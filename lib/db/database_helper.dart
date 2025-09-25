@@ -1,5 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import '../models/historia.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
@@ -96,5 +97,18 @@ class DatabaseHelper {
     if (oldVersion < 2) {
       await db.execute('ALTER TABLE historia ADD COLUMN emoticon TEXT;');
     }
+  }
+
+  Future<Historia?> getHistoria(int id) async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'historia',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    if (maps.isNotEmpty) {
+      return Historia.fromMap(maps.first);
+    }
+    return null;
   }
 }

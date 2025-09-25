@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1099153278193",
+    "project_id": "dayapp-52066",
+    "storage_bucket": "dayapp-52066.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1099153278193:android:ee3f06e7df2c0020451550",
+        "android_client_info": {
+          "package_name": "com.israelijr.dayapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHYTRTF2ekURPVsBmGHFp92wlj6GCAE34"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

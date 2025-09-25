@@ -83,86 +83,127 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildCardView(Historia historia) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 24),
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            HistoriaFotosGrid(historiaId: historia.id ?? 0, height: 100),
-            const SizedBox(height: 12),
-            Text(
-              historia.titulo,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            if (historia.emoticon != null && historia.emoticon!.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Image.asset(
-                'assets/image/${_getEmoticonImage(historia.emoticon!)}',
-                width: 32,
-                height: 32,
-              ),
-            ],
-            if (historia.tag != null && historia.tag!.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.blue[100],
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  historia.tag!,
-                  style: TextStyle(fontSize: 12, color: Colors.blue[800]),
-                ),
-              ),
-            ],
-            const SizedBox(height: 8),
-            Text(
-              historia.descricao ?? '',
-              style: const TextStyle(fontSize: 15, color: Colors.black87),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return FutureBuilder<List<HistoriaFoto>>(
+      future: HistoriaFotoHelper().getFotosByHistoria(historia.id ?? 0),
+      builder: (context, snapshot) {
+        final hasImages = snapshot.hasData && snapshot.data!.isNotEmpty;
+
+        return Card(
+          margin: const EdgeInsets.only(bottom: 24),
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (hasImages) ...[
+                  HistoriaFotosGrid(historiaId: historia.id ?? 0, height: 100),
+                  const SizedBox(height: 12),
+                ],
                 Text(
-                  DateFormat('dd/MM/yyyy HH:mm', 'pt_BR').format(historia.data),
-                  style: const TextStyle(fontSize: 13, color: Colors.black54),
+                  historia.titulo,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).textTheme.titleLarge?.color,
+                  ),
                 ),
-                PopupMenuButton<String>(
-                  icon: const Icon(Icons.more_horiz, color: Colors.black38),
-                  onSelected: (value) async {
-                    if (value == 'edit') {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) =>
-                              EditHistoriaScreen(historia: historia),
+                if (historia.emoticon != null &&
+                    historia.emoticon!.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Image.asset(
+                    'assets/image/${_getEmoticonImage(historia.emoticon!)}',
+                    width: 32,
+                    height: 32,
+                  ),
+                ],
+                if (historia.tag != null && historia.tag!.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.blue[700]
+                          : Colors.blue[100],
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      historia.tag!,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.blue[100]
+                            : Colors.blue[800],
+                      ),
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 8),
+                Text(
+                  historia.descricao ?? '',
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: Theme.of(context).textTheme.bodyMedium?.color,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      DateFormat(
+                        'dd/MM/yyyy HH:mm',
+                        'pt_BR',
+                      ).format(historia.data),
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Theme.of(context).textTheme.bodySmall?.color,
+                      ),
+                    ),
+                    PopupMenuButton<String>(
+                      icon: Icon(
+                        Icons.more_horiz,
+                        color: Theme.of(context).iconTheme.color,
+                      ),
+                      onSelected: (value) async {
+                        if (value == 'edit') {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  EditHistoriaScreen(historia: historia),
+                            ),
+                          ).then((updated) {
+                            if (updated == true) setState(() {});
+                          });
+                        } else if (value == 'delete') {
+                          await _deleteHistoria(historia);
+                        }
+                      },
+                      itemBuilder: (context) => [
+                        const PopupMenuItem(
+                          value: 'edit',
+                          child: Text('Editar'),
                         ),
-                      ).then((updated) {
-                        if (updated == true) setState(() {});
-                      });
-                    } else if (value == 'delete') {
-                      await _deleteHistoria(historia);
-                    }
-                  },
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(value: 'edit', child: Text('Editar')),
-                    const PopupMenuItem(
-                      value: 'delete',
-                      child: Text('Excluir'),
+                        const PopupMenuItem(
+                          value: 'delete',
+                          child: Text('Excluir'),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -172,22 +213,41 @@ class _HomeScreenState extends State<HomeScreen> {
       elevation: 1,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
-        leading: Image.asset(
-          'assets/image/image.png',
+        leading: Container(
           width: 40,
           height: 40,
-          fit: BoxFit.cover,
+          decoration: BoxDecoration(
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.grey[800]
+                : Colors.grey[200],
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(
+            Icons.image,
+            color: Theme.of(context).iconTheme.color,
+            size: 24,
+          ),
         ),
         title: Text(
           historia.titulo,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: Theme.of(context).textTheme.titleMedium?.color,
+          ),
         ),
         subtitle: Text(
           DateFormat('dd/MM/yyyy', 'pt_BR').format(historia.data),
-          style: const TextStyle(fontSize: 12, color: Colors.black54),
+          style: TextStyle(
+            fontSize: 12,
+            color: Theme.of(context).textTheme.bodySmall?.color,
+          ),
         ),
         trailing: PopupMenuButton<String>(
-          icon: const Icon(Icons.more_horiz, color: Colors.black38),
+          icon: Icon(
+            Icons.more_horiz,
+            color: Theme.of(context).iconTheme.color,
+          ),
           onSelected: (value) async {
             if (value == 'edit') {
               Navigator.push(
@@ -233,7 +293,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Row(
           children: [
@@ -272,11 +332,14 @@ class _HomeScreenState extends State<HomeScreen> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(color: Color(0xFFB388FF)),
+            DrawerHeader(
+              decoration: BoxDecoration(color: Theme.of(context).primaryColor),
               child: Text(
                 'Menu',
-                style: TextStyle(color: Colors.white, fontSize: 24),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                  fontSize: 24,
+                ),
               ),
             ),
             ListTile(
@@ -287,6 +350,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   context,
                   MaterialPageRoute(builder: (_) => const EditProfileScreen()),
                 );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Configurações'),
+              onTap: () {
+                Navigator.pushNamed(context, '/settings');
               },
             ),
             ListTile(
