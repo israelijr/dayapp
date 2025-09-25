@@ -23,7 +23,12 @@ class DatabaseHelper {
       print('DatabaseHelper: caminho do banco: $dbPath');
       final path = join(dbPath, 'dayapp.db');
       print('DatabaseHelper: abrindo banco em $path');
-      return await openDatabase(path, version: 1, onCreate: _onCreate);
+      return await openDatabase(
+        path,
+        version: 2,
+        onCreate: _onCreate,
+        onUpgrade: _onUpgrade,
+      );
     } catch (e, stack) {
       print('DatabaseHelper: erro ao inicializar banco: $e');
       print('DatabaseHelper: stacktrace: $stack');
@@ -55,6 +60,7 @@ class DatabaseHelper {
           tag TEXT,
           descricao TEXT,
           sentimento TEXT,
+          emoticon TEXT,
           data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           data_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           foto_historia TEXT,
@@ -83,6 +89,12 @@ class DatabaseHelper {
       print('DatabaseHelper: erro ao criar tabelas: $e');
       print('DatabaseHelper: stacktrace: $stack');
       rethrow;
+    }
+  }
+
+  Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute('ALTER TABLE historia ADD COLUMN emoticon TEXT;');
     }
   }
 }

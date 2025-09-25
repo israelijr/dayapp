@@ -7,6 +7,7 @@ class Historia {
   final String? tag;
   final String? descricao;
   final String? sentimento;
+  final String? emoticon;
   final DateTime? dataCriacao;
   final DateTime? dataUpdate;
   final String? fotoHistoria;
@@ -20,6 +21,7 @@ class Historia {
     this.tag,
     this.descricao,
     this.sentimento,
+    this.emoticon,
     this.dataCriacao,
     this.dataUpdate,
     this.fotoHistoria,
@@ -35,6 +37,7 @@ class Historia {
       tag: map['tag'],
       descricao: map['descricao'],
       sentimento: map['sentimento'],
+      emoticon: map['emoticon'],
       dataCriacao: map['data_criacao'] != null
           ? DateTime.tryParse(map['data_criacao'])
           : null,
@@ -55,6 +58,7 @@ class Historia {
       'tag': tag,
       'descricao': descricao,
       'sentimento': sentimento,
+      'emoticon': emoticon,
       'data_criacao': dataCriacao?.toIso8601String(),
       'data_update': dataUpdate?.toIso8601String(),
       'foto_historia': fotoHistoria,

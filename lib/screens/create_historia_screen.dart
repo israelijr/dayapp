@@ -22,6 +22,47 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
   final List<Uint8List> fotos = [];
   DateTime selectedDate = DateTime.now();
   bool _isLoading = false;
+  String? selectedEmoticon;
+
+  final List<String> emoticons = [
+    'Feliz',
+    'Tranquilo',
+    'Aliviado',
+    'Pensativo',
+    'Sono',
+    'Preocupado',
+    'Assustado',
+    'Bravo',
+    'Triste',
+    'Muito Triste',
+  ];
+
+  String _getEmoticonImage(String emoticon) {
+    switch (emoticon) {
+      case 'Feliz':
+        return '1_feliz.png';
+      case 'Tranquilo':
+        return '2_tranquilo.png';
+      case 'Aliviado':
+        return '3_aliviado.png';
+      case 'Pensativo':
+        return '4_pensativo.png';
+      case 'Sono':
+        return '5_sono.png';
+      case 'Preocupado':
+        return '6_preocupado.png';
+      case 'Assustado':
+        return '7_assustado.png';
+      case 'Bravo':
+        return '8_bravo.png';
+      case 'Triste':
+        return '9_triste.png';
+      case 'Muito Triste':
+        return '10_muito_triste.png';
+      default:
+        return '1_feliz.png';
+    }
+  }
 
   String _capitalizeText(String text) {
     if (text.isEmpty) return text;
@@ -100,6 +141,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
         'titulo': _capitalizeText(titleController.text.trim()),
         'descricao': _capitalizeText(descriptionController.text.trim()),
         'tag': tagsController.text.trim(),
+        'emoticon': selectedEmoticon,
         'data': selectedDate.toIso8601String(),
         'data_criacao': DateTime.now().toIso8601String(),
         'data_update': DateTime.now().toIso8601String(),
@@ -292,6 +334,46 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                         labelText: 'Tags (separadas por vírgula)',
                         border: OutlineInputBorder(),
                       ),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Selecione um Emoticon:',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    GridView.count(
+                      crossAxisCount: 5,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: emoticons
+                          .map(
+                            (emoticon) => GestureDetector(
+                              onTap: () =>
+                                  setState(() => selectedEmoticon = emoticon),
+                              child: Container(
+                                margin: const EdgeInsets.all(4),
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: selectedEmoticon == emoticon
+                                        ? Colors.blue
+                                        : Colors.transparent,
+                                    width: 2,
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Image.asset(
+                                  'assets/image/${_getEmoticonImage(emoticon)}',
+                                  width: 40,
+                                  height: 40,
+                                ),
+                              ),
+                            ),
+                          )
+                          .toList(),
                     ),
                   ],
                 ),

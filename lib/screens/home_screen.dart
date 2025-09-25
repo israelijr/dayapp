@@ -11,6 +11,7 @@ import '../models/historia_foto.dart';
 import '../providers/auth_provider.dart';
 import 'create_historia_screen.dart';
 import 'edit_historia_screen.dart';
+import 'edit_profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -54,6 +55,33 @@ class _HomeScreenState extends State<HomeScreen> {
 
   bool _isCardView = true; // true = modo blocos, false = modo ícones
 
+  String _getEmoticonImage(String emoticon) {
+    switch (emoticon) {
+      case 'Feliz':
+        return '1_feliz.png';
+      case 'Tranquilo':
+        return '2_tranquilo.png';
+      case 'Aliviado':
+        return '3_aliviado.png';
+      case 'Pensativo':
+        return '4_pensativo.png';
+      case 'Sono':
+        return '5_sono.png';
+      case 'Preocupado':
+        return '6_preocupado.png';
+      case 'Assustado':
+        return '7_assustado.png';
+      case 'Bravo':
+        return '8_bravo.png';
+      case 'Triste':
+        return '9_triste.png';
+      case 'Muito Triste':
+        return '10_muito_triste.png';
+      default:
+        return '1_feliz.png';
+    }
+  }
+
   Widget _buildCardView(Historia historia) {
     return Card(
       margin: const EdgeInsets.only(bottom: 24),
@@ -70,6 +98,28 @@ class _HomeScreenState extends State<HomeScreen> {
               historia.titulo,
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
+            if (historia.emoticon != null && historia.emoticon!.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Image.asset(
+                'assets/image/${_getEmoticonImage(historia.emoticon!)}',
+                width: 32,
+                height: 32,
+              ),
+            ],
+            if (historia.tag != null && historia.tag!.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.blue[100],
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  historia.tag!,
+                  style: TextStyle(fontSize: 12, color: Colors.blue[800]),
+                ),
+              ),
+            ],
             const SizedBox(height: 8),
             Text(
               historia.descricao ?? '',
@@ -158,7 +208,23 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         onTap: () {
-          // Pode adicionar navegação para detalhes se necessário
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                content: Container(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  child: SingleChildScrollView(child: _buildCardView(historia)),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('Fechar'),
+                  ),
+                ],
+              );
+            },
+          );
         },
       ),
     );
@@ -182,8 +248,8 @@ class _HomeScreenState extends State<HomeScreen> {
               _isCardView
                   ? 'assets/image/card.png'
                   : 'assets/image/icone_pequeno.png',
-              width: 24,
-              height: 24,
+              width: 34,
+              height: 34,
             ),
             onPressed: () {
               setState(() {
@@ -212,6 +278,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 'Menu',
                 style: TextStyle(color: Colors.white, fontSize: 24),
               ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.person),
+              title: const Text('Editar Perfil'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const EditProfileScreen()),
+                );
+              },
             ),
             ListTile(
               leading: const Icon(Icons.logout),
@@ -303,11 +379,29 @@ class HistoriaFotosGrid extends StatelessWidget {
         if (fotos.length == 1) {
           return ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: Image.memory(
-              Uint8List.fromList(fotos[0].foto),
-              height: height,
-              width: double.infinity,
-              fit: BoxFit.cover,
+            child: GestureDetector(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      content: Image.memory(Uint8List.fromList(fotos[0].foto)),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text('Fechar'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              child: Image.memory(
+                Uint8List.fromList(fotos[0].foto),
+                height: height,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
             ),
           );
         }
@@ -318,9 +412,27 @@ class HistoriaFotosGrid extends StatelessWidget {
             children: fotos.map((foto) {
               return ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Image.memory(
-                  Uint8List.fromList(foto.foto),
-                  fit: BoxFit.cover,
+                child: GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          content: Image.memory(Uint8List.fromList(foto.foto)),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: const Text('Fechar'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  child: Image.memory(
+                    Uint8List.fromList(foto.foto),
+                    fit: BoxFit.cover,
+                  ),
                 ),
               );
             }).toList(),
