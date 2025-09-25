@@ -228,7 +228,11 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                               onTap: () => _removeFoto(i),
                               child: Container(
                                 decoration: BoxDecoration(
-                                  color: Colors.black54,
+                                  color:
+                                      Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.grey[700]
+                                      : Colors.black54,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: const Icon(
@@ -268,9 +272,9 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                   Expanded(
                     child: Text(
                       dateFormat.format(selectedDate),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
-                        color: Colors.black87,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                       ),
                     ),
                   ),
