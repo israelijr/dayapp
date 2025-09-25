@@ -22,7 +22,13 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  try {
+    await Firebase.initializeApp();
+    print('Firebase inicializado com sucesso');
+  } catch (e) {
+    print('Erro ao inicializar Firebase: $e');
+    // Continue sem Firebase se falhar
+  }
   await initializeDateFormatting('pt_BR', null);
   // Inicializa sqflite_common_ffi apenas em desktop
   if (!identical(0, 0.0)) {
