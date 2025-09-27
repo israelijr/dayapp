@@ -9,6 +9,7 @@ import 'screens/edit_profile_screen.dart';
 import 'package:provider/provider.dart';
 import 'providers/auth_provider.dart';
 import 'providers/theme_provider.dart';
+import 'providers/refresh_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'dart:io';
 import 'package:intl/date_symbol_data_local.dart';
@@ -45,6 +46,9 @@ void main() async {
   // Inicializar ThemeProvider
   final themeProvider = ThemeProvider();
 
+  // Inicializar RefreshProvider
+  final refreshProvider = RefreshProvider();
+
   // Inicializar notificações
   await NotificationService().init((String? payload) async {
     if (payload != null) {
@@ -62,17 +66,25 @@ void main() async {
     }
   });
 
-  runApp(MyApp(authProvider: authProvider, themeProvider: themeProvider));
+  runApp(
+    MyApp(
+      authProvider: authProvider,
+      themeProvider: themeProvider,
+      refreshProvider: refreshProvider,
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
   final AuthProvider authProvider;
   final ThemeProvider themeProvider;
+  final RefreshProvider refreshProvider;
 
   const MyApp({
     super.key,
     required this.authProvider,
     required this.themeProvider,
+    required this.refreshProvider,
   });
 
   // This widget is the root of your application.
@@ -82,6 +94,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider.value(value: authProvider),
         ChangeNotifierProvider.value(value: themeProvider),
+        ChangeNotifierProvider.value(value: refreshProvider),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {

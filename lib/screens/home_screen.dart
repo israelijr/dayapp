@@ -9,6 +9,7 @@ import '../db/historia_foto_helper.dart';
 import '../models/historia.dart';
 import '../models/historia_foto.dart';
 import '../providers/auth_provider.dart';
+import '../providers/refresh_provider.dart';
 import 'create_historia_screen.dart';
 import 'edit_historia_screen.dart';
 import 'edit_profile_screen.dart';
@@ -375,29 +376,39 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      body: FutureBuilder<List<Historia>>(
-        future: _fetchHistorias(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState != ConnectionState.done) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          final historias = snapshot.data ?? [];
-          if (historias.isEmpty) {
-            return const Center(child: Text('Nenhuma história cadastrada.'));
-          }
-          return AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            child: ListView.builder(
-              key: ValueKey<bool>(_isCardView),
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-              itemCount: historias.length,
-              itemBuilder: (context, index) {
-                final historia = historias[index];
-                return _isCardView
-                    ? _buildCardView(historia)
-                    : _buildIconView(historia);
-              },
-            ),
+      body: Consumer<RefreshProvider>(
+        builder: (context, refreshProvider, child) {
+          return FutureBuilder<List<Historia>>(
+            key: ValueKey<int>(refreshProvider.refreshCounter),
+            future: _fetchHistorias(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState != ConnectionState.done) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              final historias = snapshot.data ?? [];
+              if (historias.isEmpty) {
+                return const Center(
+                  child: Text('Nenhuma história cadastrada.'),
+                );
+              }
+              return AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                child: ListView.builder(
+                  key: ValueKey<bool>(_isCardView),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 16,
+                    horizontal: 12,
+                  ),
+                  itemCount: historias.length,
+                  itemBuilder: (context, index) {
+                    final historia = historias[index];
+                    return _isCardView
+                        ? _buildCardView(historia)
+                        : _buildIconView(historia);
+                  },
+                ),
+              );
+            },
           );
         },
       ),

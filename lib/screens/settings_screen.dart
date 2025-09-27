@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:flutter/services.dart';
+import '../providers/auth_provider.dart';
 import '../providers/theme_provider.dart';
+import '../providers/refresh_provider.dart';
 import '../services/backup_service.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -203,11 +208,85 @@ class _SettingsScreenState extends State<SettingsScreen> {
       final backupCode = await _backupService.backupDatabase();
       if (!mounted) return;
       _showBackupCodeDialog(backupCode);
+      // Try to open the user's email client with the backup code
+      _emailBackupCode(backupCode);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Erro ao fazer backup: $e')));
+    }
+  }
+
+  Future<void> _emailBackupCode(String backupCode) async {
+    try {
+      // Get the current user email from AuthProvider
+      final auth = Provider.of<AuthProvider>(context, listen: false);
+      final String? email = auth.user?.email;
+      final subject = 'Backup DayApp';
+      final body = 'Seu código de backup é: $backupCode';
+
+      // Prefer the system share sheet (share_plus) so the user can choose any app
+      try {
+        final params = ShareParams(text: body, subject: subject);
+        await SharePlus.instance.share(params);
+        return;
+      } catch (_) {
+        // If share sheet not available, fall back to email intent if email exists
+      }
+
+      if (email == null || email.isEmpty) {
+        // No configured email — copy and notify
+        await Clipboard.setData(ClipboardData(text: backupCode));
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Código copiado para a área de transferência.'),
+          ),
+        );
+        return;
+      }
+
+      final subjectEnc = Uri.encodeComponent(subject);
+      final bodyEnc = Uri.encodeComponent(body);
+      final uri = Uri.parse('mailto:$email?subject=$subjectEnc&body=$bodyEnc');
+
+      if (!await canLaunchUrl(uri)) {
+        await Clipboard.setData(ClipboardData(text: backupCode));
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Não foi possível abrir o cliente de e-mail. Código copiado para a área de transferência.',
+            ),
+          ),
+        );
+        return;
+      }
+
+      final launched = await launchUrl(uri);
+      if (!launched) {
+        await Clipboard.setData(ClipboardData(text: backupCode));
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Não foi possível abrir o cliente de e-mail. Código copiado para a área de transferência.',
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      // On any unexpected failure, copy the code so the user can still send it manually
+      await Clipboard.setData(ClipboardData(text: backupCode));
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Falha ao tentar enviar e-mail: $e. Código copiado para a área de transferência.',
+          ),
+        ),
+      );
     }
   }
 
@@ -234,6 +313,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ],
         ),
         actions: [
+          TextButton(
+            onPressed: () {
+              // Try to open email client when user taps explicitly
+              Navigator.of(context).pop();
+              _emailBackupCode(backupCode);
+            },
+            child: const Text('Enviar por e-mail'),
+          ),
+          TextButton(
+            onPressed: () {
+              // Copy to clipboard as a fallback
+              Clipboard.setData(ClipboardData(text: backupCode));
+              Navigator.of(context).pop();
+              if (!mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Código copiado para a área de transferência'),
+                ),
+              );
+            },
+            child: const Text('Copiar código'),
+          ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
             child: const Text('OK'),
@@ -336,6 +437,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _restoreBackup(Reference backup) async {
     try {
       await _backupService.restoreDatabase(backup);
+      // Refresh home screen data
+      final refreshProvider = Provider.of<RefreshProvider>(
+        context,
+        listen: false,
+      );
+      refreshProvider.refresh();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Restauração realizada com sucesso!')),
       );
