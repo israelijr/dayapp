@@ -11,6 +11,8 @@ class Historia {
   final DateTime? dataCriacao;
   final DateTime? dataUpdate;
   final String? fotoHistoria;
+  final String? grupo;
+  final String? arquivado;
 
   Historia({
     this.id,
@@ -25,6 +27,8 @@ class Historia {
     this.dataCriacao,
     this.dataUpdate,
     this.fotoHistoria,
+    this.grupo,
+    this.arquivado,
   });
 
   factory Historia.fromMap(Map<String, dynamic> map) {
@@ -45,6 +49,8 @@ class Historia {
           ? DateTime.tryParse(map['data_update'])
           : null,
       fotoHistoria: map['foto_historia'],
+      grupo: map['grupo'],
+      arquivado: map['arquivado'],
     );
   }
 
@@ -62,6 +68,8 @@ class Historia {
       'data_criacao': dataCriacao?.toIso8601String(),
       'data_update': dataUpdate?.toIso8601String(),
       'foto_historia': fotoHistoria,
+      'grupo': grupo,
+      'arquivado': arquivado,
     };
   }
 }

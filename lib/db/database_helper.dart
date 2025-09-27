@@ -27,7 +27,7 @@ class DatabaseHelper {
       debugPrint('DatabaseHelper: abrindo banco em $path');
       return await openDatabase(
         path,
-        version: 2,
+        version: 4,
         onCreate: _onCreate,
         onUpgrade: _onUpgrade,
       );
@@ -80,6 +80,16 @@ class DatabaseHelper {
         );
       ''');
       debugPrint('DatabaseHelper: tabela historia_fotos criada');
+      await db.execute('''
+        CREATE TABLE grupos (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          user_id TEXT NOT NULL,
+          nome TEXT NOT NULL,
+          data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        );
+      ''');
+      debugPrint('DatabaseHelper: tabela grupos criada');
       await db.execute(
         'CREATE INDEX idx_historia_user_id ON historia(user_id);',
       );
@@ -97,6 +107,22 @@ class DatabaseHelper {
   Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2) {
       await db.execute('ALTER TABLE historia ADD COLUMN emoticon TEXT;');
+    }
+    if (oldVersion < 3) {
+      await db.execute('ALTER TABLE historia ADD COLUMN grupo TEXT;');
+      await db.execute('ALTER TABLE historia ADD COLUMN arquivado TEXT;');
+    }
+    if (oldVersion < 4) {
+      await db.execute('''
+        CREATE TABLE grupos (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          user_id TEXT NOT NULL,
+          nome TEXT NOT NULL,
+          data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        );
+      ''');
+      debugPrint('DatabaseHelper: tabela grupos criada na upgrade');
     }
   }
 
