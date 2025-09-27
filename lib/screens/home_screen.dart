@@ -49,6 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (confirm == true) {
       final db = await DatabaseHelper().database;
       await db.delete('historia', where: 'id = ?', whereArgs: [historia.id]);
+      if (!mounted) return;
       setState(() {});
     }
   }
@@ -180,6 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   EditHistoriaScreen(historia: historia),
                             ),
                           ).then((updated) {
+                            if (!mounted) return;
                             if (updated == true) setState(() {});
                           });
                         } else if (value == 'delete') {
@@ -256,6 +258,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   builder: (_) => EditHistoriaScreen(historia: historia),
                 ),
               ).then((updated) {
+                if (!mounted) return;
                 if (updated == true) setState(() {});
               });
             } else if (value == 'delete') {
@@ -365,7 +368,8 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () async {
                 final auth = Provider.of<AuthProvider>(context, listen: false);
                 await auth.logout();
-                if (mounted) Navigator.pushReplacementNamed(context, '/login');
+                if (!mounted) return;
+                Navigator.pushReplacementNamed(context, '/login');
               },
             ),
           ],

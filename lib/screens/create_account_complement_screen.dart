@@ -25,6 +25,7 @@ class _CreateAccountComplementScreenState
     final picker = ImagePicker();
     final picked = await picker.pickImage(source: ImageSource.gallery);
     if (picked != null) {
+      if (!mounted) return;
       setState(() {
         profileImagePath = picked.path;
       });
@@ -68,6 +69,7 @@ class _CreateAccountComplementScreenState
       where: 'id = ?',
       whereArgs: [auth.user!.id],
     );
+    if (!mounted) return;
     setState(() {
       loading = false;
     });
@@ -120,23 +122,30 @@ class _CreateAccountComplementScreenState
                   ),
                 ),
                 const SizedBox(height: 24),
-                TextField(
-                  controller: birthDateController,
-                  keyboardType: TextInputType.datetime,
-                  decoration: InputDecoration(
-                    labelText: 'Data de nascimento (DD/MM/AAAA)',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                Theme(
+                  data: Theme.of(
+                    context,
+                  ).copyWith(brightness: Brightness.light),
+                  child: TextField(
+                    controller: birthDateController,
+                    keyboardType: TextInputType.datetime,
+                    style: TextStyle(color: Colors.black),
+                    decoration: InputDecoration(
+                      labelText: 'Data de nascimento (DD/MM/AAAA)',
+                      labelStyle: TextStyle(color: Colors.black),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[200],
                     ),
-                    filled: true,
-                    fillColor: Colors.grey[200],
                   ),
                 ),
                 if (errorMessage != null) ...[
                   const SizedBox(height: 8),
                   Text(
                     errorMessage!,
-                    style: const TextStyle(color: Colors.red),
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ],
                 const SizedBox(height: 24),

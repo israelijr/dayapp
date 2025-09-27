@@ -159,6 +159,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
             onTap: _showRestoreDialog,
           ),
           ListTile(
+            leading: const Icon(Icons.restore_from_trash),
+            title: const Text('Restaurar com código'),
+            onTap: _showRestoreWithCodeDialog,
+          ),
+          ListTile(
             leading: const Icon(Icons.logout),
             title: const Text('Sair do Google'),
             onTap: _signOut,
@@ -172,10 +177,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     try {
       await _backupService.signInAnonymously();
       _checkSignInStatus();
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Login anônimo realizado com sucesso!')),
       );
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Erro ao fazer login: $e')));
@@ -185,6 +192,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _signOut() async {
     await _backupService.signOut();
     _checkSignInStatus();
+    if (!mounted) return;
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(const SnackBar(content: Text('Logout realizado')));
@@ -192,21 +200,54 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _performBackup() async {
     try {
-      await _backupService.backupDatabase();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Backup realizado com sucesso!')),
-      );
+      final backupCode = await _backupService.backupDatabase();
+      if (!mounted) return;
+      _showBackupCodeDialog(backupCode);
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Erro ao fazer backup: $e')));
     }
   }
 
-  Future<void> _showRestoreDialog() async {
+  void _showBackupCodeDialog(String backupCode) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Backup realizado com sucesso!'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Anote o código de recuperação abaixo. Você precisará dele para restaurar o backup em caso de reinstalação do app.',
+            ),
+            const SizedBox(height: 16),
+            Text(
+              backupCode,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Este código também foi enviado para o seu email (se configurado).',
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showRestoreDialog([String? backupCode]) async {
     try {
-      final backups = await _backupService.listBackups();
+      final backups = await _backupService.listBackups(backupCode);
       if (backups.isEmpty) {
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Nenhum backup encontrado')),
         );
@@ -244,10 +285,52 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       );
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Erro ao listar backups: $e')));
     }
+  }
+
+  Future<void> _showRestoreWithCodeDialog() async {
+    final TextEditingController codeController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Restaurar backup com código'),
+        content: TextField(
+          controller: codeController,
+          decoration: const InputDecoration(
+            labelText: 'Código de recuperação',
+            hintText: 'Digite o código anotado durante o backup',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () async {
+              final code = codeController.text.trim();
+              if (code.isEmpty) {
+                if (!mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Digite o código de recuperação'),
+                  ),
+                );
+                return;
+              }
+              Navigator.of(context).pop();
+              await _showRestoreDialog(code);
+            },
+            child: const Text('Restaurar'),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _restoreBackup(Reference backup) async {

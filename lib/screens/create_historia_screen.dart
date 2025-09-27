@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../services/notification_service.dart';
 import 'dart:io';
+import 'rich_text_editor_screen.dart';
 
 class CreateHistoriaScreen extends StatefulWidget {
   const CreateHistoriaScreen({super.key});
@@ -19,7 +20,7 @@ class CreateHistoriaScreen extends StatefulWidget {
 
 class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
   final titleController = TextEditingController();
-  final descriptionController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
   final tagsController = TextEditingController();
   final List<Uint8List> fotos = [];
   DateTime selectedDate = DateTime.now();
@@ -68,13 +69,14 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
 
   String _capitalizeText(String text) {
     if (text.isEmpty) return text;
-    return text
-        .split(' ')
-        .map((word) {
-          if (word.isEmpty) return word;
-          return word[0].toUpperCase() + word.substring(1).toLowerCase();
-        })
-        .join(' ');
+    // Capitalize first letter
+    String result =
+        text[0].toUpperCase() + (text.length > 1 ? text.substring(1) : '');
+    // Capitalize after sentence endings
+    result = result.replaceAllMapped(RegExp(r'([.!?]\s*)([a-z])'), (match) {
+      return match.group(1)! + match.group(2)!.toUpperCase();
+    });
+    return result;
   }
 
   Future<void> _pickImage() async {
@@ -82,6 +84,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
     final picked = await picker.pickImage(source: ImageSource.gallery);
     if (picked != null) {
       final bytes = await picked.readAsBytes();
+      if (!mounted) return;
       setState(() {
         fotos.add(bytes);
       });
@@ -108,6 +111,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
         initialTime: TimeOfDay.fromDateTime(selectedDate),
       );
       if (time != null) {
+        if (!mounted) return;
         setState(() {
           selectedDate = DateTime(
             date.year,
@@ -142,14 +146,14 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                     child: Column(
                       children: [
                         ...[
-                          {
-                            'label': 'Imediata (teste)',
-                            'duration': Duration.zero,
-                          },
-                          {
-                            'label': 'Agora (teste)',
-                            'duration': const Duration(seconds: 10),
-                          },
+                          // {
+                          //   'label': 'Imediata (teste)',
+                          //   'duration': Duration.zero,
+                          // },
+                          // {
+                          //   'label': 'Agora (teste)',
+                          //   'duration': const Duration(seconds: 10),
+                          // },
                           {
                             'label': '1 hora antes',
                             'duration': const Duration(hours: 1),
@@ -202,6 +206,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
           body: 'Não esqueça: ${titleController.text}',
           payload: historiaId.toString(),
         );
+        if (!mounted) return;
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(const SnackBar(content: Text('Notificação mostrada')));
@@ -216,6 +221,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
       if (notificationTime.isAfter(DateTime.now())) {
         if (Platform.isWindows) {
           // Notificações agendadas não são suportadas no Windows
+          if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text(
@@ -231,6 +237,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
             scheduledDate: notificationTime,
             payload: historiaId.toString(),
           );
+          if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Notificação agendada com sucesso')),
           );
@@ -259,7 +266,9 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
       final historiaId = await db.insert('historia', {
         'user_id': auth.user?.id ?? '',
         'titulo': _capitalizeText(titleController.text.trim()),
-        'descricao': _capitalizeText(descriptionController.text.trim()),
+        'descricao': descriptionController.text.trim().isEmpty
+            ? null
+            : descriptionController.text.trim(),
         'tag': tagsController.text.trim(),
         'emoticon': selectedEmoticon,
         'data': selectedDate.toIso8601String(),
@@ -280,9 +289,8 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
       }
 
       // Navega para a tela inicial
-      if (mounted) {
-        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
-      }
+      if (!mounted) return;
+      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(
@@ -295,6 +303,21 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
           _isLoading = false;
         });
       }
+    }
+  }
+
+  void _expandDescriptionEditor() async {
+    final result = await Navigator.of(context).push<String>(
+      MaterialPageRoute(
+        builder: (context) =>
+            RichTextEditorScreen(initialText: descriptionController.text),
+      ),
+    );
+    if (result != null) {
+      if (!mounted) return;
+      setState(() {
+        descriptionController.text = result;
+      });
     }
   }
 
@@ -450,15 +473,44 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    TextField(
-                      controller: descriptionController,
-                      decoration: const InputDecoration(
-                        labelText: 'Descrição',
-                        border: OutlineInputBorder(),
-                      ),
-                      maxLines: 3,
-                      keyboardType: TextInputType.text,
-                      enableSuggestions: true,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Text(
+                              'Descrição',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const Spacer(),
+                            IconButton(
+                              icon: const Icon(Icons.fullscreen),
+                              onPressed: _expandDescriptionEditor,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          height: 150,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: TextField(
+                            controller: descriptionController,
+                            maxLines: null,
+                            expands: true,
+                            textAlignVertical: TextAlignVertical.top,
+                            decoration: const InputDecoration(
+                              contentPadding: EdgeInsets.all(8),
+                              border: InputBorder.none,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 16),
                     TextField(

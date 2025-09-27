@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-import 'package:sqflite/sqflite.dart';
 import 'database_helper.dart';
 import '../models/historia_foto.dart';
 

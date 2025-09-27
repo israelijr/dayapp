@@ -9,7 +9,7 @@ flutter_launcher_icons:
   windows:
     generate: true
   image_path: "assets/icon/icon.png"
-name: DayApp
+name: dayapp
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -53,6 +53,7 @@ dependencies:
   provider: ^6.1.2
   intl: ^0.20.2
   shared_preferences: ^2.2.3
+  path: ^1.8.3
   uuid: ^4.3.3
   image_picker: ^1.1.1
   sqflite_common_ffi: ^2.3.6

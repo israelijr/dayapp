@@ -22,17 +22,22 @@ class CustomTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextField(
-        controller: controller,
-        obscureText: obscureText,
-        keyboardType: keyboardType,
-        enabled: enabled,
-        decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-          suffixIcon: suffixIcon,
-          filled: true,
-          fillColor: Colors.grey[200],
+      child: Theme(
+        data: Theme.of(context).copyWith(brightness: Brightness.light),
+        child: TextField(
+          controller: controller,
+          obscureText: obscureText,
+          keyboardType: keyboardType,
+          enabled: enabled,
+          style: TextStyle(color: Colors.black),
+          decoration: InputDecoration(
+            labelText: label,
+            labelStyle: TextStyle(color: Colors.black),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            suffixIcon: suffixIcon,
+            filled: true,
+            fillColor: Colors.grey[200],
+          ),
         ),
       ),
     );

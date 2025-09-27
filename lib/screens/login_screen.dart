@@ -34,7 +34,8 @@ class _LoginScreenState extends State<LoginScreen> {
       loading = false;
     });
     if (success) {
-      if (mounted) Navigator.pushReplacementNamed(context, '/home');
+      if (!mounted) return;
+      Navigator.pushReplacementNamed(context, '/home');
     } else {
       setState(() {
         errorMessage = 'E-mail ou senha inválidos.';
@@ -91,7 +92,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 8),
                   Text(
                     errorMessage!,
-                    style: const TextStyle(color: Colors.red),
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ],
                 const SizedBox(height: 8),

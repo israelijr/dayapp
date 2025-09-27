@@ -1,7 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
-import 'package:flutter/material.dart';
 import 'dart:io';
 
 class NotificationService {
@@ -57,7 +57,7 @@ class NotificationService {
     required DateTime scheduledDate,
     String? payload,
   }) async {
-    print(
+    debugPrint(
       'NotificationService: Agendando notificação ID $id para $scheduledDate',
     );
     final notificationDetails = const NotificationDetails(
@@ -75,7 +75,9 @@ class NotificationService {
     if (Platform.isWindows) {
       // Para Windows, notificações agendadas podem não ser suportadas
       // Vamos mostrar uma notificação imediata para teste
-      print('NotificationService: Windows - mostrando notificação imediata');
+      debugPrint(
+        'NotificationService: Windows - mostrando notificação imediata',
+      );
       await flutterLocalNotificationsPlugin.show(
         id,
         title,
@@ -85,7 +87,7 @@ class NotificationService {
       );
     } else {
       // Para outras plataformas, usar zonedSchedule
-      print('NotificationService: Agendando zonedSchedule');
+      debugPrint('NotificationService: Agendando zonedSchedule');
       try {
         await flutterLocalNotificationsPlugin.zonedSchedule(
           id,
@@ -98,9 +100,9 @@ class NotificationService {
               UILocalNotificationDateInterpretation.absoluteTime,
           payload: payload,
         );
-        print('NotificationService: Notificação agendada com sucesso');
+        debugPrint('NotificationService: Notificação agendada com sucesso');
       } catch (e) {
-        print('NotificationService: Erro ao agendar notificação: $e');
+        debugPrint('NotificationService: Erro ao agendar notificação: $e');
       }
     }
   }

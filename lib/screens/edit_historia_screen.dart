@@ -6,6 +6,8 @@ import '../models/historia.dart';
 import '../db/database_helper.dart';
 import '../db/historia_foto_helper.dart';
 import '../models/historia_foto.dart';
+import 'rich_text_editor_screen.dart';
+// ...existing code...
 
 class EditHistoriaScreen extends StatefulWidget {
   final Historia historia;
@@ -66,13 +68,14 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
 
   String _capitalizeText(String text) {
     if (text.isEmpty) return text;
-    return text
-        .split(' ')
-        .map((word) {
-          if (word.isEmpty) return word;
-          return word[0].toUpperCase() + word.substring(1).toLowerCase();
-        })
-        .join(' ');
+    // Capitalize first letter
+    String result =
+        text[0].toUpperCase() + (text.length > 1 ? text.substring(1) : '');
+    // Capitalize after sentence endings
+    result = result.replaceAllMapped(RegExp(r'([.!?]\s*)([a-z])'), (match) {
+      return match.group(1)! + match.group(2)!.toUpperCase();
+    });
+    return result;
   }
 
   @override
@@ -92,6 +95,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     final fotosDb = await HistoriaFotoHelper().getFotosByHistoria(
       widget.historia.id ?? 0,
     );
+    if (!mounted) return;
     setState(() {
       fotos = fotosDb.map((f) => Uint8List.fromList(f.foto)).toList();
       fotoIds = fotosDb.map((f) => f.id ?? 0).toList();
@@ -103,6 +107,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     final picked = await picker.pickImage(source: ImageSource.gallery);
     if (picked != null) {
       final bytes = await picked.readAsBytes();
+      if (!mounted) return;
       setState(() {
         fotos.add(bytes);
         fotoIds.add(0); // 0 indica nova foto
@@ -119,6 +124,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
         whereArgs: [fotoIds[index]],
       );
     }
+    if (!mounted) return;
     setState(() {
       fotos.removeAt(index);
       fotoIds.removeAt(index);
@@ -158,7 +164,9 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
       'historia',
       {
         'titulo': _capitalizeText(titleController.text.trim()),
-        'descricao': _capitalizeText(descriptionController.text.trim()),
+        'descricao': descriptionController.text.trim().isEmpty
+            ? null
+            : descriptionController.text.trim(),
         'tag': tagsController.text.trim(),
         'emoticon': selectedEmoticon,
         'data': selectedDate.toIso8601String(),
@@ -175,7 +183,23 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
         );
       }
     }
+    if (!mounted) return;
     Navigator.pop(context, true);
+  }
+
+  void _expandDescriptionEditor() async {
+    final result = await Navigator.of(context).push<String>(
+      MaterialPageRoute(
+        builder: (context) =>
+            RichTextEditorScreen(initialText: descriptionController.text),
+      ),
+    );
+    if (result != null) {
+      if (!mounted) return;
+      setState(() {
+        descriptionController.text = result;
+      });
+    }
   }
 
   @override
@@ -296,15 +320,51 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              TextField(
-                controller: descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Descrição',
-                  border: OutlineInputBorder(),
-                ),
-                maxLines: 3,
-                keyboardType: TextInputType.text,
-                enableSuggestions: true,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Text(
+                        'Descrição',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        icon: const Icon(Icons.fullscreen),
+                        onPressed: _expandDescriptionEditor,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    height: 150,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Column(
+                      children: [
+                        // Simple multiline text field for description
+                        Expanded(
+                          child: TextField(
+                            controller: descriptionController,
+                            maxLines: null,
+                            expands: true,
+                            textAlignVertical: TextAlignVertical.top,
+                            decoration: const InputDecoration(
+                              contentPadding: EdgeInsets.all(8),
+                              border: InputBorder.none,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 16),
               TextField(

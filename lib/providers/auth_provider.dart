@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../db/database_helper.dart';
 import '../models/user.dart';
@@ -14,16 +15,16 @@ class AuthProvider extends ChangeNotifier {
     String password, {
     bool remember = false,
   }) async {
-    print('Tentando login para: $email');
+    debugPrint('Tentando login para: $email');
     final db = await DatabaseHelper().database;
     final result = await db.query(
       'users',
       where: 'email = ? AND senha = ?',
       whereArgs: [email, password],
     );
-    print('Resultado da consulta: ${result.length}');
+    debugPrint('Resultado da consulta: ${result.length}');
     if (result.isNotEmpty) {
-      print('Login bem-sucedido!');
+      debugPrint('Login bem-sucedido!');
       _user = User.fromMap(result.first);
       if (remember) {
         final prefs = await SharedPreferences.getInstance();
@@ -32,7 +33,7 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
       return true;
     }
-    print('Login falhou: usuário ou senha inválidos');
+    debugPrint('Login falhou: usuário ou senha inválidos');
     return false;
   }
 
@@ -43,24 +44,26 @@ class AuthProvider extends ChangeNotifier {
     DateTime? dtNascimento,
     String? fotoPerfil,
   }) async {
-    print('register: início');
+    debugPrint('register: início');
     try {
-      print('register: obtendo instância do banco de dados...');
+      debugPrint('register: obtendo instância do banco de dados...');
       final db = await DatabaseHelper().database;
-      print('register: instância do banco obtida');
-      print('register: verificando se email já existe...');
+      debugPrint('register: instância do banco obtida');
+      debugPrint('register: verificando se email já existe...');
       final existing = await db.query(
         'users',
         where: 'email = ?',
         whereArgs: [email],
       );
-      print('register: resultado da consulta de email: ${existing.length}');
+      debugPrint(
+        'register: resultado da consulta de email: ${existing.length}',
+      );
       if (existing.isNotEmpty) {
-        print('register: email já cadastrado');
+        debugPrint('register: email já cadastrado');
         return false;
       }
       final uuid = const Uuid().v4();
-      print('register: inserindo novo usuário...');
+      debugPrint('register: inserindo novo usuário...');
       await db.insert('users', {
         'id': uuid,
         'nome': nome,
@@ -69,7 +72,7 @@ class AuthProvider extends ChangeNotifier {
         'dt_nascimento': dtNascimento?.toIso8601String(),
         'foto_perfil': fotoPerfil,
       });
-      print('register: usuário inserido com sucesso');
+      debugPrint('register: usuário inserido com sucesso');
       _user = User(
         id: uuid,
         nome: nome,
@@ -80,8 +83,8 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
       return true;
     } catch (e, stack) {
-      print('register: erro ao registrar usuário: $e');
-      print('register: stacktrace: $stack');
+      debugPrint('register: erro ao registrar usuário: $e');
+      debugPrint('register: stacktrace: $stack');
       return false;
     }
   }
@@ -142,7 +145,7 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
       return true;
     } catch (e) {
-      print('Erro ao atualizar usuário: $e');
+      debugPrint('Erro ao atualizar usuário: $e');
       return false;
     }
   }

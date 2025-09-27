@@ -61,6 +61,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       loading = false;
     });
     if (success) {
+      if (!mounted) return;
       Navigator.pushNamed(context, '/create_account_complement');
     } else {
       // Verifica se o e-mail já existe no banco
@@ -70,6 +71,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         where: 'email = ?',
         whereArgs: [emailController.text.trim()],
       );
+      if (!mounted) return;
       setState(() {
         errorMessage = existing.isNotEmpty
             ? 'E-mail já cadastrado.'
@@ -138,7 +140,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   const SizedBox(height: 8),
                   Text(
                     errorMessage!,
-                    style: const TextStyle(color: Colors.red),
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ],
                 const SizedBox(height: 24),

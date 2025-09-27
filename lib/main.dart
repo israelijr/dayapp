@@ -24,9 +24,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
     await Firebase.initializeApp();
-    print('Firebase inicializado com sucesso');
+    debugPrint('Firebase inicializado com sucesso');
   } catch (e) {
-    print('Erro ao inicializar Firebase: $e');
+    debugPrint('Erro ao inicializar Firebase: $e');
     // Continue sem Firebase se falhar
   }
   await initializeDateFormatting('pt_BR', null);
