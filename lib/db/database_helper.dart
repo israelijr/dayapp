@@ -148,4 +148,22 @@ class DatabaseHelper {
     }
     return null;
   }
+
+  /// Close any open database and reset the cached instance so the next call
+  /// to `database` will re-open the (possibly replaced) DB file.
+  Future<void> resetDatabase() async {
+    try {
+      if (_database != null) {
+        debugPrint('DatabaseHelper: closing existing database connection...');
+        await _database!.close();
+        _database = null;
+        debugPrint(
+          'DatabaseHelper: database connection closed and cache cleared',
+        );
+      }
+    } catch (e) {
+      debugPrint('DatabaseHelper: erro ao resetar o banco: $e');
+      rethrow;
+    }
+  }
 }
