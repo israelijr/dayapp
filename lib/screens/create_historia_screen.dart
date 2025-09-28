@@ -14,6 +14,12 @@ import 'package:flutter/services.dart';
 import 'package:file_selector/file_selector.dart';
 import 'rich_text_editor_screen.dart';
 
+// Note: This file implements two UI features requested by the team:
+// 1) Importar arquivo .txt na descrição usando `file_selector` (_pickTxtFileForDescription).
+/// 2) Animação de expansão do editor de descrição bottom-to-top ao abrir a tela de edição (_expandDescriptionEditor).
+// The expanded editor screen is in `lib/screens/rich_text_editor_screen.dart` which
+// provides drag-to-save (swipe down) behavior.
+
 class SentenceCapitalizationTextInputFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
