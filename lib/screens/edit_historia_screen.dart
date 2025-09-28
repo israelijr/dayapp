@@ -7,6 +7,7 @@ import '../db/database_helper.dart';
 import '../db/historia_foto_helper.dart';
 import '../models/historia_foto.dart';
 import 'package:flutter/services.dart';
+import 'package:file_selector/file_selector.dart';
 import 'rich_text_editor_screen.dart';
 // ...existing code...
 
@@ -215,9 +216,30 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
 
   void _expandDescriptionEditor() async {
     final result = await Navigator.of(context).push<String>(
-      MaterialPageRoute(
-        builder: (context) =>
+      PageRouteBuilder<String>(
+        pageBuilder: (context, animation, secondaryAnimation) =>
             RichTextEditorScreen(initialText: descriptionController.text),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          // Slide from bottom
+          final slideTween = Tween(
+            begin: const Offset(0, 1),
+            end: Offset.zero,
+          ).chain(CurveTween(curve: Curves.easeInOutCubic));
+          // Fade in
+          final fadeTween = Tween(
+            begin: 0.0,
+            end: 1.0,
+          ).chain(CurveTween(curve: Curves.easeInOutCubic));
+
+          return SlideTransition(
+            position: animation.drive(slideTween),
+            child: FadeTransition(
+              opacity: animation.drive(fadeTween),
+              child: child,
+            ),
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 450),
       ),
     );
     if (result != null) {
@@ -225,6 +247,25 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
       setState(() {
         descriptionController.text = result;
       });
+    }
+  }
+
+  Future<void> _pickTxtFileForDescription() async {
+    try {
+      final typeGroup = XTypeGroup(extensions: ['txt']);
+      final files = await openFiles(acceptedTypeGroups: [typeGroup]);
+      if (files.isEmpty) return; // canceled
+      final file = files.first;
+      final content = await file.readAsString();
+      if (!mounted) return;
+      setState(() {
+        descriptionController.text = content;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Erro ao carregar arquivo: $e')));
     }
   }
 
@@ -361,7 +402,30 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                       ),
                       const Spacer(),
                       IconButton(
-                        icon: const Icon(Icons.fullscreen),
+                        icon: SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: Image.asset(
+                            'assets/image/upload_file.png',
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) =>
+                                const Icon(Icons.upload_file, size: 20),
+                          ),
+                        ),
+                        tooltip: 'Carregar .txt',
+                        onPressed: _pickTxtFileForDescription,
+                      ),
+                      IconButton(
+                        icon: SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: Image.asset(
+                            'assets/image/maximize.png',
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) =>
+                                const Icon(Icons.open_in_full, size: 20),
+                          ),
+                        ),
                         onPressed: _expandDescriptionEditor,
                       ),
                     ],

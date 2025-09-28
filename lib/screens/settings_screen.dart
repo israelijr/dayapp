@@ -152,7 +152,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         if (!_isSignedIn)
           ListTile(
             leading: const Icon(Icons.login),
-            title: const Text('Fazer login no Google'),
+            title: const Text('Inicializar Backup'),
             onTap: _signIn,
           )
         else ...[
@@ -171,14 +171,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
             title: const Text('Restaurar com código'),
             onTap: _showRestoreWithCodeDialog,
           ),
-          ListTile(
-            leading: const Icon(Icons.logout),
-            title: const Text('Sair do Google'),
-            onTap: _signOut,
-          ),
+          // Removed explicit "Sair do Google" option per requirements.
+          // The app will now sign out automatically when the user leaves
+          // the Settings screen.
         ],
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    // When the Settings screen is closed, sign out from Google automatically.
+    // We do not await here because dispose must not be async; fire-and-forget is fine.
+    _backupService.signOut();
+    super.dispose();
   }
 
   Widget _buildGroupsSection(BuildContext context) {
@@ -212,14 +218,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  Future<void> _signOut() async {
-    await _backupService.signOut();
-    _checkSignInStatus();
-    if (!mounted) return;
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Logout realizado')));
-  }
+  // Sign-out handled automatically on dispose; explicit sign-out option removed.
 
   Future<void> _performBackup() async {
     try {
