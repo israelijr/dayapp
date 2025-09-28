@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:m3_carousel/m3_carousel.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'dart:typed_data';
@@ -783,36 +782,146 @@ class HistoriaFotosGrid extends StatelessWidget {
           );
         }
 
-        return SizedBox(
-          height: height,
-          child: M3Carousel(
-            children: fotos.map((foto) {
-              return ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: GestureDetector(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          content: Image.memory(Uint8List.fromList(foto.foto)),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.of(context).pop(),
-                              child: const Text('Fechar'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                  child: Image.memory(
-                    Uint8List.fromList(foto.foto),
-                    fit: BoxFit.cover,
+        // Use the same responsive collage layout as home_content
+        final displayFotos = fotos;
+        final total = displayFotos.length;
+
+        void openViewer(int initialIndex) {
+          showDialog(
+            context: context,
+            builder: (_) {
+              return Dialog(
+                insetPadding: const EdgeInsets.all(8),
+                backgroundColor: Colors.black,
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.8,
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  child: PageView.builder(
+                    controller: PageController(initialPage: initialIndex),
+                    itemCount: total,
+                    itemBuilder: (context, index) {
+                      return InteractiveViewer(
+                        child: Image.memory(
+                          Uint8List.fromList(displayFotos[index].foto),
+                          fit: BoxFit.contain,
+                        ),
+                      );
+                    },
                   ),
                 ),
               );
-            }).toList(),
+            },
+          );
+        }
+
+        Widget tileForIndex(int index) {
+          final foto = displayFotos[index];
+          final isLast = index == 3 && total > 4;
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: GestureDetector(
+              onTap: () => openViewer(index),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.memory(
+                    Uint8List.fromList(foto.foto),
+                    fit: BoxFit.cover,
+                  ),
+                  if (isLast)
+                    Container(
+                      color: Colors.black45,
+                      child: Center(
+                        child: Text(
+                          '+${total - 3}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        if (total == 1) {
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: GestureDetector(
+              onTap: () => openViewer(0),
+              child: Image.memory(
+                Uint8List.fromList(displayFotos[0].foto),
+                height: height,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
+            ),
+          );
+        }
+
+        if (total == 2) {
+          return SizedBox(
+            height: height,
+            child: Row(
+              children: [
+                Expanded(child: tileForIndex(0)),
+                const SizedBox(width: 4),
+                Expanded(child: tileForIndex(1)),
+              ],
+            ),
+          );
+        }
+
+        if (total == 3) {
+          return SizedBox(
+            height: height,
+            child: Row(
+              children: [
+                Expanded(flex: 2, child: tileForIndex(0)),
+                const SizedBox(width: 4),
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    children: [
+                      Expanded(child: tileForIndex(1)),
+                      const SizedBox(height: 4),
+                      Expanded(child: tileForIndex(2)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return SizedBox(
+          height: height,
+          child: Column(
+            children: [
+              Expanded(
+                child: Row(
+                  children: [
+                    Expanded(child: tileForIndex(0)),
+                    const SizedBox(width: 4),
+                    Expanded(child: tileForIndex(1)),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 4),
+              Expanded(
+                child: Row(
+                  children: [
+                    Expanded(child: tileForIndex(2)),
+                    const SizedBox(width: 4),
+                    Expanded(child: tileForIndex(3)),
+                  ],
+                ),
+              ),
+            ],
           ),
         );
       },

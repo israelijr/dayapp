@@ -25,4 +25,9 @@ class HistoriaFotoHelper {
     );
     return result.map((map) => HistoriaFoto.fromMap(map)).toList();
   }
+
+  Future<int> deleteFoto(int id) async {
+    final db = await DatabaseHelper().database;
+    return await db.delete('historia_fotos', where: 'id = ?', whereArgs: [id]);
+  }
 }

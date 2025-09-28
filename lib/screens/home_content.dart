@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:m3_carousel/m3_carousel.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'dart:typed_data';
@@ -13,6 +12,7 @@ import '../providers/auth_provider.dart';
 import '../providers/refresh_provider.dart';
 import 'edit_historia_screen.dart';
 import 'group_selection_screen.dart';
+import 'image_viewer_screen.dart';
 
 class HomeContent extends StatefulWidget {
   final bool isCardView;
@@ -588,36 +588,132 @@ class HistoriaFotosGrid extends StatelessWidget {
           );
         }
 
-        return SizedBox(
-          height: height,
-          child: M3Carousel(
-            children: fotos.map((foto) {
-              return ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: GestureDetector(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          content: Image.memory(Uint8List.fromList(foto.foto)),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.of(context).pop(),
-                              child: const Text('Fechar'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                  child: Image.memory(
+        // Build a responsive collage for 2..4+ photos.
+        final displayFotos = fotos;
+        final total = displayFotos.length;
+
+        void openViewer(int initialIndex) {
+          // Prepare raw images as Uint8List and navigate to the full screen viewer
+          final images = displayFotos
+              .map((f) => Uint8List.fromList(f.foto))
+              .toList();
+          final ids = displayFotos.map((f) => f.id ?? -1).toList();
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ImageViewerScreen(
+                images: images,
+                photoIds: ids,
+                historiaId: historiaId,
+                initialIndex: initialIndex,
+              ),
+            ),
+          ).then((deleted) {
+            // If a deletion happened, refresh the view
+            if (deleted == true) {
+              final refreshProvider = Provider.of<RefreshProvider>(
+                context,
+                listen: false,
+              );
+              refreshProvider.refresh();
+            }
+          });
+        }
+
+        Widget tileForIndex(int index) {
+          final foto = displayFotos[index];
+          final isOverlay = index == 3 && total > 4;
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: GestureDetector(
+              onTap: () => openViewer(index),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.memory(
                     Uint8List.fromList(foto.foto),
                     fit: BoxFit.cover,
                   ),
+                  if (isOverlay)
+                    Container(
+                      color: Colors.black45,
+                      child: Center(
+                        child: Text(
+                          '+${total - 3}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        if (total == 2) {
+          return SizedBox(
+            height: height,
+            child: Row(
+              children: [
+                Expanded(child: tileForIndex(0)),
+                const SizedBox(width: 4),
+                Expanded(child: tileForIndex(1)),
+              ],
+            ),
+          );
+        }
+
+        if (total == 3) {
+          return SizedBox(
+            height: height,
+            child: Row(
+              children: [
+                Expanded(flex: 2, child: tileForIndex(0)),
+                const SizedBox(width: 4),
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    children: [
+                      Expanded(child: tileForIndex(1)),
+                      const SizedBox(height: 4),
+                      Expanded(child: tileForIndex(2)),
+                    ],
+                  ),
                 ),
-              );
-            }).toList(),
+              ],
+            ),
+          );
+        }
+
+        // total >= 4
+        return SizedBox(
+          height: height,
+          child: Column(
+            children: [
+              Expanded(
+                child: Row(
+                  children: [
+                    Expanded(child: tileForIndex(0)),
+                    const SizedBox(width: 4),
+                    Expanded(child: tileForIndex(1)),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 4),
+              Expanded(
+                child: Row(
+                  children: [
+                    Expanded(child: tileForIndex(2)),
+                    const SizedBox(width: 4),
+                    Expanded(child: tileForIndex(3)),
+                  ],
+                ),
+              ),
+            ],
           ),
         );
       },
