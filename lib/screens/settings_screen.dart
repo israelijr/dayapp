@@ -8,6 +8,7 @@ import '../providers/auth_provider.dart';
 import '../providers/theme_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../services/backup_service.dart';
+import '../db/database_helper.dart';
 import 'manage_groups_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -454,6 +455,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _restoreBackup(Reference backup) async {
     try {
       await _backupService.restoreDatabase(backup);
+      // Ensure the app reloads the replaced database file by closing any
+      // cached connections so subsequent DB calls open the new file.
+      await DatabaseHelper().resetDatabase();
       // Refresh home screen data
       final refreshProvider = Provider.of<RefreshProvider>(
         context,
