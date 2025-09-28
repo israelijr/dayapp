@@ -55,3 +55,19 @@ app.*.map.json
 # Firebase configuration files
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
+# Local SDK and secrets
+android/local.properties
+**/local.properties
+key.properties
+# Keystore files
+*.jks
+*.keystore
+# Env files
+.env
+.env.*
+# Credentials
+credentials.json
+serviceAccountKey.json
+*.p12
+*.pem
+*.crt
