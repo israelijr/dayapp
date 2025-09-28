@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+// import 'dart:convert'; // not used
+import 'package:share_plus/share_plus.dart';
+import 'package:cross_file/cross_file.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'dart:typed_data';
 
@@ -12,21 +15,19 @@ import '../providers/auth_provider.dart';
 import '../providers/refresh_provider.dart';
 import 'edit_historia_screen.dart';
 import 'group_selection_screen.dart';
-import 'image_viewer_screen.dart';
 
 class HomeContent extends StatefulWidget {
   final bool isCardView;
-  const HomeContent({super.key, this.isCardView = true});
+  const HomeContent({super.key, required this.isCardView});
 
   @override
   State<HomeContent> createState() => _HomeContentState();
 }
 
 class _HomeContentState extends State<HomeContent> {
-  // Constantes para melhor organização
+  // Constants and state used by the home content
   static const double cardMargin = 24.0;
-
-  late bool _isCardView; // true = modo blocos, false = modo ícones
+  bool _isCardView = true;
 
   String _getEmoticonImage(String emoticon) {
     switch (emoticon) {
@@ -59,6 +60,7 @@ class _HomeContentState extends State<HomeContent> {
     final auth = Provider.of<AuthProvider>(context, listen: false);
     final userId = auth.user?.id ?? '';
     final db = await DatabaseHelper().database;
+    // Only show stories that are not grouped and not archived
     final result = await db.query(
       'historia',
       where: 'user_id = ? AND grupo IS NULL AND arquivado IS NULL',
@@ -66,6 +68,30 @@ class _HomeContentState extends State<HomeContent> {
       orderBy: 'data DESC',
     );
     return result.map((map) => Historia.fromMap(map)).toList();
+  }
+
+  Future<void> _updateHistoria(
+    Historia historia, {
+    Map<String, dynamic>? updates,
+  }) async {
+    final db = await DatabaseHelper().database;
+    final Map<String, dynamic> updateData = {
+      'data_update': DateTime.now().toIso8601String(),
+    };
+
+    if (updates != null) updateData.addAll(updates);
+
+    await db.update(
+      'historia',
+      updateData,
+      where: 'id = ?',
+      whereArgs: [historia.id],
+    );
+    final refreshProvider = Provider.of<RefreshProvider>(
+      context,
+      listen: false,
+    );
+    refreshProvider.refresh();
   }
 
   Future<void> _deleteHistoria(Historia historia) async {
@@ -99,42 +125,19 @@ class _HomeContentState extends State<HomeContent> {
     }
   }
 
-  Future<void> _updateHistoria(
-    Historia historia, {
-    Map<String, dynamic>? updates,
-  }) async {
-    final db = await DatabaseHelper().database;
-    final Map<String, dynamic> updateData = {
-      'data_update': DateTime.now().toIso8601String(),
-    };
-
-    if (updates != null) {
-      updateData.addAll(updates);
-    }
-
-    await db.update(
-      'historia',
-      updateData,
-      where: 'id = ?',
-      whereArgs: [historia.id],
+  Future<void> _archiveWithUndo(Historia historia) async {
+    final previousGrupo = historia.grupo;
+    await _updateHistoria(
+      historia,
+      updates: {'arquivado': 'sim', 'grupo': null},
     );
+    if (!mounted) return;
     final refreshProvider = Provider.of<RefreshProvider>(
       context,
       listen: false,
     );
     refreshProvider.refresh();
-  }
 
-  Future<void> _archiveWithUndo(Historia historia) async {
-    final previousTag = historia.tag;
-    final previousGrupo = historia.grupo;
-
-    await _updateHistoria(
-      historia,
-      updates: {'arquivado': 'sim', 'grupo': null},
-    );
-
-    if (!mounted) return;
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -144,11 +147,7 @@ class _HomeContentState extends State<HomeContent> {
           onPressed: () async {
             await _updateHistoria(
               historia,
-              updates: {
-                'arquivado': null,
-                'tag': previousTag,
-                'grupo': previousGrupo,
-              },
+              updates: {'arquivado': null, 'grupo': previousGrupo},
             );
           },
         ),
@@ -472,18 +471,18 @@ class _HomeContentState extends State<HomeContent> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.asset(
-                      'assets/icon/icon.png',
+                      'assets/image/home_vazia.png',
                       width: 100,
                       height: 100,
                     ),
                     const SizedBox(height: 16),
                     const Text(
-                      'Nenhuma história encontrada.',
+                      'Nenhuma história para exibir aqui.',
                       style: TextStyle(fontSize: 18, color: Colors.grey),
                     ),
                     const SizedBox(height: 8),
                     const Text(
-                      'Crie sua primeira história!',
+                      'Elas estão agrupadas ou arquivadas.',
                       style: TextStyle(fontSize: 14, color: Colors.grey),
                     ),
                   ],
@@ -593,23 +592,320 @@ class HistoriaFotosGrid extends StatelessWidget {
         final total = displayFotos.length;
 
         void openViewer(int initialIndex) {
-          // Prepare raw images as Uint8List and navigate to the full screen viewer
+          final parentContext = context;
           final images = displayFotos
               .map((f) => Uint8List.fromList(f.foto))
               .toList();
           final ids = displayFotos.map((f) => f.id ?? -1).toList();
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => ImageViewerScreen(
-                images: images,
-                photoIds: ids,
-                historiaId: historiaId,
-                initialIndex: initialIndex,
-              ),
-            ),
+
+          // Simpler dialog-based viewer (balanced parentheses)
+          final localImages = List<Uint8List>.from(images);
+          final localIds = List<int>.from(ids);
+
+          showDialog<bool>(
+            context: parentContext,
+            barrierDismissible: true,
+            builder: (ctx) {
+              int currentIndex = initialIndex;
+              final controller = PageController(initialPage: initialIndex);
+              return StatefulBuilder(
+                builder: (ctx2, setState) {
+                  return Dialog(
+                    insetPadding: const EdgeInsets.all(8),
+                    backgroundColor: Colors.transparent,
+                    child: Container(
+                      width: MediaQuery.of(parentContext).size.width * 0.98,
+                      height: MediaQuery.of(parentContext).size.height * 0.88,
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Stack(
+                        children: [
+                          Positioned.fill(
+                            child: PageView.builder(
+                              controller: controller,
+                              itemCount: localImages.length,
+                              onPageChanged: (i) =>
+                                  setState(() => currentIndex = i),
+                              itemBuilder: (c, i) => InteractiveViewer(
+                                panEnabled: true,
+                                minScale: 1.0,
+                                maxScale: 4.0,
+                                child: Center(
+                                  child: Image.memory(
+                                    localImages[i],
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          if (localImages.length > 1)
+                            Positioned(
+                              left: 12,
+                              top: 0,
+                              bottom: 0,
+                              child: Center(
+                                child: AnimatedOpacity(
+                                  opacity: currentIndex > 0 ? 1.0 : 0.0,
+                                  duration: const Duration(milliseconds: 120),
+                                  child: Material(
+                                    color: Colors.black54,
+                                    shape: const CircleBorder(),
+                                    elevation: 8,
+                                    child: IconButton(
+                                      iconSize: 44,
+                                      color: Colors.white,
+                                      onPressed: currentIndex > 0
+                                          ? () => controller.previousPage(
+                                              duration: const Duration(
+                                                milliseconds: 250,
+                                              ),
+                                              curve: Curves.easeInOut,
+                                            )
+                                          : null,
+                                      icon: const Icon(Icons.chevron_left),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                          if (localImages.length > 1)
+                            Positioned(
+                              right: 12,
+                              top: 0,
+                              bottom: 0,
+                              child: Center(
+                                child: AnimatedOpacity(
+                                  opacity: currentIndex < localImages.length - 1
+                                      ? 1.0
+                                      : 0.0,
+                                  duration: const Duration(milliseconds: 120),
+                                  child: Material(
+                                    color: Colors.black54,
+                                    shape: const CircleBorder(),
+                                    elevation: 8,
+                                    child: IconButton(
+                                      iconSize: 44,
+                                      color: Colors.white,
+                                      onPressed:
+                                          currentIndex < localImages.length - 1
+                                          ? () => controller.nextPage(
+                                              duration: const Duration(
+                                                milliseconds: 250,
+                                              ),
+                                              curve: Curves.easeInOut,
+                                            )
+                                          : null,
+                                      icon: const Icon(Icons.chevron_right),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                          Positioned(
+                            right: 8,
+                            top: 8,
+                            child: SafeArea(
+                              child: Material(
+                                color: Colors.black45,
+                                shape: const CircleBorder(),
+                                child: IconButton(
+                                  icon: const Icon(
+                                    Icons.close,
+                                    color: Colors.white,
+                                  ),
+                                  onPressed: () =>
+                                      Navigator.of(ctx2).pop(false),
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          Positioned(
+                            right: 12,
+                            bottom: 12,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Material(
+                                  color: Colors.black54,
+                                  shape: const CircleBorder(),
+                                  elevation: 6,
+                                  child: IconButton(
+                                    icon: const Icon(
+                                      Icons.share,
+                                      color: Colors.white,
+                                    ),
+                                    onPressed: () async {
+                                      try {
+                                        final bytes = localImages[currentIndex];
+                                        await Share.shareXFiles([
+                                          XFile.fromData(
+                                            bytes,
+                                            mimeType: 'image/png',
+                                            name:
+                                                'image_${currentIndex + 1}.png',
+                                          ),
+                                        ]);
+                                      } catch (_) {
+                                        ScaffoldMessenger.of(
+                                          parentContext,
+                                        ).showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                              'Erro ao compartilhar',
+                                            ),
+                                          ),
+                                        );
+                                      }
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                if (localIds.isNotEmpty)
+                                  Material(
+                                    color: Colors.black54,
+                                    shape: const CircleBorder(),
+                                    elevation: 6,
+                                    child: IconButton(
+                                      icon: const Icon(
+                                        Icons.delete,
+                                        color: Colors.white,
+                                      ),
+                                      onPressed: () async {
+                                        final id = localIds[currentIndex];
+                                        final confirm = await showDialog<bool>(
+                                          context: parentContext,
+                                          builder: (_) => AlertDialog(
+                                            title: const Text('Excluir foto'),
+                                            content: const Text(
+                                              'Deseja realmente excluir esta foto?',
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () => Navigator.pop(
+                                                  parentContext,
+                                                  false,
+                                                ),
+                                                child: const Text('Cancelar'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () => Navigator.pop(
+                                                  parentContext,
+                                                  true,
+                                                ),
+                                                child: const Text(
+                                                  'Excluir',
+                                                  style: TextStyle(
+                                                    color: Colors.red,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                        if (confirm == true) {
+                                          final deletedBytes =
+                                              localImages[currentIndex];
+                                          await HistoriaFotoHelper().deleteFoto(
+                                            id,
+                                          );
+                                          setState(() {
+                                            localImages.removeAt(currentIndex);
+                                            localIds.removeAt(currentIndex);
+                                            if (currentIndex >=
+                                                    localImages.length &&
+                                                localImages.isNotEmpty) {
+                                              currentIndex =
+                                                  localImages.length - 1;
+                                              controller.jumpToPage(
+                                                currentIndex,
+                                              );
+                                            }
+                                          });
+
+                                          ScaffoldMessenger.of(
+                                            parentContext,
+                                          ).hideCurrentSnackBar();
+                                          ScaffoldMessenger.of(
+                                            parentContext,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: const Text(
+                                                'Foto excluída',
+                                              ),
+                                              action: SnackBarAction(
+                                                label: 'Desfazer',
+                                                onPressed: () async {
+                                                  await HistoriaFotoHelper()
+                                                      .insertFoto(
+                                                        HistoriaFoto(
+                                                          historiaId:
+                                                              historiaId,
+                                                          foto: deletedBytes,
+                                                          legenda: null,
+                                                        ),
+                                                      );
+                                                  final refreshProvider =
+                                                      Provider.of<
+                                                        RefreshProvider
+                                                      >(
+                                                        parentContext,
+                                                        listen: false,
+                                                      );
+                                                  refreshProvider.refresh();
+                                                },
+                                              ),
+                                            ),
+                                          );
+
+                                          if (localImages.isEmpty)
+                                            Navigator.of(ctx2).pop(true);
+                                        }
+                                      },
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+
+                          Positioned(
+                            bottom: 18,
+                            left: 0,
+                            right: 0,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: List.generate(localImages.length, (i) {
+                                final active = i == currentIndex;
+                                return Container(
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 4,
+                                  ),
+                                  width: active ? 10 : 6,
+                                  height: active ? 10 : 6,
+                                  decoration: BoxDecoration(
+                                    color: active
+                                        ? Colors.white
+                                        : Colors.white54,
+                                    shape: BoxShape.circle,
+                                  ),
+                                );
+                              }),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
           ).then((deleted) {
-            // If a deletion happened, refresh the view
             if (deleted == true) {
               final refreshProvider = Provider.of<RefreshProvider>(
                 context,
@@ -625,30 +921,53 @@ class HistoriaFotosGrid extends StatelessWidget {
           final isOverlay = index == 3 && total > 4;
           return ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: GestureDetector(
-              onTap: () => openViewer(index),
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Image.memory(
-                    Uint8List.fromList(foto.foto),
-                    fit: BoxFit.cover,
-                  ),
-                  if (isOverlay)
-                    Container(
-                      color: Colors.black45,
-                      child: Center(
-                        child: Text(
-                          '+${total - 3}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
+            child: Material(
+              color: Colors.grey[200],
+              child: InkWell(
+                onTap: () => openViewer(index),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Semantics(
+                      label: 'Foto ${index + 1} de $total',
+                      image: true,
+                      child: Image.memory(
+                        Uint8List.fromList(foto.foto),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    if (isOverlay)
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black54,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                '+${total - 3}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 26,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              const Text(
+                                'mais',
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
           );

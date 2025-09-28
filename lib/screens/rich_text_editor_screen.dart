@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class RichTextEditorScreen extends StatefulWidget {
   final String? initialText;
@@ -81,25 +82,49 @@ class _RichTextEditorScreenState extends State<RichTextEditorScreen> {
                   scale: scale,
                   alignment: Alignment.topCenter,
                   child: Scaffold(
-                    appBar: AppBar(
-                      title: const Text('Editar Descrição'),
-                      actions: [
-                        IconButton(
-                          icon: SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: Image.asset(
-                              'assets/image/salvar.png',
-                              fit: BoxFit.contain,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  const Icon(Icons.save, size: 20),
-                            ),
+                    // Animated AppBar: fades and slides slightly based on drag
+                    appBar: PreferredSize(
+                      preferredSize: const Size.fromHeight(kToolbarHeight),
+                      child: AnimatedOpacity(
+                        opacity: 1.0 - (dragFraction * 0.95),
+                        duration: const Duration(milliseconds: 120),
+                        child: Transform.translate(
+                          offset: Offset(0, -dragFraction * 20),
+                          child: AppBar(
+                            title: const Text('Editar Descrição'),
+                            elevation: dragFraction > 0.02 ? 2 : 4,
+                            actions: [
+                              IconButton(
+                                icon: SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: Image.asset(
+                                    'assets/image/salvar.png',
+                                    fit: BoxFit.contain,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            const Icon(Icons.save, size: 20),
+                                  ),
+                                ),
+                                onPressed: () async {
+                                  // unified save: show check feedback then pop
+                                  if (_isAutoSaving) return;
+                                  setState(() {
+                                    _isAutoSaving = true;
+                                    _showAutoSaveCheck = true;
+                                  });
+                                  HapticFeedback.mediumImpact();
+                                  await Future.delayed(
+                                    const Duration(milliseconds: 350),
+                                  );
+                                  if (!mounted) return;
+                                  Navigator.of(context).pop(_controller.text);
+                                },
+                              ),
+                            ],
                           ),
-                          onPressed: () {
-                            Navigator.of(context).pop(_controller.text);
-                          },
                         ),
-                      ],
+                      ),
                     ),
                     body: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -152,4 +177,12 @@ class _RichTextEditorScreenState extends State<RichTextEditorScreen> {
       ),
     );
   }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 }
+
+// (duplicate dispose removed)
