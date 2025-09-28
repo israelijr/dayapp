@@ -363,32 +363,37 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _showRestoreDialog([String? backupCode]) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final buildContext = context;
     try {
       final backups = await _backupService.listBackups(backupCode);
       if (backups.isEmpty) {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
+        messenger.showSnackBar(
           const SnackBar(content: Text('Nenhum backup encontrado')),
         );
         return;
       }
 
+      if (!mounted) return;
+
       showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
+        context: buildContext,
+        builder: (dialogContext) => AlertDialog(
           title: const Text('Escolher backup para restaurar'),
           content: SizedBox(
             width: double.maxFinite,
             child: ListView.builder(
               shrinkWrap: true,
               itemCount: backups.length,
-              itemBuilder: (context, index) {
+              itemBuilder: (dialogContext, index) {
                 final backup = backups[index];
                 return ListTile(
                   title: Text(backup.name),
                   subtitle: Text(_extractDateFromBackupName(backup.name)),
                   onTap: () async {
-                    Navigator.of(context).pop();
+                    final navigator = Navigator.of(dialogContext);
+                    navigator.pop();
                     await _restoreBackup(backup);
                   },
                 );
@@ -397,7 +402,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () {
+                final navigator = Navigator.of(dialogContext);
+                navigator.pop();
+              },
               child: const Text('Cancelar'),
             ),
           ],
@@ -453,24 +461,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _restoreBackup(Reference backup) async {
+    final refreshProvider = Provider.of<RefreshProvider>(
+      context,
+      listen: false,
+    );
+    final messenger = ScaffoldMessenger.of(context);
     try {
       await _backupService.restoreDatabase(backup);
       // Ensure the app reloads the replaced database file by closing any
       // cached connections so subsequent DB calls open the new file.
       await DatabaseHelper().resetDatabase();
       // Refresh home screen data
-      final refreshProvider = Provider.of<RefreshProvider>(
-        context,
-        listen: false,
-      );
       refreshProvider.refresh();
-      ScaffoldMessenger.of(context).showSnackBar(
+      messenger.showSnackBar(
         const SnackBar(content: Text('Restauração realizada com sucesso!')),
       );
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Erro ao restaurar: $e')));
+      messenger.showSnackBar(SnackBar(content: Text('Erro ao restaurar: $e')));
     }
   }
 

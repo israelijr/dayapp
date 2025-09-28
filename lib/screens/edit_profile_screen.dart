@@ -80,18 +80,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           _pickedImagePath ??
           authProvider.user!.fotoPerfil, // mantém nova foto (ou a atual)
     );
+    if (!mounted) return;
 
     setState(() {
       _isLoading = false;
     });
 
     if (success) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Perfil atualizado com sucesso!')),
-        );
-        Navigator.of(context).pop();
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Perfil atualizado com sucesso!')),
+      );
+      Navigator.of(context).pop();
     } else {
       setState(() {
         _errorMessage = 'Erro ao atualizar perfil. Tente novamente.';
@@ -119,11 +118,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           await FileUtils.deleteFileIfExists(oldPath);
         }
 
+        if (!mounted) return;
         setState(() {
           _pickedImagePath = savedPath;
         });
       }
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Erro ao selecionar imagem')),
       );

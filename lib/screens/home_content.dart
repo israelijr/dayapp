@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 // import 'dart:convert'; // not used
 import 'package:share_plus/share_plus.dart';
-import 'package:cross_file/cross_file.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'dart:typed_data';
 
@@ -87,6 +86,7 @@ class _HomeContentState extends State<HomeContent> {
       where: 'id = ?',
       whereArgs: [historia.id],
     );
+    if (!mounted) return;
     final refreshProvider = Provider.of<RefreshProvider>(
       context,
       listen: false,
@@ -181,8 +181,8 @@ class _HomeContentState extends State<HomeContent> {
             children: [
               SlidableAction(
                 onPressed: (context) async {
-                  final selectedGroup = await Navigator.push<String>(
-                    context,
+                  final navigator = Navigator.of(context);
+                  final selectedGroup = await navigator.push<String>(
                     MaterialPageRoute(
                       builder: (_) => const GroupSelectionScreen(),
                     ),
@@ -265,23 +265,25 @@ class _HomeContentState extends State<HomeContent> {
                         ),
                         onSelected: (value) async {
                           if (value == 'edit') {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    EditHistoriaScreen(historia: historia),
-                              ),
-                            ).then((updated) {
-                              if (!mounted) return;
-                              if (updated == true) {
-                                final refreshProvider =
-                                    Provider.of<RefreshProvider>(
-                                      context,
-                                      listen: false,
-                                    );
-                                refreshProvider.refresh();
-                              }
-                            });
+                            final navigator = Navigator.of(context);
+                            final refreshProvider =
+                                Provider.of<RefreshProvider>(
+                                  context,
+                                  listen: false,
+                                );
+                            navigator
+                                .push(
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        EditHistoriaScreen(historia: historia),
+                                  ),
+                                )
+                                .then((updated) {
+                                  if (!mounted) return;
+                                  if (updated == true) {
+                                    refreshProvider.refresh();
+                                  }
+                                });
                           } else if (value == 'delete') {
                             await _deleteHistoria(historia);
                           }
@@ -602,6 +604,11 @@ class HistoriaFotosGrid extends StatelessWidget {
           final localImages = List<Uint8List>.from(images);
           final localIds = List<int>.from(ids);
 
+          final _refreshProvider_for_dialog = Provider.of<RefreshProvider>(
+            parentContext,
+            listen: false,
+          );
+
           showDialog<bool>(
             context: parentContext,
             barrierDismissible: true,
@@ -742,6 +749,9 @@ class HistoriaFotosGrid extends StatelessWidget {
                                       color: Colors.white,
                                     ),
                                     onPressed: () async {
+                                      final messenger = ScaffoldMessenger.of(
+                                        parentContext,
+                                      );
                                       try {
                                         final bytes = localImages[currentIndex];
                                         await Share.shareXFiles([
@@ -753,9 +763,7 @@ class HistoriaFotosGrid extends StatelessWidget {
                                           ),
                                         ]);
                                       } catch (_) {
-                                        ScaffoldMessenger.of(
-                                          parentContext,
-                                        ).showSnackBar(
+                                        messenger.showSnackBar(
                                           const SnackBar(
                                             content: Text(
                                               'Erro ao compartilhar',
@@ -779,6 +787,15 @@ class HistoriaFotosGrid extends StatelessWidget {
                                       ),
                                       onPressed: () async {
                                         final id = localIds[currentIndex];
+                                        final refreshProvider_for_dialog =
+                                            Provider.of<RefreshProvider>(
+                                              parentContext,
+                                              listen: false,
+                                            );
+                                        final messenger = ScaffoldMessenger.of(
+                                          parentContext,
+                                        );
+                                        final navigator = Navigator.of(ctx2);
                                         final confirm = await showDialog<bool>(
                                           context: parentContext,
                                           builder: (_) => AlertDialog(
@@ -829,12 +846,8 @@ class HistoriaFotosGrid extends StatelessWidget {
                                             }
                                           });
 
-                                          ScaffoldMessenger.of(
-                                            parentContext,
-                                          ).hideCurrentSnackBar();
-                                          ScaffoldMessenger.of(
-                                            parentContext,
-                                          ).showSnackBar(
+                                          messenger.hideCurrentSnackBar();
+                                          messenger.showSnackBar(
                                             SnackBar(
                                               content: const Text(
                                                 'Foto excluída',
@@ -851,21 +864,16 @@ class HistoriaFotosGrid extends StatelessWidget {
                                                           legenda: null,
                                                         ),
                                                       );
-                                                  final refreshProvider =
-                                                      Provider.of<
-                                                        RefreshProvider
-                                                      >(
-                                                        parentContext,
-                                                        listen: false,
-                                                      );
-                                                  refreshProvider.refresh();
+                                                  refreshProvider_for_dialog
+                                                      .refresh();
                                                 },
                                               ),
                                             ),
                                           );
 
-                                          if (localImages.isEmpty)
-                                            Navigator.of(ctx2).pop(true);
+                                          if (localImages.isEmpty) {
+                                            navigator.pop(true);
+                                          }
                                         }
                                       },
                                     ),
@@ -907,11 +915,7 @@ class HistoriaFotosGrid extends StatelessWidget {
             },
           ).then((deleted) {
             if (deleted == true) {
-              final refreshProvider = Provider.of<RefreshProvider>(
-                context,
-                listen: false,
-              );
-              refreshProvider.refresh();
+              _refreshProvider_for_dialog.refresh();
             }
           });
         }

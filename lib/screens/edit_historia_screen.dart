@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:typed_data';
 import 'package:intl/intl.dart';
 import '../models/historia.dart';
 import '../db/database_helper.dart';
@@ -164,11 +163,13 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
       lastDate: DateTime(2100),
       locale: const Locale('pt', 'BR'),
     );
+    if (!mounted) return;
     if (date != null) {
       final time = await showTimePicker(
         context: context,
         initialTime: TimeOfDay.fromDateTime(selectedDate),
       );
+      if (!mounted) return;
       if (time != null) {
         setState(() {
           selectedDate = DateTime(
@@ -215,7 +216,8 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
   }
 
   void _expandDescriptionEditor() async {
-    final result = await Navigator.of(context).push<String>(
+    final navigator = Navigator.of(context);
+    final result = await navigator.push<String>(
       PageRouteBuilder<String>(
         pageBuilder: (context, animation, secondaryAnimation) =>
             RichTextEditorScreen(initialText: descriptionController.text),

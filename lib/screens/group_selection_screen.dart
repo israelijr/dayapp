@@ -42,6 +42,7 @@ class _GroupSelectionScreenState extends State<GroupSelectionScreen> {
     // Verificar se já existe
     final existing = await GrupoHelper().getGrupoByNome(userId, newGroupName);
     if (existing != null) {
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Grupo já existe')));
@@ -55,7 +56,7 @@ class _GroupSelectionScreenState extends State<GroupSelectionScreen> {
       dataCriacao: DateTime.now(),
     );
     await GrupoHelper().insertGrupo(newGrupo);
-
+    if (!mounted) return;
     Navigator.pop(context, newGroupName);
   }
 

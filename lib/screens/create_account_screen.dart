@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../widgets/custom_text_field.dart';
 import '../providers/auth_provider.dart';
@@ -52,17 +52,18 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       return;
     }
     final auth = Provider.of<AuthProvider>(context, listen: false);
+    final navigator = Navigator.of(context);
     final success = await auth.register(
       nome: nameController.text.trim(),
       email: emailController.text.trim(),
       senha: passwordController.text,
     );
+    if (!mounted) return;
     setState(() {
       loading = false;
     });
     if (success) {
-      if (!mounted) return;
-      Navigator.pushNamed(context, '/create_account_complement');
+      navigator.pushNamed('/create_account_complement');
     } else {
       // Verifica se o e-mail já existe no banco
       final db = await DatabaseHelper().database;
@@ -92,86 +93,94 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       ),
       body: Center(
         child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const Text(
-                  'Informe os dados para criar a conta',
-                  style: TextStyle(fontSize: 16, color: Colors.white70),
-                  textAlign: TextAlign.center,
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'DayApp',
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
-                const SizedBox(height: 24),
-                CustomTextField(
-                  label: 'Nome completo',
-                  controller: nameController,
+              ),
+              const SizedBox(height: 32),
+              CustomTextField(
+                controller: nameController,
+                label: 'Nome',
+                keyboardType: TextInputType.name,
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                controller: emailController,
+                label: 'E-mail',
+                keyboardType: TextInputType.emailAddress,
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                controller: passwordController,
+                label: 'Senha',
+                obscureText: obscurePassword,
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    obscurePassword ? Icons.visibility : Icons.visibility_off,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      obscurePassword = !obscurePassword;
+                    });
+                  },
                 ),
-                CustomTextField(
-                  label: 'Informe seu e-mail',
-                  controller: emailController,
-                  keyboardType: TextInputType.emailAddress,
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                controller: confirmPasswordController,
+                label: 'Confirmar Senha',
+                obscureText: obscureConfirm,
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    obscureConfirm ? Icons.visibility : Icons.visibility_off,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      obscureConfirm = !obscureConfirm;
+                    });
+                  },
                 ),
-                CustomTextField(
-                  label: 'Crie uma senha',
-                  controller: passwordController,
-                  obscureText: obscurePassword,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      obscurePassword ? Icons.visibility_off : Icons.visibility,
+              ),
+              const SizedBox(height: 16),
+              if (errorMessage != null)
+                Text(errorMessage!, style: const TextStyle(color: Colors.red)),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: loading ? null : () => _register(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: const Color(0xFFB388FF),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    onPressed: () =>
-                        setState(() => obscurePassword = !obscurePassword),
                   ),
+                  child: loading
+                      ? const CircularProgressIndicator()
+                      : const Text('Criar Conta'),
                 ),
-                CustomTextField(
-                  label: 'Repita a senha',
-                  controller: confirmPasswordController,
-                  obscureText: obscureConfirm,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      obscureConfirm ? Icons.visibility_off : Icons.visibility,
-                    ),
-                    onPressed: () =>
-                        setState(() => obscureConfirm = !obscureConfirm),
-                  ),
+              ),
+              const SizedBox(height: 16),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text(
+                  'Já tem uma conta? Faça login',
+                  style: TextStyle(color: Colors.white),
                 ),
-                if (errorMessage != null) ...[
-                  const SizedBox(height: 8),
-                  Text(
-                    errorMessage!,
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                ],
-                const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF5E35B1),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
-                    onPressed: loading ? null : () => _register(context),
-                    child: loading
-                        ? const SizedBox(
-                            height: 18,
-                            width: 18,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
-                            ),
-                          )
-                        : const Text(
-                            'Próximo passo...',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

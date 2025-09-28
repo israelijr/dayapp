@@ -1,9 +1,7 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:cross_file/cross_file.dart';
 import 'package:flutter/services.dart';
 
 import '../db/historia_foto_helper.dart';
@@ -58,14 +56,16 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
         final bytes = widget.images[_currentIndex];
         final base64 = base64Encode(bytes);
         await Clipboard.setData(ClipboardData(text: base64));
-        if (mounted)
-          ScaffoldMessenger.of(context).showSnackBar(
+        if (mounted) {
+          final messenger = ScaffoldMessenger.of(context);
+          messenger.showSnackBar(
             const SnackBar(
               content: Text(
                 'Imagem copiada para a área de transferência (base64)',
               ),
             ),
           );
+        }
       } catch (_) {
         if (mounted)
           ScaffoldMessenger.of(context).showSnackBar(
@@ -79,10 +79,12 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
     if (widget.photoIds == null) return;
     final id = widget.photoIds![_currentIndex];
     if (id <= 0) {
-      if (mounted)
-        ScaffoldMessenger.of(context).showSnackBar(
+      if (mounted) {
+        final messenger = ScaffoldMessenger.of(context);
+        messenger.showSnackBar(
           const SnackBar(content: Text('Não é possível excluir esta foto')),
         );
+      }
       return;
     }
     final confirm = await showDialog<bool>(
@@ -105,7 +107,8 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
     if (confirm == true) {
       await HistoriaFotoHelper().deleteFoto(id);
       if (!mounted) return;
-      Navigator.of(context).pop(true); // signal deletion happened to caller
+      final navigator = Navigator.of(context);
+      navigator.pop(true); // signal deletion happened to caller
     }
   }
 

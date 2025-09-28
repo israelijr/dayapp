@@ -50,10 +50,11 @@ class _RichTextEditorScreenState extends State<RichTextEditorScreen> {
             _showAutoSaveCheck = true;
           });
 
+          final navigator = Navigator.of(context);
           // show check animation briefly before popping
           await Future.delayed(const Duration(milliseconds: 450));
           if (!mounted) return;
-          Navigator.of(context).pop(_controller.text);
+          navigator.pop(_controller.text);
           return;
         }
 
@@ -114,11 +115,12 @@ class _RichTextEditorScreenState extends State<RichTextEditorScreen> {
                                     _showAutoSaveCheck = true;
                                   });
                                   HapticFeedback.mediumImpact();
+                                  final navigator = Navigator.of(context);
                                   await Future.delayed(
                                     const Duration(milliseconds: 350),
                                   );
                                   if (!mounted) return;
-                                  Navigator.of(context).pop(_controller.text);
+                                  navigator.pop(_controller.text);
                                 },
                               ),
                             ],

@@ -259,10 +259,11 @@ class _HomeScreenState extends State<HomeScreen> {
               leading: const Icon(Icons.logout),
               title: const Text('Sair'),
               onTap: () async {
+                final navigator = Navigator.of(context);
                 final auth = Provider.of<AuthProvider>(context, listen: false);
                 await auth.logout();
                 if (!mounted) return;
-                Navigator.pushReplacementNamed(context, '/login');
+                navigator.pushReplacementNamed('/login');
               },
             ),
           ],

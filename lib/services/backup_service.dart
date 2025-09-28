@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart' as path;
@@ -12,10 +13,36 @@ class BackupService {
   factory BackupService() => _instance;
   BackupService._internal();
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseStorage _storage = FirebaseStorage.instance;
+  // Lazily access Firebase singletons so the class can be instantiated
+  // before Firebase.initializeApp() runs. This prevents the `[core/no-app]`
+  // crash on platforms where Firebase isn't configured or initialization
+  // failed.
+  FirebaseAuth get _auth => FirebaseAuth.instance;
+  FirebaseStorage get _storage => FirebaseStorage.instance;
+
+  bool get _firebaseAvailable => Firebase.apps.isNotEmpty;
 
   Future<void> signInAnonymously() async {
+    // If Firebase hasn't been initialized (e.g., main initialization failed
+    // or flutterfire options are missing on desktop), try to initialize it
+    // on-demand. This attempts to give a better error message and a path
+    // forward for desktop (Windows) where `firebase_options.dart` is often
+    // required.
+    if (!_firebaseAvailable) {
+      try {
+        await Firebase.initializeApp();
+        debugPrint('Firebase inicializado on-demand.');
+      } catch (e) {
+        // Provide an actionable error message instead of a raw platform
+        // exception so the developer knows to run the FlutterFire config.
+        throw Exception(
+          'Firebase não está inicializado. Impossível autenticar. Detalhes: $e\n'
+          'Observação: em plataformas desktop (Windows) você provavelmente precisa executar `flutterfire configure`\n'
+          'para gerar `lib/firebase_options.dart` e então chamar `Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform)` em `main()` antes de usar Firebase.',
+        );
+      }
+    }
+
     try {
       await _auth.signInAnonymously();
       debugPrint('Login anônimo realizado com sucesso!');
@@ -26,14 +53,17 @@ class BackupService {
   }
 
   Future<void> signOut() async {
+    if (!_firebaseAvailable) return;
     await _auth.signOut();
   }
 
-  bool get isSignedIn => _auth.currentUser != null;
+  bool get isSignedIn => _firebaseAvailable && _auth.currentUser != null;
 
   Future<String> backupDatabase() async {
-    if (_auth.currentUser == null) {
-      throw Exception('Usuário não autenticado. Faça login primeiro.');
+    if (!_firebaseAvailable || _auth.currentUser == null) {
+      throw Exception(
+        'Usuário não autenticado ou Firebase não inicializado. Faça login primeiro.',
+      );
     }
 
     try {
@@ -65,8 +95,8 @@ class BackupService {
   }
 
   Future<List<Reference>> listBackups([String? backupCode]) async {
-    if (_auth.currentUser == null) {
-      throw Exception('Usuário não autenticado.');
+    if (!_firebaseAvailable) {
+      throw Exception('Firebase não está inicializado.');
     }
 
     try {
@@ -88,8 +118,8 @@ class BackupService {
   }
 
   Future<void> restoreDatabase(Reference backupRef) async {
-    if (_auth.currentUser == null) {
-      throw Exception('Usuário não autenticado.');
+    if (!_firebaseAvailable || _auth.currentUser == null) {
+      throw Exception('Usuário não autenticado ou Firebase não inicializado.');
     }
 
     try {

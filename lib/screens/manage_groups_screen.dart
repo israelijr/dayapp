@@ -33,6 +33,8 @@ class _ManageGroupsScreenState extends State<ManageGroupsScreen> {
     );
     final historiasCount = result.isNotEmpty ? result.first['count'] as int : 0;
 
+    if (!mounted) return;
+
     bool confirmDelete = true;
     if (historiasCount > 0) {
       confirmDelete =

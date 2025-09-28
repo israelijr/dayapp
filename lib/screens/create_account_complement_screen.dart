@@ -33,6 +33,7 @@ class _CreateAccountComplementScreenState
   }
 
   Future<void> _saveComplement(BuildContext context) async {
+    final navigator = Navigator.of(context);
     setState(() {
       loading = true;
       errorMessage = null;
@@ -73,7 +74,7 @@ class _CreateAccountComplementScreenState
     setState(() {
       loading = false;
     });
-    Navigator.popUntil(context, ModalRoute.withName('/login'));
+    navigator.popUntil(ModalRoute.withName('/login'));
   }
 
   @override

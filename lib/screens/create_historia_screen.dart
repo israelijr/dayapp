@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:typed_data';
 import 'package:intl/intl.dart';
 import '../db/database_helper.dart';
 import '../db/historia_foto_helper.dart';
@@ -265,6 +264,12 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
 
     try {
       final auth = Provider.of<AuthProvider>(context, listen: false);
+      // Capture these before any async gaps to avoid using BuildContext after awaits
+      final refreshProvider = Provider.of<RefreshProvider>(
+        context,
+        listen: false,
+      );
+      final navigator = Navigator.of(context);
       final db = await DatabaseHelper().database;
 
       // Salva a história (garante arquivado=null e grupo=null para aparecer na Home)
@@ -298,15 +303,11 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
       }
 
       // Atualiza a tela inicial
-      final refreshProvider = Provider.of<RefreshProvider>(
-        context,
-        listen: false,
-      );
+      if (!mounted) return;
       refreshProvider.refresh();
 
       // Navega para a tela inicial
-      if (!mounted) return;
-      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+      navigator.pushNamedAndRemoveUntil('/home', (route) => false);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(
@@ -323,7 +324,8 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
   }
 
   void _expandDescriptionEditor() async {
-    final result = await Navigator.of(context).push<String>(
+    final navigator = Navigator.of(context);
+    final result = await navigator.push<String>(
       PageRouteBuilder<String>(
         pageBuilder: (context, animation, secondaryAnimation) =>
             RichTextEditorScreen(initialText: descriptionController.text),

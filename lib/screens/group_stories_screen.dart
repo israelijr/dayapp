@@ -121,6 +121,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
       where: 'id = ?',
       whereArgs: [historia.id],
     );
+    if (!mounted) return;
     final refreshProvider = Provider.of<RefreshProvider>(
       context,
       listen: false,
@@ -185,8 +186,8 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
             children: [
               SlidableAction(
                 onPressed: (context) async {
-                  final selectedGroup = await Navigator.push<String>(
-                    context,
+                  final navigator = Navigator.of(context);
+                  final selectedGroup = await navigator.push<String>(
                     MaterialPageRoute(
                       builder: (_) => const GroupSelectionScreen(),
                     ),
@@ -293,6 +294,11 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
                         ),
                         onSelected: (value) async {
                           if (value == 'edit') {
+                            final refreshProvider =
+                                Provider.of<RefreshProvider>(
+                                  context,
+                                  listen: false,
+                                );
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -302,17 +308,18 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
                             ).then((updated) {
                               if (!mounted) return;
                               if (updated == true) {
-                                final refreshProvider =
-                                    Provider.of<RefreshProvider>(
-                                      context,
-                                      listen: false,
-                                    );
                                 refreshProvider.refresh();
                               }
                             });
                           } else if (value == 'delete') {
                             await _deleteHistoria(historia);
                           } else if (value == 'desagrupar') {
+                            final refreshProvider =
+                                Provider.of<RefreshProvider>(
+                                  context,
+                                  listen: false,
+                                );
+                            final messenger = ScaffoldMessenger.of(context);
                             await _updateHistoria(
                               historia,
                               updates: {
@@ -321,19 +328,13 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
                                 'grupo': null,
                               },
                             );
-                            final refreshProvider =
-                                Provider.of<RefreshProvider>(
-                                  context,
-                                  listen: false,
-                                );
+                            if (!mounted) return;
                             refreshProvider.refresh();
-                            if (mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('História desagrupada'),
-                                ),
-                              );
-                            }
+                            messenger.showSnackBar(
+                              const SnackBar(
+                                content: Text('História desagrupada'),
+                              ),
+                            );
                           }
                         },
                         itemBuilder: (context) => [
@@ -397,8 +398,8 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
           await _archiveWithUndo(historia);
           return true;
         } else if (direction == DismissDirection.endToStart) {
-          final selectedGroup = await Navigator.push<String>(
-            context,
+          final navigator = Navigator.of(context);
+          final selectedGroup = await navigator.push<String>(
             MaterialPageRoute(builder: (_) => const GroupSelectionScreen()),
           );
           if (selectedGroup != null) {
@@ -470,20 +471,19 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
               } else if (value == 'delete') {
                 await _deleteHistoria(historia);
               } else if (value == 'desagrupar') {
-                await _updateHistoria(
-                  historia,
-                  updates: {'tag': null, 'arquivado': null, 'grupo': null},
-                );
                 final refreshProvider = Provider.of<RefreshProvider>(
                   context,
                   listen: false,
                 );
+                await _updateHistoria(
+                  historia,
+                  updates: {'tag': null, 'arquivado': null, 'grupo': null},
+                );
+                if (!mounted) return;
                 refreshProvider.refresh();
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('História desagrupada')),
-                  );
-                }
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('História desagrupada')),
+                );
               }
             },
             itemBuilder: (context) => [
@@ -607,9 +607,10 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
               title: const Text('Sair'),
               onTap: () async {
                 final auth = Provider.of<AuthProvider>(context, listen: false);
+                final navigator = Navigator.of(context);
                 await auth.logout();
                 if (!mounted) return;
-                Navigator.pushReplacementNamed(context, '/login');
+                navigator.pushReplacementNamed('/login');
               },
             ),
           ],
@@ -658,15 +659,15 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
         padding: const EdgeInsets.only(bottom: 12),
         child: FloatingActionButton(
           onPressed: () {
+            final refreshProvider = Provider.of<RefreshProvider>(
+              context,
+              listen: false,
+            );
             Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const CreateHistoriaScreen()),
             ).then((created) {
               if (!mounted) return;
-              final refreshProvider = Provider.of<RefreshProvider>(
-                context,
-                listen: false,
-              );
               refreshProvider.refresh();
             });
           },
@@ -678,6 +679,9 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
   }
 
   Future<void> _deleteGroup() async {
+    final auth = Provider.of<AuthProvider>(context, listen: false);
+    final userId = auth.user?.id ?? '';
+    final navigator = Navigator.of(context);
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -699,8 +703,6 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
     );
 
     if (confirm == true) {
-      final auth = Provider.of<AuthProvider>(context, listen: false);
-      final userId = auth.user?.id ?? '';
       final db = await DatabaseHelper().database;
       await db.update(
         'historia',
@@ -719,7 +721,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
       } catch (_) {}
 
       if (!mounted) return;
-      Navigator.pushReplacementNamed(context, '/home');
+      navigator.pushReplacementNamed('/home');
     }
   }
 }

@@ -118,6 +118,7 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
       where: 'id = ?',
       whereArgs: [historia.id],
     );
+    if (!mounted) return;
     final refreshProvider = Provider.of<RefreshProvider>(
       context,
       listen: false,
@@ -260,6 +261,11 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
                         ),
                         onSelected: (value) async {
                           if (value == 'edit') {
+                            final refreshProvider =
+                                Provider.of<RefreshProvider>(
+                                  context,
+                                  listen: false,
+                                );
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -269,11 +275,6 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
                             ).then((updated) {
                               if (!mounted) return;
                               if (updated == true) {
-                                final refreshProvider =
-                                    Provider.of<RefreshProvider>(
-                                      context,
-                                      listen: false,
-                                    );
                                 refreshProvider.refresh();
                               }
                             });
@@ -527,9 +528,10 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
               title: const Text('Sair'),
               onTap: () async {
                 final auth = Provider.of<AuthProvider>(context, listen: false);
+                final navigator = Navigator.of(context);
                 await auth.logout();
                 if (!mounted) return;
-                Navigator.pushReplacementNamed(context, '/login');
+                navigator.pushReplacementNamed('/login');
               },
             ),
           ],
@@ -574,15 +576,15 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
         padding: const EdgeInsets.only(bottom: 12),
         child: FloatingActionButton(
           onPressed: () {
+            final refreshProvider = Provider.of<RefreshProvider>(
+              context,
+              listen: false,
+            );
             Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const CreateHistoriaScreen()),
             ).then((created) {
               if (!mounted) return;
-              final refreshProvider = Provider.of<RefreshProvider>(
-                context,
-                listen: false,
-              );
               refreshProvider.refresh();
             });
           },

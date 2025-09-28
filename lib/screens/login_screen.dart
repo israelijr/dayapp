@@ -24,18 +24,19 @@ class _LoginScreenState extends State<LoginScreen> {
       errorMessage = null;
     });
     final auth = Provider.of<AuthProvider>(context, listen: false);
+    final navigator = Navigator.of(context);
     // Sempre lembrar o login para persistência
     final success = await auth.login(
       emailController.text.trim(),
       passwordController.text,
       remember: true,
     );
+    if (!mounted) return;
     setState(() {
       loading = false;
     });
     if (success) {
-      if (!mounted) return;
-      Navigator.pushReplacementNamed(context, '/home');
+      navigator.pushReplacementNamed('/home');
     } else {
       setState(() {
         errorMessage = 'E-mail ou senha inválidos.';
