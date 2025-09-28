@@ -7,9 +7,34 @@ import '../db/historia_foto_helper.dart';
 import '../models/historia_foto.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import '../providers/refresh_provider.dart';
 import '../services/notification_service.dart';
 import 'dart:io';
+import 'package:flutter/services.dart';
 import 'rich_text_editor_screen.dart';
+
+class SentenceCapitalizationTextInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    String _capitalizeText(String text) {
+      if (text.isEmpty) return text;
+      // Capitalize first letter
+      String result =
+          text[0].toUpperCase() + (text.length > 1 ? text.substring(1) : '');
+      // Capitalize after sentence endings
+      result = result.replaceAllMapped(RegExp(r'([.!?]\s*)([a-z])'), (match) {
+        return match.group(1)! + match.group(2)!.toUpperCase();
+      });
+      return result;
+    }
+
+    final capitalized = _capitalizeText(newValue.text);
+    return newValue.copyWith(text: capitalized, selection: newValue.selection);
+  }
+}
 
 class CreateHistoriaScreen extends StatefulWidget {
   const CreateHistoriaScreen({super.key});
@@ -95,34 +120,6 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
     setState(() {
       fotos.removeAt(index);
     });
-  }
-
-  Future<void> _pickDateTime() async {
-    final date = await showDatePicker(
-      context: context,
-      initialDate: selectedDate,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-      locale: const Locale('pt', 'BR'),
-    );
-    if (date != null) {
-      final time = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay.fromDateTime(selectedDate),
-      );
-      if (time != null) {
-        if (!mounted) return;
-        setState(() {
-          selectedDate = DateTime(
-            date.year,
-            date.month,
-            date.day,
-            time.hour,
-            time.minute,
-          );
-        });
-      }
-    }
   }
 
   Future<void> _showNotificationDialog(int historiaId) async {
@@ -247,6 +244,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
   }
 
   Future<void> _saveHistoria() async {
+    selectedDate = DateTime.now();
     if (titleController.text.trim().isEmpty) {
       ScaffoldMessenger.of(
         context,
@@ -262,14 +260,18 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
       final auth = Provider.of<AuthProvider>(context, listen: false);
       final db = await DatabaseHelper().database;
 
-      // Salva a história
+      // Salva a história (garante arquivado=null e grupo=null para aparecer na Home)
       final historiaId = await db.insert('historia', {
         'user_id': auth.user?.id ?? '',
         'titulo': _capitalizeText(titleController.text.trim()),
         'descricao': descriptionController.text.trim().isEmpty
             ? null
             : descriptionController.text.trim(),
-        'tag': tagsController.text.trim(),
+        'tag': tagsController.text.trim().isEmpty
+            ? null
+            : tagsController.text.trim(),
+        'grupo': null,
+        'arquivado': null,
         'emoticon': selectedEmoticon,
         'data': selectedDate.toIso8601String(),
         'data_criacao': DateTime.now().toIso8601String(),
@@ -287,6 +289,13 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
       if (selectedDate.isAfter(DateTime.now())) {
         await _showNotificationDialog(historiaId);
       }
+
+      // Atualiza a tela inicial
+      final refreshProvider = Provider.of<RefreshProvider>(
+        context,
+        listen: false,
+      );
+      refreshProvider.refresh();
 
       // Navega para a tela inicial
       if (!mounted) return;
@@ -455,13 +464,6 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                             ),
                           ),
                         ),
-                        IconButton(
-                          icon: const Icon(
-                            Icons.calendar_today,
-                            color: Colors.deepPurple,
-                          ),
-                          onPressed: _pickDateTime,
-                        ),
                       ],
                     ),
                     const SizedBox(height: 16),
@@ -471,6 +473,9 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                         labelText: 'Título',
                         border: OutlineInputBorder(),
                       ),
+                      inputFormatters: [
+                        SentenceCapitalizationTextInputFormatter(),
+                      ],
                     ),
                     const SizedBox(height: 16),
                     Column(
@@ -508,6 +513,9 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                               contentPadding: EdgeInsets.all(8),
                               border: InputBorder.none,
                             ),
+                            inputFormatters: [
+                              SentenceCapitalizationTextInputFormatter(),
+                            ],
                           ),
                         ),
                       ],

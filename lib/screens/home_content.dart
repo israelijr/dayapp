@@ -11,9 +11,7 @@ import '../models/historia.dart';
 import '../models/historia_foto.dart';
 import '../providers/auth_provider.dart';
 import '../providers/refresh_provider.dart';
-import 'create_historia_screen.dart';
 import 'edit_historia_screen.dart';
-import 'edit_profile_screen.dart';
 import 'group_selection_screen.dart';
 
 class HomeContent extends StatefulWidget {
@@ -26,7 +24,6 @@ class HomeContent extends StatefulWidget {
 class _HomeContentState extends State<HomeContent> {
   // Constantes para melhor organização
   static const double cardMargin = 24.0;
-  static const double iconViewHeight = 100.0;
 
   bool _isCardView = true; // true = modo blocos, false = modo ícones
 
@@ -58,10 +55,13 @@ class _HomeContentState extends State<HomeContent> {
   }
 
   Future<List<Historia>> _fetchHistorias() async {
+    final auth = Provider.of<AuthProvider>(context, listen: false);
+    final userId = auth.user?.id ?? '';
     final db = await DatabaseHelper().database;
     final result = await db.query(
       'historia',
-      where: 'grupo IS NULL AND arquivado IS NULL',
+      where: 'user_id = ? AND grupo IS NULL AND arquivado IS NULL',
+      whereArgs: [userId],
       orderBy: 'data DESC',
     );
     return result.map((map) => Historia.fromMap(map)).toList();
@@ -100,20 +100,16 @@ class _HomeContentState extends State<HomeContent> {
 
   Future<void> _updateHistoria(
     Historia historia, {
-    String? grupo,
-    String? arquivado,
+    Map<String, dynamic>? updates,
   }) async {
     final db = await DatabaseHelper().database;
     final Map<String, dynamic> updateData = {
       'data_update': DateTime.now().toIso8601String(),
     };
 
-    if (grupo != null) {
-      updateData['grupo'] = grupo;
+    if (updates != null) {
+      updateData.addAll(updates);
     }
-
-    // Para arquivado, sempre definir o valor, mesmo que seja null
-    updateData['arquivado'] = arquivado;
 
     await db.update(
       'historia',
@@ -158,7 +154,10 @@ class _HomeContentState extends State<HomeContent> {
                     ),
                   );
                   if (confirm == true) {
-                    await _updateHistoria(historia, arquivado: 'sim');
+                    await _updateHistoria(
+                      historia,
+                      updates: {'arquivado': 'sim'},
+                    );
                   }
                 },
                 backgroundColor: Colors.blue,
@@ -180,7 +179,10 @@ class _HomeContentState extends State<HomeContent> {
                     ),
                   );
                   if (selectedGroup != null) {
-                    await _updateHistoria(historia, grupo: selectedGroup);
+                    await _updateHistoria(
+                      historia,
+                      updates: {'grupo': selectedGroup},
+                    );
                   }
                 },
                 backgroundColor: Colors.green,
@@ -223,30 +225,6 @@ class _HomeContentState extends State<HomeContent> {
                       'assets/image/${_getEmoticonImage(historia.emoticon!)}',
                       width: 32,
                       height: 32,
-                    ),
-                  ],
-                  if (historia.tag != null && historia.tag!.isNotEmpty) ...[
-                    const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? Colors.blue[700]
-                            : Colors.blue[100],
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        historia.tag!,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.blue[100]
-                              : Colors.blue[800],
-                        ),
-                      ),
                     ),
                   ],
                   const SizedBox(height: 8),
@@ -371,7 +349,10 @@ class _HomeContentState extends State<HomeContent> {
             ),
           );
           if (confirm == true) {
-            await _updateHistoria(historia, arquivado: 'sim');
+            await _updateHistoria(
+              historia,
+              updates: {'arquivado': 'sim', 'grupo': null},
+            );
             return true;
           }
         } else if (direction == DismissDirection.endToStart) {
@@ -380,7 +361,7 @@ class _HomeContentState extends State<HomeContent> {
             MaterialPageRoute(builder: (_) => const GroupSelectionScreen()),
           );
           if (selectedGroup != null) {
-            await _updateHistoria(historia, grupo: selectedGroup);
+            await _updateHistoria(historia, updates: {'grupo': selectedGroup});
           }
         }
         return false;
@@ -482,143 +463,64 @@ class _HomeContentState extends State<HomeContent> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        title: Row(
-          children: [
-            Image.asset('assets/icon/icon.png', width: 32, height: 32),
-            const SizedBox(width: 12),
-            const Text('Diário', style: TextStyle(fontWeight: FontWeight.bold)),
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: Image.asset(
-              _isCardView
-                  ? 'assets/image/card.png'
-                  : 'assets/image/icone_pequeno.png',
-              width: 34,
-              height: 34,
-            ),
-            onPressed: () {
-              setState(() {
-                _isCardView = !_isCardView;
-              });
-            },
-            tooltip: _isCardView
-                ? 'Alternar para modo ícones'
-                : 'Alternar para modo blocos',
-          ),
-          Builder(
-            builder: (context) => IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: () => Scaffold.of(context).openEndDrawer(),
-            ),
-          ),
-        ],
-      ),
-      endDrawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(color: Theme.of(context).primaryColor),
-              child: Text(
-                'Menu',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  fontSize: 24,
+    return Consumer<RefreshProvider>(
+      builder: (context, refreshProvider, child) {
+        return FutureBuilder<List<Historia>>(
+          future: _fetchHistorias(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState != ConnectionState.done) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return Center(
+                child: Text('Erro ao carregar histórias: ${snapshot.error}'),
+              );
+            }
+            final historias = snapshot.data ?? [];
+            if (historias.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/icon/icon.png',
+                      width: 100,
+                      height: 100,
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Nenhuma história encontrada.',
+                      style: TextStyle(fontSize: 18, color: Colors.grey),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Crie sua primeira história!',
+                      style: TextStyle(fontSize: 14, color: Colors.grey),
+                    ),
+                  ],
                 ),
+              );
+            }
+            return AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: ListView.builder(
+                key: ValueKey<bool>(_isCardView),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 16,
+                  horizontal: 12,
+                ),
+                itemCount: historias.length,
+                itemBuilder: (context, index) {
+                  final historia = historias[index];
+                  return _isCardView
+                      ? _buildCardView(historia)
+                      : _buildIconView(historia);
+                },
               ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text('Editar Perfil'),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const EditProfileScreen()),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('Configurações'),
-              onTap: () {
-                Navigator.pushNamed(context, '/settings');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('Sair'),
-              onTap: () async {
-                final auth = Provider.of<AuthProvider>(context, listen: false);
-                await auth.logout();
-                if (!mounted) return;
-                Navigator.pushReplacementNamed(context, '/login');
-              },
-            ),
-          ],
-        ),
-      ),
-      body: Consumer<RefreshProvider>(
-        builder: (context, refreshProvider, child) {
-          return FutureBuilder<List<Historia>>(
-            key: ValueKey<int>(refreshProvider.refreshCounter),
-            future: _fetchHistorias(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState != ConnectionState.done) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              final historias = snapshot.data ?? [];
-              if (historias.isEmpty) {
-                return const Center(
-                  child: Text('Nenhuma história cadastrada.'),
-                );
-              }
-              return AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
-                child: ListView.builder(
-                  key: ValueKey<bool>(_isCardView),
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 16,
-                    horizontal: 12,
-                  ),
-                  itemCount: historias.length,
-                  itemBuilder: (context, index) {
-                    final historia = historias[index];
-                    return _isCardView
-                        ? _buildCardView(historia)
-                        : _buildIconView(historia);
-                  },
-                ),
-              );
-            },
-          );
-        },
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 12),
-        child: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const CreateHistoriaScreen()),
-            ).then((created) {
-              if (!mounted) return;
-              final refreshProvider = Provider.of<RefreshProvider>(
-                context,
-                listen: false,
-              );
-              refreshProvider.refresh();
-            });
+            );
           },
-          backgroundColor: const Color(0xFFB388FF),
-          child: const Icon(Icons.add, color: Colors.white, size: 32),
-        ),
-      ),
+        );
+      },
     );
   }
 }

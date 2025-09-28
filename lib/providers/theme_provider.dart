@@ -3,9 +3,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeProvider with ChangeNotifier {
   static const String _themeKey = 'theme_mode';
-  ThemeMode _themeMode = ThemeMode.system;
+  ThemeMode _themeMode = ThemeMode.light;
+  bool _isLoaded = false;
 
   ThemeMode get themeMode => _themeMode;
+  bool get isLoaded => _isLoaded;
 
   ThemeProvider() {
     _loadThemeFromPrefs();
@@ -13,9 +15,15 @@ class ThemeProvider with ChangeNotifier {
 
   Future<void> _loadThemeFromPrefs() async {
     final prefs = await SharedPreferences.getInstance();
-    final themeIndex =
-        prefs.getInt(_themeKey) ?? 0; // 0 = system, 1 = light, 2 = dark
-    _themeMode = ThemeMode.values[themeIndex];
+    final themeIndex = prefs.getInt(_themeKey);
+    if (themeIndex != null) {
+      _themeMode = ThemeMode.values[themeIndex];
+    } else {
+      // Se não há prefs, define como light e salva
+      _themeMode = ThemeMode.light;
+      await prefs.setInt(_themeKey, _themeMode.index);
+    }
+    _isLoaded = true;
     notifyListeners();
   }
 
@@ -27,14 +35,9 @@ class ThemeProvider with ChangeNotifier {
     await prefs.setInt(_themeKey, mode.index);
   }
 
-  Future<void> toggleTheme() async {
-    if (_themeMode == ThemeMode.light) {
-      await setThemeMode(ThemeMode.dark);
-    } else if (_themeMode == ThemeMode.dark) {
-      await setThemeMode(ThemeMode.light);
-    } else {
-      // If system, switch to light
-      await setThemeMode(ThemeMode.light);
+  Future<void> waitForLoad() async {
+    while (!_isLoaded) {
+      await Future.delayed(const Duration(milliseconds: 10));
     }
   }
 }

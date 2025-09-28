@@ -27,7 +27,7 @@ class DatabaseHelper {
       debugPrint('DatabaseHelper: abrindo banco em $path');
       return await openDatabase(
         path,
-        version: 4,
+        version: 5,
         onCreate: _onCreate,
         onUpgrade: _onUpgrade,
       );
@@ -60,6 +60,8 @@ class DatabaseHelper {
           titulo TEXT NOT NULL,
           data TIMESTAMP NOT NULL,
           tag TEXT,
+          grupo TEXT,
+          arquivado TEXT,
           descricao TEXT,
           sentimento TEXT,
           emoticon TEXT,
@@ -123,6 +125,14 @@ class DatabaseHelper {
         );
       ''');
       debugPrint('DatabaseHelper: tabela grupos criada na upgrade');
+    }
+    if (oldVersion < 5) {
+      try {
+        await db.execute('ALTER TABLE historia ADD COLUMN arquivado TEXT;');
+        debugPrint('DatabaseHelper: coluna arquivado adicionada');
+      } catch (e) {
+        debugPrint('DatabaseHelper: coluna arquivado já existe: $e');
+      }
     }
   }
 

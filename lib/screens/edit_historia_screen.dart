@@ -6,8 +6,32 @@ import '../models/historia.dart';
 import '../db/database_helper.dart';
 import '../db/historia_foto_helper.dart';
 import '../models/historia_foto.dart';
+import 'package:flutter/services.dart';
 import 'rich_text_editor_screen.dart';
 // ...existing code...
+
+class SentenceCapitalizationTextInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    String _capitalizeText(String text) {
+      if (text.isEmpty) return text;
+      // Capitalize first letter
+      String result =
+          text[0].toUpperCase() + (text.length > 1 ? text.substring(1) : '');
+      // Capitalize after sentence endings
+      result = result.replaceAllMapped(RegExp(r'([.!?]\s*)([a-z])'), (match) {
+        return match.group(1)! + match.group(2)!.toUpperCase();
+      });
+      return result;
+    }
+
+    final capitalized = _capitalizeText(newValue.text);
+    return newValue.copyWith(text: capitalized, selection: newValue.selection);
+  }
+}
 
 class EditHistoriaScreen extends StatefulWidget {
   final Historia historia;
@@ -167,7 +191,9 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
         'descricao': descriptionController.text.trim().isEmpty
             ? null
             : descriptionController.text.trim(),
-        'tag': tagsController.text.trim(),
+        'tag': tagsController.text.trim().isEmpty
+            ? null
+            : tagsController.text.trim(),
         'emoticon': selectedEmoticon,
         'data': selectedDate.toIso8601String(),
         'data_update': DateTime.now().toIso8601String(),
@@ -318,6 +344,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                   labelText: 'Título',
                   border: OutlineInputBorder(),
                 ),
+                inputFormatters: [SentenceCapitalizationTextInputFormatter()],
               ),
               const SizedBox(height: 16),
               Column(
@@ -359,6 +386,9 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                               contentPadding: EdgeInsets.all(8),
                               border: InputBorder.none,
                             ),
+                            inputFormatters: [
+                              SentenceCapitalizationTextInputFormatter(),
+                            ],
                           ),
                         ),
                       ],

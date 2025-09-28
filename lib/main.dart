@@ -6,6 +6,7 @@ import 'screens/create_account_complement_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/edit_profile_screen.dart';
+import 'screens/create_historia_screen.dart';
 import 'package:provider/provider.dart';
 import 'providers/auth_provider.dart';
 import 'providers/theme_provider.dart';
@@ -45,6 +46,7 @@ void main() async {
 
   // Inicializar ThemeProvider
   final themeProvider = ThemeProvider();
+  await themeProvider.waitForLoad();
 
   // Inicializar RefreshProvider
   final refreshProvider = RefreshProvider();
@@ -129,6 +131,7 @@ class MyApp extends StatelessWidget {
               '/create_account_complement': (context) =>
                   const CreateAccountComplementScreen(),
               '/home': (context) => const HomeScreen(),
+              '/create_historia': (context) => const CreateHistoriaScreen(),
               '/edit_profile': (context) => const EditProfileScreen(),
               '/settings': (context) => const SettingsScreen(),
             },

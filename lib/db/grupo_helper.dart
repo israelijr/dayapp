@@ -30,4 +30,26 @@ class GrupoHelper {
     }
     return null;
   }
+
+  Future<int> deleteGrupo(int id) async {
+    final db = await DatabaseHelper().database;
+    return await db.delete('grupos', where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<void> deleteGrupoAndUpdateHistorias(
+    int grupoId,
+    String grupoNome,
+    String userId,
+  ) async {
+    final db = await DatabaseHelper().database;
+    // Primeiro, atualizar histórias que têm tag igual ao nome do grupo
+    await db.update(
+      'historia',
+      {'tag': null},
+      where: 'user_id = ? AND tag = ?',
+      whereArgs: [userId, grupoNome],
+    );
+    // Depois, excluir o grupo
+    await db.delete('grupos', where: 'id = ?', whereArgs: [grupoId]);
+  }
 }

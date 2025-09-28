@@ -8,6 +8,7 @@ import '../providers/auth_provider.dart';
 import '../providers/theme_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../services/backup_service.dart';
+import 'manage_groups_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -42,6 +43,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _buildThemeSection(context),
           const Divider(),
           _buildBackupSection(context),
+          const Divider(),
+          _buildGroupsSection(context),
           // Espaço para futuras configurações
         ],
       ),
@@ -175,6 +178,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         ],
       ],
+    );
+  }
+
+  Widget _buildGroupsSection(BuildContext context) {
+    return ListTile(
+      leading: const Icon(Icons.group),
+      title: const Text('Gerenciar Grupos'),
+      subtitle: const Text('Editar e excluir grupos'),
+      trailing: const Icon(Icons.arrow_forward_ios),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => ManageGroupsScreen()),
+        );
+      },
     );
   }
 

@@ -1,0 +1,46 @@
+Recovery: Reparação do índice Git e aplicação de correções locais
+
+Resumo:
+- Reparei o índice Git corrompido (.git/index), criei um backup em `.git/index.corrupt.bak` e reconstrui o índice com `git reset --mixed`.
+- Há alterações locais não staged resultantes das correções feitas no app (UI, banco de dados e lógica de arquivar/agrupamento).
+- Objetivo deste commit: salvar o estado de recuperação para facilitar revisão e distribuição.
+
+Arquivos modificados (principalmente):
+- lib/db/database_helper.dart
+- lib/db/grupo_helper.dart
+- lib/main.dart
+- lib/providers/theme_provider.dart
+- lib/screens/archived_stories_screen.dart
+- lib/screens/create_historia_screen.dart
+- lib/screens/edit_historia_screen.dart
+- lib/screens/group_stories_screen.dart
+- lib/screens/home_content.dart
+- lib/screens/home_screen.dart
+- lib/screens/settings_screen.dart
+
+Arquivo não rastreado:
+- lib/screens/manage_groups_screen.dart
+
+Comandos sugeridos (PowerShell) — execute na raiz do repositório (C:\DEV\dayapp):
+
+# revisar alterações antes do commit
+git status
+git diff
+
+# adicionar todas as alterações e commitar usando esta mensagem
+git add -A
+git commit -F .\RECOVERY_COMMIT_MESSAGE.txt
+
+# opcional: enviar para o remoto
+# git push origin tratamento-de-Grupos-e-Arquivar
+
+Notas importantes:
+- Verifique os diffs (`git diff`) para confirmar que tudo está correto antes de commitar.
+- O backup do índice corrompido está em `.git/index.corrupt.bak` caso precise restaurar algo manualmente.
+- Se preferir que eu execute os comandos de `git add` e `git commit` por você, diga e eu posso fazê-lo aqui (vou precisar de permissão para executar comandos de git nesse repositório).
+
+Mensagem curta sugerida (primeira linha do commit):
+Recovery: repaired git index and applied local fixes (backup: .git/index.corrupt.bak)
+
+---
+Gerado automaticamente pelo assistente para facilitar a recuperação do repositório.

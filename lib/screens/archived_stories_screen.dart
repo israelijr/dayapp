@@ -57,11 +57,13 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
   }
 
   Future<List<Historia>> _fetchHistoriasArquivadas() async {
+    final auth = Provider.of<AuthProvider>(context, listen: false);
+    final userId = auth.user?.id ?? '';
     final db = await DatabaseHelper().database;
     final result = await db.query(
       'historia',
-      where: 'arquivado = ?',
-      whereArgs: ['sim'],
+      where: 'user_id = ? AND arquivado = ?',
+      whereArgs: [userId, 'sim'],
       orderBy: 'data DESC',
     );
     return result.map((map) => Historia.fromMap(map)).toList();
@@ -100,20 +102,16 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
 
   Future<void> _updateHistoria(
     Historia historia, {
-    String? grupo,
-    String? arquivado,
+    Map<String, dynamic>? updates,
   }) async {
     final db = await DatabaseHelper().database;
     final Map<String, dynamic> updateData = {
       'data_update': DateTime.now().toIso8601String(),
     };
 
-    if (grupo != null) {
-      updateData['grupo'] = grupo;
+    if (updates != null) {
+      updateData.addAll(updates);
     }
-
-    // Para arquivado, sempre definir o valor, mesmo que seja null
-    updateData['arquivado'] = arquivado;
 
     await db.update(
       'historia',
@@ -160,7 +158,15 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
                     ),
                   );
                   if (confirm == true) {
-                    await _updateHistoria(historia, arquivado: null);
+                    await _updateHistoria(
+                      historia,
+                      updates: {'arquivado': null, 'tag': null, 'grupo': null},
+                    );
+                    final refreshProvider = Provider.of<RefreshProvider>(
+                      context,
+                      listen: false,
+                    );
+                    refreshProvider.refresh();
                   }
                 },
                 backgroundColor: Colors.green,
@@ -184,8 +190,7 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
                   if (selectedGroup != null) {
                     await _updateHistoria(
                       historia,
-                      grupo: selectedGroup,
-                      arquivado: null,
+                      updates: {'tag': selectedGroup, 'arquivado': null},
                     );
                   }
                 },
@@ -377,7 +382,10 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
             ),
           );
           if (confirm == true) {
-            await _updateHistoria(historia, arquivado: null);
+            await _updateHistoria(
+              historia,
+              updates: {'arquivado': null, 'tag': null, 'grupo': null},
+            );
             return true; // Remove o item da lista visualmente
           }
         } else if (direction == DismissDirection.endToStart) {
@@ -388,8 +396,7 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
           if (selectedGroup != null) {
             await _updateHistoria(
               historia,
-              grupo: selectedGroup,
-              arquivado: null,
+              updates: {'grupo': selectedGroup, 'arquivado': null, 'tag': null},
             );
             return true; // Remove o item da lista visualmente
           }

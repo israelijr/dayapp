@@ -60,11 +60,13 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
   }
 
   Future<List<Historia>> _fetchHistoriasByGrupo() async {
+    final auth = Provider.of<AuthProvider>(context, listen: false);
+    final userId = auth.user?.id ?? '';
     final db = await DatabaseHelper().database;
     final result = await db.query(
       'historia',
-      where: 'grupo = ? AND arquivado IS NULL',
-      whereArgs: [widget.grupo.nome],
+      where: 'user_id = ? AND grupo = ? AND arquivado IS NULL',
+      whereArgs: [userId, widget.grupo.nome],
       orderBy: 'data DESC',
     );
     return result.map((map) => Historia.fromMap(map)).toList();
@@ -103,20 +105,16 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
 
   Future<void> _updateHistoria(
     Historia historia, {
-    String? grupo,
-    String? arquivado,
+    Map<String, dynamic>? updates,
   }) async {
     final db = await DatabaseHelper().database;
     final Map<String, dynamic> updateData = {
       'data_update': DateTime.now().toIso8601String(),
     };
 
-    if (grupo != null) {
-      updateData['grupo'] = grupo;
+    if (updates != null) {
+      updateData.addAll(updates);
     }
-
-    // Para arquivado, sempre definir o valor, mesmo que seja null
-    updateData['arquivado'] = arquivado;
 
     await db.update(
       'historia',
@@ -161,7 +159,10 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
                     ),
                   );
                   if (confirm == true) {
-                    await _updateHistoria(historia, arquivado: 'sim');
+                    await _updateHistoria(
+                      historia,
+                      updates: {'arquivado': 'sim', 'grupo': null},
+                    );
                   }
                 },
                 backgroundColor: Colors.blue,
@@ -183,7 +184,10 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
                     ),
                   );
                   if (selectedGroup != null) {
-                    await _updateHistoria(historia, grupo: selectedGroup);
+                    await _updateHistoria(
+                      historia,
+                      updates: {'grupo': selectedGroup},
+                    );
                   }
                 },
                 backgroundColor: Colors.green,
@@ -300,12 +304,38 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
                             });
                           } else if (value == 'delete') {
                             await _deleteHistoria(historia);
+                          } else if (value == 'desagrupar') {
+                            await _updateHistoria(
+                              historia,
+                              updates: {
+                                'tag': null,
+                                'arquivado': null,
+                                'grupo': null,
+                              },
+                            );
+                            final refreshProvider =
+                                Provider.of<RefreshProvider>(
+                                  context,
+                                  listen: false,
+                                );
+                            refreshProvider.refresh();
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('História desagrupada'),
+                                ),
+                              );
+                            }
                           }
                         },
                         itemBuilder: (context) => [
                           const PopupMenuItem(
                             value: 'edit',
                             child: Text('Editar'),
+                          ),
+                          const PopupMenuItem(
+                            value: 'desagrupar',
+                            child: Text('Desagrupar'),
                           ),
                           const PopupMenuItem(
                             value: 'delete',
@@ -374,7 +404,10 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
             ),
           );
           if (confirm == true) {
-            await _updateHistoria(historia, arquivado: 'sim');
+            await _updateHistoria(
+              historia,
+              updates: {'arquivado': 'sim', 'grupo': null},
+            );
             return true;
           }
         } else if (direction == DismissDirection.endToStart) {
@@ -383,7 +416,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
             MaterialPageRoute(builder: (_) => const GroupSelectionScreen()),
           );
           if (selectedGroup != null) {
-            await _updateHistoria(historia, grupo: selectedGroup);
+            await _updateHistoria(historia, updates: {'grupo': selectedGroup});
           }
         }
         return false;
@@ -450,10 +483,29 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
                 });
               } else if (value == 'delete') {
                 await _deleteHistoria(historia);
+              } else if (value == 'desagrupar') {
+                await _updateHistoria(
+                  historia,
+                  updates: {'tag': null, 'arquivado': null, 'grupo': null},
+                );
+                final refreshProvider = Provider.of<RefreshProvider>(
+                  context,
+                  listen: false,
+                );
+                refreshProvider.refresh();
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('História desagrupada')),
+                  );
+                }
               }
             },
             itemBuilder: (context) => [
               const PopupMenuItem(value: 'edit', child: Text('Editar')),
+              const PopupMenuItem(
+                value: 'desagrupar',
+                child: Text('Desagrupar'),
+              ),
               const PopupMenuItem(value: 'delete', child: Text('Excluir')),
             ],
           ),
@@ -492,9 +544,12 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
           children: [
             Image.asset('assets/icon/icon.png', width: 32, height: 32),
             const SizedBox(width: 12),
-            Text(
-              widget.grupo.nome,
-              style: const TextStyle(fontWeight: FontWeight.bold),
+            Expanded(
+              child: Text(
+                widget.grupo.nome,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           ],
         ),
