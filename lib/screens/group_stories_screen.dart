@@ -129,6 +129,37 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
     refreshProvider.refresh();
   }
 
+  Future<void> _archiveWithUndo(Historia historia) async {
+    final previousTag = historia.tag;
+    final previousGrupo = historia.grupo;
+
+    await _updateHistoria(
+      historia,
+      updates: {'arquivado': 'sim', 'grupo': null},
+    );
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('História arquivada'),
+        action: SnackBarAction(
+          label: 'Desfazer',
+          onPressed: () async {
+            await _updateHistoria(
+              historia,
+              updates: {
+                'arquivado': null,
+                'tag': previousTag,
+                'grupo': previousGrupo,
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
+
   Widget _buildCardView(Historia historia) {
     return FutureBuilder<List<HistoriaFoto>>(
       future: HistoriaFotoHelper().getFotosByHistoria(historia.id ?? 0),
@@ -141,29 +172,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
             children: [
               SlidableAction(
                 onPressed: (context) async {
-                  final confirm = await showDialog<bool>(
-                    context: context,
-                    builder: (ctx) => AlertDialog(
-                      title: const Text('Arquivar história'),
-                      content: const Text('Deseja arquivar esta história?'),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(ctx, false),
-                          child: const Text('Cancelar'),
-                        ),
-                        TextButton(
-                          onPressed: () => Navigator.pop(ctx, true),
-                          child: const Text('Arquivar'),
-                        ),
-                      ],
-                    ),
-                  );
-                  if (confirm == true) {
-                    await _updateHistoria(
-                      historia,
-                      updates: {'arquivado': 'sim', 'grupo': null},
-                    );
-                  }
+                  await _archiveWithUndo(historia);
                 },
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
@@ -386,30 +395,8 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
       ),
       confirmDismiss: (direction) async {
         if (direction == DismissDirection.startToEnd) {
-          final confirm = await showDialog<bool>(
-            context: context,
-            builder: (ctx) => AlertDialog(
-              title: const Text('Arquivar história'),
-              content: const Text('Deseja arquivar esta história?'),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(ctx, false),
-                  child: const Text('Cancelar'),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.pop(ctx, true),
-                  child: const Text('Arquivar'),
-                ),
-              ],
-            ),
-          );
-          if (confirm == true) {
-            await _updateHistoria(
-              historia,
-              updates: {'arquivado': 'sim', 'grupo': null},
-            );
-            return true;
-          }
+          await _archiveWithUndo(historia);
+          return true;
         } else if (direction == DismissDirection.endToStart) {
           final selectedGroup = await Navigator.push<String>(
             context,
@@ -571,6 +558,12 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
                 ? 'Alternar para modo ícones'
                 : 'Alternar para modo blocos',
           ),
+          // delete group
+          IconButton(
+            icon: const Icon(Icons.delete_forever),
+            onPressed: () => _deleteGroup(),
+            tooltip: 'Excluir Grupo',
+          ),
           Builder(
             builder: (context) => IconButton(
               icon: const Icon(Icons.menu),
@@ -683,6 +676,52 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> _deleteGroup() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Excluir grupo'),
+        content: Text(
+          'Deseja remover o grupo "${widget.grupo.nome}" das suas histórias?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Excluir', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      final auth = Provider.of<AuthProvider>(context, listen: false);
+      final userId = auth.user?.id ?? '';
+      final db = await DatabaseHelper().database;
+      await db.update(
+        'historia',
+        {'grupo': null, 'data_update': DateTime.now().toIso8601String()},
+        where: 'user_id = ? AND grupo = ?',
+        whereArgs: [userId, widget.grupo.nome],
+      );
+
+      // Optionally remove the group from grupos table if present
+      try {
+        await db.delete(
+          'grupos',
+          where: 'user_id = ? AND nome = ?',
+          whereArgs: [userId, widget.grupo.nome],
+        );
+      } catch (_) {}
+
+      if (!mounted) return;
+      Navigator.pushReplacementNamed(context, '/home');
+    }
   }
 }
 

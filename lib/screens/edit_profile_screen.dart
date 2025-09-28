@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+// ...existing code...
+import '../services/file_utils.dart';
 import 'package:intl/intl.dart';
 import '../providers/auth_provider.dart';
 
@@ -18,6 +22,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   DateTime? _selectedDate;
   String? _errorMessage;
   bool _isLoading = false;
+  String? _pickedImagePath;
 
   @override
   void initState() {
@@ -31,6 +36,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           ? DateFormat('dd/MM/yyyy').format(user.dtNascimento!)
           : '',
     );
+    _pickedImagePath = user.fotoPerfil;
   }
 
   @override
@@ -70,7 +76,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       nome: _nameController.text.trim(),
       email: _emailController.text.trim(),
       dtNascimento: _selectedDate,
-      fotoPerfil: authProvider.user!.fotoPerfil, // Mantém a foto atual
+      fotoPerfil:
+          _pickedImagePath ??
+          authProvider.user!.fotoPerfil, // mantém nova foto (ou a atual)
     );
 
     setState(() {
@@ -88,6 +96,37 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       setState(() {
         _errorMessage = 'Erro ao atualizar perfil. Tente novamente.';
       });
+    }
+  }
+
+  Future<void> _pickImage() async {
+    try {
+      final picker = ImagePicker();
+      final XFile? picked = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 85,
+      );
+      if (picked != null) {
+        final File tmpFile = File(picked.path);
+        final oldPath = _pickedImagePath;
+        // copy into app directory
+        final savedPath = await FileUtils.copyProfileImageToApp(tmpFile);
+
+        // if oldPath points to a local file inside profile_images, delete it
+        if (oldPath != null && oldPath.isNotEmpty && oldPath != savedPath) {
+          await FileUtils.deleteFileIfExists(oldPath);
+        }
+
+        setState(() {
+          _pickedImagePath = savedPath;
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Erro ao selecionar imagem')),
+      );
     }
   }
 
@@ -123,14 +162,47 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     CircleAvatar(
                       radius: 60,
                       backgroundColor: Colors.grey[300],
-                      backgroundImage:
-                          context.watch<AuthProvider>().user!.fotoPerfil != null
-                          ? NetworkImage(
-                              context.watch<AuthProvider>().user!.fotoPerfil!,
-                            )
-                          : null,
+                      backgroundImage: _pickedImagePath != null
+                          ? (_pickedImagePath!.startsWith('http')
+                                ? NetworkImage(_pickedImagePath!)
+                                      as ImageProvider
+                                : (File(_pickedImagePath!).existsSync()
+                                      ? FileImage(File(_pickedImagePath!))
+                                      : null))
+                          : (context.watch<AuthProvider>().user!.fotoPerfil !=
+                                    null
+                                ? (context
+                                          .watch<AuthProvider>()
+                                          .user!
+                                          .fotoPerfil!
+                                          .startsWith('http')
+                                      ? NetworkImage(
+                                              context
+                                                  .watch<AuthProvider>()
+                                                  .user!
+                                                  .fotoPerfil!,
+                                            )
+                                            as ImageProvider
+                                      : (File(
+                                              context
+                                                  .watch<AuthProvider>()
+                                                  .user!
+                                                  .fotoPerfil!,
+                                            ).existsSync()
+                                            ? FileImage(
+                                                File(
+                                                  context
+                                                      .watch<AuthProvider>()
+                                                      .user!
+                                                      .fotoPerfil!,
+                                                ),
+                                              )
+                                            : null))
+                                : null),
                       child:
-                          context.watch<AuthProvider>().user!.fotoPerfil == null
+                          (_pickedImagePath == null &&
+                              context.watch<AuthProvider>().user!.fotoPerfil ==
+                                  null)
                           ? const Icon(
                               Icons.person,
                               size: 60,
@@ -150,16 +222,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             color: Colors.white,
                             size: 16,
                           ),
-                          onPressed: () {
-                            // TODO: Implementar seleção de foto
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Funcionalidade em desenvolvimento',
-                                ),
-                              ),
-                            );
-                          },
+                          onPressed: _pickImage,
                         ),
                       ),
                     ),

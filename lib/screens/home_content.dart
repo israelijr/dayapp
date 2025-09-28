@@ -15,7 +15,8 @@ import 'edit_historia_screen.dart';
 import 'group_selection_screen.dart';
 
 class HomeContent extends StatefulWidget {
-  const HomeContent({super.key});
+  final bool isCardView;
+  const HomeContent({super.key, this.isCardView = true});
 
   @override
   State<HomeContent> createState() => _HomeContentState();
@@ -25,7 +26,7 @@ class _HomeContentState extends State<HomeContent> {
   // Constantes para melhor organização
   static const double cardMargin = 24.0;
 
-  bool _isCardView = true; // true = modo blocos, false = modo ícones
+  late bool _isCardView; // true = modo blocos, false = modo ícones
 
   String _getEmoticonImage(String emoticon) {
     switch (emoticon) {
@@ -124,6 +125,37 @@ class _HomeContentState extends State<HomeContent> {
     refreshProvider.refresh();
   }
 
+  Future<void> _archiveWithUndo(Historia historia) async {
+    final previousTag = historia.tag;
+    final previousGrupo = historia.grupo;
+
+    await _updateHistoria(
+      historia,
+      updates: {'arquivado': 'sim', 'grupo': null},
+    );
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('História arquivada'),
+        action: SnackBarAction(
+          label: 'Desfazer',
+          onPressed: () async {
+            await _updateHistoria(
+              historia,
+              updates: {
+                'arquivado': null,
+                'tag': previousTag,
+                'grupo': previousGrupo,
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
+
   Widget _buildCardView(Historia historia) {
     return FutureBuilder<List<HistoriaFoto>>(
       future: HistoriaFotoHelper().getFotosByHistoria(historia.id ?? 0),
@@ -136,29 +168,7 @@ class _HomeContentState extends State<HomeContent> {
             children: [
               SlidableAction(
                 onPressed: (context) async {
-                  final confirm = await showDialog<bool>(
-                    context: context,
-                    builder: (ctx) => AlertDialog(
-                      title: const Text('Arquivar história'),
-                      content: const Text('Deseja arquivar esta história?'),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(ctx, false),
-                          child: const Text('Cancelar'),
-                        ),
-                        TextButton(
-                          onPressed: () => Navigator.pop(ctx, true),
-                          child: const Text('Arquivar'),
-                        ),
-                      ],
-                    ),
-                  );
-                  if (confirm == true) {
-                    await _updateHistoria(
-                      historia,
-                      updates: {'arquivado': 'sim'},
-                    );
-                  }
+                  await _archiveWithUndo(historia);
                 },
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
@@ -331,30 +341,8 @@ class _HomeContentState extends State<HomeContent> {
       ),
       confirmDismiss: (direction) async {
         if (direction == DismissDirection.startToEnd) {
-          final confirm = await showDialog<bool>(
-            context: context,
-            builder: (ctx) => AlertDialog(
-              title: const Text('Arquivar história'),
-              content: const Text('Deseja arquivar esta história?'),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(ctx, false),
-                  child: const Text('Cancelar'),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.pop(ctx, true),
-                  child: const Text('Arquivar'),
-                ),
-              ],
-            ),
-          );
-          if (confirm == true) {
-            await _updateHistoria(
-              historia,
-              updates: {'arquivado': 'sim', 'grupo': null},
-            );
-            return true;
-          }
+          await _archiveWithUndo(historia);
+          return true;
         } else if (direction == DismissDirection.endToStart) {
           final selectedGroup = await Navigator.push<String>(
             context,
@@ -463,6 +451,7 @@ class _HomeContentState extends State<HomeContent> {
 
   @override
   Widget build(BuildContext context) {
+    _isCardView = widget.isCardView;
     return Consumer<RefreshProvider>(
       builder: (context, refreshProvider, child) {
         return FutureBuilder<List<Historia>>(
@@ -502,7 +491,23 @@ class _HomeContentState extends State<HomeContent> {
               );
             }
             return AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
+              duration: const Duration(milliseconds: 450),
+              switchInCurve: Curves.easeOutCubic,
+              switchOutCurve: Curves.easeInCubic,
+              transitionBuilder: (child, animation) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: ScaleTransition(
+                    scale: Tween<double>(begin: 0.98, end: 1.0).animate(
+                      CurvedAnimation(
+                        parent: animation,
+                        curve: Curves.easeOutBack,
+                      ),
+                    ),
+                    child: child,
+                  ),
+                );
+              },
               child: ListView.builder(
                 key: ValueKey<bool>(_isCardView),
                 padding: const EdgeInsets.symmetric(

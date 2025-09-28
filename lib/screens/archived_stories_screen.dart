@@ -138,36 +138,15 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
             children: [
               SlidableAction(
                 onPressed: (context) async {
-                  final confirm = await showDialog<bool>(
-                    context: context,
-                    builder: (ctx) => AlertDialog(
-                      title: const Text('Restaurar história'),
-                      content: const Text(
-                        'Deseja restaurar esta história do arquivo?',
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(ctx, false),
-                          child: const Text('Cancelar'),
-                        ),
-                        TextButton(
-                          onPressed: () => Navigator.pop(ctx, true),
-                          child: const Text('Restaurar'),
-                        ),
-                      ],
-                    ),
+                  await _updateHistoria(
+                    historia,
+                    updates: {'arquivado': null, 'tag': null, 'grupo': null},
                   );
-                  if (confirm == true) {
-                    await _updateHistoria(
-                      historia,
-                      updates: {'arquivado': null, 'tag': null, 'grupo': null},
-                    );
-                    final refreshProvider = Provider.of<RefreshProvider>(
-                      context,
-                      listen: false,
-                    );
-                    refreshProvider.refresh();
-                  }
+                  final refreshProvider = Provider.of<RefreshProvider>(
+                    context,
+                    listen: false,
+                  );
+                  refreshProvider.refresh();
                 },
                 backgroundColor: Colors.green,
                 foregroundColor: Colors.white,
@@ -364,30 +343,11 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
       ),
       confirmDismiss: (direction) async {
         if (direction == DismissDirection.startToEnd) {
-          final confirm = await showDialog<bool>(
-            context: context,
-            builder: (ctx) => AlertDialog(
-              title: const Text('Restaurar história'),
-              content: const Text('Deseja restaurar esta história do arquivo?'),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(ctx, false),
-                  child: const Text('Cancelar'),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.pop(ctx, true),
-                  child: const Text('Restaurar'),
-                ),
-              ],
-            ),
+          await _updateHistoria(
+            historia,
+            updates: {'arquivado': null, 'tag': null, 'grupo': null},
           );
-          if (confirm == true) {
-            await _updateHistoria(
-              historia,
-              updates: {'arquivado': null, 'tag': null, 'grupo': null},
-            );
-            return true; // Remove o item da lista visualmente
-          }
+          return true; // Remove o item da lista visualmente
         } else if (direction == DismissDirection.endToStart) {
           final selectedGroup = await Navigator.push<String>(
             context,
