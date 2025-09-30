@@ -151,15 +151,18 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
               ),
               const SizedBox(height: 16),
               if (errorMessage != null)
-                Text(errorMessage!, style: const TextStyle(color: Colors.red)),
+                Text(
+                  errorMessage!,
+                  style: const TextStyle(color: Colors.white),
+                ),
               const SizedBox(height: 16),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: loading ? null : () => _register(context),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: const Color(0xFFB388FF),
+                    backgroundColor: const Color(0xFF5E35B1),
+                    foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),

@@ -461,6 +461,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _restoreBackup(Reference backup) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const AlertDialog(
+        content: Row(
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(width: 16),
+            Text('Restaurando backup...'),
+          ],
+        ),
+      ),
+    );
+
     final refreshProvider = Provider.of<RefreshProvider>(
       context,
       listen: false,
@@ -473,10 +487,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
       await DatabaseHelper().resetDatabase();
       // Refresh home screen data
       refreshProvider.refresh();
+      if (!mounted) return;
+      Navigator.of(context).pop(); // Close the loading dialog
+      // Sign out to refresh auth state
+      final auth = Provider.of<AuthProvider>(context, listen: false);
+      await auth.logout();
+      // Navigate to Login screen
+      Navigator.of(context).pushReplacementNamed('/login');
       messenger.showSnackBar(
         const SnackBar(content: Text('Restauração realizada com sucesso!')),
       );
     } catch (e) {
+      if (!mounted) return;
+      Navigator.of(context).pop(); // Close the loading dialog
       messenger.showSnackBar(SnackBar(content: Text('Erro ao restaurar: $e')));
     }
   }
