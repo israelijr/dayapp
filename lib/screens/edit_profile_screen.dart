@@ -238,8 +238,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  filled: true,
-                  fillColor: Colors.grey[200],
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
@@ -260,8 +258,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  filled: true,
-                  fillColor: Colors.grey[200],
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
@@ -286,8 +282,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  filled: true,
-                  fillColor: Colors.grey[200],
                   suffixIcon: const Icon(Icons.calendar_today),
                 ),
               ),

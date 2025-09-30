@@ -130,15 +130,11 @@ class _CreateAccountComplementScreenState
                   child: TextField(
                     controller: birthDateController,
                     keyboardType: TextInputType.datetime,
-                    style: TextStyle(color: Colors.black),
                     decoration: InputDecoration(
                       labelText: 'Data de nascimento (DD/MM/AAAA)',
-                      labelStyle: TextStyle(color: Colors.black),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      filled: true,
-                      fillColor: Colors.grey[200],
                     ),
                   ),
                 ),

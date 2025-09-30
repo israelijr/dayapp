@@ -128,6 +128,35 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
     });
   }
 
+  Future<void> _pickDateTime() async {
+    final date = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+      locale: const Locale('pt', 'BR'),
+    );
+    if (!mounted) return;
+    if (date != null) {
+      final time = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.fromDateTime(selectedDate),
+      );
+      if (!mounted) return;
+      if (time != null) {
+        setState(() {
+          selectedDate = DateTime(
+            date.year,
+            date.month,
+            date.day,
+            time.hour,
+            time.minute,
+          );
+        });
+      }
+    }
+  }
+
   Future<void> _showNotificationDialog(int historiaId) async {
     Duration? selectedDuration;
     await showDialog(
@@ -250,7 +279,6 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
   }
 
   Future<void> _saveHistoria() async {
-    selectedDate = DateTime.now();
     if (titleController.text.trim().isEmpty) {
       ScaffoldMessenger.of(
         context,
@@ -514,6 +542,13 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                               ).textTheme.bodyLarge?.color,
                             ),
                           ),
+                        ),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.calendar_today,
+                            color: Colors.deepPurple,
+                          ),
+                          onPressed: _pickDateTime,
                         ),
                       ],
                     ),
