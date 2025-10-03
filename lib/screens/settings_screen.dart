@@ -1,13 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:flutter/services.dart';
-import '../providers/auth_provider.dart';
 import '../providers/theme_provider.dart';
-import '../providers/refresh_provider.dart';
-import '../services/backup_service.dart';
 import '../services/biometric_service.dart';
 import '../db/database_helper.dart';
 import 'manage_groups_screen.dart';
@@ -20,23 +14,14 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  final BackupService _backupService = BackupService();
   final BiometricService _biometricService = BiometricService();
-  bool _isSignedIn = false;
   bool _biometricAvailable = false;
   bool _biometricEnabled = false;
 
   @override
   void initState() {
     super.initState();
-    _checkSignInStatus();
     _checkBiometricStatus();
-  }
-
-  Future<void> _checkSignInStatus() async {
-    setState(() {
-      _isSignedIn = _backupService.isSignedIn;
-    });
   }
 
   Future<void> _checkBiometricStatus() async {
@@ -349,52 +334,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
         ),
         ListTile(
-          leading: const Icon(Icons.manage_accounts_outlined),
+          leading: const Icon(Icons.folder_zip),
           title: const Text('Gerenciar Backup Completo'),
-          subtitle: const Text('Backup com vídeos, OneDrive, Google Drive'),
+          subtitle: const Text('Backup com vídeos em arquivo ZIP'),
           trailing: const Icon(Icons.arrow_forward_ios),
           onTap: () {
             Navigator.pushNamed(context, '/backup-manager');
           },
         ),
-        const Divider(),
-        if (!_isSignedIn)
-          ListTile(
-            leading: const Icon(Icons.login),
-            title: const Text('Inicializar Backup (Apenas DB)'),
-            subtitle: const Text('Backup rápido sem vídeos'),
-            onTap: _signIn,
-          )
-        else ...[
-          ListTile(
-            leading: const Icon(Icons.backup),
-            title: const Text('Fazer backup (Apenas DB)'),
-            subtitle: const Text('Backup rápido sem vídeos'),
-            onTap: _performBackup,
-          ),
-          ListTile(
-            leading: const Icon(Icons.restore),
-            title: const Text('Restaurar backup (Apenas DB)'),
-            onTap: _showRestoreDialog,
-          ),
-          ListTile(
-            leading: const Icon(Icons.restore_from_trash),
-            title: const Text('Restaurar com código (Apenas DB)'),
-            onTap: _showRestoreWithCodeDialog,
-          ),
-          // Removed explicit "Sair do Google" option per requirements.
-          // The app will now sign out automatically when the user leaves
-          // the Settings screen.
-        ],
       ],
     );
   }
 
   @override
   void dispose() {
-    // When the Settings screen is closed, sign out from Google automatically.
-    // We do not await here because dispose must not be async; fire-and-forget is fine.
-    _backupService.signOut();
     super.dispose();
   }
 
@@ -411,322 +364,5 @@ class _SettingsScreenState extends State<SettingsScreen> {
         );
       },
     );
-  }
-
-  Future<void> _signIn() async {
-    try {
-      await _backupService.signInAnonymously();
-      _checkSignInStatus();
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Login anônimo realizado com sucesso!')),
-      );
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Erro ao fazer login: $e')));
-    }
-  }
-
-  // Sign-out handled automatically on dispose; explicit sign-out option removed.
-
-  Future<void> _performBackup() async {
-    try {
-      final backupCode = await _backupService.backupDatabase();
-      if (!mounted) return;
-      _showBackupCodeDialog(backupCode);
-      // Try to open the user's email client with the backup code
-      _emailBackupCode(backupCode);
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Erro ao fazer backup: $e')));
-    }
-  }
-
-  Future<void> _emailBackupCode(String backupCode) async {
-    try {
-      // Get the current user email from AuthProvider
-      final auth = Provider.of<AuthProvider>(context, listen: false);
-      final String? email = auth.user?.email;
-      final subject = 'Backup DayApp';
-      final body = 'Seu código de backup é: $backupCode';
-
-      // Prefer the system share sheet (share_plus) so the user can choose any app
-      try {
-        final params = ShareParams(text: body, subject: subject);
-        await SharePlus.instance.share(params);
-        return;
-      } catch (_) {
-        // If share sheet not available, fall back to email intent if email exists
-      }
-
-      if (email == null || email.isEmpty) {
-        // No configured email — copy and notify
-        await Clipboard.setData(ClipboardData(text: backupCode));
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Código copiado para a área de transferência.'),
-          ),
-        );
-        return;
-      }
-
-      final subjectEnc = Uri.encodeComponent(subject);
-      final bodyEnc = Uri.encodeComponent(body);
-      final uri = Uri.parse('mailto:$email?subject=$subjectEnc&body=$bodyEnc');
-
-      if (!await canLaunchUrl(uri)) {
-        await Clipboard.setData(ClipboardData(text: backupCode));
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Não foi possível abrir o cliente de e-mail. Código copiado para a área de transferência.',
-            ),
-          ),
-        );
-        return;
-      }
-
-      final launched = await launchUrl(uri);
-      if (!launched) {
-        await Clipboard.setData(ClipboardData(text: backupCode));
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Não foi possível abrir o cliente de e-mail. Código copiado para a área de transferência.',
-            ),
-          ),
-        );
-      }
-    } catch (e) {
-      // On any unexpected failure, copy the code so the user can still send it manually
-      await Clipboard.setData(ClipboardData(text: backupCode));
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Falha ao tentar enviar e-mail: $e. Código copiado para a área de transferência.',
-          ),
-        ),
-      );
-    }
-  }
-
-  void _showBackupCodeDialog(String backupCode) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Backup realizado com sucesso!'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'Anote o código de recuperação abaixo. Você precisará dele para restaurar o backup em caso de reinstalação do app.',
-            ),
-            const SizedBox(height: 16),
-            Text(
-              backupCode,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Este código também foi enviado para o seu email (se configurado).',
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              // Try to open email client when user taps explicitly
-              Navigator.of(context).pop();
-              _emailBackupCode(backupCode);
-            },
-            child: const Text('Compartilhar'),
-          ),
-          TextButton(
-            onPressed: () {
-              // Copy to clipboard as a fallback
-              Clipboard.setData(ClipboardData(text: backupCode));
-              Navigator.of(context).pop();
-              if (!mounted) return;
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Código copiado para a área de transferência'),
-                ),
-              );
-            },
-            child: const Text('Copiar código'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _showRestoreDialog([String? backupCode]) async {
-    final messenger = ScaffoldMessenger.of(context);
-    final buildContext = context;
-    try {
-      final backups = await _backupService.listBackups(backupCode);
-      if (backups.isEmpty) {
-        if (!mounted) return;
-        messenger.showSnackBar(
-          const SnackBar(content: Text('Nenhum backup encontrado')),
-        );
-        return;
-      }
-
-      if (!mounted) return;
-
-      showDialog(
-        context: buildContext,
-        builder: (dialogContext) => AlertDialog(
-          title: const Text('Escolher backup para restaurar'),
-          content: SizedBox(
-            width: double.maxFinite,
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: backups.length,
-              itemBuilder: (dialogContext, index) {
-                final backup = backups[index];
-                return ListTile(
-                  title: Text(backup.name),
-                  subtitle: Text(_extractDateFromBackupName(backup.name)),
-                  onTap: () async {
-                    final navigator = Navigator.of(dialogContext);
-                    navigator.pop();
-                    await _restoreBackup(backup);
-                  },
-                );
-              },
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                final navigator = Navigator.of(dialogContext);
-                navigator.pop();
-              },
-              child: const Text('Cancelar'),
-            ),
-          ],
-        ),
-      );
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Erro ao listar backups: $e')));
-    }
-  }
-
-  Future<void> _showRestoreWithCodeDialog() async {
-    final TextEditingController codeController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Restaurar backup com código'),
-        content: TextField(
-          controller: codeController,
-          decoration: const InputDecoration(
-            labelText: 'Código de recuperação',
-            hintText: 'Digite o código anotado durante o backup',
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancelar'),
-          ),
-          TextButton(
-            onPressed: () async {
-              final code = codeController.text.trim();
-              if (code.isEmpty) {
-                if (!mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Digite o código de recuperação'),
-                  ),
-                );
-                return;
-              }
-              Navigator.of(context).pop();
-              await _showRestoreDialog(code);
-            },
-            child: const Text('Restaurar'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _restoreBackup(Reference backup) async {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => const AlertDialog(
-        content: Row(
-          children: [
-            CircularProgressIndicator(),
-            SizedBox(width: 16),
-            Text('Restaurando backup...'),
-          ],
-        ),
-      ),
-    );
-
-    final refreshProvider = Provider.of<RefreshProvider>(
-      context,
-      listen: false,
-    );
-    final messenger = ScaffoldMessenger.of(context);
-    try {
-      await _backupService.restoreDatabase(backup);
-      // Ensure the app reloads the replaced database file by closing any
-      // cached connections so subsequent DB calls open the new file.
-      await DatabaseHelper().resetDatabase();
-      // Refresh home screen data
-      refreshProvider.refresh();
-      if (!mounted) return;
-      Navigator.of(context).pop(); // Close the loading dialog
-      // Sign out to refresh auth state
-      final auth = Provider.of<AuthProvider>(context, listen: false);
-      await auth.logout();
-      // Navigate to Login screen
-      Navigator.of(context).pushReplacementNamed('/login');
-      messenger.showSnackBar(
-        const SnackBar(content: Text('Restauração realizada com sucesso!')),
-      );
-    } catch (e) {
-      if (!mounted) return;
-      Navigator.of(context).pop(); // Close the loading dialog
-      messenger.showSnackBar(SnackBar(content: Text('Erro ao restaurar: $e')));
-    }
-  }
-
-  String _extractDateFromBackupName(String name) {
-    // Nome: dayapp_backup_2025-09-25T14-30-00.000.db
-    final regex = RegExp(r'dayapp_backup_(.+)\.db');
-    final match = regex.firstMatch(name);
-    if (match != null) {
-      final dateStr = match.group(1)!.replaceAll('-', ':').replaceAll('T', ' ');
-      try {
-        final date = DateTime.parse(dateStr);
-        return date.toLocal().toString();
-      } catch (e) {
-        return 'Data desconhecida';
-      }
-    }
-    return 'Data desconhecida';
   }
 }

@@ -20,19 +20,21 @@ import 'screens/calendar_view_screen.dart';
 import 'screens/backup_manager_screen.dart';
 import 'db/database_helper.dart';
 import 'models/historia.dart';
-import 'package:firebase_core/firebase_core.dart';
+// Firebase não é mais necessário - backup agora usa apenas arquivos ZIP locais
+// import 'package:firebase_core/firebase_core.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  try {
-    await Firebase.initializeApp();
-    debugPrint('Firebase inicializado com sucesso');
-  } catch (e) {
-    debugPrint('Erro ao inicializar Firebase: $e');
-    // Continue sem Firebase se falhar
-  }
+  // Firebase desabilitado - não é mais usado pelo sistema de backup
+  // try {
+  //   await Firebase.initializeApp();
+  //   debugPrint('Firebase inicializado com sucesso');
+  // } catch (e) {
+  //   debugPrint('Erro ao inicializar Firebase: $e');
+  //   // Continue sem Firebase se falhar
+  // }
   await initializeDateFormatting('pt_BR', null);
   // Inicializa sqflite_common_ffi apenas em desktop
   if (!identical(0, 0.0)) {
