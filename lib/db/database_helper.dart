@@ -1,7 +1,10 @@
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as p;
 import 'package:flutter/foundation.dart';
 import '../models/historia.dart';
+import '../helpers/video_file_helper.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
@@ -27,7 +30,7 @@ class DatabaseHelper {
       debugPrint('DatabaseHelper: abrindo banco em $path');
       return await openDatabase(
         path,
-        version: 5,
+        version: 7,
         onCreate: _onCreate,
         onUpgrade: _onUpgrade,
       );
@@ -83,6 +86,29 @@ class DatabaseHelper {
       ''');
       debugPrint('DatabaseHelper: tabela historia_fotos criada');
       await db.execute('''
+        CREATE TABLE historia_audios (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          historia_id INTEGER NOT NULL,
+          audio BLOB NOT NULL,
+          legenda TEXT,
+          duracao INTEGER,
+          FOREIGN KEY (historia_id) REFERENCES historia(id) ON DELETE CASCADE
+        );
+      ''');
+      debugPrint('DatabaseHelper: tabela historia_audios criada');
+      await db.execute('''
+        CREATE TABLE historia_videos (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          historia_id INTEGER NOT NULL,
+          video BLOB NOT NULL,
+          legenda TEXT,
+          duracao INTEGER,
+          thumbnail BLOB,
+          FOREIGN KEY (historia_id) REFERENCES historia(id) ON DELETE CASCADE
+        );
+      ''');
+      debugPrint('DatabaseHelper: tabela historia_videos criada');
+      await db.execute('''
         CREATE TABLE grupos (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           user_id TEXT NOT NULL,
@@ -133,6 +159,123 @@ class DatabaseHelper {
       } catch (e) {
         debugPrint('DatabaseHelper: coluna arquivado já existe: $e');
       }
+    }
+    if (oldVersion < 6) {
+      await db.execute('''
+        CREATE TABLE historia_audios (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          historia_id INTEGER NOT NULL,
+          audio BLOB NOT NULL,
+          legenda TEXT,
+          duracao INTEGER,
+          FOREIGN KEY (historia_id) REFERENCES historia(id) ON DELETE CASCADE
+        );
+      ''');
+      debugPrint('DatabaseHelper: tabela historia_audios criada na upgrade');
+      await db.execute('''
+        CREATE TABLE historia_videos (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          historia_id INTEGER NOT NULL,
+          video BLOB NOT NULL,
+          legenda TEXT,
+          duracao INTEGER,
+          thumbnail BLOB,
+          FOREIGN KEY (historia_id) REFERENCES historia(id) ON DELETE CASCADE
+        );
+      ''');
+      debugPrint('DatabaseHelper: tabela historia_videos criada na upgrade');
+    }
+    if (oldVersion < 7) {
+      // Migração: BLOB para sistema de arquivos
+      debugPrint(
+        'DatabaseHelper: iniciando migração v6 -> v7 (vídeos para arquivos)',
+      );
+
+      // Criar nova tabela com caminhos
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS historia_videos_new (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          historia_id INTEGER NOT NULL,
+          video_path TEXT NOT NULL,
+          legenda TEXT,
+          duracao INTEGER,
+          thumbnail_path TEXT,
+          FOREIGN KEY (historia_id) REFERENCES historia(id) ON DELETE CASCADE
+        );
+      ''');
+      debugPrint('DatabaseHelper: tabela historia_videos_new criada');
+
+      // Tentar migrar dados existentes (apenas vídeos pequenos < 2MB)
+      try {
+        final videos = await db.query('historia_videos', limit: 100);
+        debugPrint(
+          'DatabaseHelper: encontrados ${videos.length} vídeos para migrar',
+        );
+
+        int migrated = 0;
+        int skipped = 0;
+
+        for (final video in videos) {
+          try {
+            final videoBlob = video['video'];
+            if (videoBlob != null && videoBlob is List<int>) {
+              final videoData = Uint8List.fromList(videoBlob);
+
+              // Só migra vídeos < 2MB (que ainda conseguem ser lidos)
+              if (videoData.length < 2000000) {
+                final historiaId = video['historia_id'] as int;
+
+                // Salvar no sistema de arquivos
+                final videosDir = await VideoFileHelper.getVideosDirectory();
+                final timestamp = DateTime.now().millisecondsSinceEpoch;
+                final fileName =
+                    'video_${historiaId}_${timestamp}_migrated.mp4';
+                final filePath = p.join(videosDir.path, fileName);
+
+                final file = File(filePath);
+                await file.writeAsBytes(videoData);
+
+                // Inserir na nova tabela
+                await db.insert('historia_videos_new', {
+                  'historia_id': historiaId,
+                  'video_path': filePath,
+                  'legenda': video['legenda'],
+                  'duracao': video['duracao'],
+                  'thumbnail_path': null,
+                });
+
+                migrated++;
+                debugPrint(
+                  'DatabaseHelper: vídeo $migrated migrado (${videoData.length} bytes)',
+                );
+              } else {
+                skipped++;
+                debugPrint(
+                  'DatabaseHelper: vídeo muito grande ignorado (${videoData.length} bytes)',
+                );
+              }
+            }
+          } catch (e) {
+            debugPrint('DatabaseHelper: erro ao migrar vídeo individual: $e');
+            skipped++;
+          }
+        }
+
+        debugPrint(
+          'DatabaseHelper: migração concluída - $migrated migrados, $skipped ignorados',
+        );
+      } catch (e) {
+        debugPrint(
+          'DatabaseHelper: tabela antiga não existe ou erro na migração: $e',
+        );
+      }
+
+      // Dropar tabela antiga e renomear nova
+      await db.execute('DROP TABLE IF EXISTS historia_videos');
+      await db.execute(
+        'ALTER TABLE historia_videos_new RENAME TO historia_videos',
+      );
+      debugPrint('DatabaseHelper: migração v6 -> v7 concluída');
     }
   }
 

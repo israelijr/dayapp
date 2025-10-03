@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'dart:io';
 import '../models/historia.dart';
 import '../db/database_helper.dart';
 import '../db/historia_foto_helper.dart';
+import '../db/historia_audio_helper.dart';
+import '../db/historia_video_helper.dart';
 import '../models/historia_foto.dart';
+import '../models/historia_audio.dart';
 import 'package:flutter/services.dart';
 import 'package:file_selector/file_selector.dart';
+import 'package:file_picker/file_picker.dart';
 import 'rich_text_editor_screen.dart';
+import '../widgets/audio_recorder_widget.dart';
+import '../widgets/compact_audio_icon.dart';
+import '../widgets/compact_video_icon.dart';
 // ...existing code...
 
 class SentenceCapitalizationTextInputFormatter extends TextInputFormatter {
@@ -48,6 +56,11 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
   late DateTime selectedDate;
   List<Uint8List> fotos = [];
   List<int> fotoIds = [];
+  List<Map<String, dynamic>> audios = []; // {audio: Uint8List, duration: int}
+  List<int> audioIds = []; // IDs dos áudios existentes
+  List<Map<String, dynamic>> videos =
+      []; // Para novos: {video: Uint8List, duration: int}, Para existentes: {videoPath: String, duration: int, id: int}
+  List<int> videoIds = []; // IDs dos vídeos existentes
   String? selectedEmoticon;
 
   final List<String> emoticons = [
@@ -113,6 +126,8 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     selectedDate = widget.historia.data;
     selectedEmoticon = widget.historia.emoticon;
     _loadFotos();
+    _loadAudios();
+    _loadVideos();
   }
 
   Future<void> _loadFotos() async {
@@ -152,6 +167,132 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     setState(() {
       fotos.removeAt(index);
       fotoIds.removeAt(index);
+    });
+  }
+
+  Future<void> _loadAudios() async {
+    final audiosDb = await HistoriaAudioHelper().getAudiosByHistoria(
+      widget.historia.id ?? 0,
+    );
+    if (!mounted) return;
+    setState(() {
+      audios = audiosDb
+          .map(
+            (a) => {
+              'audio': Uint8List.fromList(a.audio),
+              'duration': a.duracao,
+            },
+          )
+          .toList();
+      audioIds = audiosDb.map((a) => a.id ?? 0).toList();
+    });
+  }
+
+  Future<void> _loadVideos() async {
+    try {
+      final videosDb = await HistoriaVideoHelper().getVideosByHistoria(
+        widget.historia.id ?? 0,
+      );
+      debugPrint('_loadVideos: ${videosDb.length} vídeos carregados');
+      if (!mounted) return;
+      setState(() {
+        videos = videosDb
+            .map(
+              (v) => {
+                'videoPath': v.videoPath, // Caminho ao invés de bytes
+                'duration': v.duracao,
+                'id': v.id,
+              },
+            )
+            .toList();
+        videoIds = videosDb.map((v) => v.id ?? 0).toList();
+      });
+    } catch (e) {
+      debugPrint('_loadVideos: erro ao carregar vídeos: $e');
+    }
+  }
+
+  Future<void> _recordAudio() async {
+    showDialog(
+      context: context,
+      builder: (context) => AudioRecorderWidget(
+        onAudioRecorded: (audio, duration) {
+          setState(() {
+            audios.add({'audio': audio, 'duration': duration});
+            audioIds.add(0); // 0 indica novo áudio
+          });
+        },
+      ),
+    );
+  }
+
+  void _removeAudio(int index) async {
+    if (audioIds[index] != 0) {
+      await HistoriaAudioHelper().deleteAudio(audioIds[index]);
+    }
+    if (!mounted) return;
+    setState(() {
+      audios.removeAt(index);
+      audioIds.removeAt(index);
+    });
+  }
+
+  Future<void> _pickVideo() async {
+    try {
+      debugPrint('Iniciando seleção de vídeo...');
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.video,
+        allowMultiple: false,
+      );
+
+      if (result != null && result.files.single.path != null) {
+        debugPrint('Arquivo de vídeo selecionado: ${result.files.single.path}');
+        final file = File(result.files.single.path!);
+        final bytes = await file.readAsBytes();
+        debugPrint('Vídeo carregado: ${bytes.length} bytes');
+
+        // Duração e thumbnail serão null por enquanto
+        const estimatedDuration = 0;
+
+        if (!mounted) return;
+        setState(() {
+          videos.add({
+            'video': bytes,
+            'thumbnail': null,
+            'duration': estimatedDuration,
+          });
+          videoIds.add(0); // 0 indica novo vídeo
+        });
+        debugPrint(
+          'Vídeo adicionado à lista. Total de vídeos: ${videos.length}',
+        );
+
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Vídeo adicionado com sucesso!')),
+        );
+      } else {
+        debugPrint('Nenhum arquivo de vídeo foi selecionado');
+      }
+    } catch (e) {
+      debugPrint('Erro ao selecionar vídeo: $e');
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Erro ao selecionar vídeo: $e')));
+    }
+  }
+
+  void _removeVideo(int index) async {
+    if (videoIds[index] != 0) {
+      // Vídeo existente - precisa deletar do banco e do sistema de arquivos
+      final videoPath = videos[index]['videoPath'] as String;
+      await HistoriaVideoHelper().deleteVideo(videoIds[index], videoPath);
+    }
+    if (!mounted) return;
+    setState(() {
+      videos.removeAt(index);
+      videoIds.removeAt(index);
     });
   }
 
@@ -211,6 +352,39 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
         );
       }
     }
+
+    // Salva novos áudios
+    for (int i = 0; i < audios.length; i++) {
+      if (audioIds[i] == 0) {
+        await HistoriaAudioHelper().insertAudio(
+          HistoriaAudio(
+            historiaId: widget.historia.id ?? 0,
+            audio: audios[i]['audio'],
+            duracao: audios[i]['duration'],
+          ),
+        );
+      }
+    }
+
+    // Salva novos vídeos
+    for (int i = 0; i < videos.length; i++) {
+      if (videoIds[i] == 0) {
+        debugPrint(
+          'Salvando novo vídeo $i - Tamanho: ${videos[i]['video'].length} bytes, Duração: ${videos[i]['duration']}',
+        );
+        try {
+          final videoId = await HistoriaVideoHelper().insertVideoFromBytes(
+            historiaId: widget.historia.id ?? 0,
+            videoBytes: videos[i]['video'],
+            duracao: videos[i]['duration'],
+          );
+          debugPrint('Vídeo $i salvo com ID: $videoId');
+        } catch (e) {
+          debugPrint('Erro ao salvar vídeo $i: $e');
+        }
+      }
+    }
+
     if (!mounted) return;
     Navigator.pop(context, true);
   }
@@ -360,6 +534,78 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                 ),
               ),
               const SizedBox(height: 16),
+
+              // Seção de Áudios
+              if (audios.isNotEmpty) ...[
+                const Text(
+                  'Áudios',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: audios.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final audioData = entry.value;
+                    return CompactAudioIcon(
+                      audioData: audioData['audio'],
+                      duration: audioData['duration'],
+                      onDelete: () => _removeAudio(index),
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 8),
+              ],
+
+              // Botão para adicionar áudio
+              OutlinedButton.icon(
+                onPressed: _recordAudio,
+                icon: const Icon(Icons.mic),
+                label: const Text('Adicionar Áudio'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.deepPurple,
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Seção de Vídeos
+              if (videos.isNotEmpty) ...[
+                const Text(
+                  'Vídeos',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: videos.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final videoData = entry.value;
+                    return CompactVideoIcon(
+                      videoData: videoData['video'], // Para vídeos novos
+                      videoPath:
+                          videoData['videoPath'], // Para vídeos existentes
+                      thumbnail: videoData['thumbnail'],
+                      duration: videoData['duration'],
+                      onDelete: () => _removeVideo(index),
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 8),
+              ],
+
+              // Botão para adicionar vídeo
+              OutlinedButton.icon(
+                onPressed: _pickVideo,
+                icon: const Icon(Icons.videocam),
+                label: const Text('Adicionar Vídeo'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.deepPurple,
+                ),
+              ),
+              const SizedBox(height: 16),
+
               Row(
                 children: [
                   Expanded(

@@ -337,7 +337,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               Navigator.of(context).pop();
               _emailBackupCode(backupCode);
             },
-            child: const Text('Enviar por e-mail'),
+            child: const Text('Compartilhar'),
           ),
           TextButton(
             onPressed: () {

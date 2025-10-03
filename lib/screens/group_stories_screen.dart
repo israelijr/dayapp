@@ -6,11 +6,17 @@ import 'dart:typed_data';
 
 import '../db/database_helper.dart';
 import '../db/historia_foto_helper.dart';
+import '../db/historia_audio_helper.dart';
+import '../db/historia_video_helper.dart';
 import '../models/grupo.dart';
 import '../models/historia.dart';
 import '../models/historia_foto.dart';
+import '../models/historia_audio.dart';
+import '../models/historia_video_v2.dart' as v2;
 import '../providers/auth_provider.dart';
 import '../providers/refresh_provider.dart';
+import '../widgets/compact_audio_icon.dart';
+import '../widgets/compact_video_icon.dart';
 import 'create_historia_screen.dart';
 import 'edit_historia_screen.dart';
 import 'edit_profile_screen.dart';
@@ -224,6 +230,12 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
                     ),
                     const SizedBox(height: 12),
                   ],
+                  // Linha combinada: Emoticon + Áudios + Vídeos
+                  HistoriaMediaRow(
+                    historiaId: historia.id ?? 0,
+                    emoticon: historia.emoticon,
+                    getEmoticonImage: _getEmoticonImage,
+                  ),
                   Text(
                     historia.titulo,
                     style: TextStyle(
@@ -232,15 +244,6 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
                       color: Theme.of(context).textTheme.titleLarge?.color,
                     ),
                   ),
-                  if (historia.emoticon != null &&
-                      historia.emoticon!.isNotEmpty) ...[
-                    const SizedBox(height: 8),
-                    Image.asset(
-                      'assets/image/${_getEmoticonImage(historia.emoticon!)}',
-                      width: 32,
-                      height: 32,
-                    ),
-                  ],
                   if (historia.tag != null && historia.tag!.isNotEmpty) ...[
                     const SizedBox(height: 8),
                     Container(
@@ -924,6 +927,197 @@ class HistoriaFotosGrid extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+// Widget combinado para exibir emoticon, áudios e vídeos em linha horizontal
+class HistoriaMediaRow extends StatelessWidget {
+  final int historiaId;
+  final String? emoticon;
+  final String Function(String) getEmoticonImage;
+
+  const HistoriaMediaRow({
+    super.key,
+    required this.historiaId,
+    this.emoticon,
+    required this.getEmoticonImage,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<Map<String, dynamic>>(
+      future: _loadMediaData(),
+      builder: (context, snapshot) {
+        // Mostra loading enquanto carrega
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const SizedBox.shrink();
+        }
+
+        // Mostra erro se houver
+        if (snapshot.hasError) {
+          debugPrint('Erro ao carregar mídia: ${snapshot.error}');
+          return const SizedBox.shrink();
+        }
+
+        if (!snapshot.hasData) {
+          return const SizedBox.shrink();
+        }
+
+        final data = snapshot.data!;
+        final audios = data['audios'] as List<HistoriaAudio>;
+        final videos = data['videos'] as List<v2.HistoriaVideo>;
+
+        debugPrint(
+          'HistoriaMediaRow [Grupo] - ID: $historiaId, Emoticon: $emoticon, Audios: ${audios.length}, Videos: ${videos.length}',
+        );
+
+        // Se não tem emoticon nem mídia, não mostra nada
+        if ((emoticon == null || emoticon!.isEmpty) &&
+            audios.isEmpty &&
+            videos.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        return Padding(
+          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+          child: SizedBox(
+            height: 64,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: [
+                // Emoticon
+                if (emoticon != null && emoticon!.isNotEmpty)
+                  Container(
+                    margin: const EdgeInsets.only(right: 8),
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Theme.of(context).dividerColor,
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Image.asset(
+                      'assets/image/${getEmoticonImage(emoticon!)}',
+                      width: 40,
+                      height: 40,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Icon(Icons.mood, size: 40);
+                      },
+                    ),
+                  ),
+                // Áudios
+                ...audios.map((audio) {
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: CompactAudioIcon(
+                      audioData: audio.audio,
+                      duration: audio.duracao,
+                    ),
+                  );
+                }),
+                // Vídeos
+                ...videos.map((video) {
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: CompactVideoIcon(
+                      videoPath: video.videoPath, // Caminho do arquivo
+                      duration: video.duracao,
+                    ),
+                  );
+                }),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<Map<String, dynamic>> _loadMediaData() async {
+    try {
+      final audios = await HistoriaAudioHelper().getAudiosByHistoria(
+        historiaId,
+      );
+      final videos = await HistoriaVideoHelper().getVideosByHistoria(
+        historiaId,
+      );
+      debugPrint(
+        '_loadMediaData [Grupo] - Historia $historiaId: ${audios.length} áudios, ${videos.length} vídeos',
+      );
+      return {'audios': audios, 'videos': videos};
+    } catch (e) {
+      debugPrint('Erro em _loadMediaData [Grupo]: $e');
+      return {'audios': <HistoriaAudio>[], 'videos': <v2.HistoriaVideo>[]};
+    }
+  }
+}
+
+// Widget para exibir áudios de uma história (mantido para compatibilidade)
+class HistoriaAudiosSection extends StatelessWidget {
+  final int historiaId;
+
+  const HistoriaAudiosSection({super.key, required this.historiaId});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<HistoriaAudio>>(
+      future: HistoriaAudioHelper().getAudiosByHistoria(historiaId),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        final audios = snapshot.data!;
+        return Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: audios.map((audio) {
+              return CompactAudioIcon(
+                audioData: audio.audio,
+                duration: audio.duracao,
+              );
+            }).toList(),
+          ),
+        );
+      },
+    );
+  }
+}
+
+// Widget para exibir vídeos de uma história (mantido para compatibilidade)
+class HistoriaVideosSection extends StatelessWidget {
+  final int historiaId;
+
+  const HistoriaVideosSection({super.key, required this.historiaId});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<v2.HistoriaVideo>>(
+      future: HistoriaVideoHelper().getVideosByHistoria(historiaId),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        final videos = snapshot.data!;
+        return Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: videos.map((video) {
+              return CompactVideoIcon(
+                videoPath: video.videoPath, // Caminho do arquivo
+                duration: video.duracao,
+              );
+            }).toList(),
           ),
         );
       },
