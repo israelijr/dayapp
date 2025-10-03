@@ -148,6 +148,29 @@ class _HomeScreenState extends State<HomeScreen> {
                       _saveLayoutPreference(false);
                     },
                   ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 6.0),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: () {
+                        Navigator.pushNamed(context, '/calendar');
+                      },
+                      child: Tooltip(
+                        message: 'Ver calendário',
+                        child: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Image.asset(
+                            'assets/image/calendario.png',
+                            width: 28,
+                            height: 28,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               );
             },

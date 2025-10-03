@@ -16,6 +16,7 @@ import 'dart:io';
 import 'package:intl/date_symbol_data_local.dart';
 import 'services/notification_service.dart';
 import 'screens/edit_historia_screen.dart';
+import 'screens/calendar_view_screen.dart';
 import 'db/database_helper.dart';
 import 'models/historia.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -134,6 +135,7 @@ class MyApp extends StatelessWidget {
               '/create_historia': (context) => const CreateHistoriaScreen(),
               '/edit_profile': (context) => const EditProfileScreen(),
               '/settings': (context) => const SettingsScreen(),
+              '/calendar': (context) => const CalendarViewScreen(),
             },
           );
         },
