@@ -60,10 +60,30 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
     _selectedDay = _focusedDay;
     _selectedHistorias = ValueNotifier([]);
     _loadHistorias();
+
+    // Adicionar listener para atualizar quando houver mudanças
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final refreshProvider = Provider.of<RefreshProvider>(
+        context,
+        listen: false,
+      );
+      refreshProvider.addListener(_onRefresh);
+    });
+  }
+
+  void _onRefresh() {
+    if (mounted) {
+      _loadHistorias();
+    }
   }
 
   @override
   void dispose() {
+    final refreshProvider = Provider.of<RefreshProvider>(
+      context,
+      listen: false,
+    );
+    refreshProvider.removeListener(_onRefresh);
     _selectedHistorias.dispose();
     super.dispose();
   }
@@ -172,121 +192,110 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
-      body: Consumer<RefreshProvider>(
-        builder: (context, refreshProvider, child) {
-          // Recarregar quando o provider notificar
-          if (refreshProvider.refreshCounter > 0) {
-            Future.microtask(() => _loadHistorias());
-          }
-
-          if (_isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          return Column(
-            children: [
-              // Calendário
-              Card(
-                margin: const EdgeInsets.all(8),
-                elevation: 2,
-                child: TableCalendar<Historia>(
-                  firstDay: DateTime.utc(2000, 1, 1),
-                  lastDay: DateTime.utc(2100, 12, 31),
-                  focusedDay: _focusedDay,
-                  calendarFormat: _calendarFormat,
-                  selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-                  eventLoader: _getHistoriasForDay,
-                  locale: 'pt_BR',
-                  startingDayOfWeek: StartingDayOfWeek.sunday,
-                  calendarStyle: CalendarStyle(
-                    outsideDaysVisible: false,
-                    todayDecoration: BoxDecoration(
-                      color: Colors.deepPurple.withOpacity(0.5),
-                      shape: BoxShape.circle,
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Column(
+              children: [
+                // Calendário
+                Card(
+                  margin: const EdgeInsets.all(8),
+                  elevation: 2,
+                  child: TableCalendar<Historia>(
+                    firstDay: DateTime.utc(2000, 1, 1),
+                    lastDay: DateTime.utc(2100, 12, 31),
+                    focusedDay: _focusedDay,
+                    calendarFormat: _calendarFormat,
+                    selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+                    eventLoader: _getHistoriasForDay,
+                    locale: 'pt_BR',
+                    startingDayOfWeek: StartingDayOfWeek.sunday,
+                    calendarStyle: CalendarStyle(
+                      outsideDaysVisible: false,
+                      todayDecoration: BoxDecoration(
+                        color: Colors.deepPurple.withOpacity(0.5),
+                        shape: BoxShape.circle,
+                      ),
+                      selectedDecoration: const BoxDecoration(
+                        color: Colors.deepPurple,
+                        shape: BoxShape.circle,
+                      ),
+                      markerDecoration: const BoxDecoration(
+                        color: Colors.deepPurpleAccent,
+                        shape: BoxShape.circle,
+                      ),
+                      markersMaxCount: 3,
                     ),
-                    selectedDecoration: const BoxDecoration(
-                      color: Colors.deepPurple,
-                      shape: BoxShape.circle,
+                    headerStyle: const HeaderStyle(
+                      formatButtonVisible: true,
+                      titleCentered: true,
+                      formatButtonShowsNext: false,
                     ),
-                    markerDecoration: const BoxDecoration(
-                      color: Colors.deepPurpleAccent,
-                      shape: BoxShape.circle,
-                    ),
-                    markersMaxCount: 3,
+                    onDaySelected: (selectedDay, focusedDay) {
+                      if (!isSameDay(_selectedDay, selectedDay)) {
+                        setState(() {
+                          _selectedDay = selectedDay;
+                          _focusedDay = focusedDay;
+                        });
+                        _updateSelectedHistorias(selectedDay);
+                      }
+                    },
+                    onFormatChanged: (format) {
+                      if (_calendarFormat != format) {
+                        setState(() {
+                          _calendarFormat = format;
+                        });
+                      }
+                    },
+                    onPageChanged: (focusedDay) {
+                      _focusedDay = focusedDay;
+                    },
                   ),
-                  headerStyle: const HeaderStyle(
-                    formatButtonVisible: true,
-                    titleCentered: true,
-                    formatButtonShowsNext: false,
-                  ),
-                  onDaySelected: (selectedDay, focusedDay) {
-                    if (!isSameDay(_selectedDay, selectedDay)) {
-                      setState(() {
-                        _selectedDay = selectedDay;
-                        _focusedDay = focusedDay;
-                      });
-                      _updateSelectedHistorias(selectedDay);
-                    }
-                  },
-                  onFormatChanged: (format) {
-                    if (_calendarFormat != format) {
-                      setState(() {
-                        _calendarFormat = format;
-                      });
-                    }
-                  },
-                  onPageChanged: (focusedDay) {
-                    _focusedDay = focusedDay;
-                  },
                 ),
-              ),
 
-              // Divisor
-              const Divider(height: 1),
+                // Divisor
+                const Divider(height: 1),
 
-              // Lista de histórias do dia selecionado
-              Expanded(
-                child: ValueListenableBuilder<List<Historia>>(
-                  valueListenable: _selectedHistorias,
-                  builder: (context, historias, _) {
-                    if (historias.isEmpty) {
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.event_busy,
-                              size: 64,
-                              color: Colors.grey[400],
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Nenhum registro neste dia',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey[600],
+                // Lista de histórias do dia selecionado
+                Expanded(
+                  child: ValueListenableBuilder<List<Historia>>(
+                    valueListenable: _selectedHistorias,
+                    builder: (context, historias, _) {
+                      if (historias.isEmpty) {
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.event_busy,
+                                size: 64,
+                                color: Colors.grey[400],
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
+                              const SizedBox(height: 16),
+                              Text(
+                                'Nenhum registro neste dia',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
 
-                    return ListView.builder(
-                      padding: const EdgeInsets.all(8),
-                      itemCount: historias.length,
-                      itemBuilder: (context, index) {
-                        final historia = historias[index];
-                        return _buildHistoriaCard(historia);
-                      },
-                    );
-                  },
+                      return ListView.builder(
+                        padding: const EdgeInsets.all(8),
+                        itemCount: historias.length,
+                        itemBuilder: (context, index) {
+                          final historia = historias[index];
+                          return _buildHistoriaCard(historia);
+                        },
+                      );
+                    },
+                  ),
                 ),
-              ),
-            ],
-          );
-        },
-      ),
+              ],
+            ),
     );
   }
 

@@ -348,26 +348,38 @@ class _SettingsScreenState extends State<SettingsScreen> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
+        ListTile(
+          leading: const Icon(Icons.manage_accounts_outlined),
+          title: const Text('Gerenciar Backup Completo'),
+          subtitle: const Text('Backup com vídeos, OneDrive, Google Drive'),
+          trailing: const Icon(Icons.arrow_forward_ios),
+          onTap: () {
+            Navigator.pushNamed(context, '/backup-manager');
+          },
+        ),
+        const Divider(),
         if (!_isSignedIn)
           ListTile(
             leading: const Icon(Icons.login),
-            title: const Text('Inicializar Backup'),
+            title: const Text('Inicializar Backup (Apenas DB)'),
+            subtitle: const Text('Backup rápido sem vídeos'),
             onTap: _signIn,
           )
         else ...[
           ListTile(
             leading: const Icon(Icons.backup),
-            title: const Text('Fazer backup'),
+            title: const Text('Fazer backup (Apenas DB)'),
+            subtitle: const Text('Backup rápido sem vídeos'),
             onTap: _performBackup,
           ),
           ListTile(
             leading: const Icon(Icons.restore),
-            title: const Text('Restaurar backup'),
+            title: const Text('Restaurar backup (Apenas DB)'),
             onTap: _showRestoreDialog,
           ),
           ListTile(
             leading: const Icon(Icons.restore_from_trash),
-            title: const Text('Restaurar com código'),
+            title: const Text('Restaurar com código (Apenas DB)'),
             onTap: _showRestoreWithCodeDialog,
           ),
           // Removed explicit "Sair do Google" option per requirements.

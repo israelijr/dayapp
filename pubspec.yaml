@@ -71,6 +71,7 @@ dependencies:
   file_picker: ^8.1.6
   table_calendar: ^3.1.2
   local_auth: ^2.3.0
+  archive: ^3.6.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
