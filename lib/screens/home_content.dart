@@ -207,104 +207,126 @@ class _HomeContentState extends State<HomeContent> {
               ),
             ],
           ),
-          child: Card(
-            margin: const EdgeInsets.only(bottom: cardMargin),
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (hasImages) ...[
-                    HistoriaFotosGrid(
+          child: GestureDetector(
+            onDoubleTap: () {
+              final navigator = Navigator.of(context);
+              final refreshProvider = Provider.of<RefreshProvider>(
+                context,
+                listen: false,
+              );
+              navigator
+                  .push(
+                    MaterialPageRoute(
+                      builder: (_) => EditHistoriaScreen(historia: historia),
+                    ),
+                  )
+                  .then((updated) {
+                    if (!mounted) return;
+                    if (updated == true) {
+                      refreshProvider.refresh();
+                    }
+                  });
+            },
+            child: Card(
+              margin: const EdgeInsets.only(bottom: cardMargin),
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (hasImages) ...[
+                      HistoriaFotosGrid(
+                        historiaId: historia.id ?? 0,
+                        height: 100,
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    // Linha combinada: Emoticon + Áudios + Vídeos
+                    HistoriaMediaRow(
                       historiaId: historia.id ?? 0,
-                      height: 100,
+                      emoticon: historia.emoticon,
+                      getEmoticonImage: _getEmoticonImage,
+                    ),
+                    Text(
+                      historia.titulo,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).textTheme.titleLarge?.color,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      historia.descricao ?? '',
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
+                      ),
                     ),
                     const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          DateFormat(
+                            'dd/MM/yyyy HH:mm',
+                            'pt_BR',
+                          ).format(historia.data),
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Theme.of(context).textTheme.bodySmall?.color,
+                          ),
+                        ),
+                        PopupMenuButton<String>(
+                          icon: Icon(
+                            Icons.more_horiz,
+                            color: Theme.of(context).iconTheme.color,
+                          ),
+                          onSelected: (value) async {
+                            if (value == 'edit') {
+                              final navigator = Navigator.of(context);
+                              final refreshProvider =
+                                  Provider.of<RefreshProvider>(
+                                    context,
+                                    listen: false,
+                                  );
+                              navigator
+                                  .push(
+                                    MaterialPageRoute(
+                                      builder: (_) => EditHistoriaScreen(
+                                        historia: historia,
+                                      ),
+                                    ),
+                                  )
+                                  .then((updated) {
+                                    if (!mounted) return;
+                                    if (updated == true) {
+                                      refreshProvider.refresh();
+                                    }
+                                  });
+                            } else if (value == 'delete') {
+                              await _deleteHistoria(historia);
+                            }
+                          },
+                          itemBuilder: (context) => [
+                            const PopupMenuItem(
+                              value: 'edit',
+                              child: Text('Editar'),
+                            ),
+                            const PopupMenuItem(
+                              value: 'delete',
+                              child: Text('Excluir'),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ],
-                  // Linha combinada: Emoticon + Áudios + Vídeos
-                  HistoriaMediaRow(
-                    historiaId: historia.id ?? 0,
-                    emoticon: historia.emoticon,
-                    getEmoticonImage: _getEmoticonImage,
-                  ),
-                  Text(
-                    historia.titulo,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).textTheme.titleLarge?.color,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    historia.descricao ?? '',
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Theme.of(context).textTheme.bodyMedium?.color,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        DateFormat(
-                          'dd/MM/yyyy HH:mm',
-                          'pt_BR',
-                        ).format(historia.data),
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Theme.of(context).textTheme.bodySmall?.color,
-                        ),
-                      ),
-                      PopupMenuButton<String>(
-                        icon: Icon(
-                          Icons.more_horiz,
-                          color: Theme.of(context).iconTheme.color,
-                        ),
-                        onSelected: (value) async {
-                          if (value == 'edit') {
-                            final navigator = Navigator.of(context);
-                            final refreshProvider =
-                                Provider.of<RefreshProvider>(
-                                  context,
-                                  listen: false,
-                                );
-                            navigator
-                                .push(
-                                  MaterialPageRoute(
-                                    builder: (_) =>
-                                        EditHistoriaScreen(historia: historia),
-                                  ),
-                                )
-                                .then((updated) {
-                                  if (!mounted) return;
-                                  if (updated == true) {
-                                    refreshProvider.refresh();
-                                  }
-                                });
-                          } else if (value == 'delete') {
-                            await _deleteHistoria(historia);
-                          }
-                        },
-                        itemBuilder: (context) => [
-                          const PopupMenuItem(
-                            value: 'edit',
-                            child: Text('Editar'),
-                          ),
-                          const PopupMenuItem(
-                            value: 'delete',
-                            child: Text('Excluir'),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
+                ),
               ),
             ),
           ),

@@ -306,6 +306,17 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
         onTap: () {
           _showHistoriaDetails(historia);
         },
+        onDoubleTap: () async {
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => EditHistoriaScreen(historia: historia),
+            ),
+          );
+          if (result == true) {
+            _loadHistorias();
+          }
+        },
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Column(

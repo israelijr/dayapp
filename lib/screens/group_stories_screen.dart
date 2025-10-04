@@ -212,152 +212,172 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
               ),
             ],
           ),
-          child: Card(
-            margin: const EdgeInsets.only(bottom: cardMargin),
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (hasImages) ...[
-                    HistoriaFotosGrid(
+          child: GestureDetector(
+            onDoubleTap: () {
+              final refreshProvider = Provider.of<RefreshProvider>(
+                context,
+                listen: false,
+              );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => EditHistoriaScreen(historia: historia),
+                ),
+              ).then((updated) {
+                if (!mounted) return;
+                if (updated == true) {
+                  refreshProvider.refresh();
+                }
+              });
+            },
+            child: Card(
+              margin: const EdgeInsets.only(bottom: cardMargin),
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (hasImages) ...[
+                      HistoriaFotosGrid(
+                        historiaId: historia.id ?? 0,
+                        height: 100,
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    // Linha combinada: Emoticon + Áudios + Vídeos
+                    HistoriaMediaRow(
                       historiaId: historia.id ?? 0,
-                      height: 100,
+                      emoticon: historia.emoticon,
+                      getEmoticonImage: _getEmoticonImage,
                     ),
-                    const SizedBox(height: 12),
-                  ],
-                  // Linha combinada: Emoticon + Áudios + Vídeos
-                  HistoriaMediaRow(
-                    historiaId: historia.id ?? 0,
-                    emoticon: historia.emoticon,
-                    getEmoticonImage: _getEmoticonImage,
-                  ),
-                  Text(
-                    historia.titulo,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).textTheme.titleLarge?.color,
+                    Text(
+                      historia.titulo,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).textTheme.titleLarge?.color,
+                      ),
                     ),
-                  ),
-                  if (historia.tag != null && historia.tag!.isNotEmpty) ...[
-                    const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? Colors.blue[700]
-                            : Colors.blue[100],
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        historia.tag!,
-                        style: TextStyle(
-                          fontSize: 12,
+                    if (historia.tag != null && historia.tag!.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
                           color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.blue[100]
-                              : Colors.blue[800],
+                              ? Colors.blue[700]
+                              : Colors.blue[100],
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                      ),
-                    ),
-                  ],
-                  const SizedBox(height: 8),
-                  Text(
-                    historia.descricao ?? '',
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Theme.of(context).textTheme.bodyMedium?.color,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        DateFormat(
-                          'dd/MM/yyyy HH:mm',
-                          'pt_BR',
-                        ).format(historia.data),
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Theme.of(context).textTheme.bodySmall?.color,
+                        child: Text(
+                          historia.tag!,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                ? Colors.blue[100]
+                                : Colors.blue[800],
+                          ),
                         ),
-                      ),
-                      PopupMenuButton<String>(
-                        icon: Icon(
-                          Icons.more_horiz,
-                          color: Theme.of(context).iconTheme.color,
-                        ),
-                        onSelected: (value) async {
-                          if (value == 'edit') {
-                            final refreshProvider =
-                                Provider.of<RefreshProvider>(
-                                  context,
-                                  listen: false,
-                                );
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    EditHistoriaScreen(historia: historia),
-                              ),
-                            ).then((updated) {
-                              if (!mounted) return;
-                              if (updated == true) {
-                                refreshProvider.refresh();
-                              }
-                            });
-                          } else if (value == 'delete') {
-                            await _deleteHistoria(historia);
-                          } else if (value == 'desagrupar') {
-                            final refreshProvider =
-                                Provider.of<RefreshProvider>(
-                                  context,
-                                  listen: false,
-                                );
-                            final messenger = ScaffoldMessenger.of(context);
-                            await _updateHistoria(
-                              historia,
-                              updates: {
-                                'tag': null,
-                                'arquivado': null,
-                                'grupo': null,
-                              },
-                            );
-                            if (!mounted) return;
-                            refreshProvider.refresh();
-                            messenger.showSnackBar(
-                              const SnackBar(
-                                content: Text('História desagrupada'),
-                              ),
-                            );
-                          }
-                        },
-                        itemBuilder: (context) => [
-                          const PopupMenuItem(
-                            value: 'edit',
-                            child: Text('Editar'),
-                          ),
-                          const PopupMenuItem(
-                            value: 'desagrupar',
-                            child: Text('Desagrupar'),
-                          ),
-                          const PopupMenuItem(
-                            value: 'delete',
-                            child: Text('Excluir'),
-                          ),
-                        ],
                       ),
                     ],
-                  ),
-                ],
+                    const SizedBox(height: 8),
+                    Text(
+                      historia.descricao ?? '',
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          DateFormat(
+                            'dd/MM/yyyy HH:mm',
+                            'pt_BR',
+                          ).format(historia.data),
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Theme.of(context).textTheme.bodySmall?.color,
+                          ),
+                        ),
+                        PopupMenuButton<String>(
+                          icon: Icon(
+                            Icons.more_horiz,
+                            color: Theme.of(context).iconTheme.color,
+                          ),
+                          onSelected: (value) async {
+                            if (value == 'edit') {
+                              final refreshProvider =
+                                  Provider.of<RefreshProvider>(
+                                    context,
+                                    listen: false,
+                                  );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      EditHistoriaScreen(historia: historia),
+                                ),
+                              ).then((updated) {
+                                if (!mounted) return;
+                                if (updated == true) {
+                                  refreshProvider.refresh();
+                                }
+                              });
+                            } else if (value == 'delete') {
+                              await _deleteHistoria(historia);
+                            } else if (value == 'desagrupar') {
+                              final refreshProvider =
+                                  Provider.of<RefreshProvider>(
+                                    context,
+                                    listen: false,
+                                  );
+                              final messenger = ScaffoldMessenger.of(context);
+                              await _updateHistoria(
+                                historia,
+                                updates: {
+                                  'tag': null,
+                                  'arquivado': null,
+                                  'grupo': null,
+                                },
+                              );
+                              if (!mounted) return;
+                              refreshProvider.refresh();
+                              messenger.showSnackBar(
+                                const SnackBar(
+                                  content: Text('História desagrupada'),
+                                ),
+                              );
+                            }
+                          },
+                          itemBuilder: (context) => [
+                            const PopupMenuItem(
+                              value: 'edit',
+                              child: Text('Editar'),
+                            ),
+                            const PopupMenuItem(
+                              value: 'desagrupar',
+                              child: Text('Desagrupar'),
+                            ),
+                            const PopupMenuItem(
+                              value: 'delete',
+                              child: Text('Excluir'),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
