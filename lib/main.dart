@@ -18,6 +18,7 @@ import 'services/notification_service.dart';
 import 'screens/edit_historia_screen.dart';
 import 'screens/calendar_view_screen.dart';
 import 'screens/backup_manager_screen.dart';
+import 'screens/trash_screen.dart';
 import 'db/database_helper.dart';
 import 'models/historia.dart';
 // Firebase não é mais necessário - backup agora usa apenas arquivos ZIP locais
@@ -140,6 +141,7 @@ class MyApp extends StatelessWidget {
               '/settings': (context) => const SettingsScreen(),
               '/calendar': (context) => const CalendarViewScreen(),
               '/backup-manager': (context) => const BackupManagerScreen(),
+              '/trash': (context) => const TrashScreen(),
             },
           );
         },

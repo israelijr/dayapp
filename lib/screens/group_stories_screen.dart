@@ -70,7 +70,8 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
     final db = await DatabaseHelper().database;
     final result = await db.query(
       'historia',
-      where: 'user_id = ? AND grupo = ? AND arquivado IS NULL',
+      where:
+          'user_id = ? AND grupo = ? AND arquivado IS NULL AND excluido IS NULL',
       whereArgs: [userId, widget.grupo.nome],
       orderBy: 'data DESC',
     );
@@ -82,7 +83,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Excluir história'),
-        content: const Text('Deseja realmente excluir esta história?'),
+        content: const Text('Deseja mover esta história para a lixeira?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
@@ -98,13 +99,27 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
 
     if (confirm == true) {
       final db = await DatabaseHelper().database;
-      await db.delete('historia', where: 'id = ?', whereArgs: [historia.id]);
+      // Soft delete: marca como excluído ao invés de deletar
+      await db.update(
+        'historia',
+        {
+          'excluido': 'sim',
+          'data_exclusao': DateTime.now().toIso8601String(),
+          'data_update': DateTime.now().toIso8601String(),
+        },
+        where: 'id = ?',
+        whereArgs: [historia.id],
+      );
       if (!mounted) return;
       final refreshProvider = Provider.of<RefreshProvider>(
         context,
         listen: false,
       );
       refreshProvider.refresh();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('História movida para a lixeira')),
+      );
     }
   }
 

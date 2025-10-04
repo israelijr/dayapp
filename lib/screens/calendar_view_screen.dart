@@ -99,7 +99,7 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
       final db = await DatabaseHelper().database;
       final result = await db.query(
         'historia',
-        where: 'user_id = ? AND arquivado IS NULL',
+        where: 'user_id = ? AND arquivado IS NULL AND excluido IS NULL',
         whereArgs: [userId],
         orderBy: 'data DESC',
       );
@@ -147,8 +147,8 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Confirmar exclusão'),
-        content: const Text('Deseja realmente excluir esta história?'),
+        title: const Text('Excluir história'),
+        content: const Text('Deseja mover esta história para a lixeira?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -156,7 +156,7 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Excluir'),
+            child: const Text('Excluir', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -165,11 +165,21 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
     if (confirmed == true) {
       try {
         final db = await DatabaseHelper().database;
-        await db.delete('historia', where: 'id = ?', whereArgs: [historia.id]);
+        // Soft delete: marca como excluído ao invés de deletar
+        await db.update(
+          'historia',
+          {
+            'excluido': 'sim',
+            'data_exclusao': DateTime.now().toIso8601String(),
+            'data_update': DateTime.now().toIso8601String(),
+          },
+          where: 'id = ?',
+          whereArgs: [historia.id],
+        );
 
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('História excluída com sucesso')),
+          const SnackBar(content: Text('História movida para a lixeira')),
         );
 
         _loadHistorias();

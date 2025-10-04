@@ -61,7 +61,7 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
     final db = await DatabaseHelper().database;
     final result = await db.query(
       'historia',
-      where: 'user_id = ? AND arquivado = ?',
+      where: 'user_id = ? AND arquivado = ? AND excluido IS NULL',
       whereArgs: [userId, 'sim'],
       orderBy: 'data DESC',
     );
@@ -73,7 +73,7 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Excluir história'),
-        content: const Text('Deseja realmente excluir esta história?'),
+        content: const Text('Deseja mover esta história para a lixeira?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
@@ -89,13 +89,27 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
 
     if (confirm == true) {
       final db = await DatabaseHelper().database;
-      await db.delete('historia', where: 'id = ?', whereArgs: [historia.id]);
+      // Soft delete: marca como excluído ao invés de deletar
+      await db.update(
+        'historia',
+        {
+          'excluido': 'sim',
+          'data_exclusao': DateTime.now().toIso8601String(),
+          'data_update': DateTime.now().toIso8601String(),
+        },
+        where: 'id = ?',
+        whereArgs: [historia.id],
+      );
       if (!mounted) return;
       final refreshProvider = Provider.of<RefreshProvider>(
         context,
         listen: false,
       );
       refreshProvider.refresh();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('História movida para a lixeira')),
+      );
     }
   }
 

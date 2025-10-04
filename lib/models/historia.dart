@@ -13,6 +13,8 @@ class Historia {
   final String? fotoHistoria;
   final String? grupo;
   final String? arquivado;
+  final String? excluido;
+  final DateTime? dataExclusao;
 
   Historia({
     this.id,
@@ -29,6 +31,8 @@ class Historia {
     this.fotoHistoria,
     this.grupo,
     this.arquivado,
+    this.excluido,
+    this.dataExclusao,
   });
 
   factory Historia.fromMap(Map<String, dynamic> map) {
@@ -51,6 +55,10 @@ class Historia {
       fotoHistoria: map['foto_historia'],
       grupo: map['grupo'],
       arquivado: map['arquivado'],
+      excluido: map['excluido'],
+      dataExclusao: map['data_exclusao'] != null
+          ? DateTime.tryParse(map['data_exclusao'])
+          : null,
     );
   }
 
@@ -70,6 +78,8 @@ class Historia {
       'foto_historia': fotoHistoria,
       'grupo': grupo,
       'arquivado': arquivado,
+      'excluido': excluido,
+      'data_exclusao': dataExclusao?.toIso8601String(),
     };
   }
 }

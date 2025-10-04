@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as p;
 import 'package:flutter/foundation.dart';
@@ -30,7 +29,7 @@ class DatabaseHelper {
       debugPrint('DatabaseHelper: abrindo banco em $path');
       return await openDatabase(
         path,
-        version: 7,
+        version: 8,
         onCreate: _onCreate,
         onUpgrade: _onUpgrade,
       );
@@ -65,6 +64,8 @@ class DatabaseHelper {
           tag TEXT,
           grupo TEXT,
           arquivado TEXT,
+          excluido TEXT,
+          data_exclusao TIMESTAMP,
           descricao TEXT,
           sentimento TEXT,
           emoticon TEXT,
@@ -276,6 +277,19 @@ class DatabaseHelper {
         'ALTER TABLE historia_videos_new RENAME TO historia_videos',
       );
       debugPrint('DatabaseHelper: migração v6 -> v7 concluída');
+    }
+    if (oldVersion < 8) {
+      try {
+        await db.execute('ALTER TABLE historia ADD COLUMN excluido TEXT;');
+        await db.execute(
+          'ALTER TABLE historia ADD COLUMN data_exclusao TIMESTAMP;',
+        );
+        debugPrint(
+          'DatabaseHelper: colunas excluido e data_exclusao adicionadas',
+        );
+      } catch (e) {
+        debugPrint('DatabaseHelper: erro ao adicionar colunas de exclusão: $e');
+      }
     }
   }
 

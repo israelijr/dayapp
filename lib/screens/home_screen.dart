@@ -271,6 +271,14 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             ListTile(
+              leading: const Icon(Icons.delete),
+              title: const Text('Lixeira'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/trash');
+              },
+            ),
+            ListTile(
               leading: const Icon(Icons.settings),
               title: const Text('Configurações'),
               onTap: () {
