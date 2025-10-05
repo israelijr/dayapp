@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 import '../providers/theme_provider.dart';
+import '../providers/pin_provider.dart';
 import '../services/biometric_service.dart';
 import '../db/database_helper.dart';
 import 'manage_groups_screen.dart';
+import 'setup_pin_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -17,11 +19,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final BiometricService _biometricService = BiometricService();
   bool _biometricAvailable = false;
   bool _biometricEnabled = false;
+  bool _pinEnabled = false;
 
   @override
   void initState() {
     super.initState();
     _checkBiometricStatus();
+    _checkPinStatus();
   }
 
   Future<void> _checkBiometricStatus() async {
@@ -31,6 +35,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() {
       _biometricAvailable = available;
       _biometricEnabled = enabled;
+    });
+  }
+
+  Future<void> _checkPinStatus() async {
+    final pinProvider = Provider.of<PinProvider>(context, listen: false);
+    final enabled = await pinProvider.checkPinEnabled();
+
+    setState(() {
+      _pinEnabled = enabled;
     });
   }
 
@@ -97,6 +110,64 @@ class _SettingsScreenState extends State<SettingsScreen> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
+
+        // PIN de segurança
+        ListTile(
+          leading: const Icon(Icons.pin),
+          title: const Text('PIN de Desbloqueio'),
+          subtitle: Text(_pinEnabled ? 'Habilitado' : 'Desabilitado'),
+          trailing: Switch(
+            value: _pinEnabled,
+            onChanged: (value) async {
+              if (value) {
+                final result = await Navigator.push<bool>(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const SetupPinScreen(),
+                  ),
+                );
+                if (result == true) {
+                  await _checkPinStatus();
+                }
+              } else {
+                _showDisablePinDialog();
+              }
+            },
+          ),
+        ),
+
+        if (_pinEnabled)
+          ListTile(
+            leading: const Icon(Icons.edit),
+            title: const Text('Alterar PIN'),
+            dense: true,
+            onTap: () async {
+              final result = await Navigator.push<bool>(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SetupPinScreen(isChanging: true),
+                ),
+              );
+              if (result == true) {
+                await _checkPinStatus();
+              }
+            },
+          ),
+
+        if (_pinEnabled)
+          const ListTile(
+            leading: Icon(Icons.info_outline),
+            title: Text('Informações'),
+            subtitle: Text(
+              'O PIN será solicitado sempre que você abrir o aplicativo '
+              'ou voltar de outro aplicativo.',
+            ),
+            dense: true,
+          ),
+
+        const Divider(),
+
+        // Biometria
         if (!_biometricAvailable)
           const ListTile(
             leading: Icon(Icons.fingerprint),
@@ -349,6 +420,84 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  void _showDisablePinDialog() {
+    final pinController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Desabilitar PIN'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('Para desabilitar o PIN, digite seu PIN atual:'),
+              const SizedBox(height: 16),
+              TextField(
+                controller: pinController,
+                decoration: const InputDecoration(
+                  labelText: 'PIN atual',
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.number,
+                obscureText: true,
+                maxLength: 8,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final pin = pinController.text.trim();
+
+                if (pin.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Digite o PIN'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                  return;
+                }
+
+                final pinProvider = Provider.of<PinProvider>(
+                  context,
+                  listen: false,
+                );
+                final success = await pinProvider.disablePin(pin);
+
+                if (success) {
+                  await _checkPinStatus();
+                  if (!mounted) return;
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('PIN desabilitado com sucesso!'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                } else {
+                  if (!mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('PIN incorreto'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              },
+              child: const Text('Confirmar'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Widget _buildGroupsSection(BuildContext context) {

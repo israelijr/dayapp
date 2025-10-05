@@ -1,6 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+class SentenceCapitalizationTextInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    String capitalizeText(String text) {
+      if (text.isEmpty) return text;
+
+      // Capitaliza a primeira letra do texto
+      String result = text;
+      if (result.isNotEmpty) {
+        result = result[0].toUpperCase() + result.substring(1);
+      }
+
+      // Capitaliza após pontos finais (., !, ?) seguidos de espaço e letra minúscula
+      result = result.replaceAllMapped(
+        RegExp(r'([.!?]\s+)([a-z])'),
+        (match) => match.group(1)! + match.group(2)!.toUpperCase(),
+      );
+
+      // Capitaliza após quebras de linha
+      result = result.replaceAllMapped(
+        RegExp(r'(\n)([a-z])'),
+        (match) => match.group(1)! + match.group(2)!.toUpperCase(),
+      );
+
+      return result;
+    }
+
+    final capitalized = capitalizeText(newValue.text);
+    return newValue.copyWith(text: capitalized, selection: newValue.selection);
+  }
+}
+
 class RichTextEditorScreen extends StatefulWidget {
   final String? initialText;
 
@@ -136,6 +171,9 @@ class _RichTextEditorScreenState extends State<RichTextEditorScreen> {
                         maxLines: null,
                         expands: true,
                         textAlignVertical: TextAlignVertical.top,
+                        inputFormatters: [
+                          SentenceCapitalizationTextInputFormatter(),
+                        ],
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                         ),

@@ -6,9 +6,16 @@ dev_dependencies:
 
 flutter_launcher_icons:
   android: true
+  ios: false
   windows:
     generate: true
   image_path: "assets/icon/icon.png"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/icon/icon.png"
+  adaptive_icon_round: "assets/icon/icon.png"
+  # Para melhor resultado, crie um ícone específico para adaptive (sem padding)
+  # Se tiver um ícone foreground separado, use:
+  # adaptive_icon_foreground: "assets/icon/foreground.png"
 name: dayapp
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
@@ -61,9 +68,6 @@ dependencies:
   sqflite_common_ffi: ^2.3.6
   flutter_local_notifications: ^17.2.2
   timezone: ^0.9.3
-  firebase_core: ^3.0.0
-  firebase_auth: ^5.0.0
-  firebase_storage: ^12.0.0
   flutter_slidable: ^3.1.0
   file_selector: ^0.9.0
   audioplayers: ^6.1.0
@@ -72,6 +76,7 @@ dependencies:
   table_calendar: ^3.1.2
   local_auth: ^2.3.0
   archive: ^3.6.1
+  crypto: ^3.0.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

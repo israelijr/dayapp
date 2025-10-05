@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'providers/auth_provider.dart';
 import 'providers/theme_provider.dart';
 import 'providers/refresh_provider.dart';
+import 'providers/pin_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'dart:io';
 import 'package:intl/date_symbol_data_local.dart';
@@ -21,21 +22,12 @@ import 'screens/backup_manager_screen.dart';
 import 'screens/trash_screen.dart';
 import 'db/database_helper.dart';
 import 'models/historia.dart';
-// Firebase não é mais necessário - backup agora usa apenas arquivos ZIP locais
-// import 'package:firebase_core/firebase_core.dart';
+import 'widgets/pin_protected_wrapper.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Firebase desabilitado - não é mais usado pelo sistema de backup
-  // try {
-  //   await Firebase.initializeApp();
-  //   debugPrint('Firebase inicializado com sucesso');
-  // } catch (e) {
-  //   debugPrint('Erro ao inicializar Firebase: $e');
-  //   // Continue sem Firebase se falhar
-  // }
   await initializeDateFormatting('pt_BR', null);
   // Inicializa sqflite_common_ffi apenas em desktop
   if (!identical(0, 0.0)) {
@@ -55,6 +47,10 @@ void main() async {
 
   // Inicializar RefreshProvider
   final refreshProvider = RefreshProvider();
+
+  // Inicializar PinProvider
+  final pinProvider = PinProvider();
+  await pinProvider.initialize();
 
   // Inicializar notificações
   await NotificationService().init((String? payload) async {
@@ -78,6 +74,7 @@ void main() async {
       authProvider: authProvider,
       themeProvider: themeProvider,
       refreshProvider: refreshProvider,
+      pinProvider: pinProvider,
     ),
   );
 }
@@ -86,12 +83,14 @@ class MyApp extends StatelessWidget {
   final AuthProvider authProvider;
   final ThemeProvider themeProvider;
   final RefreshProvider refreshProvider;
+  final PinProvider pinProvider;
 
   const MyApp({
     super.key,
     required this.authProvider,
     required this.themeProvider,
     required this.refreshProvider,
+    required this.pinProvider,
   });
 
   // This widget is the root of your application.
@@ -102,6 +101,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(value: authProvider),
         ChangeNotifierProvider.value(value: themeProvider),
         ChangeNotifierProvider.value(value: refreshProvider),
+        ChangeNotifierProvider.value(value: pinProvider),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
@@ -135,13 +135,20 @@ class MyApp extends StatelessWidget {
               '/create_account': (context) => const CreateAccountScreen(),
               '/create_account_complement': (context) =>
                   const CreateAccountComplementScreen(),
-              '/home': (context) => const HomeScreen(),
-              '/create_historia': (context) => const CreateHistoriaScreen(),
-              '/edit_profile': (context) => const EditProfileScreen(),
-              '/settings': (context) => const SettingsScreen(),
-              '/calendar': (context) => const CalendarViewScreen(),
-              '/backup-manager': (context) => const BackupManagerScreen(),
-              '/trash': (context) => const TrashScreen(),
+              '/home': (context) =>
+                  const PinProtectedWrapper(child: HomeScreen()),
+              '/create_historia': (context) =>
+                  const PinProtectedWrapper(child: CreateHistoriaScreen()),
+              '/edit_profile': (context) =>
+                  const PinProtectedWrapper(child: EditProfileScreen()),
+              '/settings': (context) =>
+                  const PinProtectedWrapper(child: SettingsScreen()),
+              '/calendar': (context) =>
+                  const PinProtectedWrapper(child: CalendarViewScreen()),
+              '/backup-manager': (context) =>
+                  const PinProtectedWrapper(child: BackupManagerScreen()),
+              '/trash': (context) =>
+                  const PinProtectedWrapper(child: TrashScreen()),
             },
           );
         },

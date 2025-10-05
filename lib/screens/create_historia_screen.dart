@@ -32,19 +32,31 @@ class SentenceCapitalizationTextInputFormatter extends TextInputFormatter {
     TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
-    String _capitalizeText(String text) {
+    String capitalizeText(String text) {
       if (text.isEmpty) return text;
-      // Capitalize first letter
-      String result =
-          text[0].toUpperCase() + (text.length > 1 ? text.substring(1) : '');
-      // Capitalize after sentence endings
-      result = result.replaceAllMapped(RegExp(r'([.!?]\s*)([a-z])'), (match) {
-        return match.group(1)! + match.group(2)!.toUpperCase();
-      });
+
+      // Capitaliza a primeira letra do texto
+      String result = text;
+      if (result.isNotEmpty) {
+        result = result[0].toUpperCase() + result.substring(1);
+      }
+
+      // Capitaliza após pontos finais (., !, ?) seguidos de espaço e letra minúscula
+      result = result.replaceAllMapped(
+        RegExp(r'([.!?]\s+)([a-z])'),
+        (match) => match.group(1)! + match.group(2)!.toUpperCase(),
+      );
+
+      // Capitaliza após quebras de linha
+      result = result.replaceAllMapped(
+        RegExp(r'(\n)([a-z])'),
+        (match) => match.group(1)! + match.group(2)!.toUpperCase(),
+      );
+
       return result;
     }
 
-    final capitalized = _capitalizeText(newValue.text);
+    final capitalized = capitalizeText(newValue.text);
     return newValue.copyWith(text: capitalized, selection: newValue.selection);
   }
 }
@@ -111,13 +123,25 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
 
   String _capitalizeText(String text) {
     if (text.isEmpty) return text;
-    // Capitalize first letter
-    String result =
-        text[0].toUpperCase() + (text.length > 1 ? text.substring(1) : '');
-    // Capitalize after sentence endings
-    result = result.replaceAllMapped(RegExp(r'([.!?]\s*)([a-z])'), (match) {
-      return match.group(1)! + match.group(2)!.toUpperCase();
-    });
+
+    // Capitaliza a primeira letra do texto
+    String result = text;
+    if (result.isNotEmpty) {
+      result = result[0].toUpperCase() + result.substring(1);
+    }
+
+    // Capitaliza após pontos finais (., !, ?) seguidos de espaço e letra minúscula
+    result = result.replaceAllMapped(
+      RegExp(r'([.!?]\s+)([a-z])'),
+      (match) => match.group(1)! + match.group(2)!.toUpperCase(),
+    );
+
+    // Capitaliza após quebras de linha
+    result = result.replaceAllMapped(
+      RegExp(r'(\n)([a-z])'),
+      (match) => match.group(1)! + match.group(2)!.toUpperCase(),
+    );
+
     return result;
   }
 
@@ -379,7 +403,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
         'titulo': _capitalizeText(titleController.text.trim()),
         'descricao': descriptionController.text.trim().isEmpty
             ? null
-            : descriptionController.text.trim(),
+            : _capitalizeText(descriptionController.text.trim()),
         'tag': tagsController.text.trim().isEmpty
             ? null
             : tagsController.text.trim(),

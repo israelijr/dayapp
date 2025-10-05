@@ -1,0 +1,342 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import '../providers/pin_provider.dart';
+import 'dart:ui';
+
+class PinInputScreen extends StatefulWidget {
+  const PinInputScreen({super.key});
+
+  @override
+  State<PinInputScreen> createState() => _PinInputScreenState();
+}
+
+class _PinInputScreenState extends State<PinInputScreen>
+    with TickerProviderStateMixin {
+  final List<String> _digits = ['', '', '', '', '', '', '', ''];
+  int _currentIndex = 0;
+  bool _isLoading = false;
+  String? _errorMessage;
+  late AnimationController _shakeController;
+  late Animation<double> _shakeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    // Garante que o teclado do sistema seja ocultado
+    SystemChannels.textInput.invokeMethod('TextInput.hide');
+    _shakeController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    _shakeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _shakeController, curve: Curves.elasticIn),
+    );
+  }
+
+  @override
+  void dispose() {
+    _shakeController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      resizeToAvoidBottomInset: false, // Impede que a tela redimensione quando o teclado aparecer
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Theme.of(context).colorScheme.primary.withOpacity(0.1),
+              Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+            ],
+          ),
+        ),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                children: [
+                  const Spacer(),
+
+                  // Logo e título
+                  Icon(
+                    Icons.security,
+                    size: 80,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  const SizedBox(height: 24),
+
+                  Text(
+                    'Digite seu PIN',
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+
+                  Text(
+                    'Para acessar o DayApp',
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.7),
+                    ),
+                  ),
+
+                  const SizedBox(height: 48),
+
+                  // Círculos do PIN
+                  AnimatedBuilder(
+                    animation: _shakeAnimation,
+                    builder: (context, child) {
+                      return Transform.translate(
+                        offset: Offset(
+                          _shakeAnimation.value *
+                              10 *
+                              (1 - _shakeAnimation.value) *
+                              2,
+                          0,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(8, (index) {
+                            return Container(
+                              margin: const EdgeInsets.symmetric(horizontal: 8),
+                              width: 20,
+                              height: 20,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: _digits[index].isNotEmpty
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(
+                                        context,
+                                      ).colorScheme.outline.withOpacity(0.3),
+                                border: Border.all(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.outline.withOpacity(0.5),
+                                  width: 1,
+                                ),
+                              ),
+                            );
+                          }),
+                        ),
+                      );
+                    },
+                  ),
+
+                  if (_errorMessage != null) ...[
+                    const SizedBox(height: 24),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.errorContainer,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        _errorMessage!,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onErrorContainer,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+
+                  const SizedBox(height: 48),
+
+                  // Teclado numérico
+                  _buildNumericKeypad(),
+
+                  const Spacer(),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNumericKeypad() {
+    return Column(
+      children: [
+        // Primeira linha (1, 2, 3)
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _buildKeypadButton('1'),
+            _buildKeypadButton('2'),
+            _buildKeypadButton('3'),
+          ],
+        ),
+        const SizedBox(height: 16),
+
+        // Segunda linha (4, 5, 6)
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _buildKeypadButton('4'),
+            _buildKeypadButton('5'),
+            _buildKeypadButton('6'),
+          ],
+        ),
+        const SizedBox(height: 16),
+
+        // Terceira linha (7, 8, 9)
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _buildKeypadButton('7'),
+            _buildKeypadButton('8'),
+            _buildKeypadButton('9'),
+          ],
+        ),
+        const SizedBox(height: 16),
+
+        // Quarta linha (vazio, 0, apagar)
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            const SizedBox(width: 80), // Espaço vazio
+            _buildKeypadButton('0'),
+            _buildBackspaceButton(),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildKeypadButton(String digit) {
+    return InkWell(
+      onTap: _isLoading ? null : () => _onDigitPressed(digit),
+      borderRadius: BorderRadius.circular(40),
+      child: Container(
+        width: 80,
+        height: 80,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Theme.of(context).colorScheme.surface,
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Center(
+          child: Text(
+            digit,
+            style: Theme.of(
+              context,
+            ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w500),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBackspaceButton() {
+    return InkWell(
+      onTap: _isLoading ? null : _onBackspacePressed,
+      borderRadius: BorderRadius.circular(40),
+      child: Container(
+        width: 80,
+        height: 80,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Theme.of(context).colorScheme.surface,
+          border: Border.all(
+            color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Center(
+          child: Icon(
+            Icons.backspace_outlined,
+            size: 24,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _onDigitPressed(String digit) {
+    if (_currentIndex < 8) {
+      setState(() {
+        _digits[_currentIndex] = digit;
+        _currentIndex++;
+        _errorMessage = null;
+      });
+
+      HapticFeedback.lightImpact();
+
+      // Se atingiu o mínimo de dígitos (4), tenta autenticar
+      if (_currentIndex >= 4) {
+        _tryAuthenticate();
+      }
+    }
+  }
+
+  void _onBackspacePressed() {
+    if (_currentIndex > 0) {
+      setState(() {
+        _currentIndex--;
+        _digits[_currentIndex] = '';
+        _errorMessage = null;
+      });
+
+      HapticFeedback.selectionClick();
+    }
+  }
+
+  void _tryAuthenticate() async {
+    if (_currentIndex < 4) return;
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    final pin = _digits.take(_currentIndex).join();
+    final pinProvider = Provider.of<PinProvider>(context, listen: false);
+
+    final success = await pinProvider.authenticate(pin);
+
+    if (success) {
+      HapticFeedback.lightImpact();
+      // O PinProvider notificará os listeners e a tela será ocultada automaticamente
+    } else {
+      HapticFeedback.heavyImpact();
+      _shakeController.reset();
+      _shakeController.forward();
+
+      setState(() {
+        _errorMessage = 'PIN incorreto';
+        _currentIndex = 0;
+        _digits.fillRange(0, 8, '');
+        _isLoading = false;
+      });
+    }
+  }
+}
