@@ -538,7 +538,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
-                  content: Container(
+                  content: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.9,
                     child: SingleChildScrollView(
                       child: _buildCardView(historia),

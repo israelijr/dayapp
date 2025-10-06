@@ -469,7 +469,7 @@ class _HomeContentState extends State<HomeContent> {
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
-                  content: Container(
+                  content: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.9,
                     child: SingleChildScrollView(
                       child: _buildCardView(historia),
@@ -644,7 +644,7 @@ class HistoriaFotosGrid extends StatelessWidget {
           final localImages = List<Uint8List>.from(images);
           final localIds = List<int>.from(ids);
 
-          final _refreshProvider_for_dialog = Provider.of<RefreshProvider>(
+          final refreshProviderForDialog = Provider.of<RefreshProvider>(
             parentContext,
             listen: false,
           );
@@ -827,7 +827,7 @@ class HistoriaFotosGrid extends StatelessWidget {
                                       ),
                                       onPressed: () async {
                                         final id = localIds[currentIndex];
-                                        final refreshProvider_for_dialog =
+                                        final refreshProviderForDialog =
                                             Provider.of<RefreshProvider>(
                                               parentContext,
                                               listen: false,
@@ -904,7 +904,7 @@ class HistoriaFotosGrid extends StatelessWidget {
                                                           legenda: null,
                                                         ),
                                                       );
-                                                  refreshProvider_for_dialog
+                                                  refreshProviderForDialog
                                                       .refresh();
                                                 },
                                               ),
@@ -955,7 +955,7 @@ class HistoriaFotosGrid extends StatelessWidget {
             },
           ).then((deleted) {
             if (deleted == true) {
-              _refreshProvider_for_dialog.refresh();
+              refreshProviderForDialog.refresh();
             }
           });
         }

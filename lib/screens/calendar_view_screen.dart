@@ -222,7 +222,7 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
                     calendarStyle: CalendarStyle(
                       outsideDaysVisible: false,
                       todayDecoration: BoxDecoration(
-                        color: Colors.deepPurple.withOpacity(0.5),
+                        color: Colors.deepPurple.withValues(alpha: 0.5),
                         shape: BoxShape.circle,
                       ),
                       selectedDecoration: const BoxDecoration(

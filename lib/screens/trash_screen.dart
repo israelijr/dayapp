@@ -21,7 +21,7 @@ class TrashScreen extends StatefulWidget {
 }
 
 class _TrashScreenState extends State<TrashScreen> {
-  List<Historia> _selectedItems = [];
+  final List<Historia> _selectedItems = [];
   bool _isSelectionMode = false;
 
   Future<List<Historia>> _fetchDeletedHistorias() async {

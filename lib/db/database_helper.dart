@@ -29,7 +29,7 @@ class DatabaseHelper {
       debugPrint('DatabaseHelper: abrindo banco em $path');
       return await openDatabase(
         path,
-        version: 8,
+        version: 9,
         onCreate: _onCreate,
         onUpgrade: _onUpgrade,
       );
@@ -101,10 +101,10 @@ class DatabaseHelper {
         CREATE TABLE historia_videos (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           historia_id INTEGER NOT NULL,
-          video BLOB NOT NULL,
+          video_path TEXT NOT NULL,
           legenda TEXT,
           duracao INTEGER,
-          thumbnail BLOB,
+          thumbnail_path TEXT,
           FOREIGN KEY (historia_id) REFERENCES historia(id) ON DELETE CASCADE
         );
       ''');
@@ -177,10 +177,10 @@ class DatabaseHelper {
         CREATE TABLE historia_videos (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           historia_id INTEGER NOT NULL,
-          video BLOB NOT NULL,
+          video_path TEXT NOT NULL,
           legenda TEXT,
           duracao INTEGER,
-          thumbnail BLOB,
+          thumbnail_path TEXT,
           FOREIGN KEY (historia_id) REFERENCES historia(id) ON DELETE CASCADE
         );
       ''');
@@ -289,6 +289,48 @@ class DatabaseHelper {
         );
       } catch (e) {
         debugPrint('DatabaseHelper: erro ao adicionar colunas de exclusão: $e');
+      }
+    }
+    if (oldVersion < 9) {
+      // Garantir que a tabela historia_videos tenha a estrutura correta (video_path)
+      try {
+        // Verificar se a tabela existe e tem a estrutura correta
+        final result = await db.rawQuery("PRAGMA table_info(historia_videos)");
+        final hasVideoPath = result.any(
+          (column) => column['name'] == 'video_path',
+        );
+
+        if (!hasVideoPath) {
+          // Tabela ainda usa BLOB, precisa migrar
+          debugPrint(
+            'DatabaseHelper: corrigindo estrutura da tabela historia_videos...',
+          );
+
+          // Criar nova tabela com estrutura correta
+          await db.execute('''
+            CREATE TABLE IF NOT EXISTS historia_videos_fixed (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              historia_id INTEGER NOT NULL,
+              video_path TEXT NOT NULL,
+              legenda TEXT,
+              duracao INTEGER,
+              thumbnail_path TEXT,
+              FOREIGN KEY (historia_id) REFERENCES historia(id) ON DELETE CASCADE
+            );
+          ''');
+
+          // Dropar tabela antiga e renomear nova
+          await db.execute('DROP TABLE IF EXISTS historia_videos');
+          await db.execute(
+            'ALTER TABLE historia_videos_fixed RENAME TO historia_videos',
+          );
+
+          debugPrint(
+            'DatabaseHelper: estrutura da tabela historia_videos corrigida',
+          );
+        }
+      } catch (e) {
+        debugPrint('DatabaseHelper: erro ao corrigir estrutura da tabela: $e');
       }
     }
   }

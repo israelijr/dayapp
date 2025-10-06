@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
-import 'package:flutter/foundation.dart';
 
 class VideoPlayerWidget extends StatefulWidget {
   final List<int>? videoData; // Para vídeos novos (bytes)

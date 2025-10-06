@@ -92,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: active
                             ? Theme.of(
                                 context,
-                              ).colorScheme.secondary.withOpacity(0.14)
+                              ).colorScheme.secondary.withValues(alpha: 0.14)
                             : Colors.transparent,
                         borderRadius: BorderRadius.circular(8),
                         border: active
@@ -104,9 +104,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         boxShadow: active
                             ? [
                                 BoxShadow(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.secondary.withOpacity(0.08),
+                                  color: Theme.of(context).colorScheme.secondary
+                                      .withValues(alpha: 0.08),
                                   blurRadius: 6,
                                   offset: const Offset(0, 2),
                                 ),

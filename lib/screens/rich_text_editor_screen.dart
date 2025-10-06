@@ -49,8 +49,8 @@ class _RichTextEditorScreenState extends State<RichTextEditorScreen> {
   late TextEditingController _controller;
   double _dragOffset = 0.0;
   // Configurable threshold and return animation duration
-  double _threshold = 120.0;
-  Duration _returnDuration = const Duration(milliseconds: 250);
+  final double _threshold = 120.0;
+  final Duration _returnDuration = const Duration(milliseconds: 250);
   bool _isAutoSaving = false;
   bool _showAutoSaveCheck = false;
 
