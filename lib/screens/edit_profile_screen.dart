@@ -23,20 +23,62 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   String? _errorMessage;
   bool _isLoading = false;
   String? _pickedImagePath;
+  AuthProvider? _authProvider; // Salvar referência
+
+  // Helper para mostrar SnackBar sem conflitos de Hero
+  Future<void> _showSnackBar(String message) async {
+    if (!mounted) return;
+
+    // Remove TUDO antes
+    ScaffoldMessenger.of(context)
+      ..removeCurrentSnackBar()
+      ..clearSnackBars();
+
+    // Aguarda Hero limpar completamente
+    await Future.delayed(const Duration(milliseconds: 150));
+
+    if (!mounted) return;
+
+    // Mostra novo SnackBar com action invisível para mudar Hero tag
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 2),
+        // Action invisível força Hero tag diferente
+        action: SnackBarAction(
+          label: ' ',
+          onPressed: () {},
+          textColor: Colors.transparent,
+        ),
+      ),
+    );
+  }
 
   @override
   void initState() {
     super.initState();
-    final user = context.read<AuthProvider>().user!;
-    _nameController = TextEditingController(text: user.nome);
-    _emailController = TextEditingController(text: user.email);
-    _selectedDate = user.dtNascimento;
-    _birthDateController = TextEditingController(
-      text: user.dtNascimento != null
+    // Inicializar controllers vazios
+    _nameController = TextEditingController();
+    _emailController = TextEditingController();
+    _birthDateController = TextEditingController();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Acessar context aqui é seguro
+    if (_authProvider == null) {
+      _authProvider = context.read<AuthProvider>();
+      final user = _authProvider!.user!;
+      _nameController.text = user.nome;
+      _emailController.text = user.email;
+      _selectedDate = user.dtNascimento;
+      _birthDateController.text = user.dtNascimento != null
           ? DateFormat('dd/MM/yyyy').format(user.dtNascimento!)
-          : '',
-    );
-    _pickedImagePath = user.fotoPerfil;
+          : '';
+      _pickedImagePath = user.fotoPerfil;
+    }
   }
 
   @override
@@ -87,9 +129,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     });
 
     if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Perfil atualizado com sucesso!')),
-      );
+      // Mostrar mensagem de sucesso sem conflitos de Hero
+      await _showSnackBar('Perfil atualizado com sucesso!');
+
+      // Aguardar usuário ver mensagem
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      if (!mounted) return;
       Navigator.of(context).pop();
     } else {
       setState(() {
@@ -124,10 +170,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         });
       }
     } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Erro ao selecionar imagem')),
-      );
+      // Mostrar erro sem conflitos de Hero
+      await _showSnackBar('Erro ao selecionar imagem');
     }
   }
 
@@ -233,12 +277,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               const SizedBox(height: 32),
               TextFormField(
                 controller: _nameController,
-                decoration: InputDecoration(
-                  labelText: 'Nome completo',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
+                decoration: const InputDecoration(labelText: 'Nome completo'),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'Nome é obrigatório';
@@ -253,12 +292,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               TextFormField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  labelText: 'E-mail',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
+                decoration: const InputDecoration(labelText: 'E-mail'),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
                     return 'E-mail é obrigatório';
@@ -277,12 +311,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 controller: _birthDateController,
                 readOnly: true,
                 onTap: () => _selectDate(context),
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Data de nascimento',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  suffixIcon: const Icon(Icons.calendar_today),
+                  suffixIcon: Icon(Icons.calendar_today),
                 ),
               ),
               if (_errorMessage != null) ...[
@@ -295,24 +326,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _saveProfile,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).primaryColor,
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
                   ),
                   child: _isLoading
                       ? const SizedBox(
                           height: 20,
                           width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
-                          ),
+                          child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : const Text(
                           'Salvar Alterações',
-                          style: TextStyle(fontSize: 16, color: Colors.white),
+                          style: TextStyle(fontSize: 16),
                         ),
                 ),
               ),

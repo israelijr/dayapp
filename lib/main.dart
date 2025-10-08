@@ -23,6 +23,7 @@ import 'screens/trash_screen.dart';
 import 'db/database_helper.dart';
 import 'models/historia.dart';
 import 'widgets/pin_protected_wrapper.dart';
+import 'theme/m3_expressive_theme.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -109,19 +110,8 @@ class MyApp extends StatelessWidget {
             title: 'DayApp',
             debugShowCheckedModeBanner: false,
             navigatorKey: navigatorKey,
-            theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFFB388FF)),
-              useMaterial3: true,
-              fontFamily: 'Roboto',
-            ),
-            darkTheme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(
-                seedColor: Color(0xFFB388FF),
-                brightness: Brightness.dark,
-              ),
-              useMaterial3: true,
-              fontFamily: 'Roboto',
-            ),
+            theme: M3ExpressiveTheme.getLightTheme(),
+            darkTheme: M3ExpressiveTheme.getDarkTheme(),
             themeMode: themeProvider.themeMode,
             supportedLocales: const [Locale('pt', 'BR'), Locale('en', 'US')],
             localizationsDelegates: const [

@@ -608,7 +608,7 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 12),
-        child: FloatingActionButton(
+        child: FloatingActionButton.extended(
           onPressed: () {
             final refreshProvider = Provider.of<RefreshProvider>(
               context,
@@ -622,8 +622,8 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
               refreshProvider.refresh();
             });
           },
-          backgroundColor: const Color(0xFFB388FF),
-          child: const Icon(Icons.add, color: Colors.white, size: 32),
+          icon: const Icon(Icons.add),
+          label: const Text('Nova História'),
         ),
       ),
     );

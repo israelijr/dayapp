@@ -26,6 +26,7 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
   DateTime? _selectedDay;
   Map<DateTime, List<Historia>> _historiasMap = {};
   bool _isLoading = true;
+  RefreshProvider? _refreshProvider; // Salvar referência
 
   String _getEmoticonImage(String emoticon) {
     switch (emoticon) {
@@ -63,11 +64,8 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
 
     // Adicionar listener para atualizar quando houver mudanças
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final refreshProvider = Provider.of<RefreshProvider>(
-        context,
-        listen: false,
-      );
-      refreshProvider.addListener(_onRefresh);
+      _refreshProvider = Provider.of<RefreshProvider>(context, listen: false);
+      _refreshProvider?.addListener(_onRefresh);
     });
   }
 
@@ -79,11 +77,8 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
 
   @override
   void dispose() {
-    final refreshProvider = Provider.of<RefreshProvider>(
-      context,
-      listen: false,
-    );
-    refreshProvider.removeListener(_onRefresh);
+    // Usar a referência salva em vez de acessar o context
+    _refreshProvider?.removeListener(_onRefresh);
     _selectedHistorias.dispose();
     super.dispose();
   }
@@ -219,6 +214,11 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
                     eventLoader: _getHistoriasForDay,
                     locale: 'pt_BR',
                     startingDayOfWeek: StartingDayOfWeek.sunday,
+                    availableCalendarFormats: const {
+                      CalendarFormat.month: 'Mês',
+                      CalendarFormat.twoWeeks: '2 Semanas',
+                      CalendarFormat.week: 'Semana',
+                    },
                     calendarStyle: CalendarStyle(
                       outsideDaysVisible: false,
                       todayDecoration: BoxDecoration(

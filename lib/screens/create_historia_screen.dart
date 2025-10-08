@@ -800,20 +800,17 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                           ],
                         ),
                         const SizedBox(height: 8),
-                        Container(
+                        SizedBox(
                           height: 150,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
                           child: TextField(
+                            key: const Key('description_field'),
                             controller: descriptionController,
                             maxLines: null,
                             expands: true,
                             textAlignVertical: TextAlignVertical.top,
                             decoration: const InputDecoration(
-                              contentPadding: EdgeInsets.all(8),
-                              border: InputBorder.none,
+                              hintText: 'Digite a descrição...',
+                              alignLabelWithHint: true,
                             ),
                             inputFormatters: [
                               SentenceCapitalizationTextInputFormatter(),
@@ -827,7 +824,6 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                       controller: tagsController,
                       decoration: const InputDecoration(
                         labelText: 'Tags (separadas por vírgula)',
-                        border: OutlineInputBorder(),
                       ),
                     ),
                     const SizedBox(height: 16),

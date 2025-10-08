@@ -15,6 +15,9 @@ class PinProtectedWrapper extends StatefulWidget {
 
 class _PinProtectedWrapperState extends State<PinProtectedWrapper>
     with WidgetsBindingObserver {
+  DateTime? _pausedTime;
+  static const _shortPauseDuration = Duration(seconds: 3);
+
   @override
   void initState() {
     super.initState();
@@ -38,11 +41,24 @@ class _PinProtectedWrapperState extends State<PinProtectedWrapper>
       case AppLifecycleState.inactive:
       case AppLifecycleState.hidden:
         // App foi para background ou perdeu foco
+        // Registra o momento em que o app foi pausado
+        _pausedTime = DateTime.now();
         break;
       case AppLifecycleState.resumed:
         // App voltou para foreground
         if (pinProvider.isPinEnabled) {
-          pinProvider.requireAuthentication();
+          // Verifica quanto tempo o app ficou pausado
+          if (_pausedTime != null) {
+            final pauseDuration = DateTime.now().difference(_pausedTime!);
+            // Se foi uma pausa curta (ex: abrir seletor de mídia), não pede PIN
+            if (pauseDuration > _shortPauseDuration) {
+              pinProvider.requireAuthentication();
+            }
+          } else {
+            // Se não temos registro de quando pausou, pede PIN por segurança
+            pinProvider.requireAuthentication();
+          }
+          _pausedTime = null;
         }
         break;
       case AppLifecycleState.detached:

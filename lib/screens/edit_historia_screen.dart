@@ -703,30 +703,20 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  Container(
+                  SizedBox(
                     height: 150,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Column(
-                      children: [
-                        // Simple multiline text field for description
-                        Expanded(
-                          child: TextField(
-                            controller: descriptionController,
-                            maxLines: null,
-                            expands: true,
-                            textAlignVertical: TextAlignVertical.top,
-                            decoration: const InputDecoration(
-                              contentPadding: EdgeInsets.all(8),
-                              border: InputBorder.none,
-                            ),
-                            inputFormatters: [
-                              SentenceCapitalizationTextInputFormatter(),
-                            ],
-                          ),
-                        ),
+                    child: TextField(
+                      key: const Key('description_field'),
+                      controller: descriptionController,
+                      maxLines: null,
+                      expands: true,
+                      textAlignVertical: TextAlignVertical.top,
+                      decoration: const InputDecoration(
+                        hintText: 'Digite a descrição...',
+                        alignLabelWithHint: true,
+                      ),
+                      inputFormatters: [
+                        SentenceCapitalizationTextInputFormatter(),
                       ],
                     ),
                   ),
@@ -737,7 +727,6 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                 controller: tagsController,
                 decoration: const InputDecoration(
                   labelText: 'Tags (separadas por vírgula)',
-                  border: OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 16),
