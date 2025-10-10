@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'dart:io';
 import '../models/historia.dart';
 import '../db/database_helper.dart';
 import '../db/historia_foto_helper.dart';
@@ -11,9 +10,9 @@ import '../models/historia_foto.dart';
 import '../models/historia_audio.dart';
 import 'package:flutter/services.dart';
 import 'package:file_selector/file_selector.dart';
-import 'package:file_picker/file_picker.dart';
 import 'rich_text_editor_screen.dart';
 import '../widgets/audio_recorder_widget.dart';
+import '../widgets/video_recorder_widget.dart';
 import '../widgets/compact_audio_icon.dart';
 import '../widgets/compact_video_icon.dart';
 // ...existing code...
@@ -262,49 +261,25 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
   }
 
   Future<void> _pickVideo() async {
-    try {
-      debugPrint('Iniciando seleção de vídeo...');
-      final result = await FilePicker.platform.pickFiles(
-        type: FileType.video,
-        allowMultiple: false,
-      );
-
-      if (result != null && result.files.single.path != null) {
-        debugPrint('Arquivo de vídeo selecionado: ${result.files.single.path}');
-        final file = File(result.files.single.path!);
-        final bytes = await file.readAsBytes();
-        debugPrint('Vídeo carregado: ${bytes.length} bytes');
-
-        // Duração e thumbnail serão null por enquanto
-        const estimatedDuration = 0;
-
-        if (!mounted) return;
-        setState(() {
-          videos.add({
-            'video': bytes,
-            'thumbnail': null,
-            'duration': estimatedDuration,
+    showDialog(
+      context: context,
+      builder: (context) => VideoRecorderWidget(
+        onVideoRecorded: (video, duration) {
+          debugPrint('Vídeo recebido: ${video.length} bytes');
+          setState(() {
+            videos.add({
+              'video': video,
+              'thumbnail': null,
+              'duration': duration,
+            });
+            videoIds.add(0); // 0 indica novo vídeo
           });
-          videoIds.add(0); // 0 indica novo vídeo
-        });
-        debugPrint(
-          'Vídeo adicionado à lista. Total de vídeos: ${videos.length}',
-        );
-
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Vídeo adicionado com sucesso!')),
-        );
-      } else {
-        debugPrint('Nenhum arquivo de vídeo foi selecionado');
-      }
-    } catch (e) {
-      debugPrint('Erro ao selecionar vídeo: $e');
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Erro ao selecionar vídeo: $e')));
-    }
+          debugPrint(
+            'Vídeo adicionado à lista. Total de vídeos: ${videos.length}',
+          );
+        },
+      ),
+    );
   }
 
   void _removeVideo(int index) async {
@@ -585,8 +560,8 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
               // Botão para adicionar áudio
               OutlinedButton.icon(
                 onPressed: _recordAudio,
-                icon: const Icon(Icons.mic),
-                label: const Text('Adicionar Áudio'),
+                icon: const Icon(Icons.audiotrack),
+                label: const Text('Áudio'),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.deepPurple,
                 ),
@@ -623,7 +598,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
               OutlinedButton.icon(
                 onPressed: _pickVideo,
                 icon: const Icon(Icons.videocam),
-                label: const Text('Adicionar Vídeo'),
+                label: const Text('Vídeo'),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.deepPurple,
                 ),

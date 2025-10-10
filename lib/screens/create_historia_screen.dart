@@ -14,9 +14,9 @@ import '../services/notification_service.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:file_selector/file_selector.dart';
-import 'package:file_picker/file_picker.dart';
 import 'rich_text_editor_screen.dart';
 import '../widgets/audio_recorder_widget.dart';
+import '../widgets/video_recorder_widget.dart';
 import '../widgets/compact_audio_icon.dart';
 import '../widgets/compact_video_icon.dart';
 
@@ -183,40 +183,20 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
   }
 
   Future<void> _pickVideo() async {
-    try {
-      final result = await FilePicker.platform.pickFiles(
-        type: FileType.video,
-        allowMultiple: false,
-      );
-
-      if (result != null && result.files.single.path != null) {
-        final file = File(result.files.single.path!);
-        final bytes = await file.readAsBytes();
-
-        // Duração e thumbnail serão null por enquanto
-        // Podem ser implementados futuramente com plugins específicos
-        const estimatedDuration = 0;
-
-        if (!mounted) return;
-        setState(() {
-          videos.add({
-            'video': bytes,
-            'thumbnail': null,
-            'duration': estimatedDuration,
+    showDialog(
+      context: context,
+      builder: (context) => VideoRecorderWidget(
+        onVideoRecorded: (video, duration) {
+          setState(() {
+            videos.add({
+              'video': video,
+              'thumbnail': null,
+              'duration': duration,
+            });
           });
-        });
-
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Vídeo adicionado com sucesso!')),
-        );
-      }
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Erro ao selecionar vídeo: $e')));
-    }
+        },
+      ),
+    );
   }
 
   void _removeVideo(int index) {
@@ -677,8 +657,8 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                     // Botão para adicionar áudio
                     OutlinedButton.icon(
                       onPressed: _recordAudio,
-                      icon: const Icon(Icons.mic),
-                      label: const Text('Gravar Áudio'),
+                      icon: const Icon(Icons.audiotrack),
+                      label: const Text('Áudio'),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: Colors.deepPurple,
                       ),
@@ -716,7 +696,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                     OutlinedButton.icon(
                       onPressed: _pickVideo,
                       icon: const Icon(Icons.videocam),
-                      label: const Text('Adicionar Vídeo'),
+                      label: const Text('Vídeo'),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: Colors.deepPurple,
                       ),
