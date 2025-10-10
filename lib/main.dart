@@ -80,7 +80,7 @@ void main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   final AuthProvider authProvider;
   final ThemeProvider themeProvider;
   final RefreshProvider refreshProvider;
@@ -94,15 +94,67 @@ class MyApp extends StatelessWidget {
     required this.pinProvider,
   });
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  DateTime? _pausedTime;
+  static const _shortPauseDuration = Duration(seconds: 3);
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    switch (state) {
+      case AppLifecycleState.paused:
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.hidden:
+        // App foi para background ou perdeu foco
+        _pausedTime = DateTime.now();
+        break;
+      case AppLifecycleState.resumed:
+        // App voltou para foreground
+        if (widget.pinProvider.isPinEnabled) {
+          if (_pausedTime != null) {
+            final pauseDuration = DateTime.now().difference(_pausedTime!);
+            // Se foi uma pausa curta (ex: abrir seletor de mídia), não pede PIN
+            if (pauseDuration > _shortPauseDuration) {
+              widget.pinProvider.requireAuthentication();
+            }
+          } else {
+            // Se não temos registro de quando pausou, pede PIN por segurança
+            widget.pinProvider.requireAuthentication();
+          }
+          _pausedTime = null;
+        }
+        break;
+      case AppLifecycleState.detached:
+        break;
+    }
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider.value(value: authProvider),
-        ChangeNotifierProvider.value(value: themeProvider),
-        ChangeNotifierProvider.value(value: refreshProvider),
-        ChangeNotifierProvider.value(value: pinProvider),
+        ChangeNotifierProvider.value(value: widget.authProvider),
+        ChangeNotifierProvider.value(value: widget.themeProvider),
+        ChangeNotifierProvider.value(value: widget.refreshProvider),
+        ChangeNotifierProvider.value(value: widget.pinProvider),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
@@ -119,7 +171,7 @@ class MyApp extends StatelessWidget {
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
-            initialRoute: authProvider.isLoggedIn ? '/home' : '/login',
+            initialRoute: widget.authProvider.isLoggedIn ? '/home' : '/login',
             routes: {
               '/login': (context) => const LoginScreen(),
               '/create_account': (context) => const CreateAccountScreen(),

@@ -170,9 +170,11 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
-                      if (_isLoading)
-                        const CircularProgressIndicator()
-                      else
+                      if (_isLoading) ...[
+                        const CircularProgressIndicator(),
+                        const SizedBox(height: 16),
+                        const LinearProgressIndicator(),
+                      ] else
                         Icon(
                           _statusMessage.contains('sucesso')
                               ? Icons.check_circle
@@ -184,9 +186,14 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                         ),
                       const SizedBox(height: 12),
                       Text(
-                        _statusMessage,
+                        _statusMessage.isEmpty && _isLoading
+                            ? 'Processando...'
+                            : _statusMessage,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 14),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ],
                   ),
@@ -201,26 +208,32 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
   Future<void> _createAndShareBackup() async {
     setState(() {
       _isLoading = true;
-      _statusMessage = '';
+      _statusMessage = 'Iniciando backup...';
     });
 
     try {
       await _backupService.shareBackupFile(
         onProgress: (message) {
-          setState(() => _statusMessage = message);
+          if (mounted) {
+            setState(() => _statusMessage = message);
+          }
         },
       );
 
-      setState(() {
-        _isLoading = false;
-        _statusMessage =
-            'Arquivo de backup criado! Use o menu de compartilhamento para salvá-lo.';
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _statusMessage =
+              'Arquivo de backup criado! Use o menu de compartilhamento para salvá-lo.';
+        });
+      }
     } catch (e) {
-      setState(() {
-        _isLoading = false;
-        _statusMessage = 'Erro ao criar backup: $e';
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _statusMessage = 'Erro ao criar backup: $e';
+        });
+      }
     }
   }
 
@@ -267,13 +280,15 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
 
       setState(() {
         _isLoading = true;
-        _statusMessage = '';
+        _statusMessage = 'Iniciando restauração...';
       });
 
       await _backupService.restoreFromZipFile(
         filePath,
         onProgress: (message) {
-          setState(() => _statusMessage = message);
+          if (mounted) {
+            setState(() => _statusMessage = message);
+          }
         },
       );
 

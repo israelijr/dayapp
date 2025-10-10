@@ -34,42 +34,60 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
       appBar: AppBar(
         title: Text(widget.isChanging ? 'Alterar PIN' : 'Configurar PIN'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(height: 32),
-            Icon(
-              Icons.security,
-              size: 64,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            const SizedBox(height: 24),
-            Text(
-              widget.isChanging
-                  ? 'Altere seu PIN de segurança'
-                  : 'Crie um PIN de segurança',
-              style: Theme.of(context).textTheme.headlineSmall,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'O PIN deve ter entre 4 e 8 dígitos',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 32),
+              Icon(
+                Icons.security,
+                size: 64,
+                color: Theme.of(context).colorScheme.primary,
               ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 32),
+              const SizedBox(height: 24),
+              Text(
+                widget.isChanging
+                    ? 'Altere seu PIN de segurança'
+                    : 'Crie um PIN de segurança',
+                style: Theme.of(context).textTheme.headlineSmall,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'O PIN deve ter entre 4 e 8 dígitos',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.7),
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 32),
 
-            if (widget.isChanging) ...[
+              if (widget.isChanging) ...[
+                TextField(
+                  controller: _currentPinController,
+                  decoration: const InputDecoration(
+                    labelText: 'PIN atual',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.lock_outline),
+                  ),
+                  keyboardType: TextInputType.number,
+                  obscureText: true,
+                  maxLength: 8,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                ),
+                const SizedBox(height: 16),
+              ],
+
               TextField(
-                controller: _currentPinController,
-                decoration: const InputDecoration(
-                  labelText: 'PIN atual',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.lock_outline),
+                controller: _newPinController,
+                decoration: InputDecoration(
+                  labelText: widget.isChanging ? 'Novo PIN' : 'PIN',
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.lock),
                 ),
                 keyboardType: TextInputType.number,
                 obscureText: true,
@@ -77,70 +95,58 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               ),
               const SizedBox(height: 16),
-            ],
 
-            TextField(
-              controller: _newPinController,
-              decoration: InputDecoration(
-                labelText: widget.isChanging ? 'Novo PIN' : 'PIN',
-                border: const OutlineInputBorder(),
-                prefixIcon: const Icon(Icons.lock),
-              ),
-              keyboardType: TextInputType.number,
-              obscureText: true,
-              maxLength: 8,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            ),
-            const SizedBox(height: 16),
-
-            TextField(
-              controller: _confirmPinController,
-              decoration: const InputDecoration(
-                labelText: 'Confirmar PIN',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.lock),
-              ),
-              keyboardType: TextInputType.number,
-              obscureText: true,
-              maxLength: 8,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            ),
-
-            if (_errorMessage != null) ...[
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.errorContainer,
-                  borderRadius: BorderRadius.circular(8),
+              TextField(
+                controller: _confirmPinController,
+                decoration: const InputDecoration(
+                  labelText: 'Confirmar PIN',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.lock),
                 ),
-                child: Text(
-                  _errorMessage!,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onErrorContainer,
+                keyboardType: TextInputType.number,
+                obscureText: true,
+                maxLength: 8,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              ),
+
+              if (_errorMessage != null) ...[
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.errorContainer,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    _errorMessage!,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onErrorContainer,
+                    ),
                   ),
                 ),
+              ],
+
+              const SizedBox(height: 32),
+
+              ElevatedButton(
+                onPressed: _isLoading ? null : _setupPin,
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
+                child: _isLoading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Text(
+                        widget.isChanging ? 'Alterar PIN' : 'Configurar PIN',
+                      ),
               ),
+
+              const SizedBox(height: 16),
             ],
-
-            const Spacer(),
-
-            ElevatedButton(
-              onPressed: _isLoading ? null : _setupPin,
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-              ),
-              child: _isLoading
-                  ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : Text(widget.isChanging ? 'Alterar PIN' : 'Configurar PIN'),
-            ),
-
-            const SizedBox(height: 16),
-          ],
+          ),
         ),
       ),
     );

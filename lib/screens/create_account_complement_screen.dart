@@ -123,17 +123,28 @@ class _CreateAccountComplementScreenState
                   ),
                 ),
                 const SizedBox(height: 24),
-                Theme(
-                  data: Theme.of(context).copyWith(brightness: Brightness.dark),
-                  child: TextField(
-                    controller: birthDateController,
-                    keyboardType: TextInputType.datetime,
-                    style: TextStyle(color: Colors.white),
-                    decoration: InputDecoration(
-                      labelText: 'Data de nascimento (DD/MM/AAAA)',
-                      labelStyle: TextStyle(color: Colors.white),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+                TextField(
+                  controller: birthDateController,
+                  keyboardType: TextInputType.datetime,
+                  style: const TextStyle(color: Colors.black87),
+                  decoration: InputDecoration(
+                    labelText: 'Data de nascimento (DD/MM/AAAA)',
+                    labelStyle: const TextStyle(color: Colors.black54),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: Color(0xFF5E35B1),
+                        width: 2,
                       ),
                     ),
                   ),
