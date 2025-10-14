@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 import '../providers/auth_provider.dart';
+import '../providers/pin_provider.dart';
 import 'home_content.dart';
 import 'groups_screen.dart';
 import 'edit_profile_screen.dart';
@@ -291,7 +292,13 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () async {
                 final navigator = Navigator.of(context);
                 final auth = Provider.of<AuthProvider>(context, listen: false);
+                final pinProvider = Provider.of<PinProvider>(
+                  context,
+                  listen: false,
+                );
                 await auth.logout();
+                // Atualiza o status de login no PinProvider
+                pinProvider.updateUserLoginStatus(false);
                 if (!mounted) return;
                 navigator.pushReplacementNamed('/login');
               },

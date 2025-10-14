@@ -14,6 +14,7 @@ import '../models/historia_foto.dart';
 import '../models/historia_audio.dart';
 import '../models/historia_video_v2.dart' as v2;
 import '../providers/auth_provider.dart';
+import '../providers/pin_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../widgets/compact_audio_icon.dart';
 import '../widgets/compact_video_icon.dart';
@@ -645,8 +646,14 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
               title: const Text('Sair'),
               onTap: () async {
                 final auth = Provider.of<AuthProvider>(context, listen: false);
+                final pinProvider = Provider.of<PinProvider>(
+                  context,
+                  listen: false,
+                );
                 final navigator = Navigator.of(context);
                 await auth.logout();
+                // Atualiza o status de login no PinProvider
+                pinProvider.updateUserLoginStatus(false);
                 if (!mounted) return;
                 navigator.pushReplacementNamed('/login');
               },

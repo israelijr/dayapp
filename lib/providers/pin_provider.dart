@@ -7,17 +7,20 @@ class PinProvider extends ChangeNotifier {
   bool _isAuthenticated = false;
   bool _isPinEnabled = false;
   bool _shouldShowPinScreen = false;
+  bool _isUserLoggedIn = false;
 
   bool get isAuthenticated => _isAuthenticated;
   bool get isPinEnabled => _isPinEnabled;
   bool get shouldShowPinScreen => _shouldShowPinScreen;
 
   /// Inicializa o provider verificando se o PIN está habilitado
-  Future<void> initialize() async {
+  /// Requer que o status de login do usuário seja informado
+  Future<void> initialize({bool isUserLoggedIn = false}) async {
+    _isUserLoggedIn = isUserLoggedIn;
     _isPinEnabled = await _pinService.isPinEnabled();
 
-    // Se o PIN está habilitado, o usuário precisa se autenticar
-    if (_isPinEnabled) {
+    // Só mostra tela de PIN se o usuário estiver logado E o PIN estiver habilitado
+    if (_isUserLoggedIn && _isPinEnabled) {
       _isAuthenticated = false;
       _shouldShowPinScreen = true;
     } else {
@@ -77,7 +80,8 @@ class PinProvider extends ChangeNotifier {
 
   /// Força a exibição da tela de PIN (quando o app volta do background)
   void requireAuthentication() {
-    if (_isPinEnabled) {
+    // Só exige autenticação se o usuário estiver logado E o PIN estiver habilitado
+    if (_isUserLoggedIn && _isPinEnabled) {
       _isAuthenticated = false;
       _shouldShowPinScreen = true;
       notifyListeners();
@@ -103,5 +107,30 @@ class PinProvider extends ChangeNotifier {
     } catch (e) {
       return false;
     }
+  }
+
+  /// Atualiza o status de login do usuário
+  /// Deve ser chamado quando o usuário faz login ou logout
+  /// [isLoggedIn] - se o usuário está logado
+  /// [skipPinCheck] - se true, não pede PIN imediatamente (útil após login manual)
+  void updateUserLoginStatus(bool isLoggedIn, {bool skipPinCheck = false}) {
+    _isUserLoggedIn = isLoggedIn;
+
+    // Se o usuário fez logout, limpa a autenticação do PIN
+    if (!isLoggedIn) {
+      _isAuthenticated = true;
+      _shouldShowPinScreen = false;
+    } else if (_isPinEnabled && !skipPinCheck) {
+      // Se o usuário fez login e o PIN está habilitado, requer autenticação
+      // (mas não imediatamente após login manual)
+      _isAuthenticated = false;
+      _shouldShowPinScreen = true;
+    } else {
+      // Login manual ou PIN não habilitado - usuário já está autenticado
+      _isAuthenticated = true;
+      _shouldShowPinScreen = false;
+    }
+
+    notifyListeners();
   }
 }

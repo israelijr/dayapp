@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../widgets/custom_text_field.dart';
 import '../providers/auth_provider.dart';
+import '../providers/pin_provider.dart';
 import '../services/biometric_service.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -59,6 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
         });
 
         final auth = Provider.of<AuthProvider>(context, listen: false);
+        final pinProvider = Provider.of<PinProvider>(context, listen: false);
         final navigator = Navigator.of(context);
 
         final success = await auth.login(
@@ -73,6 +75,9 @@ class _LoginScreenState extends State<LoginScreen> {
         });
 
         if (success) {
+          // Atualiza o status de login no PinProvider
+          // skipPinCheck: true porque o usuário acabou de se autenticar com biometria
+          pinProvider.updateUserLoginStatus(true, skipPinCheck: true);
           navigator.pushReplacementNamed('/home');
         } else {
           setState(() {
@@ -91,6 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
       errorMessage = null;
     });
     final auth = Provider.of<AuthProvider>(context, listen: false);
+    final pinProvider = Provider.of<PinProvider>(context, listen: false);
     final navigator = Navigator.of(context);
     // Sempre lembrar o login para persistência
     final success = await auth.login(
@@ -103,6 +109,10 @@ class _LoginScreenState extends State<LoginScreen> {
       loading = false;
     });
     if (success) {
+      // Atualiza o status de login no PinProvider
+      // skipPinCheck: true porque o usuário acabou de se autenticar com email/senha
+      pinProvider.updateUserLoginStatus(true, skipPinCheck: true);
+
       // Se o login foi bem-sucedido e o usuário marcou para habilitar biometria
       if (enableBiometric && biometricAvailable) {
         await _biometricService.enableBiometric(

@@ -9,6 +9,7 @@ import '../db/historia_foto_helper.dart';
 import '../models/historia.dart';
 import '../models/historia_foto.dart';
 import '../providers/auth_provider.dart';
+import '../providers/pin_provider.dart';
 import '../providers/refresh_provider.dart';
 import 'create_historia_screen.dart';
 import 'edit_historia_screen.dart';
@@ -562,8 +563,14 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
               title: const Text('Sair'),
               onTap: () async {
                 final auth = Provider.of<AuthProvider>(context, listen: false);
+                final pinProvider = Provider.of<PinProvider>(
+                  context,
+                  listen: false,
+                );
                 final navigator = Navigator.of(context);
                 await auth.logout();
+                // Atualiza o status de login no PinProvider
+                pinProvider.updateUserLoginStatus(false);
                 if (!mounted) return;
                 navigator.pushReplacementNamed('/login');
               },

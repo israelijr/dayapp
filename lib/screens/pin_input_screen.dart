@@ -59,107 +59,128 @@ class _PinInputScreenState extends State<PinInputScreen>
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                children: [
-                  const Spacer(),
+            child: SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight:
+                      MediaQuery.of(context).size.height -
+                      MediaQuery.of(context).padding.top -
+                      MediaQuery.of(context).padding.bottom,
+                ),
+                child: IntrinsicHeight(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Column(
+                      children: [
+                        const Spacer(flex: 1),
 
-                  // Logo e título
-                  Icon(
-                    Icons.security,
-                    size: 80,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  const SizedBox(height: 24),
-
-                  Text(
-                    'Digite seu PIN',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-
-                  Text(
-                    'Para acessar o DayApp',
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withValues(alpha: 0.7),
-                    ),
-                  ),
-
-                  const SizedBox(height: 48),
-
-                  // Círculos do PIN
-                  AnimatedBuilder(
-                    animation: _shakeAnimation,
-                    builder: (context, child) {
-                      return Transform.translate(
-                        offset: Offset(
-                          _shakeAnimation.value *
-                              10 *
-                              (1 - _shakeAnimation.value) *
-                              2,
-                          0,
+                        // Logo e título
+                        Icon(
+                          Icons.security,
+                          size: 64,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(8, (index) {
-                            return Container(
-                              margin: const EdgeInsets.symmetric(horizontal: 8),
-                              width: 20,
-                              height: 20,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: _digits[index].isNotEmpty
-                                    ? Theme.of(context).colorScheme.primary
-                                    : Theme.of(
-                                        context,
-                                      ).colorScheme.outline.withOpacity(0.3),
-                                border: Border.all(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.outline.withOpacity(0.5),
-                                  width: 1,
-                                ),
+                        const SizedBox(height: 16),
+
+                        Text(
+                          'Digite seu PIN',
+                          style: Theme.of(context).textTheme.headlineMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 8),
+
+                        Text(
+                          'Para acessar o DayApp',
+                          style: Theme.of(context).textTheme.bodyLarge
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.7),
+                              ),
+                        ),
+
+                        const SizedBox(height: 32),
+
+                        // Círculos do PIN
+                        AnimatedBuilder(
+                          animation: _shakeAnimation,
+                          builder: (context, child) {
+                            return Transform.translate(
+                              offset: Offset(
+                                _shakeAnimation.value *
+                                    10 *
+                                    (1 - _shakeAnimation.value) *
+                                    2,
+                                0,
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: List.generate(8, (index) {
+                                  return Container(
+                                    margin: const EdgeInsets.symmetric(
+                                      horizontal: 8,
+                                    ),
+                                    width: 20,
+                                    height: 20,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: _digits[index].isNotEmpty
+                                          ? Theme.of(
+                                              context,
+                                            ).colorScheme.primary
+                                          : Theme.of(context)
+                                                .colorScheme
+                                                .outline
+                                                .withOpacity(0.3),
+                                      border: Border.all(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.outline.withOpacity(0.5),
+                                        width: 1,
+                                      ),
+                                    ),
+                                  );
+                                }),
                               ),
                             );
-                          }),
+                          },
                         ),
-                      );
-                    },
-                  ),
 
-                  if (_errorMessage != null) ...[
-                    const SizedBox(height: 24),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.errorContainer,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        _errorMessage!,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onErrorContainer,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
+                        if (_errorMessage != null) ...[
+                          const SizedBox(height: 24),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.errorContainer,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              _errorMessage!,
+                              style: TextStyle(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onErrorContainer,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ],
+
+                        const SizedBox(height: 32),
+
+                        // Teclado numérico
+                        _buildNumericKeypad(),
+
+                        const Spacer(flex: 1),
+                      ],
                     ),
-                  ],
-
-                  const SizedBox(height: 48),
-
-                  // Teclado numérico
-                  _buildNumericKeypad(),
-
-                  const Spacer(),
-                ],
+                  ),
+                ),
               ),
             ),
           ),

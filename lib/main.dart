@@ -49,9 +49,9 @@ void main() async {
   // Inicializar RefreshProvider
   final refreshProvider = RefreshProvider();
 
-  // Inicializar PinProvider
+  // Inicializar PinProvider (passa o status de login do usuário)
   final pinProvider = PinProvider();
-  await pinProvider.initialize();
+  await pinProvider.initialize(isUserLoggedIn: authProvider.isLoggedIn);
 
   // Inicializar notificações
   await NotificationService().init((String? payload) async {
