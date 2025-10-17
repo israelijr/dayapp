@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'dart:typed_data';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 
 import '../db/database_helper.dart';
 import '../db/historia_foto_helper.dart';
@@ -794,13 +796,15 @@ class HistoriaFotosGrid extends StatelessWidget {
                                       );
                                       try {
                                         final bytes = localImages[currentIndex];
+                                        final tempDir =
+                                            await getTemporaryDirectory();
+                                        final file = File(
+                                          '${tempDir.path}/image_${currentIndex + 1}.png',
+                                        );
+                                        await file.writeAsBytes(bytes);
+                                        // ignore: deprecated_member_use
                                         await Share.shareXFiles([
-                                          XFile.fromData(
-                                            bytes,
-                                            mimeType: 'image/png',
-                                            name:
-                                                'image_${currentIndex + 1}.png',
-                                          ),
+                                          XFile(file.path),
                                         ]);
                                       } catch (_) {
                                         messenger.showSnackBar(

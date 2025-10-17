@@ -168,13 +168,16 @@ class _TrashScreenState extends State<TrashScreen> {
   Future<void> _emptyTrash() async {
     final historias = await _fetchDeletedHistorias();
     if (historias.isEmpty) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(
+        // ignore: use_build_context_synchronously
         context,
       ).showSnackBar(const SnackBar(content: Text('A lixeira já está vazia')));
       return;
     }
 
     final confirm = await showDialog<bool>(
+      // ignore: use_build_context_synchronously
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Esvaziar lixeira'),
@@ -199,6 +202,7 @@ class _TrashScreenState extends State<TrashScreen> {
 
     if (confirm == true) {
       final db = await DatabaseHelper().database;
+      // ignore: use_build_context_synchronously
       final auth = Provider.of<AuthProvider>(context, listen: false);
       final userId = auth.user?.id ?? '';
       await db.delete(
@@ -276,7 +280,7 @@ class _TrashScreenState extends State<TrashScreen> {
     return Card(
       elevation: isSelected ? 8 : 2,
       color: isSelected
-          ? Theme.of(context).primaryColor.withOpacity(0.1)
+          ? Theme.of(context).primaryColor.withValues(alpha: 0.1 * 255)
           : null,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: InkWell(

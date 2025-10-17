@@ -131,11 +131,12 @@ class _PinInputScreenState extends State<PinInputScreen>
                                           : Theme.of(context)
                                                 .colorScheme
                                                 .outline
-                                                .withOpacity(0.3),
+                                                .withValues(alpha: 0.3 * 255),
                                       border: Border.all(
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.outline.withOpacity(0.5),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .outline
+                                            .withValues(alpha: 0.5 * 255),
                                         width: 1,
                                       ),
                                     ),
@@ -249,11 +250,13 @@ class _PinInputScreenState extends State<PinInputScreen>
           shape: BoxShape.circle,
           color: Theme.of(context).colorScheme.surface,
           border: Border.all(
-            color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+            color: Theme.of(
+              context,
+            ).colorScheme.outline.withValues(alpha: 0.3 * 255),
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1 * 255),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
@@ -282,11 +285,13 @@ class _PinInputScreenState extends State<PinInputScreen>
           shape: BoxShape.circle,
           color: Theme.of(context).colorScheme.surface,
           border: Border.all(
-            color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+            color: Theme.of(
+              context,
+            ).colorScheme.outline.withValues(alpha: 0.3 * 255),
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1 * 255),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),

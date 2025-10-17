@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -21,7 +23,6 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   final Map<String, int> _emoticonCounts = {};
   final Map<String, double> _emoticonPercentages = {};
   int _longestStreak = 0;
-  int _currentStreak = 0;
   List<bool> _weekDays = List.filled(7, false);
 
   @override
@@ -78,7 +79,6 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   void _calculateStreaks() {
     if (_historias.isEmpty) {
       _longestStreak = 0;
-      _currentStreak = 0;
       _weekDays = List.filled(7, false);
       return;
     }
@@ -130,10 +130,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           break;
         }
       }
-      _currentStreak = streak;
-    } else {
-      _currentStreak = 0;
-    }
+    } else {}
 
     _longestStreak = longestStreak;
 
@@ -744,9 +741,9 @@ class AreaChartPainter extends CustomPainter {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          primaryColor.withOpacity(0.6),
-          primaryColor.withOpacity(0.3),
-          primaryColor.withOpacity(0.1),
+          primaryColor.withValues(alpha: 0.6 * 255),
+          primaryColor.withValues(alpha: 0.3 * 255),
+          primaryColor.withValues(alpha: 0.1 * 255),
         ],
       ).createShader(Rect.fromLTWH(leftMargin, 0, chartWidth, size.height));
 

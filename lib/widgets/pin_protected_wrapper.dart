@@ -20,7 +20,7 @@ class PinProtectedWrapper extends StatelessWidget {
               BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                 child: Container(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withValues(alpha: 0.3 * 255),
                   child: this.child,
                 ),
               ),

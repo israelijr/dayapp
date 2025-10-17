@@ -204,7 +204,10 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                 gradient: LinearGradient(
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
-                  colors: [Colors.black.withOpacity(0.7), Colors.transparent],
+                  colors: [
+                    Colors.black.withValues(alpha: 0.7 * 255),
+                    Colors.transparent,
+                  ],
                 ),
               ),
               child: Row(

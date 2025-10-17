@@ -19,10 +19,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _biometricAvailable = false;
   bool _biometricEnabled = false;
   bool _pinEnabled = false;
+  late PinProvider _pinProvider;
 
   @override
   void initState() {
     super.initState();
+    _pinProvider = Provider.of<PinProvider>(context, listen: false);
     _checkBiometricStatus();
     _checkPinStatus();
   }
@@ -38,8 +40,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _checkPinStatus() async {
-    final pinProvider = Provider.of<PinProvider>(context, listen: false);
-    final enabled = await pinProvider.checkPinEnabled();
+    final enabled = await _pinProvider.checkPinEnabled();
 
     setState(() {
       _pinEnabled = enabled;
@@ -187,6 +188,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   await _biometricService.disableBiometric();
                   await _checkBiometricStatus();
                   if (!mounted) return;
+                  // ignore: use_build_context_synchronously
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Biometria desabilitada'),
@@ -215,9 +217,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final emailController = TextEditingController();
     final passwordController = TextEditingController();
     bool obscurePassword = true;
+    final outerContext = context;
 
     showDialog(
-      context: context,
+      context: outerContext,
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (context, setDialogState) {
@@ -272,7 +275,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     final password = passwordController.text;
 
                     if (email.isEmpty || password.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
+                      ScaffoldMessenger.of(outerContext).showSnackBar(
                         const SnackBar(
                           content: Text('Preencha todos os campos'),
                           backgroundColor: Colors.red,
@@ -291,7 +294,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                     if (result.isEmpty) {
                       if (!mounted) return;
-                      ScaffoldMessenger.of(context).showSnackBar(
+                      // ignore: use_build_context_synchronously
+                      ScaffoldMessenger.of(outerContext).showSnackBar(
                         const SnackBar(
                           content: Text('E-mail ou senha inválidos'),
                           backgroundColor: Colors.red,
@@ -310,8 +314,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       await _biometricService.enableBiometric(email, password);
                       await _checkBiometricStatus();
                       if (!mounted) return;
+                      // ignore: use_build_context_synchronously
                       Navigator.of(context).pop();
-                      ScaffoldMessenger.of(context).showSnackBar(
+                      // ignore: use_build_context_synchronously
+                      ScaffoldMessenger.of(outerContext).showSnackBar(
                         const SnackBar(
                           content: Text('Biometria habilitada com sucesso!'),
                           backgroundColor: Colors.green,
@@ -319,7 +325,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       );
                     } else {
                       if (!mounted) return;
-                      ScaffoldMessenger.of(context).showSnackBar(
+                      // ignore: use_build_context_synchronously
+                      ScaffoldMessenger.of(outerContext).showSnackBar(
                         const SnackBar(
                           content: Text('Falha na autenticação biométrica'),
                           backgroundColor: Colors.red,
@@ -341,50 +348,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
+        return SimpleDialog(
           title: const Text('Escolher Tema'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              RadioListTile<ThemeMode>(
-                title: const Text('Claro'),
-                value: ThemeMode.light,
-                groupValue: themeProvider.themeMode,
-                onChanged: (ThemeMode? value) {
-                  if (value != null) {
-                    themeProvider.setThemeMode(value);
-                    Navigator.of(context).pop();
-                  }
-                },
-              ),
-              RadioListTile<ThemeMode>(
-                title: const Text('Escuro'),
-                value: ThemeMode.dark,
-                groupValue: themeProvider.themeMode,
-                onChanged: (ThemeMode? value) {
-                  if (value != null) {
-                    themeProvider.setThemeMode(value);
-                    Navigator.of(context).pop();
-                  }
-                },
-              ),
-              RadioListTile<ThemeMode>(
-                title: const Text('Sistema'),
-                value: ThemeMode.system,
-                groupValue: themeProvider.themeMode,
-                onChanged: (ThemeMode? value) {
-                  if (value != null) {
-                    themeProvider.setThemeMode(value);
-                    Navigator.of(context).pop();
-                  }
-                },
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancelar'),
+          children: [
+            SimpleDialogOption(
+              onPressed: () {
+                themeProvider.setThemeMode(ThemeMode.light);
+                Navigator.of(context).pop();
+              },
+              child: const Text('Claro'),
+            ),
+            SimpleDialogOption(
+              onPressed: () {
+                themeProvider.setThemeMode(ThemeMode.dark);
+                Navigator.of(context).pop();
+              },
+              child: const Text('Escuro'),
+            ),
+            SimpleDialogOption(
+              onPressed: () {
+                themeProvider.setThemeMode(ThemeMode.system);
+                Navigator.of(context).pop();
+              },
+              child: const Text('Sistema'),
             ),
           ],
         );
@@ -423,9 +409,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   void _showDisablePinDialog() {
     final pinController = TextEditingController();
+    final outerContext = context;
 
     showDialog(
-      context: context,
+      context: outerContext,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Desabilitar PIN'),
@@ -456,7 +443,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 final pin = pinController.text.trim();
 
                 if (pin.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  ScaffoldMessenger.of(outerContext).showSnackBar(
                     const SnackBar(
                       content: Text('Digite o PIN'),
                       backgroundColor: Colors.red,
@@ -465,17 +452,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   return;
                 }
 
-                final pinProvider = Provider.of<PinProvider>(
-                  context,
-                  listen: false,
-                );
+                final pinProvider = _pinProvider;
                 final success = await pinProvider.disablePin(pin);
 
                 if (success) {
                   await _checkPinStatus();
                   if (!mounted) return;
+                  // ignore: use_build_context_synchronously
                   Navigator.of(context).pop();
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  // ignore: use_build_context_synchronously
+                  ScaffoldMessenger.of(outerContext).showSnackBar(
                     const SnackBar(
                       content: Text('PIN desabilitado com sucesso!'),
                       backgroundColor: Colors.green,
@@ -483,7 +469,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   );
                 } else {
                   if (!mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  // ignore: use_build_context_synchronously
+                  ScaffoldMessenger.of(outerContext).showSnackBar(
                     const SnackBar(
                       content: Text('PIN incorreto'),
                       backgroundColor: Colors.red,

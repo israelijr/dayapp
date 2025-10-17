@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:sqflite/sqflite.dart';
 
 void main() {
   setUpAll(() {
@@ -63,7 +62,9 @@ void main() {
         expect(columnNames, isNot(contains('video')));
         expect(columnNames, isNot(contains('thumbnail')));
 
+        // ignore: avoid_print
         print('✅ Estrutura da tabela historia_videos está correta');
+        // ignore: avoid_print
         print('   Colunas encontradas: $columnNames');
       },
     );
@@ -100,9 +101,13 @@ void main() {
       expect(videos.first['duracao'], 30);
       expect(videos.first['thumbnail_path'], '/caminho/para/thumbnail.jpg');
 
+      // ignore: avoid_print
       print('✅ Inserção e recuperação de vídeo funcionando');
+      // ignore: avoid_print
       print('   - ID: ${videos.first['id']}');
+      // ignore: avoid_print
       print('   - Caminho: ${videos.first['video_path']}');
+      // ignore: avoid_print
       print('   - Duração: ${videos.first['duracao']}s');
     });
   });

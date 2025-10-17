@@ -187,7 +187,9 @@ class _RichTextEditorScreenState extends State<RichTextEditorScreen> {
                     child: IgnorePointer(
                       ignoring: true,
                       child: Container(
-                        color: Colors.black.withOpacity(overlayOpacity),
+                        color: Colors.black.withValues(
+                          alpha: overlayOpacity * 255,
+                        ),
                       ),
                     ),
                   ),

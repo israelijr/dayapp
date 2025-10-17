@@ -43,6 +43,7 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
   Future<void> _shareCurrent() async {
     try {
       final bytes = widget.images[_currentIndex];
+      // ignore: deprecated_member_use
       await Share.shareXFiles([
         XFile.fromData(
           bytes,
@@ -67,10 +68,11 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
           );
         }
       } catch (_) {
-        if (mounted)
+        if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Não foi possível compartilhar')),
           );
+        }
       }
     }
   }

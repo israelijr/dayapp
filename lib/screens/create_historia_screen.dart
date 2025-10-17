@@ -239,66 +239,35 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
     await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
+        return SimpleDialog(
           title: const Text('Agendar Notificação'),
-          content: SizedBox(
-            width: double.maxFinite,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'Quando você gostaria de ser notificado sobre esta história?',
-                ),
-                const SizedBox(height: 16),
-                Flexible(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        ...[
-                          // {
-                          //   'label': 'Imediata (teste)',
-                          //   'duration': Duration.zero,
-                          // },
-                          // {
-                          //   'label': 'Agora (teste)',
-                          //   'duration': const Duration(seconds: 10),
-                          // },
-                          {
-                            'label': '1 hora antes',
-                            'duration': const Duration(hours: 1),
-                          },
-                          {
-                            'label': '1 dia antes',
-                            'duration': const Duration(days: 1),
-                          },
-                          {
-                            'label': '1 semana antes',
-                            'duration': const Duration(days: 7),
-                          },
-                        ].map(
-                          (option) => RadioListTile<Duration>(
-                            title: Text(option['label'] as String),
-                            value: option['duration'] as Duration,
-                            groupValue: selectedDuration,
-                            onChanged: (Duration? value) {
-                              setState(() {
-                                selectedDuration = value;
-                              });
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                'Quando você gostaria de ser notificado sobre esta história?',
+              ),
             ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancelar'),
+            ...[
+              // {
+              //   'label': 'Imediata (teste)',
+              //   'duration': Duration.zero,
+              // },
+              // {
+              //   'label': 'Agora (teste)',
+              //   'duration': const Duration(seconds: 10),
+              // },
+              {'label': '1 hora antes', 'duration': const Duration(hours: 1)},
+              {'label': '1 dia antes', 'duration': const Duration(days: 1)},
+              {'label': '1 semana antes', 'duration': const Duration(days: 7)},
+            ].map(
+              (option) => SimpleDialogOption(
+                onPressed: () {
+                  selectedDuration = option['duration'] as Duration;
+                  Navigator.of(context).pop();
+                },
+                child: Text(option['label'] as String),
+              ),
             ),
           ],
         );

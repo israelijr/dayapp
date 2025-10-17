@@ -59,8 +59,11 @@ class _LoginScreenState extends State<LoginScreen> {
           errorMessage = null;
         });
 
+        // ignore: use_build_context_synchronously
         final auth = Provider.of<AuthProvider>(context, listen: false);
+        // ignore: use_build_context_synchronously
         final pinProvider = Provider.of<PinProvider>(context, listen: false);
+        // ignore: use_build_context_synchronously
         final navigator = Navigator.of(context);
 
         final success = await auth.login(
@@ -120,6 +123,7 @@ class _LoginScreenState extends State<LoginScreen> {
           passwordController.text,
         );
         if (!mounted) return;
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Biometria habilitada com sucesso!'),

@@ -150,6 +150,7 @@ Versão: 1.0.0
       }
 
       // Compartilhar arquivo
+      // ignore: deprecated_member_use
       final result = await Share.shareXFiles(
         [XFile(zipPath)],
         subject: 'Backup DayApp',

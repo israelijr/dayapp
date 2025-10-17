@@ -1,8 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/foundation.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:sqflite/sqflite.dart';
-import '../lib/db/historia_video_helper.dart';
+import 'package:dayapp/db/historia_video_helper.dart';
 import 'dart:typed_data';
 import 'package:flutter/services.dart';
 
@@ -101,11 +100,16 @@ void main() {
         expect(videos.first['duracao'], 30);
         expect(videos.first['video_path'], isNotNull);
 
+        // ignore: avoid_print
         print('✅ Vídeo salvo com sucesso no banco de dados');
+        // ignore: avoid_print
         print('   - ID do vídeo: $videoId');
+        // ignore: avoid_print
         print('   - Caminho: ${videos.first['video_path']}');
+        // ignore: avoid_print
         print('   - Duração: ${videos.first['duracao']} segundos');
       } catch (e) {
+        // ignore: avoid_print
         print('❌ Erro ao salvar vídeo: $e');
         rethrow;
       }
@@ -143,11 +147,16 @@ void main() {
         expect(videos[0].historiaId, historiaId);
         expect(videos[1].historiaId, historiaId);
 
+        // ignore: avoid_print
         print('✅ Vídeos recuperados com sucesso');
+        // ignore: avoid_print
         print('   - Total de vídeos: ${videos.length}');
+        // ignore: avoid_print
         print('   - Vídeo 1: ${videos[0].duracao}s');
+        // ignore: avoid_print
         print('   - Vídeo 2: ${videos[1].duracao}s');
       } catch (e) {
+        // ignore: avoid_print
         print('❌ Erro ao recuperar vídeos: $e');
         rethrow;
       }
