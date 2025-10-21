@@ -81,6 +81,9 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
   bool _isLoading = false;
   String? selectedEmoticon;
 
+  // Controle de alterações não salvas
+  bool _hasUnsavedChanges = false;
+
   final List<String> emoticons = [
     'Feliz',
     'Tranquilo',
@@ -145,6 +148,44 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
     return result;
   }
 
+  @override
+  void initState() {
+    super.initState();
+    // Adiciona listeners para detectar mudanças
+    titleController.addListener(_checkForChanges);
+    descriptionController.addListener(_checkForChanges);
+    tagsController.addListener(_checkForChanges);
+  }
+
+  void _checkForChanges() {
+    // Na tela de criação, qualquer coisa digitada é considerada mudança
+    final hasChanges =
+        titleController.text.isNotEmpty ||
+        descriptionController.text.isNotEmpty ||
+        tagsController.text.isNotEmpty ||
+        fotos.isNotEmpty ||
+        audios.isNotEmpty ||
+        videos.isNotEmpty ||
+        selectedEmoticon != null;
+
+    if (hasChanges != _hasUnsavedChanges) {
+      setState(() {
+        _hasUnsavedChanges = hasChanges;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    titleController.removeListener(_checkForChanges);
+    descriptionController.removeListener(_checkForChanges);
+    tagsController.removeListener(_checkForChanges);
+    titleController.dispose();
+    descriptionController.dispose();
+    tagsController.dispose();
+    super.dispose();
+  }
+
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     final picked = await picker.pickImage(source: ImageSource.gallery);
@@ -153,6 +194,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
       if (!mounted) return;
       setState(() {
         fotos.add(bytes);
+        _checkForChanges();
       });
     }
   }
@@ -160,6 +202,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
   void _removeFoto(int index) {
     setState(() {
       fotos.removeAt(index);
+      _checkForChanges();
     });
   }
 
@@ -170,6 +213,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
         onAudioRecorded: (audio, duration) {
           setState(() {
             audios.add({'audio': audio, 'duration': duration});
+            _checkForChanges();
           });
         },
       ),
@@ -179,6 +223,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
   void _removeAudio(int index) {
     setState(() {
       audios.removeAt(index);
+      _checkForChanges();
     });
   }
 
@@ -193,6 +238,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
               'thumbnail': null,
               'duration': duration,
             });
+            _checkForChanges();
           });
         },
       ),
@@ -202,6 +248,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
   void _removeVideo(int index) {
     setState(() {
       videos.removeAt(index);
+      _checkForChanges();
     });
   }
 
@@ -476,349 +523,414 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
     final dateFormat = DateFormat('dd/MM/yyyy HH:mm', 'pt_BR');
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Nova História'),
-        actions: [
-          if (_isLoading)
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: SizedBox(
-                width: 16,
-                height: 16,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              ),
-            )
-          else
-            TextButton(
-              onPressed: _saveHistoria,
-              child: const Text(
-                'Salvar',
-                style: TextStyle(color: Colors.deepPurple),
-              ),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, dynamic result) async {
+        if (didPop) return;
+
+        // Se não há alterações não salvas, pode sair
+        if (!_hasUnsavedChanges) {
+          Navigator.of(context).pop();
+          return;
+        }
+
+        // Se está salvando, bloqueia
+        if (_isLoading) return;
+
+        // Mostra diálogo de confirmação
+        final dialogResult = await showDialog<String>(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => AlertDialog(
+            title: const Text('Descartar história?'),
+            content: const Text(
+              'Você tem uma nova história não salva. Deseja sair sem salvar?',
             ),
-        ],
-      ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(16),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Grid de fotos
-                    SizedBox(
-                      height: 100,
-                      child: fotos.isEmpty
-                          ? GestureDetector(
-                              onTap: _pickImage,
-                              child: Container(
-                                width: 100,
-                                height: 100,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[200],
-                                  borderRadius: BorderRadius.circular(12),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop('cancel'),
+                child: const Text('Cancelar'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop('discard'),
+                style: TextButton.styleFrom(foregroundColor: Colors.red),
+                child: const Text('Descartar'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop('save'),
+                child: const Text('Salvar'),
+              ),
+            ],
+          ),
+        );
+
+        if (!context.mounted) return;
+
+        if (dialogResult == 'save') {
+          await _saveHistoria();
+        } else if (dialogResult == 'discard') {
+          Navigator.of(context).pop();
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Nova História'),
+          actions: [
+            if (_isLoading)
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              )
+            else
+              TextButton(
+                onPressed: _saveHistoria,
+                child: const Text(
+                  'Salvar',
+                  style: TextStyle(color: Colors.deepPurple),
+                ),
+              ),
+          ],
+        ),
+        body: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : Padding(
+                padding: const EdgeInsets.all(16),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Grid de fotos
+                      SizedBox(
+                        height: 100,
+                        child: fotos.isEmpty
+                            ? GestureDetector(
+                                onTap: _pickImage,
+                                child: Container(
+                                  width: 100,
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[200],
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: const Icon(
+                                    Icons.add_a_photo,
+                                    color: Colors.deepPurple,
+                                    size: 32,
+                                  ),
                                 ),
-                                child: const Icon(
-                                  Icons.add_a_photo,
-                                  color: Colors.deepPurple,
-                                  size: 32,
-                                ),
-                              ),
-                            )
-                          : ListView.separated(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: fotos.length + 1,
-                              separatorBuilder: (_, __) =>
-                                  const SizedBox(width: 8),
-                              itemBuilder: (context, i) {
-                                if (i < fotos.length) {
-                                  return Stack(
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(12),
-                                        child: Image.memory(
-                                          fotos[i],
-                                          width: 100,
-                                          height: 100,
-                                          fit: BoxFit.cover,
+                              )
+                            : ListView.separated(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: fotos.length + 1,
+                                separatorBuilder: (_, __) =>
+                                    const SizedBox(width: 8),
+                                itemBuilder: (context, i) {
+                                  if (i < fotos.length) {
+                                    return Stack(
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                          child: Image.memory(
+                                            fotos[i],
+                                            width: 100,
+                                            height: 100,
+                                            fit: BoxFit.cover,
+                                          ),
                                         ),
-                                      ),
-                                      Positioned(
-                                        top: 2,
-                                        right: 2,
-                                        child: GestureDetector(
-                                          onTap: () => _removeFoto(i),
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              color:
-                                                  Theme.of(
-                                                        context,
-                                                      ).brightness ==
-                                                      Brightness.dark
-                                                  ? Colors.grey[700]
-                                                  : Colors.black54,
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                            ),
-                                            child: const Icon(
-                                              Icons.close,
-                                              color: Colors.white,
-                                              size: 18,
+                                        Positioned(
+                                          top: 2,
+                                          right: 2,
+                                          child: GestureDetector(
+                                            onTap: () => _removeFoto(i),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color:
+                                                    Theme.of(
+                                                          context,
+                                                        ).brightness ==
+                                                        Brightness.dark
+                                                    ? Colors.grey[700]
+                                                    : Colors.black54,
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                              child: const Icon(
+                                                Icons.close,
+                                                color: Colors.white,
+                                                size: 18,
+                                              ),
                                             ),
                                           ),
                                         ),
+                                      ],
+                                    );
+                                  } else {
+                                    return GestureDetector(
+                                      onTap: _pickImage,
+                                      child: Container(
+                                        width: 80,
+                                        height: 80,
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey[200],
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                        child: const Icon(
+                                          Icons.add_a_photo,
+                                          color: Colors.deepPurple,
+                                          size: 32,
+                                        ),
                                       ),
-                                    ],
-                                  );
-                                } else {
-                                  return GestureDetector(
-                                    onTap: _pickImage,
-                                    child: Container(
-                                      width: 80,
-                                      height: 80,
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey[200],
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: const Icon(
-                                        Icons.add_a_photo,
-                                        color: Colors.deepPurple,
-                                        size: 32,
-                                      ),
-                                    ),
-                                  );
-                                }
-                              },
-                            ),
-                    ),
-                    const SizedBox(height: 16),
+                                    );
+                                  }
+                                },
+                              ),
+                      ),
+                      const SizedBox(height: 16),
 
-                    // Seção de Áudios
-                    if (audios.isNotEmpty) ...[
-                      const Text(
-                        'Áudios',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: audios.asMap().entries.map((entry) {
-                          final index = entry.key;
-                          final audioData = entry.value;
-                          return CompactAudioIcon(
-                            audioData: audioData['audio'],
-                            duration: audioData['duration'],
-                            onDelete: () => _removeAudio(index),
-                          );
-                        }).toList(),
-                      ),
-                      const SizedBox(height: 8),
-                    ],
-
-                    // Botão para adicionar áudio
-                    OutlinedButton.icon(
-                      onPressed: _recordAudio,
-                      icon: const Icon(Icons.audiotrack),
-                      label: const Text('Áudio'),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.deepPurple,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Seção de Vídeos
-                    if (videos.isNotEmpty) ...[
-                      const Text(
-                        'Vídeos',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: videos.asMap().entries.map((entry) {
-                          final index = entry.key;
-                          final videoData = entry.value;
-                          return CompactVideoIcon(
-                            videoData: videoData['video'],
-                            thumbnail: videoData['thumbnail'],
-                            duration: videoData['duration'],
-                            onDelete: () => _removeVideo(index),
-                          );
-                        }).toList(),
-                      ),
-                      const SizedBox(height: 8),
-                    ],
-
-                    // Botão para adicionar vídeo
-                    OutlinedButton.icon(
-                      onPressed: _pickVideo,
-                      icon: const Icon(Icons.videocam),
-                      label: const Text('Vídeo'),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.deepPurple,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            dateFormat.format(selectedDate),
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Theme.of(
-                                context,
-                              ).textTheme.bodyLarge?.color,
-                            ),
+                      // Seção de Áudios
+                      if (audios.isNotEmpty) ...[
+                        const Text(
+                          'Áudios',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
-                        ),
-                        IconButton(
-                          icon: const Icon(
-                            Icons.calendar_today,
-                            color: Colors.deepPurple,
-                          ),
-                          onPressed: _pickDateTime,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: titleController,
-                      decoration: const InputDecoration(
-                        labelText: 'Título',
-                        border: OutlineInputBorder(),
-                      ),
-                      inputFormatters: [
-                        SentenceCapitalizationTextInputFormatter(),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const Text(
-                              'Descrição',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const Spacer(),
-                            IconButton(
-                              icon: SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: Image.asset(
-                                  'assets/image/upload_file.png',
-                                  fit: BoxFit.contain,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      const Icon(Icons.upload_file, size: 20),
-                                ),
-                              ),
-                              tooltip: 'Carregar .txt',
-                              onPressed: _pickTxtFileForDescription,
-                            ),
-                            IconButton(
-                              icon: SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: Image.asset(
-                                  'assets/image/maximize.png',
-                                  fit: BoxFit.contain,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      const Icon(Icons.open_in_full, size: 20),
-                                ),
-                              ),
-                              onPressed: _expandDescriptionEditor,
-                            ),
-                          ],
                         ),
                         const SizedBox(height: 8),
-                        SizedBox(
-                          height: 150,
-                          child: TextField(
-                            key: const Key('description_field'),
-                            controller: descriptionController,
-                            maxLines: null,
-                            expands: true,
-                            textAlignVertical: TextAlignVertical.top,
-                            decoration: const InputDecoration(
-                              hintText: 'Digite a descrição...',
-                              alignLabelWithHint: true,
-                            ),
-                            inputFormatters: [
-                              SentenceCapitalizationTextInputFormatter(),
-                            ],
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: audios.asMap().entries.map((entry) {
+                            final index = entry.key;
+                            final audioData = entry.value;
+                            return CompactAudioIcon(
+                              audioData: audioData['audio'],
+                              duration: audioData['duration'],
+                              onDelete: () => _removeAudio(index),
+                            );
+                          }).toList(),
+                        ),
+                        const SizedBox(height: 8),
+                      ],
+
+                      // Botão para adicionar áudio
+                      OutlinedButton.icon(
+                        onPressed: _recordAudio,
+                        icon: const Icon(Icons.audiotrack),
+                        label: const Text('Áudio'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.deepPurple,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Seção de Vídeos
+                      if (videos.isNotEmpty) ...[
+                        const Text(
+                          'Vídeos',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: videos.asMap().entries.map((entry) {
+                            final index = entry.key;
+                            final videoData = entry.value;
+                            return CompactVideoIcon(
+                              videoData: videoData['video'],
+                              thumbnail: videoData['thumbnail'],
+                              duration: videoData['duration'],
+                              onDelete: () => _removeVideo(index),
+                            );
+                          }).toList(),
+                        ),
+                        const SizedBox(height: 8),
                       ],
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: tagsController,
-                      decoration: const InputDecoration(
-                        labelText: 'Tags (separadas por vírgula)',
+
+                      // Botão para adicionar vídeo
+                      OutlinedButton.icon(
+                        onPressed: _pickVideo,
+                        icon: const Icon(Icons.videocam),
+                        label: const Text('Vídeo'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.deepPurple,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Selecione um Emoticon:',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    GridView.count(
-                      crossAxisCount: 5,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      children: emoticons
-                          .map(
-                            (emoticon) => GestureDetector(
-                              onTap: () =>
-                                  setState(() => selectedEmoticon = emoticon),
-                              child: Container(
-                                margin: const EdgeInsets.all(4),
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: selectedEmoticon == emoticon
-                                        ? Colors.blue
-                                        : Colors.transparent,
-                                    width: 2,
-                                  ),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Image.asset(
-                                  'assets/image/${_getEmoticonImage(emoticon)}',
-                                  width: 40,
-                                  height: 40,
-                                ),
+                      const SizedBox(height: 16),
+
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              dateFormat.format(selectedDate),
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Theme.of(
+                                  context,
+                                ).textTheme.bodyLarge?.color,
                               ),
                             ),
-                          )
-                          .toList(),
-                    ),
-                  ],
+                          ),
+                          IconButton(
+                            icon: const Icon(
+                              Icons.calendar_today,
+                              color: Colors.deepPurple,
+                            ),
+                            onPressed: _pickDateTime,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      TextField(
+                        controller: titleController,
+                        decoration: const InputDecoration(
+                          labelText: 'Título',
+                          border: OutlineInputBorder(),
+                        ),
+                        inputFormatters: [
+                          SentenceCapitalizationTextInputFormatter(),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Text(
+                                'Descrição',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const Spacer(),
+                              IconButton(
+                                icon: SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: Image.asset(
+                                    'assets/image/upload_file.png',
+                                    fit: BoxFit.contain,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            const Icon(
+                                              Icons.upload_file,
+                                              size: 20,
+                                            ),
+                                  ),
+                                ),
+                                tooltip: 'Carregar .txt',
+                                onPressed: _pickTxtFileForDescription,
+                              ),
+                              IconButton(
+                                icon: SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: Image.asset(
+                                    'assets/image/maximize.png',
+                                    fit: BoxFit.contain,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            const Icon(
+                                              Icons.open_in_full,
+                                              size: 20,
+                                            ),
+                                  ),
+                                ),
+                                onPressed: _expandDescriptionEditor,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          SizedBox(
+                            height: 150,
+                            child: TextField(
+                              key: const Key('description_field'),
+                              controller: descriptionController,
+                              maxLines: null,
+                              expands: true,
+                              textAlignVertical: TextAlignVertical.top,
+                              decoration: const InputDecoration(
+                                hintText: 'Digite a descrição...',
+                                alignLabelWithHint: true,
+                              ),
+                              inputFormatters: [
+                                SentenceCapitalizationTextInputFormatter(),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      TextField(
+                        controller: tagsController,
+                        decoration: const InputDecoration(
+                          labelText: 'Tags (separadas por vírgula)',
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Selecione um Emoticon:',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      GridView.count(
+                        crossAxisCount: 5,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        children: emoticons
+                            .map(
+                              (emoticon) => GestureDetector(
+                                onTap: () => setState(() {
+                                  selectedEmoticon = emoticon;
+                                  _checkForChanges();
+                                }),
+                                child: Container(
+                                  margin: const EdgeInsets.all(4),
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: selectedEmoticon == emoticon
+                                          ? Colors.blue
+                                          : Colors.transparent,
+                                      width: 2,
+                                    ),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Image.asset(
+                                    'assets/image/${_getEmoticonImage(emoticon)}',
+                                    width: 40,
+                                    height: 40,
+                                  ),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-    );
+      ), // Scaffold
+    ); // PopScope
   }
 }
