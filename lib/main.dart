@@ -16,6 +16,8 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'dart:io';
 import 'package:intl/date_symbol_data_local.dart';
 import 'services/notification_service.dart';
+import 'services/inactivity_service.dart';
+import 'services/ad_service.dart';
 import 'screens/edit_historia_screen.dart';
 import 'screens/calendar_view_screen.dart';
 import 'screens/backup_manager_screen.dart';
@@ -52,6 +54,9 @@ void main() async {
   // Inicializar PinProvider (passa o status de login do usuário)
   final pinProvider = PinProvider();
   await pinProvider.initialize(isUserLoggedIn: authProvider.isLoggedIn);
+
+  // Inicializar Google Mobile Ads
+  await AdService().initialize();
 
   // Inicializar notificações
   await NotificationService().init((String? payload) async {
@@ -99,6 +104,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  final InactivityService _inactivityService = InactivityService();
   DateTime? _pausedTime;
   static const _shortPauseDuration = Duration(seconds: 3);
 
@@ -106,11 +112,27 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+
+    // Inicializa o serviço de inatividade sempre
+    _inactivityService.initialize(
+      onTimeout: () {
+        if (widget.pinProvider.isPinEnabled) {
+          print('Timer de inatividade disparado - bloqueando app');
+          widget.pinProvider.requireAuthentication();
+        }
+      },
+    );
+
+    // Inicia o timer se PIN estiver habilitado
+    if (widget.pinProvider.isPinEnabled) {
+      _inactivityService.startTimer();
+    }
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _inactivityService.clear();
     super.dispose();
   }
 
@@ -124,20 +146,27 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       case AppLifecycleState.hidden:
         // App foi para background ou perdeu foco
         _pausedTime = DateTime.now();
+        _inactivityService.stopTimer();
         break;
       case AppLifecycleState.resumed:
         // App voltou para foreground
         if (widget.pinProvider.isPinEnabled) {
-          if (_pausedTime != null) {
-            final pauseDuration = DateTime.now().difference(_pausedTime!);
-            // Se foi uma pausa curta (ex: abrir seletor de mídia), não pede PIN
-            if (pauseDuration > _shortPauseDuration) {
+          // Verifica se deve bloquear baseado no tempo de inatividade
+          _inactivityService.shouldLockOnResume().then((shouldLock) {
+            if (shouldLock) {
               widget.pinProvider.requireAuthentication();
+            } else if (_pausedTime != null) {
+              final pauseDuration = DateTime.now().difference(_pausedTime!);
+              // Se foi uma pausa curta (ex: abrir seletor de mídia), não pede PIN
+              if (pauseDuration > _shortPauseDuration) {
+                widget.pinProvider.requireAuthentication();
+              }
             }
-          } else {
-            // Se não temos registro de quando pausou, pede PIN por segurança
-            widget.pinProvider.requireAuthentication();
-          }
+
+            // Reinicia o timer de inatividade
+            _inactivityService.startTimer();
+          });
+
           _pausedTime = null;
         }
         break;
@@ -158,40 +187,67 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
-          return MaterialApp(
-            title: 'DayApp',
-            debugShowCheckedModeBanner: false,
-            navigatorKey: navigatorKey,
-            theme: M3ExpressiveTheme.getLightTheme(),
-            darkTheme: M3ExpressiveTheme.getDarkTheme(),
-            themeMode: themeProvider.themeMode,
-            supportedLocales: const [Locale('pt', 'BR'), Locale('en', 'US')],
-            localizationsDelegates: const [
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            initialRoute: widget.authProvider.isLoggedIn ? '/home' : '/login',
-            routes: {
-              '/login': (context) => const LoginScreen(),
-              '/create_account': (context) => const CreateAccountScreen(),
-              '/create_account_complement': (context) =>
-                  const CreateAccountComplementScreen(),
-              '/home': (context) =>
-                  const PinProtectedWrapper(child: HomeScreen()),
-              '/create_historia': (context) =>
-                  const PinProtectedWrapper(child: CreateHistoriaScreen()),
-              '/edit_profile': (context) =>
-                  const PinProtectedWrapper(child: EditProfileScreen()),
-              '/settings': (context) =>
-                  const PinProtectedWrapper(child: SettingsScreen()),
-              '/calendar': (context) =>
-                  const PinProtectedWrapper(child: CalendarViewScreen()),
-              '/backup-manager': (context) =>
-                  const PinProtectedWrapper(child: BackupManagerScreen()),
-              '/trash': (context) =>
-                  const PinProtectedWrapper(child: TrashScreen()),
+          return GestureDetector(
+            onTap: () {
+              print('Atividade detectada: tap');
+              _inactivityService.recordActivity();
             },
+            onPanDown: (_) {
+              print('Atividade detectada: pan');
+              _inactivityService.recordActivity();
+            },
+            onScaleStart: (_) {
+              print('Atividade detectada: scale');
+              _inactivityService.recordActivity();
+            },
+            behavior: HitTestBehavior.translucent,
+            child: NotificationListener<ScrollNotification>(
+              onNotification: (notification) {
+                print('Atividade detectada: scroll');
+                _inactivityService.recordActivity();
+                return false;
+              },
+              child: MaterialApp(
+                title: 'DayApp',
+                debugShowCheckedModeBanner: false,
+                navigatorKey: navigatorKey,
+                theme: M3ExpressiveTheme.getLightTheme(),
+                darkTheme: M3ExpressiveTheme.getDarkTheme(),
+                themeMode: themeProvider.themeMode,
+                supportedLocales: const [
+                  Locale('pt', 'BR'),
+                  Locale('en', 'US'),
+                ],
+                localizationsDelegates: const [
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                initialRoute: widget.authProvider.isLoggedIn
+                    ? '/home'
+                    : '/login',
+                routes: {
+                  '/login': (context) => const LoginScreen(),
+                  '/create_account': (context) => const CreateAccountScreen(),
+                  '/create_account_complement': (context) =>
+                      const CreateAccountComplementScreen(),
+                  '/home': (context) =>
+                      const PinProtectedWrapper(child: HomeScreen()),
+                  '/create_historia': (context) =>
+                      const PinProtectedWrapper(child: CreateHistoriaScreen()),
+                  '/edit_profile': (context) =>
+                      const PinProtectedWrapper(child: EditProfileScreen()),
+                  '/settings': (context) =>
+                      const PinProtectedWrapper(child: SettingsScreen()),
+                  '/calendar': (context) =>
+                      const PinProtectedWrapper(child: CalendarViewScreen()),
+                  '/backup-manager': (context) =>
+                      const PinProtectedWrapper(child: BackupManagerScreen()),
+                  '/trash': (context) =>
+                      const PinProtectedWrapper(child: TrashScreen()),
+                },
+              ),
+            ),
           );
         },
       ),

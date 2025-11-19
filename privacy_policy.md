@@ -174,7 +174,7 @@ Não coletamos intencionalmente informações de crianças menores de 13 anos. S
 
 ## 10. Serviços de Terceiros
 
-### 10.1 Bibliotecas e SDKs
+###  Bibliotecas e SDKs
 
 O DayApp usa as seguintes bibliotecas de código aberto:
 
@@ -183,13 +183,6 @@ O DayApp usa as seguintes bibliotecas de código aberto:
 - **Bibliotecas de código aberto** listadas em [pub.dev](https://pub.dev)
 
 Essas bibliotecas **NÃO coletam nem transmitem** dados pessoais.
-
-### 10.2 Sem Anúncios ou Analytics
-
-❌ **Não usamos Google Analytics**  
-❌ **Não usamos sistemas de rastreamento**  
-❌ **Não exibimos anúncios**  
-❌ **Não usamos cookies**
 
 ---
 
@@ -269,7 +262,6 @@ Brasil
 - NÃO envia dados para servidores
 - NÃO usa serviços de nuvem automáticos
 - NÃO vende ou compartilha seus dados
-- NÃO exibe anúncios
 - NÃO rastreia seu comportamento
 
 ---

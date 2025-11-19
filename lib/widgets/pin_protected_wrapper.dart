@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/pin_provider.dart';
-import '../screens/pin_input_screen.dart';
+import '../screens/lock_screen.dart';
 import 'dart:ui';
 
 class PinProtectedWrapper extends StatelessWidget {
@@ -24,8 +24,8 @@ class PinProtectedWrapper extends StatelessWidget {
                   child: this.child,
                 ),
               ),
-              // Tela de PIN sobreposta
-              const PinInputScreen(),
+              // Tela de bloqueio sobreposta
+              const LockScreen(),
             ],
           );
         }

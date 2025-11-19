@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
 import '../providers/pin_provider.dart';
 import '../services/biometric_service.dart';
+import '../services/inactivity_service.dart';
+import '../services/pin_recovery_service.dart';
 import '../db/database_helper.dart';
 import 'manage_groups_screen.dart';
 import 'setup_pin_screen.dart';
@@ -16,9 +18,13 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   final BiometricService _biometricService = BiometricService();
+  final InactivityService _inactivityService = InactivityService();
+  final PinRecoveryService _recoveryService = PinRecoveryService();
   bool _biometricAvailable = false;
   bool _biometricEnabled = false;
   bool _pinEnabled = false;
+  int _inactivityTimeout = InactivityService.defaultTimeoutMinutes;
+  String? _userEmail;
   late PinProvider _pinProvider;
 
   @override
@@ -27,6 +33,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _pinProvider = Provider.of<PinProvider>(context, listen: false);
     _checkBiometricStatus();
     _checkPinStatus();
+    _loadInactivityTimeout();
+    _loadUserEmail();
   }
 
   Future<void> _checkBiometricStatus() async {
@@ -44,6 +52,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     setState(() {
       _pinEnabled = enabled;
+    });
+  }
+
+  Future<void> _loadInactivityTimeout() async {
+    final timeout = await _inactivityService.getInactivityTimeout();
+    setState(() {
+      _inactivityTimeout = timeout;
+    });
+  }
+
+  Future<void> _loadUserEmail() async {
+    final email = await _recoveryService.getUserEmail();
+    setState(() {
+      _userEmail = email;
     });
   }
 
@@ -154,16 +176,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
           ),
 
-        if (_pinEnabled)
-          const ListTile(
-            leading: Icon(Icons.info_outline),
-            title: Text('Informações'),
+        if (_pinEnabled) ...[
+          ListTile(
+            leading: const Icon(Icons.timer_outlined),
+            title: const Text('Tempo de Inatividade'),
             subtitle: Text(
-              'O PIN será solicitado sempre que você abrir o aplicativo '
-              'ou voltar de outro aplicativo.',
+              'Bloquear após: ${InactivityService.getTimeoutLabel(_inactivityTimeout)}',
             ),
+            onTap: _showInactivityTimeoutDialog,
             dense: true,
           ),
+          ListTile(
+            leading: const Icon(Icons.email_outlined),
+            title: const Text('E-mail para Recuperação'),
+            subtitle: Text(_userEmail ?? 'Não configurado'),
+            onTap: _showEmailDialog,
+            dense: true,
+          ),
+        ],
 
         const Divider(),
 
@@ -498,6 +528,114 @@ class _SettingsScreenState extends State<SettingsScreen> {
           MaterialPageRoute(builder: (_) => ManageGroupsScreen()),
         );
       },
+    );
+  }
+
+  void _showInactivityTimeoutDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Tempo de Inatividade'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Após quanto tempo de inatividade o app deve ser bloqueado?',
+            ),
+            const SizedBox(height: 16),
+            ...InactivityService.timeoutOptions.map((minutes) {
+              return RadioListTile<int>(
+                title: Text(InactivityService.getTimeoutLabel(minutes)),
+                value: minutes,
+                groupValue: _inactivityTimeout,
+                onChanged: (value) async {
+                  if (value != null) {
+                    await _inactivityService.setInactivityTimeout(value);
+                    await _loadInactivityTimeout();
+                    if (!mounted) return;
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'Tempo de inatividade: ${InactivityService.getTimeoutLabel(value)}',
+                        ),
+                      ),
+                    );
+                  }
+                },
+              );
+            }),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Fechar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showEmailDialog() {
+    final emailController = TextEditingController(text: _userEmail);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('E-mail para Recuperação'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Configure um e-mail para recuperar seu PIN caso esqueça.',
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: emailController,
+              decoration: const InputDecoration(
+                labelText: 'E-mail',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.email),
+              ),
+              keyboardType: TextInputType.emailAddress,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final email = emailController.text.trim();
+              if (email.isEmpty || !email.contains('@')) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('E-mail inválido'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+                return;
+              }
+
+              await _recoveryService.saveUserEmail(email);
+              await _loadUserEmail();
+
+              if (!mounted) return;
+              Navigator.of(context).pop();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('E-mail salvo com sucesso!'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            },
+            child: const Text('Salvar'),
+          ),
+        ],
+      ),
     );
   }
 }

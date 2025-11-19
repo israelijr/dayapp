@@ -78,6 +78,7 @@ dependencies:
   local_auth: ^2.3.0
   archive: ^3.6.1
   crypto: ^3.0.3
+  google_mobile_ads: ^5.2.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

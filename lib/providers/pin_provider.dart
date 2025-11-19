@@ -13,6 +13,24 @@ class PinProvider extends ChangeNotifier {
   bool get isPinEnabled => _isPinEnabled;
   bool get shouldShowPinScreen => _shouldShowPinScreen;
 
+  // Setters públicos para controle direto (usado por biometria)
+  set isAuthenticated(bool value) {
+    _isAuthenticated = value;
+    notifyListeners();
+  }
+
+  set shouldShowPinScreen(bool value) {
+    _shouldShowPinScreen = value;
+    notifyListeners();
+  }
+
+  /// Método público para autenticação por biometria
+  void authenticateWithBiometric() {
+    _isAuthenticated = true;
+    _shouldShowPinScreen = false;
+    notifyListeners();
+  }
+
   /// Inicializa o provider verificando se o PIN está habilitado
   /// Requer que o status de login do usuário seja informado
   Future<void> initialize({bool isUserLoggedIn = false}) async {
