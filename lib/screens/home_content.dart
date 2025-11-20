@@ -36,7 +36,7 @@ class _HomeContentState extends State<HomeContent> {
   static const double cardMargin = 24.0;
   bool _isCardView = true;
 
-  String _getEmoticonImage(String emoticon) {
+  String? _getEmoticonImage(String emoticon) {
     switch (emoticon) {
       case 'Feliz':
         return '1_feliz.png';
@@ -59,7 +59,7 @@ class _HomeContentState extends State<HomeContent> {
       case 'Muito Triste':
         return '10_muito_triste.png';
       default:
-        return '1_feliz.png';
+        return null;
     }
   }
 
@@ -1092,7 +1092,7 @@ class HistoriaFotosGrid extends StatelessWidget {
 class HistoriaMediaRow extends StatelessWidget {
   final int historiaId;
   final String? emoticon;
-  final String Function(String) getEmoticonImage;
+  final String? Function(String) getEmoticonImage;
 
   const HistoriaMediaRow({
     super.key,
@@ -1155,12 +1155,26 @@ class HistoriaMediaRow extends StatelessWidget {
                       ),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Image.asset(
-                      'assets/image/${getEmoticonImage(emoticon!)}',
-                      width: 40,
-                      height: 40,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Icon(Icons.mood, size: 40);
+                    child: Builder(
+                      builder: (context) {
+                        final imagePath = getEmoticonImage(emoticon!);
+                        if (imagePath != null) {
+                          return Image.asset(
+                            'assets/image/$imagePath',
+                            width: 40,
+                            height: 40,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Icon(Icons.mood, size: 40);
+                            },
+                          );
+                        } else {
+                          return Center(
+                            child: Text(
+                              emoticon!,
+                              style: const TextStyle(fontSize: 32),
+                            ),
+                          );
+                        }
                       },
                     ),
                   ),

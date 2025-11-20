@@ -15,6 +15,9 @@ import '../widgets/audio_recorder_widget.dart';
 import '../widgets/video_recorder_widget.dart';
 import '../widgets/compact_audio_icon.dart';
 import '../widgets/compact_video_icon.dart';
+import '../widgets/emoji_selection_modal.dart';
+import '../services/emoji_service.dart';
+import '../widgets/entry_toolbar.dart';
 // ...existing code...
 
 class SentenceCapitalizationTextInputFormatter extends TextInputFormatter {
@@ -73,6 +76,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
       []; // Para novos: {video: Uint8List, duration: int}, Para existentes: {videoPath: String, duration: int, id: int}
   List<int> videoIds = []; // IDs dos vídeos existentes
   String? selectedEmoticon;
+  String? selectedEmojiTranslation;
 
   // Controle de alterações não salvas
   bool _hasUnsavedChanges = false;
@@ -82,45 +86,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
   late DateTime _initialDate;
   late String? _initialEmoticon;
 
-  final List<String> emoticons = [
-    'Feliz',
-    'Tranquilo',
-    'Aliviado',
-    'Pensativo',
-    'Sono',
-    'Preocupado',
-    'Assustado',
-    'Bravo',
-    'Triste',
-    'Muito Triste',
-  ];
 
-  String _getEmoticonImage(String emoticon) {
-    switch (emoticon) {
-      case 'Feliz':
-        return '1_feliz.png';
-      case 'Tranquilo':
-        return '2_tranquilo.png';
-      case 'Aliviado':
-        return '3_aliviado.png';
-      case 'Pensativo':
-        return '4_pensativo.png';
-      case 'Sono':
-        return '5_sono.png';
-      case 'Preocupado':
-        return '6_preocupado.png';
-      case 'Assustado':
-        return '7_assustado.png';
-      case 'Bravo':
-        return '8_bravo.png';
-      case 'Triste':
-        return '9_triste.png';
-      case 'Muito Triste':
-        return '10_muito_triste.png';
-      default:
-        return '1_feliz.png';
-    }
-  }
 
   String _capitalizeText(String text) {
     if (text.isEmpty) return text;
@@ -172,6 +138,59 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     _loadFotos();
     _loadAudios();
     _loadVideos();
+    _loadEmojiTranslation();
+  }
+
+  final List<String> legacyEmoticons = [
+    'Feliz',
+    'Tranquilo',
+    'Aliviado',
+    'Pensativo',
+    'Sono',
+    'Preocupado',
+    'Assustado',
+    'Bravo',
+    'Triste',
+    'Muito Triste',
+  ];
+
+  String _getLegacyEmoticonImage(String emoticon) {
+    switch (emoticon) {
+      case 'Feliz':
+        return '1_feliz.png';
+      case 'Tranquilo':
+        return '2_tranquilo.png';
+      case 'Aliviado':
+        return '3_aliviado.png';
+      case 'Pensativo':
+        return '4_pensativo.png';
+      case 'Sono':
+        return '5_sono.png';
+      case 'Preocupado':
+        return '6_preocupado.png';
+      case 'Assustado':
+        return '7_assustado.png';
+      case 'Bravo':
+        return '8_bravo.png';
+      case 'Triste':
+        return '9_triste.png';
+      case 'Muito Triste':
+        return '10_muito_triste.png';
+      default:
+        return '1_feliz.png';
+    }
+  }
+
+  Future<void> _loadEmojiTranslation() async {
+    if (selectedEmoticon != null && !legacyEmoticons.contains(selectedEmoticon)) {
+      await EmojiService().loadEmojis();
+      final emoji = EmojiService().findByChar(selectedEmoticon!);
+      if (mounted && emoji != null) {
+        setState(() {
+          selectedEmojiTranslation = emoji.translation;
+        });
+      }
+    }
   }
 
   void _checkForChanges() {
@@ -481,6 +500,22 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     }
   }
 
+  Future<void> _selectEmoji() async {
+    final Emoji? result = await showModalBottomSheet<Emoji>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const EmojiSelectionModal(),
+    );
+    if (result != null) {
+      setState(() {
+        selectedEmoticon = result.char;
+        selectedEmojiTranslation = result.translation;
+        _checkForChanges();
+      });
+    }
+  }
+
   @override
   void dispose() {
     titleController.removeListener(_checkForChanges);
@@ -495,18 +530,16 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
   @override
   Widget build(BuildContext context) {
     final dateFormat = DateFormat('dd/MM/yyyy HH:mm', 'pt_BR');
+    final theme = Theme.of(context);
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (bool didPop, dynamic result) async {
         if (didPop) return;
-
-        // Se não há alterações não salvas, pode sair
         if (!_hasUnsavedChanges) {
           Navigator.of(context).pop();
           return;
         }
-
-        // Mostra diálogo de confirmação
         final dialogResult = await showDialog<String>(
           context: context,
           barrierDismissible: false,
@@ -545,303 +578,212 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
         appBar: AppBar(
           title: const Text('Editar História'),
           actions: [
+            IconButton(
+              icon: const Icon(Icons.calendar_today),
+              onPressed: _pickDateTime,
+              tooltip: 'Alterar Data',
+            ),
             TextButton(
               onPressed: _save,
               child: const Text(
                 'Salvar',
-                style: TextStyle(color: Colors.deepPurple),
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
           ],
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: 100,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: fotos.length + 1,
-                    separatorBuilder: (_, __) => const SizedBox(width: 8),
-                    itemBuilder: (context, i) {
-                      if (i < fotos.length) {
-                        final double w = 100 - (i % 2) * 30;
-                        final double h = 100 - ((i + 1) % 2) * 20;
-                        return Stack(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: Image.memory(
-                                fotos[i],
-                                width: w,
-                                height: h,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            Positioned(
-                              top: 2,
-                              right: 2,
-                              child: GestureDetector(
-                                onTap: () => _removeFoto(i),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color:
-                                        Theme.of(context).brightness ==
-                                            Brightness.dark
-                                        ? Colors.grey[700]
-                                        : Colors.black54,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: const Icon(
-                                    Icons.close,
-                                    color: Colors.white,
-                                    size: 18,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      } else {
-                        return GestureDetector(
-                          onTap: _pickImage,
-                          child: Container(
-                            width: 80,
-                            height: 80,
-                            decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: const Icon(
-                              Icons.add_a_photo,
-                              color: Colors.deepPurple,
-                              size: 32,
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // Seção de Áudios
-                if (audios.isNotEmpty) ...[
-                  const Text(
-                    'Áudios',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: audios.asMap().entries.map((entry) {
-                      final index = entry.key;
-                      final audioData = entry.value;
-                      return CompactAudioIcon(
-                        audioData: audioData['audio'],
-                        duration: audioData['duration'],
-                        onDelete: () => _removeAudio(index),
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 8),
-                ],
-
-                // Botão para adicionar áudio
-                OutlinedButton.icon(
-                  onPressed: _recordAudio,
-                  icon: const Icon(Icons.audiotrack),
-                  label: const Text('Áudio'),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.deepPurple,
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // Seção de Vídeos
-                if (videos.isNotEmpty) ...[
-                  const Text(
-                    'Vídeos',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: videos.asMap().entries.map((entry) {
-                      final index = entry.key;
-                      final videoData = entry.value;
-                      return CompactVideoIcon(
-                        videoData: videoData['video'], // Para vídeos novos
-                        videoPath:
-                            videoData['videoPath'], // Para vídeos existentes
-                        thumbnail: videoData['thumbnail'],
-                        duration: videoData['duration'],
-                        onDelete: () => _removeVideo(index),
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 8),
-                ],
-
-                // Botão para adicionar vídeo
-                OutlinedButton.icon(
-                  onPressed: _pickVideo,
-                  icon: const Icon(Icons.videocam),
-                  label: const Text('Vídeo'),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.deepPurple,
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        dateFormat.format(selectedDate),
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Theme.of(context).textTheme.bodyLarge?.color,
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(
-                        Icons.calendar_today,
-                        color: Colors.deepPurple,
-                      ),
-                      onPressed: _pickDateTime,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: titleController,
-                  decoration: const InputDecoration(
-                    labelText: 'Título',
-                    border: OutlineInputBorder(),
-                  ),
-                  inputFormatters: [SentenceCapitalizationTextInputFormatter()],
-                ),
-                const SizedBox(height: 16),
-                Column(
+        body: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Header: Date and Emoji
                     Row(
                       children: [
-                        const Text(
-                          'Descrição',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                        Text(
+                          dateFormat.format(selectedDate),
+                          style: theme.textTheme.labelLarge?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
                           ),
                         ),
                         const Spacer(),
-                        IconButton(
-                          icon: SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: Image.asset(
-                              'assets/image/upload_file.png',
-                              fit: BoxFit.contain,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  const Icon(Icons.upload_file, size: 20),
-                            ),
+                        if (selectedEmoticon != null)
+                          Chip(
+                            avatar: legacyEmoticons.contains(selectedEmoticon)
+                                ? Image.asset(
+                                    'assets/image/${_getLegacyEmoticonImage(selectedEmoticon!)}',
+                                    width: 24,
+                                    height: 24,
+                                  )
+                                : Text(selectedEmoticon!),
+                            label: Text(selectedEmojiTranslation ?? selectedEmoticon ?? ''),
+                            onDeleted: () {
+                              setState(() {
+                                selectedEmoticon = null;
+                                selectedEmojiTranslation = null;
+                                _checkForChanges();
+                              });
+                            },
                           ),
-                          tooltip: 'Carregar .txt',
-                          onPressed: _pickTxtFileForDescription,
-                        ),
-                        IconButton(
-                          icon: SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: Image.asset(
-                              'assets/image/maximize.png',
-                              fit: BoxFit.contain,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  const Icon(Icons.open_in_full, size: 20),
-                            ),
-                          ),
-                          onPressed: _expandDescriptionEditor,
-                        ),
                       ],
                     ),
-                    const SizedBox(height: 8),
-                    SizedBox(
-                      height: 150,
-                      child: TextField(
-                        key: const Key('description_field'),
-                        controller: descriptionController,
-                        maxLines: null,
-                        expands: true,
-                        textAlignVertical: TextAlignVertical.top,
-                        decoration: const InputDecoration(
-                          hintText: 'Digite a descrição...',
-                          alignLabelWithHint: true,
+                    const SizedBox(height: 16),
+
+                    // Title
+                    TextField(
+                      controller: titleController,
+                      style: theme.textTheme.headlineSmall,
+                      decoration: const InputDecoration(
+                        hintText: 'Título',
+                        border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                      inputFormatters: [
+                        SentenceCapitalizationTextInputFormatter(),
+                      ],
+                    ),
+                    const Divider(),
+
+                    // Description
+                    TextField(
+                      key: const Key('description_field'),
+                      controller: descriptionController,
+                      maxLines: null,
+                      style: theme.textTheme.bodyLarge,
+                      decoration: InputDecoration(
+                        hintText: 'Escreva sua história...',
+                        border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        contentPadding: EdgeInsets.zero,
+                        suffixIcon: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.upload_file),
+                              onPressed: _pickTxtFileForDescription,
+                              tooltip: 'Importar .txt',
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.open_in_full),
+                              onPressed: _expandDescriptionEditor,
+                              tooltip: 'Expandir',
+                            ),
+                          ],
                         ),
-                        inputFormatters: [
-                          SentenceCapitalizationTextInputFormatter(),
-                        ],
+                      ),
+                      inputFormatters: [
+                        SentenceCapitalizationTextInputFormatter(),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Tags
+                    TextField(
+                      controller: tagsController,
+                      decoration: const InputDecoration(
+                        labelText: 'Tags',
+                        prefixIcon: Icon(Icons.tag),
+                        border: OutlineInputBorder(),
                       ),
                     ),
+                    const SizedBox(height: 24),
+
+                    // Media Previews
+                    if (fotos.isNotEmpty) ...[
+                      Text('Fotos', style: theme.textTheme.titleSmall),
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        height: 100,
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: fotos.length,
+                          separatorBuilder: (_, __) => const SizedBox(width: 8),
+                          itemBuilder: (context, i) {
+                            return Stack(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Image.memory(
+                                    fotos[i],
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 2,
+                                  right: 2,
+                                  child: IconButton.filled(
+                                    onPressed: () => _removeFoto(i),
+                                    icon: const Icon(Icons.close, size: 14),
+                                    style: IconButton.styleFrom(
+                                      minimumSize: const Size(24, 24),
+                                      padding: EdgeInsets.zero,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+
+                    if (audios.isNotEmpty) ...[
+                      Text('Áudios', style: theme.textTheme.titleSmall),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: audios.asMap().entries.map((entry) {
+                          return CompactAudioIcon(
+                            audioData: entry.value['audio'],
+                            duration: entry.value['duration'],
+                            onDelete: () => _removeAudio(entry.key),
+                          );
+                        }).toList(),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+
+                    if (videos.isNotEmpty) ...[
+                      Text('Vídeos', style: theme.textTheme.titleSmall),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: videos.asMap().entries.map((entry) {
+                          return CompactVideoIcon(
+                            videoData: entry.value['video'],
+                            videoPath: entry.value['videoPath'],
+                            thumbnail: entry.value['thumbnail'],
+                            duration: entry.value['duration'],
+                            onDelete: () => _removeVideo(entry.key),
+                          );
+                        }).toList(),
+                      ),
+                    ],
                   ],
                 ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: tagsController,
-                  decoration: const InputDecoration(
-                    labelText: 'Tags (separadas por vírgula)',
-                  ),
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'Selecione um Emoticon:',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                GridView.count(
-                  crossAxisCount: 5,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: emoticons
-                      .map(
-                        (emoticon) => GestureDetector(
-                          onTap: () => setState(() {
-                            selectedEmoticon = emoticon;
-                            _checkForChanges();
-                          }),
-                          child: Container(
-                            margin: const EdgeInsets.all(4),
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: selectedEmoticon == emoticon
-                                    ? Colors.blue
-                                    : Colors.transparent,
-                                width: 2,
-                              ),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Image.asset(
-                              'assets/image/${_getEmoticonImage(emoticon)}',
-                              width: 40,
-                              height: 40,
-                            ),
-                          ),
-                        ),
-                      )
-                      .toList(),
-                ),
-              ],
+              ),
             ),
-          ),
-        ), // body
-      ), // Scaffold
-    ); // PopScope
+            // Toolbar
+            EntryToolbar(
+              onPickPhoto: _pickImage,
+              onPickVideo: _pickVideo,
+              onRecordAudio: _recordAudio,
+              onSelectEmoji: _selectEmoji,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

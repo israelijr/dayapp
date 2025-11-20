@@ -93,6 +93,7 @@ flutter:
   assets:
     - assets/image/
     - assets/icon/
+    - assets/emojis.json
 
 # Override para resolver incompatibilidade do record_linux  
 dependency_overrides:
