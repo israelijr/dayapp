@@ -5,6 +5,7 @@ import '../providers/pin_provider.dart';
 import '../services/biometric_service.dart';
 import '../services/inactivity_service.dart';
 import '../services/pin_recovery_service.dart';
+import '../services/notification_preferences_service.dart';
 import '../db/database_helper.dart';
 import 'manage_groups_screen.dart';
 import 'setup_pin_screen.dart';
@@ -20,11 +21,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final BiometricService _biometricService = BiometricService();
   final InactivityService _inactivityService = InactivityService();
   final PinRecoveryService _recoveryService = PinRecoveryService();
+  final NotificationPreferencesService _notificationService =
+      NotificationPreferencesService();
   bool _biometricAvailable = false;
   bool _biometricEnabled = false;
   bool _pinEnabled = false;
   int _inactivityTimeout = InactivityService.defaultTimeoutMinutes;
   int _backgroundLockTimeout = InactivityService.defaultBackgroundTimeoutSeconds;
+  bool _notificationEnabled = true;
+  int _notificationAdvance = NotificationPreferencesService.defaultAdvanceMinutes;
   String? _userEmail;
   late PinProvider _pinProvider;
 
@@ -36,6 +41,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _checkPinStatus();
     _loadInactivityTimeout();
     _loadBackgroundLockTimeout();
+    _loadNotificationPreferences();
     _loadUserEmail();
   }
 
@@ -78,6 +84,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
   }
 
+  Future<void> _loadNotificationPreferences() async {
+    final enabled = await _notificationService.isNotificationEnabled();
+    final advance = await _notificationService.getDefaultNotificationAdvance();
+    setState(() {
+      _notificationEnabled = enabled;
+      _notificationAdvance = advance;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,6 +103,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _buildThemeSection(context),
           const Divider(),
           _buildBiometricSection(context),
+          const Divider(),
+          _buildNotificationSection(context),
           const Divider(),
           _buildBackupSection(context),
           const Divider(),
@@ -697,6 +714,102 @@ class _SettingsScreenState extends State<SettingsScreen> {
               );
             },
             child: const Text('Salvar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNotificationSection(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Text(
+            'Notificações',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+        ),
+        ListTile(
+          leading: const Icon(Icons.notifications),
+          title: const Text('Notificações de Entradas'),
+          subtitle: Text(_notificationEnabled ? 'Habilitado' : 'Desabilitado'),
+          trailing: Switch(
+            value: _notificationEnabled,
+            onChanged: (value) async {
+              await _notificationService.setNotificationEnabled(value);
+              await _loadNotificationPreferences();
+            },
+          ),
+        ),
+        if (_notificationEnabled)
+          ListTile(
+            leading: const Icon(Icons.access_time),
+            title: const Text('Antecedência Padrão'),
+            subtitle: Text(
+              NotificationPreferencesService.getAdvanceLabel(_notificationAdvance),
+            ),
+            onTap: _showNotificationAdvanceDialog,
+            dense: true,
+          ),
+        if (_notificationEnabled)
+          const ListTile(
+            leading: Icon(Icons.info_outline),
+            title: Text('Informação'),
+            subtitle: Text(
+              'Entradas com data pelo menos 2 horas à frente podem ter notificações agendadas.',
+            ),
+            dense: true,
+          ),
+      ],
+    );
+  }
+
+  void _showNotificationAdvanceDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Antecedência da Notificação'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Com quanto tempo de antecedência você quer ser notificado?',
+            ),
+            const SizedBox(height: 16),
+            ...NotificationPreferencesService.advanceOptions.map((minutes) {
+              return RadioListTile<int>(
+                title: Text(
+                  NotificationPreferencesService.getAdvanceLabel(minutes),
+                ),
+                value: minutes,
+                groupValue: _notificationAdvance,
+                onChanged: (value) async {
+                  if (value != null) {
+                    await _notificationService.setDefaultNotificationAdvance(
+                      value,
+                    );
+                    await _loadNotificationPreferences();
+                    if (!mounted) return;
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'Antecedência padrão: ${NotificationPreferencesService.getAdvanceLabel(value)}',
+                        ),
+                      ),
+                    );
+                  }
+                },
+              );
+            }),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Fechar'),
           ),
         ],
       ),

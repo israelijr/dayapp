@@ -29,7 +29,7 @@ class DatabaseHelper {
       debugPrint('DatabaseHelper: abrindo banco em $path');
       return await openDatabase(
         path,
-        version: 9,
+        version: 10,
         onCreate: _onCreate,
         onUpgrade: _onUpgrade,
       );
@@ -119,6 +119,16 @@ class DatabaseHelper {
         );
       ''');
       debugPrint('DatabaseHelper: tabela grupos criada');
+      await db.execute('''
+        CREATE TABLE notification_scheduled (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          historia_id INTEGER NOT NULL,
+          notification_id INTEGER NOT NULL,
+          scheduled_time TEXT NOT NULL,
+          FOREIGN KEY (historia_id) REFERENCES historia(id) ON DELETE CASCADE
+        );
+      ''');
+      debugPrint('DatabaseHelper: tabela notification_scheduled criada');
       await db.execute(
         'CREATE INDEX idx_historia_user_id ON historia(user_id);',
       );
@@ -333,6 +343,23 @@ class DatabaseHelper {
         debugPrint('DatabaseHelper: erro ao corrigir estrutura da tabela: $e');
       }
     }
+    if (oldVersion < 10) {
+      // Adicionar tabela de notificações agendadas
+      try {
+        await db.execute('''
+          CREATE TABLE IF NOT EXISTS notification_scheduled (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            historia_id INTEGER NOT NULL,
+            notification_id INTEGER NOT NULL,
+            scheduled_time TEXT NOT NULL,
+            FOREIGN KEY (historia_id) REFERENCES historia(id) ON DELETE CASCADE
+          );
+        ''');
+        debugPrint('DatabaseHelper: tabela notification_scheduled criada');
+      } catch (e) {
+        debugPrint('DatabaseHelper: erro ao criar tabela notification_scheduled: $e');
+      }
+    }
   }
 
   Future<Historia?> getHistoria(int id) async {
@@ -364,5 +391,63 @@ class DatabaseHelper {
       debugPrint('DatabaseHelper: erro ao resetar o banco: $e');
       rethrow;
     }
+  }
+
+  // Métodos para gerenciar notificações agendadas
+  
+  /// Agenda uma notificação para uma história
+  Future<void> scheduleNotificationForHistoria(
+    int historiaId,
+    int notificationId,
+    DateTime scheduledTime,
+  ) async {
+    final db = await database;
+    
+    // Cancela notificação existente se houver
+    await db.delete(
+      'notification_scheduled',
+      where: 'historia_id = ?',
+      whereArgs: [historiaId],
+    );
+    
+    // Insere nova notificação
+    await db.insert('notification_scheduled', {
+      'historia_id': historiaId,
+      'notification_id': notificationId,
+      'scheduled_time': scheduledTime.toIso8601String(),
+    });
+    
+    debugPrint(
+      'DatabaseHelper: notificação $notificationId agendada para história $historiaId',
+    );
+  }
+  
+  /// Busca notificação agendada para uma história
+  Future<Map<String, dynamic>?> getScheduledNotification(int historiaId) async {
+    final db = await database;
+    final List<Map<String, dynamic>> result = await db.query(
+      'notification_scheduled',
+      where: 'historia_id = ?',
+      whereArgs: [historiaId],
+    );
+    
+    if (result.isNotEmpty) {
+      return result.first;
+    }
+    return null;
+  }
+  
+  /// Cancela notificação agendada para uma história
+  Future<void> cancelScheduledNotification(int historiaId) async {
+    final db = await database;
+    await db.delete(
+      'notification_scheduled',
+      where: 'historia_id = ?',
+      whereArgs: [historiaId],
+    );
+    
+    debugPrint(
+      'DatabaseHelper: notificação cancelada para história $historiaId',
+    );
   }
 }

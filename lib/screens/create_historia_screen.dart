@@ -10,7 +10,7 @@ import '../models/historia_audio.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/refresh_provider.dart';
-import '../services/notification_service.dart';
+import '../helpers/notification_helper.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:file_selector/file_selector.dart';
@@ -248,93 +248,13 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
   }
 
   Future<void> _showNotificationDialog(int historiaId) async {
-    Duration? selectedDuration;
-    await showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return SimpleDialog(
-          title: const Text('Agendar Notificação'),
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                'Quando você gostaria de ser notificado sobre esta história?',
-              ),
-            ),
-            ...[
-              // {
-              //   'label': 'Imediata (teste)',
-              //   'duration': Duration.zero,
-              // },
-              // {
-              //   'label': 'Agora (teste)',
-              //   'duration': const Duration(seconds: 10),
-              // },
-              {'label': '1 hora antes', 'duration': const Duration(hours: 1)},
-              {'label': '1 dia antes', 'duration': const Duration(days: 1)},
-              {'label': '1 semana antes', 'duration': const Duration(days: 7)},
-            ].map(
-              (option) => SimpleDialogOption(
-                onPressed: () {
-                  selectedDuration = option['duration'] as Duration;
-                  Navigator.of(context).pop();
-                },
-                child: Text(option['label'] as String),
-              ),
-            ),
-          ],
-        );
-      },
+    await NotificationHelper().showNotificationDialog(
+      context,
+      historiaId,
+      selectedDate,
+      titleController.text,
+      descriptionController.text,
     );
-
-    if (selectedDuration != null) {
-      DateTime notificationTime;
-      if (selectedDuration == Duration.zero) {
-        // Para teste imediato, mostrar notificação agora
-        await NotificationService().showImmediateNotification(
-          id: historiaId,
-          title: 'Lembrete de História',
-          body: 'Não esqueça: ${titleController.text}',
-          payload: historiaId.toString(),
-        );
-        if (!mounted) return;
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Notificação mostrada')));
-        return;
-      } else if (selectedDuration == const Duration(seconds: 10)) {
-        // Para teste, notificar em 10 segundos a partir de agora
-        notificationTime = DateTime.now().add(selectedDuration!);
-      } else {
-        // Para outros, notificar antes da data da história
-        notificationTime = selectedDate.subtract(selectedDuration!);
-      }
-      if (notificationTime.isAfter(DateTime.now())) {
-        if (Platform.isWindows) {
-          // Notificações agendadas não são suportadas no Windows
-          if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Notificações agendadas não são suportadas no Windows',
-              ),
-            ),
-          );
-        } else {
-          await NotificationService().scheduleNotification(
-            id: historiaId,
-            title: 'Lembrete de História',
-            body: 'Não esqueça: ${titleController.text}',
-            scheduledDate: notificationTime,
-            payload: historiaId.toString(),
-          );
-          if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Notificação agendada com sucesso')),
-          );
-        }
-      }
-    }
   }
 
   Future<void> _saveHistoria() async {

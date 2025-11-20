@@ -18,6 +18,7 @@ import '../widgets/compact_video_icon.dart';
 import '../widgets/emoji_selection_modal.dart';
 import '../services/emoji_service.dart';
 import '../widgets/entry_toolbar.dart';
+import '../helpers/notification_helper.dart';
 // ...existing code...
 
 class SentenceCapitalizationTextInputFormatter extends TextInputFormatter {
@@ -399,6 +400,18 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
       where: 'id = ?',
       whereArgs: [widget.historia.id],
     );
+    
+    // Verifica se a data foi alterada e está futura
+    if (selectedDate != _initialDate) {
+      // Reagendar notificação se a data mudou
+      await NotificationHelper().rescheduleEntryNotification(
+        widget.historia.id!,
+        selectedDate,
+        titleController.text.trim(),
+        descriptionController.text.trim(),
+      );
+    }
+    
     // Salva novas fotos
     for (int i = 0; i < fotos.length; i++) {
       if (fotoIds[i] == 0) {
