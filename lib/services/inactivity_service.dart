@@ -125,6 +125,24 @@ class InactivityService {
     await prefs.remove(_lastActivityTimeKey);
   }
 
+  static const String _backgroundLockTimeoutKey = 'background_lock_timeout_seconds';
+
+  /// Tempo padrão de bloqueio em segundo plano (em segundos)
+  /// 0 significa imediato
+  static const int defaultBackgroundTimeoutSeconds = 0;
+
+  /// Obtém o tempo de bloqueio em segundo plano configurado (em segundos)
+  Future<int> getBackgroundLockTimeout() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt(_backgroundLockTimeoutKey) ?? defaultBackgroundTimeoutSeconds;
+  }
+
+  /// Define o tempo de bloqueio em segundo plano (em segundos)
+  Future<void> setBackgroundLockTimeout(int seconds) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_backgroundLockTimeoutKey, seconds);
+  }
+
   /// Opções de tempo de inatividade disponíveis
   static const List<int> timeoutOptions = [
     0, // Desabilitado
@@ -135,6 +153,15 @@ class InactivityService {
     60, // 1 hora
   ];
 
+  /// Opções de tempo de bloqueio em segundo plano disponíveis (em segundos)
+  static const List<int> backgroundTimeoutOptions = [
+    0, // Imediato
+    15, // 15 segundos
+    30, // 30 segundos
+    60, // 1 minuto
+    300, // 5 minutos
+  ];
+
   /// Retorna o texto descritivo para cada opção de tempo
   static String getTimeoutLabel(int minutes) {
     if (minutes == 0) return 'Desabilitado';
@@ -142,5 +169,13 @@ class InactivityService {
     if (minutes < 60) return '$minutes minutos';
     final hours = minutes ~/ 60;
     return hours == 1 ? '1 hora' : '$hours horas';
+  }
+
+  /// Retorna o texto descritivo para opções de bloqueio em segundo plano
+  static String getBackgroundTimeoutLabel(int seconds) {
+    if (seconds == 0) return 'Imediatamente';
+    if (seconds < 60) return '$seconds segundos';
+    final minutes = seconds ~/ 60;
+    return minutes == 1 ? '1 minuto' : '$minutes minutos';
   }
 }

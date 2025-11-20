@@ -50,8 +50,13 @@ class _LockScreenState extends State<LockScreen> {
   Future<void> _authenticateWithBiometric() async {
     if (!mounted) return;
 
+    final pinProvider = Provider.of<PinProvider>(context, listen: false);
+
     try {
       setState(() => _isLoading = true);
+      
+      // Sinaliza que estamos autenticando com biometria para evitar bloqueio por inatividade
+      pinProvider.isAuthenticatingWithBiometrics = true;
 
       final authenticated = await _biometricService.authenticate(
         reason: 'Desbloqueie o app para continuar',
@@ -61,16 +66,20 @@ class _LockScreenState extends State<LockScreen> {
 
       if (authenticated) {
         // Autentica no provider - força autenticação bem-sucedida
-        final pinProvider = Provider.of<PinProvider>(context, listen: false);
+        // O método authenticateWithBiometric já reseta a flag isAuthenticatingWithBiometrics
         pinProvider.authenticateWithBiometric();
         // Provider notifica e isso fecha a tela de bloqueio
       } else {
+        // Se falhou, reseta a flag
+        pinProvider.isAuthenticatingWithBiometrics = false;
         if (mounted) {
           setState(() => _isLoading = false);
         }
       }
     } catch (e) {
       print('Erro na autenticação biométrica: $e');
+      // Se deu erro, reseta a flag
+      pinProvider.isAuthenticatingWithBiometrics = false;
       if (mounted) {
         setState(() => _isLoading = false);
       }

@@ -151,23 +151,36 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       case AppLifecycleState.resumed:
         // App voltou para foreground
         if (widget.pinProvider.isPinEnabled) {
+          // Se estiver autenticando com biometria, não bloqueia
+          if (widget.pinProvider.isAuthenticatingWithBiometrics) {
+             print('Retornando de autenticação biométrica - ignorando bloqueio');
+             _inactivityService.startTimer();
+             _pausedTime = null;
+             // Reseta a flag pois já consumimos o evento de retorno
+             widget.pinProvider.isAuthenticatingWithBiometrics = false;
+             return;
+          }
+
           // Verifica se deve bloquear baseado no tempo de inatividade
-          _inactivityService.shouldLockOnResume().then((shouldLock) {
+          _inactivityService.shouldLockOnResume().then((shouldLock) async {
             if (shouldLock) {
               widget.pinProvider.requireAuthentication();
             } else if (_pausedTime != null) {
               final pauseDuration = DateTime.now().difference(_pausedTime!);
-              // Se foi uma pausa curta (ex: abrir seletor de mídia), não pede PIN
-              if (pauseDuration > _shortPauseDuration) {
+              final backgroundTimeoutSeconds = await _inactivityService.getBackgroundLockTimeout();
+              final backgroundTimeout = Duration(seconds: backgroundTimeoutSeconds);
+              
+              // Verifica se o tempo de pausa excedeu o configurado
+              if (pauseDuration > backgroundTimeout) {
                 widget.pinProvider.requireAuthentication();
               }
             }
 
             // Reinicia o timer de inatividade
             _inactivityService.startTimer();
+            
+            _pausedTime = null;
           });
-
-          _pausedTime = null;
         }
         break;
       case AppLifecycleState.detached:

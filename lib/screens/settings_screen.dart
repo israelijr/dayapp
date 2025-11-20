@@ -24,6 +24,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _biometricEnabled = false;
   bool _pinEnabled = false;
   int _inactivityTimeout = InactivityService.defaultTimeoutMinutes;
+  int _backgroundLockTimeout = InactivityService.defaultBackgroundTimeoutSeconds;
   String? _userEmail;
   late PinProvider _pinProvider;
 
@@ -34,6 +35,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _checkBiometricStatus();
     _checkPinStatus();
     _loadInactivityTimeout();
+    _loadBackgroundLockTimeout();
     _loadUserEmail();
   }
 
@@ -59,6 +61,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final timeout = await _inactivityService.getInactivityTimeout();
     setState(() {
       _inactivityTimeout = timeout;
+    });
+  }
+
+  Future<void> _loadBackgroundLockTimeout() async {
+    final timeout = await _inactivityService.getBackgroundLockTimeout();
+    setState(() {
+      _backgroundLockTimeout = timeout;
     });
   }
 
@@ -184,6 +193,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
               'Bloquear após: ${InactivityService.getTimeoutLabel(_inactivityTimeout)}',
             ),
             onTap: _showInactivityTimeoutDialog,
+            dense: true,
+          ),
+          ListTile(
+            leading: const Icon(Icons.lock_clock),
+            title: const Text('Bloqueio em Segundo Plano'),
+            subtitle: Text(
+              'Bloquear após: ${InactivityService.getBackgroundTimeoutLabel(_backgroundLockTimeout)}',
+            ),
+            onTap: _showBackgroundLockTimeoutDialog,
             dense: true,
           ),
           ListTile(
@@ -558,6 +576,52 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       SnackBar(
                         content: Text(
                           'Tempo de inatividade: ${InactivityService.getTimeoutLabel(value)}',
+                        ),
+                      ),
+                    );
+                  }
+                },
+              );
+            }),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Fechar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showBackgroundLockTimeoutDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Bloqueio em Segundo Plano'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Após quanto tempo em segundo plano o app deve ser bloqueado?',
+            ),
+            const SizedBox(height: 16),
+            ...InactivityService.backgroundTimeoutOptions.map((seconds) {
+              return RadioListTile<int>(
+                title: Text(InactivityService.getBackgroundTimeoutLabel(seconds)),
+                value: seconds,
+                groupValue: _backgroundLockTimeout,
+                onChanged: (value) async {
+                  if (value != null) {
+                    await _inactivityService.setBackgroundLockTimeout(value);
+                    await _loadBackgroundLockTimeout();
+                    if (!mounted) return;
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'Bloqueio em segundo plano: ${InactivityService.getBackgroundTimeoutLabel(value)}',
                         ),
                       ),
                     );
