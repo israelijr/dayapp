@@ -19,6 +19,7 @@ import '../widgets/emoji_selection_modal.dart';
 import '../services/emoji_service.dart';
 import '../widgets/entry_toolbar.dart';
 import '../helpers/notification_helper.dart';
+import '../helpers/image_compression_helper.dart';
 // ...existing code...
 
 class SentenceCapitalizationTextInputFormatter extends TextInputFormatter {
@@ -86,8 +87,6 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
   late String _initialTags;
   late DateTime _initialDate;
   late String? _initialEmoticon;
-
-
 
   String _capitalizeText(String text) {
     if (text.isEmpty) return text;
@@ -183,7 +182,8 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
   }
 
   Future<void> _loadEmojiTranslation() async {
-    if (selectedEmoticon != null && !legacyEmoticons.contains(selectedEmoticon)) {
+    if (selectedEmoticon != null &&
+        !legacyEmoticons.contains(selectedEmoticon)) {
       await EmojiService().loadEmojis();
       final emoji = EmojiService().findByChar(selectedEmoticon!);
       if (mounted && emoji != null) {
@@ -225,11 +225,25 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     final picked = await picker.pickImage(source: ImageSource.gallery);
     if (picked != null) {
       final bytes = await picked.readAsBytes();
+      debugPrint('>>> (EDIT) Imagem selecionada: ${bytes.length} bytes');
+
+      // Compress image to avoid SQLite CursorWindow limit (2MB)
+      final compressedBytes = await ImageCompressionHelper.compressImage(bytes);
+      debugPrint(
+        '>>> (EDIT) Imagem comprimida: ${compressedBytes.length} bytes',
+      );
+
       if (!mounted) return;
       setState(() {
-        fotos.add(bytes);
+        fotos.add(compressedBytes);
         fotoIds.add(0); // 0 indica nova foto
+        debugPrint(
+          '>>> (EDIT) Total de fotos: ${fotos.length}, fotoIds: $fotoIds',
+        );
+        _checkForChanges();
       });
+    } else {
+      debugPrint('>>> (EDIT) Nenhuma imagem selecionada');
     }
   }
 
@@ -400,18 +414,19 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
       where: 'id = ?',
       whereArgs: [widget.historia.id],
     );
-    
+
     // Verifica se a data foi alterada e está futura
     if (selectedDate != _initialDate) {
       // Reagendar notificação se a data mudou
       await NotificationHelper().rescheduleEntryNotification(
         widget.historia.id!,
+        _initialDate,
         selectedDate,
         titleController.text.trim(),
         descriptionController.text.trim(),
       );
     }
-    
+
     // Salva novas fotos
     for (int i = 0; i < fotos.length; i++) {
       if (fotoIds[i] == 0) {
@@ -632,7 +647,11 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                                     height: 24,
                                   )
                                 : Text(selectedEmoticon!),
-                            label: Text(selectedEmojiTranslation ?? selectedEmoticon ?? ''),
+                            label: Text(
+                              selectedEmojiTranslation ??
+                                  selectedEmoticon ??
+                                  '',
+                            ),
                             onDeleted: () {
                               setState(() {
                                 selectedEmoticon = null;
