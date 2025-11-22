@@ -20,6 +20,7 @@ import '../services/emoji_service.dart';
 import '../widgets/entry_toolbar.dart';
 import '../helpers/notification_helper.dart';
 import '../helpers/image_compression_helper.dart';
+import '../widgets/markdown_toolbar.dart';
 // ...existing code...
 
 class SentenceCapitalizationTextInputFormatter extends TextInputFormatter {
@@ -28,6 +29,12 @@ class SentenceCapitalizationTextInputFormatter extends TextInputFormatter {
     TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
+    // Se apenas a seleção mudou (texto é igual), não fazer nada
+    // Isso permite seleção de múltiplas palavras sem interferência
+    if (oldValue.text == newValue.text) {
+      return newValue;
+    }
+
     String capitalizeText(String text) {
       if (text.isEmpty) return text;
 
@@ -696,6 +703,9 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                         suffixIcon: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
+                            MarkdownFormattingButton(
+                              controller: descriptionController,
+                            ),
                             IconButton(
                               icon: const Icon(Icons.upload_file),
                               onPressed: _pickTxtFileForDescription,

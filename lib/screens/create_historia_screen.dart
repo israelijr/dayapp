@@ -22,6 +22,7 @@ import '../widgets/compact_video_icon.dart';
 import '../widgets/emoji_selection_modal.dart';
 import '../services/emoji_service.dart';
 import '../widgets/entry_toolbar.dart';
+import '../widgets/markdown_toolbar.dart';
 
 // Note: This file implements two UI features requested by the team:
 // 1) Importar arquivo .txt na descrição usando `file_selector` (_pickTxtFileForDescription).
@@ -35,6 +36,12 @@ class SentenceCapitalizationTextInputFormatter extends TextInputFormatter {
     TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
+    // Se apenas a seleção mudou (texto é igual), não fazer nada
+    // Isso permite seleção de múltiplas palavras sem interferência
+    if (oldValue.text == newValue.text) {
+      return newValue;
+    }
+
     String capitalizeText(String text) {
       if (text.isEmpty) return text;
 
@@ -87,8 +94,6 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
 
   // Controle de alterações não salvas
   bool _hasUnsavedChanges = false;
-
-
 
   String _capitalizeText(String text) {
     if (text.isEmpty) return text;
@@ -428,7 +433,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
   Widget build(BuildContext context) {
     final dateFormat = DateFormat('dd/MM/yyyy HH:mm', 'pt_BR');
     final theme = Theme.of(context);
-    
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (bool didPop, dynamic result) async {
@@ -477,11 +482,6 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
         appBar: AppBar(
           title: const Text('Nova História'),
           actions: [
-             IconButton(
-              icon: const Icon(Icons.calendar_today),
-              onPressed: _pickDateTime,
-              tooltip: 'Alterar Data',
-            ),
             if (_isLoading)
               const Padding(
                 padding: EdgeInsets.all(16.0),
@@ -518,6 +518,13 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
                         ),
+                        IconButton(
+                          icon: const Icon(Icons.calendar_today, size: 20),
+                          onPressed: _pickDateTime,
+                          tooltip: 'Alterar Data',
+                          padding: const EdgeInsets.all(4),
+                          constraints: const BoxConstraints(),
+                        ),
                         const Spacer(),
                         if (selectedEmoticon != null)
                           Chip(
@@ -534,7 +541,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    
+
                     // Title
                     TextField(
                       controller: titleController,
@@ -551,41 +558,57 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                       ],
                     ),
                     const Divider(),
-                    
+
+                    // Description toolbar
+                    Row(
+                      children: [
+                        Text(
+                          'Descrição',
+                          style: theme.textTheme.labelMedium?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                        const Spacer(),
+                        MarkdownFormattingButton(
+                          controller: descriptionController,
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.upload_file, size: 20),
+                          onPressed: _pickTxtFileForDescription,
+                          tooltip: 'Importar .txt',
+                          padding: const EdgeInsets.all(4),
+                          constraints: const BoxConstraints(),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.open_in_full, size: 20),
+                          onPressed: _expandDescriptionEditor,
+                          tooltip: 'Expandir',
+                          padding: const EdgeInsets.all(4),
+                          constraints: const BoxConstraints(),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+
                     // Description
                     TextField(
                       key: const Key('description_field'),
                       controller: descriptionController,
                       maxLines: null,
                       style: theme.textTheme.bodyLarge,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: 'Escreva sua história...',
                         border: InputBorder.none,
                         enabledBorder: InputBorder.none,
                         focusedBorder: InputBorder.none,
                         contentPadding: EdgeInsets.zero,
-                        suffixIcon: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.upload_file),
-                              onPressed: _pickTxtFileForDescription,
-                              tooltip: 'Importar .txt',
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.open_in_full),
-                              onPressed: _expandDescriptionEditor,
-                              tooltip: 'Expandir',
-                            ),
-                          ],
-                        ),
                       ),
                       inputFormatters: [
                         SentenceCapitalizationTextInputFormatter(),
                       ],
                     ),
                     const SizedBox(height: 16),
-                    
+
                     // Tags
                     TextField(
                       controller: tagsController,
