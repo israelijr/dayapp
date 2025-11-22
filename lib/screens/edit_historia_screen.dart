@@ -20,8 +20,8 @@ import '../services/emoji_service.dart';
 import '../widgets/entry_toolbar.dart';
 import '../helpers/notification_helper.dart';
 import '../helpers/image_compression_helper.dart';
-import '../widgets/markdown_toolbar.dart';
-// ...existing code...
+
+import '../helpers/markdown_helper.dart';
 
 class SentenceCapitalizationTextInputFormatter extends TextInputFormatter {
   @override
@@ -613,11 +613,6 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
         appBar: AppBar(
           title: const Text('Editar História'),
           actions: [
-            IconButton(
-              icon: const Icon(Icons.calendar_today),
-              onPressed: _pickDateTime,
-              tooltip: 'Alterar Data',
-            ),
             TextButton(
               onPressed: _save,
               child: const Text(
@@ -643,6 +638,13 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                           style: theme.textTheme.labelLarge?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.calendar_today, size: 20),
+                          onPressed: _pickDateTime,
+                          tooltip: 'Alterar Data',
+                          padding: const EdgeInsets.all(4),
+                          constraints: const BoxConstraints(),
                         ),
                         const Spacer(),
                         if (selectedEmoticon != null)
@@ -700,24 +702,6 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                         enabledBorder: InputBorder.none,
                         focusedBorder: InputBorder.none,
                         contentPadding: EdgeInsets.zero,
-                        suffixIcon: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            MarkdownFormattingButton(
-                              controller: descriptionController,
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.upload_file),
-                              onPressed: _pickTxtFileForDescription,
-                              tooltip: 'Importar .txt',
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.open_in_full),
-                              onPressed: _expandDescriptionEditor,
-                              tooltip: 'Expandir',
-                            ),
-                          ],
-                        ),
                       ),
                       inputFormatters: [
                         SentenceCapitalizationTextInputFormatter(),
@@ -816,7 +800,131 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                 ),
               ),
             ),
-            // Toolbar
+
+            // Description Toolbar (above main toolbar)
+            Container(
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surfaceContainerHighest,
+                border: Border(
+                  top: BorderSide(
+                    color: theme.colorScheme.outlineVariant,
+                    width: 1,
+                  ),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: IconButton(
+                      icon: const Icon(Icons.format_shapes),
+                      onPressed: () {
+                        // Trigger markdown modal
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (context) => Container(
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ListTile(
+                                  leading: const Icon(Icons.format_bold),
+                                  title: const Text('Negrito'),
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                    MarkdownHelper.wrapSelection(
+                                      descriptionController,
+                                      '**',
+                                      '**',
+                                    );
+                                  },
+                                ),
+                                ListTile(
+                                  leading: const Icon(Icons.format_italic),
+                                  title: const Text('Itálico'),
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                    MarkdownHelper.wrapSelection(
+                                      descriptionController,
+                                      '*',
+                                      '*',
+                                    );
+                                  },
+                                ),
+                                ListTile(
+                                  leading: const Icon(Icons.strikethrough_s),
+                                  title: const Text('Tachado'),
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                    MarkdownHelper.wrapSelection(
+                                      descriptionController,
+                                      '~~',
+                                      '~~',
+                                    );
+                                  },
+                                ),
+                                ListTile(
+                                  leading: const Icon(Icons.title),
+                                  title: const Text('Título'),
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                    MarkdownHelper.formatHeading(
+                                      descriptionController,
+                                      1,
+                                    );
+                                  },
+                                ),
+                                ListTile(
+                                  leading: const Icon(
+                                    Icons.format_list_bulleted,
+                                  ),
+                                  title: const Text('Lista'),
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                    MarkdownHelper.toggleList(
+                                      descriptionController,
+                                      ordered: false,
+                                    );
+                                  },
+                                ),
+                                ListTile(
+                                  leading: const Icon(Icons.code),
+                                  title: const Text('Código'),
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                    MarkdownHelper.wrapSelection(
+                                      descriptionController,
+                                      '`',
+                                      '`',
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                      tooltip: 'Markdown',
+                    ),
+                  ),
+                  Expanded(
+                    child: IconButton(
+                      icon: const Icon(Icons.upload_file),
+                      onPressed: _pickTxtFileForDescription,
+                      tooltip: 'Importar .txt',
+                    ),
+                  ),
+                  Expanded(
+                    child: IconButton(
+                      icon: const Icon(Icons.open_in_full),
+                      onPressed: _expandDescriptionEditor,
+                      tooltip: 'Expandir',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Main Toolbar (photos, videos, audio, emoji)
             EntryToolbar(
               onPickPhoto: _pickImage,
               onPickVideo: _pickVideo,

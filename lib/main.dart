@@ -153,12 +153,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         if (widget.pinProvider.isPinEnabled) {
           // Se estiver autenticando com biometria, não bloqueia
           if (widget.pinProvider.isAuthenticatingWithBiometrics) {
-             print('Retornando de autenticação biométrica - ignorando bloqueio');
-             _inactivityService.startTimer();
-             _pausedTime = null;
-             // Reseta a flag pois já consumimos o evento de retorno
-             widget.pinProvider.isAuthenticatingWithBiometrics = false;
-             return;
+            print('Retornando de autenticação biométrica - ignorando bloqueio');
+            _inactivityService.startTimer();
+            _pausedTime = null;
+            // Reseta a flag pois já consumimos o evento de retorno
+            widget.pinProvider.isAuthenticatingWithBiometrics = false;
+            return;
           }
 
           // Verifica se deve bloquear baseado no tempo de inatividade
@@ -167,9 +167,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               widget.pinProvider.requireAuthentication();
             } else if (_pausedTime != null) {
               final pauseDuration = DateTime.now().difference(_pausedTime!);
-              final backgroundTimeoutSeconds = await _inactivityService.getBackgroundLockTimeout();
-              final backgroundTimeout = Duration(seconds: backgroundTimeoutSeconds);
-              
+              final backgroundTimeoutSeconds = await _inactivityService
+                  .getBackgroundLockTimeout();
+              final backgroundTimeout = Duration(
+                seconds: backgroundTimeoutSeconds,
+              );
+
               // Verifica se o tempo de pausa excedeu o configurado
               if (pauseDuration > backgroundTimeout) {
                 widget.pinProvider.requireAuthentication();
@@ -178,7 +181,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
             // Reinicia o timer de inatividade
             _inactivityService.startTimer();
-            
+
             _pausedTime = null;
           });
         }
@@ -200,67 +203,40 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
-          return GestureDetector(
-            onTap: () {
-              print('Atividade detectada: tap');
-              _inactivityService.recordActivity();
+          return MaterialApp(
+            title: 'DayApp',
+            debugShowCheckedModeBanner: false,
+            navigatorKey: navigatorKey,
+            theme: M3ExpressiveTheme.getLightTheme(),
+            darkTheme: M3ExpressiveTheme.getDarkTheme(),
+            themeMode: themeProvider.themeMode,
+            supportedLocales: const [Locale('pt', 'BR'), Locale('en', 'US')],
+            localizationsDelegates: const [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            initialRoute: widget.authProvider.isLoggedIn ? '/home' : '/login',
+            routes: {
+              '/login': (context) => const LoginScreen(),
+              '/create_account': (context) => const CreateAccountScreen(),
+              '/create_account_complement': (context) =>
+                  const CreateAccountComplementScreen(),
+              '/home': (context) =>
+                  const PinProtectedWrapper(child: HomeScreen()),
+              '/create_historia': (context) =>
+                  const PinProtectedWrapper(child: CreateHistoriaScreen()),
+              '/edit_profile': (context) =>
+                  const PinProtectedWrapper(child: EditProfileScreen()),
+              '/settings': (context) =>
+                  const PinProtectedWrapper(child: SettingsScreen()),
+              '/calendar': (context) =>
+                  const PinProtectedWrapper(child: CalendarViewScreen()),
+              '/backup-manager': (context) =>
+                  const PinProtectedWrapper(child: BackupManagerScreen()),
+              '/trash': (context) =>
+                  const PinProtectedWrapper(child: TrashScreen()),
             },
-            onPanDown: (_) {
-              print('Atividade detectada: pan');
-              _inactivityService.recordActivity();
-            },
-            onScaleStart: (_) {
-              print('Atividade detectada: scale');
-              _inactivityService.recordActivity();
-            },
-            behavior: HitTestBehavior.translucent,
-            child: NotificationListener<ScrollNotification>(
-              onNotification: (notification) {
-                print('Atividade detectada: scroll');
-                _inactivityService.recordActivity();
-                return false;
-              },
-              child: MaterialApp(
-                title: 'DayApp',
-                debugShowCheckedModeBanner: false,
-                navigatorKey: navigatorKey,
-                theme: M3ExpressiveTheme.getLightTheme(),
-                darkTheme: M3ExpressiveTheme.getDarkTheme(),
-                themeMode: themeProvider.themeMode,
-                supportedLocales: const [
-                  Locale('pt', 'BR'),
-                  Locale('en', 'US'),
-                ],
-                localizationsDelegates: const [
-                  GlobalMaterialLocalizations.delegate,
-                  GlobalWidgetsLocalizations.delegate,
-                  GlobalCupertinoLocalizations.delegate,
-                ],
-                initialRoute: widget.authProvider.isLoggedIn
-                    ? '/home'
-                    : '/login',
-                routes: {
-                  '/login': (context) => const LoginScreen(),
-                  '/create_account': (context) => const CreateAccountScreen(),
-                  '/create_account_complement': (context) =>
-                      const CreateAccountComplementScreen(),
-                  '/home': (context) =>
-                      const PinProtectedWrapper(child: HomeScreen()),
-                  '/create_historia': (context) =>
-                      const PinProtectedWrapper(child: CreateHistoriaScreen()),
-                  '/edit_profile': (context) =>
-                      const PinProtectedWrapper(child: EditProfileScreen()),
-                  '/settings': (context) =>
-                      const PinProtectedWrapper(child: SettingsScreen()),
-                  '/calendar': (context) =>
-                      const PinProtectedWrapper(child: CalendarViewScreen()),
-                  '/backup-manager': (context) =>
-                      const PinProtectedWrapper(child: BackupManagerScreen()),
-                  '/trash': (context) =>
-                      const PinProtectedWrapper(child: TrashScreen()),
-                },
-              ),
-            ),
           );
         },
       ),

@@ -22,7 +22,8 @@ import '../widgets/compact_video_icon.dart';
 import '../widgets/emoji_selection_modal.dart';
 import '../services/emoji_service.dart';
 import '../widgets/entry_toolbar.dart';
-import '../widgets/markdown_toolbar.dart';
+
+import '../helpers/markdown_helper.dart';
 
 // Note: This file implements two UI features requested by the team:
 // 1) Importar arquivo .txt na descrição usando `file_selector` (_pickTxtFileForDescription).
@@ -559,34 +560,12 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                     ),
                     const Divider(),
 
-                    // Description toolbar
-                    Row(
-                      children: [
-                        Text(
-                          'Descrição',
-                          style: theme.textTheme.labelMedium?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                        const Spacer(),
-                        MarkdownFormattingButton(
-                          controller: descriptionController,
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.upload_file, size: 20),
-                          onPressed: _pickTxtFileForDescription,
-                          tooltip: 'Importar .txt',
-                          padding: const EdgeInsets.all(4),
-                          constraints: const BoxConstraints(),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.open_in_full, size: 20),
-                          onPressed: _expandDescriptionEditor,
-                          tooltip: 'Expandir',
-                          padding: const EdgeInsets.all(4),
-                          constraints: const BoxConstraints(),
-                        ),
-                      ],
+                    // Description label
+                    Text(
+                      'Descrição',
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
                     ),
                     const SizedBox(height: 8),
 
@@ -699,7 +678,130 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                 ),
               ),
             ),
-            // Toolbar
+            // Description Toolbar (above main toolbar)
+            Container(
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surfaceContainerHighest,
+                border: Border(
+                  top: BorderSide(
+                    color: theme.colorScheme.outlineVariant,
+                    width: 1,
+                  ),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Expanded(
+                    child: IconButton(
+                      icon: const Icon(Icons.format_shapes),
+                      onPressed: () {
+                        // Show markdown modal
+                        showModalBottomSheet(
+                          context: context,
+                          builder: (context) => Container(
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ListTile(
+                                  leading: const Icon(Icons.format_bold),
+                                  title: const Text('Negrito'),
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                    MarkdownHelper.wrapSelection(
+                                      descriptionController,
+                                      '**',
+                                      '**',
+                                    );
+                                  },
+                                ),
+                                ListTile(
+                                  leading: const Icon(Icons.format_italic),
+                                  title: const Text('Itálico'),
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                    MarkdownHelper.wrapSelection(
+                                      descriptionController,
+                                      '*',
+                                      '*',
+                                    );
+                                  },
+                                ),
+                                ListTile(
+                                  leading: const Icon(Icons.strikethrough_s),
+                                  title: const Text('Tachado'),
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                    MarkdownHelper.wrapSelection(
+                                      descriptionController,
+                                      '~~',
+                                      '~~',
+                                    );
+                                  },
+                                ),
+                                ListTile(
+                                  leading: const Icon(Icons.title),
+                                  title: const Text('Título'),
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                    MarkdownHelper.formatHeading(
+                                      descriptionController,
+                                      1,
+                                    );
+                                  },
+                                ),
+                                ListTile(
+                                  leading: const Icon(
+                                    Icons.format_list_bulleted,
+                                  ),
+                                  title: const Text('Lista'),
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                    MarkdownHelper.toggleList(
+                                      descriptionController,
+                                      ordered: false,
+                                    );
+                                  },
+                                ),
+                                ListTile(
+                                  leading: const Icon(Icons.code),
+                                  title: const Text('Código'),
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                    MarkdownHelper.wrapSelection(
+                                      descriptionController,
+                                      '`',
+                                      '`',
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                      tooltip: 'Markdown',
+                    ),
+                  ),
+                  Expanded(
+                    child: IconButton(
+                      icon: const Icon(Icons.upload_file),
+                      onPressed: _pickTxtFileForDescription,
+                      tooltip: 'Importar .txt',
+                    ),
+                  ),
+                  Expanded(
+                    child: IconButton(
+                      icon: const Icon(Icons.open_in_full),
+                      onPressed: _expandDescriptionEditor,
+                      tooltip: 'Expandir',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Main Toolbar (photos, videos, audio, emoji)
             EntryToolbar(
               onPickPhoto: _pickImage,
               onPickVideo: _pickVideo,
