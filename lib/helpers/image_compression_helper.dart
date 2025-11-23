@@ -28,9 +28,7 @@ class ImageCompressionHelper {
 
       // If compressed size is under 1.5MB, we're good
       if (compressed.length < 1024 * 1024 * 1.5) {
-        debugPrint(
-          'Image compressed from ${imageBytes.length} bytes to ${compressed.length} bytes (quality: $quality)',
-        );
+        
         return compressed;
       }
 
@@ -40,9 +38,7 @@ class ImageCompressionHelper {
 
     // If we got here, return the last compressed version
     // even if it's still large (better than nothing)
-    debugPrint(
-      'Image compression completed with quality $quality: ${compressed?.length ?? imageBytes.length} bytes',
-    );
+
     return compressed ?? imageBytes;
   }
 }

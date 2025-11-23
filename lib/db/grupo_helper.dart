@@ -1,3 +1,4 @@
+import 'package:sqflite/sqflite.dart' as sqflite_lib;
 import 'database_helper.dart';
 import '../models/grupo.dart';
 
@@ -61,5 +62,25 @@ class GrupoHelper {
     );
     // Depois, excluir o grupo
     await db.delete('grupos', where: 'id = ?', whereArgs: [grupoId]);
+  }
+
+  /// Conta o número de histórias em um grupo específico (não arquivadas e não excluídas)
+  Future<int> countHistoriasInGrupo(String userId, String grupoNome) async {
+    final db = await DatabaseHelper().database;
+    final result = await db.rawQuery(
+      'SELECT COUNT(*) as count FROM historia WHERE user_id = ? AND grupo = ? AND arquivado IS NULL AND excluido IS NULL',
+      [userId, grupoNome],
+    );
+    return sqflite_lib.Sqflite.firstIntValue(result) ?? 0;
+  }
+
+  /// Conta o número de histórias arquivadas (não excluídas)
+  Future<int> countArquivadas(String userId) async {
+    final db = await DatabaseHelper().database;
+    final result = await db.rawQuery(
+      'SELECT COUNT(*) as count FROM historia WHERE user_id = ? AND arquivado IS NOT NULL AND excluido IS NULL',
+      [userId],
+    );
+    return sqflite_lib.Sqflite.firstIntValue(result) ?? 0;
   }
 }

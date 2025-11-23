@@ -37,7 +37,6 @@ class AdService {
 
     await MobileAds.instance.initialize();
     _isInitialized = true;
-    print('AdMob inicializado com sucesso');
   }
 
   /// Obtém o ID do anúncio banner baseado na plataforma
@@ -85,8 +84,8 @@ class AdService {
       listener: BannerAdListener(
         onAdLoaded: onAdLoaded,
         onAdFailedToLoad: onAdFailedToLoad,
-        onAdOpened: (Ad ad) => print('Banner ad opened'),
-        onAdClosed: (Ad ad) => print('Banner ad closed'),
+        onAdOpened: (Ad ad) {},
+        onAdClosed: (Ad ad) {},
       ),
     );
 
@@ -114,7 +113,6 @@ class AdService {
           onAdLoaded(ad);
         },
         onAdFailedToLoad: (error) {
-          print('InterstitialAd failed to load: $error');
           onAdFailedToLoad(error);
         },
       ),
@@ -143,7 +141,6 @@ class AdService {
           onAdLoaded(ad);
         },
         onAdFailedToLoad: (error) {
-          print('RewardedAd failed to load: $error');
           onAdFailedToLoad(error);
         },
       ),

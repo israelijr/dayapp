@@ -11,7 +11,6 @@ import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../helpers/notification_helper.dart';
-import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:file_selector/file_selector.dart';
 import 'rich_text_editor_screen.dart';
@@ -548,39 +547,35 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                       controller: titleController,
                       style: theme.textTheme.headlineSmall,
                       decoration: const InputDecoration(
-                        hintText: 'Título',
-                        border: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        contentPadding: EdgeInsets.zero,
+                        labelText: 'Título',
+                        hintText: 'Digite o título',
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 12,
+                        ),
                       ),
                       inputFormatters: [
                         SentenceCapitalizationTextInputFormatter(),
                       ],
                     ),
-                    const Divider(),
-
-                    // Description label
-                    Text(
-                      'Descrição',
-                      style: theme.textTheme.labelMedium?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 16),
 
                     // Description
                     TextField(
                       key: const Key('description_field'),
                       controller: descriptionController,
-                      maxLines: null,
+                      maxLines: 5,
                       style: theme.textTheme.bodyLarge,
                       decoration: const InputDecoration(
+                        labelText: 'Descrição',
                         hintText: 'Escreva sua história...',
-                        border: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        contentPadding: EdgeInsets.zero,
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 12,
+                        ),
+                        alignLabelWithHint: true,
                       ),
                       inputFormatters: [
                         SentenceCapitalizationTextInputFormatter(),

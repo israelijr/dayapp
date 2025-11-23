@@ -42,7 +42,7 @@ class VideoFileHelper {
       }
       return null;
     } catch (e) {
-      debugPrint('Erro ao ler vídeo: $e');
+
       return null;
     }
   }
@@ -57,7 +57,7 @@ class VideoFileHelper {
       }
       return false;
     } catch (e) {
-      debugPrint('Erro ao deletar vídeo: $e');
+
       return false;
     }
   }
@@ -85,9 +85,9 @@ class VideoFileHelper {
       if (file is File && !validPaths.contains(file.path)) {
         try {
           await file.delete();
-          debugPrint('Vídeo órfão deletado: ${file.path}');
+
         } catch (e) {
-          debugPrint('Erro ao deletar vídeo órfão: $e');
+
         }
       }
     }

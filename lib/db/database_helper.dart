@@ -14,34 +14,26 @@ class DatabaseHelper {
 
   Future<Database> get database async {
     if (_database != null) return _database!;
-    debugPrint('DatabaseHelper: inicializando banco de dados...');
     _database = await _initDatabase();
-    debugPrint('DatabaseHelper: banco de dados inicializado');
     return _database!;
   }
 
   Future<Database> _initDatabase() async {
     try {
-      debugPrint('DatabaseHelper: obtendo caminho do banco de dados...');
       final dbPath = await getDatabasesPath();
-      debugPrint('DatabaseHelper: caminho do banco: $dbPath');
       final path = p.join(dbPath, 'dayapp.db');
-      debugPrint('DatabaseHelper: abrindo banco em $path');
       return await openDatabase(
         path,
         version: 11,
         onCreate: _onCreate,
         onUpgrade: _onUpgrade,
       );
-    } catch (e, stack) {
-      debugPrint('DatabaseHelper: erro ao inicializar banco: $e');
-      debugPrint('DatabaseHelper: stacktrace: $stack');
+    } catch (e) {
       rethrow;
     }
   }
 
   Future _onCreate(Database db, int version) async {
-    debugPrint('DatabaseHelper: criando tabelas...');
     try {
       await db.execute('''
         CREATE TABLE users (
@@ -53,7 +45,6 @@ class DatabaseHelper {
           foto_perfil TEXT
         );
       ''');
-      debugPrint('DatabaseHelper: tabela users criada');
       await db.execute('''
         CREATE TABLE historia (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -75,7 +66,6 @@ class DatabaseHelper {
           FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         );
       ''');
-      debugPrint('DatabaseHelper: tabela historia criada');
       await db.execute('''
         CREATE TABLE historia_fotos (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -85,7 +75,6 @@ class DatabaseHelper {
           FOREIGN KEY (historia_id) REFERENCES historia(id) ON DELETE CASCADE
         );
       ''');
-      debugPrint('DatabaseHelper: tabela historia_fotos criada');
       await db.execute('''
         CREATE TABLE historia_audios (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -96,7 +85,6 @@ class DatabaseHelper {
           FOREIGN KEY (historia_id) REFERENCES historia(id) ON DELETE CASCADE
         );
       ''');
-      debugPrint('DatabaseHelper: tabela historia_audios criada');
       await db.execute('''
         CREATE TABLE historia_videos (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -108,7 +96,6 @@ class DatabaseHelper {
           FOREIGN KEY (historia_id) REFERENCES historia(id) ON DELETE CASCADE
         );
       ''');
-      debugPrint('DatabaseHelper: tabela historia_videos criada');
       await db.execute('''
         CREATE TABLE grupos (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -119,7 +106,6 @@ class DatabaseHelper {
           FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         );
       ''');
-      debugPrint('DatabaseHelper: tabela grupos criada');
       await db.execute('''
         CREATE TABLE notification_scheduled (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -129,17 +115,13 @@ class DatabaseHelper {
           FOREIGN KEY (historia_id) REFERENCES historia(id) ON DELETE CASCADE
         );
       ''');
-      debugPrint('DatabaseHelper: tabela notification_scheduled criada');
       await db.execute(
         'CREATE INDEX idx_historia_user_id ON historia(user_id);',
       );
       await db.execute('CREATE INDEX idx_historia_data ON historia(data);');
       await db.execute('CREATE INDEX idx_historia_tag ON historia(tag);');
       await db.execute('CREATE INDEX idx_users_email ON users(email);');
-      debugPrint('DatabaseHelper: índices criados');
-    } catch (e, stack) {
-      debugPrint('DatabaseHelper: erro ao criar tabelas: $e');
-      debugPrint('DatabaseHelper: stacktrace: $stack');
+    } catch (e) {
       rethrow;
     }
   }
@@ -162,14 +144,12 @@ class DatabaseHelper {
           FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         );
       ''');
-      debugPrint('DatabaseHelper: tabela grupos criada na upgrade');
     }
     if (oldVersion < 5) {
       try {
         await db.execute('ALTER TABLE historia ADD COLUMN arquivado TEXT;');
-        debugPrint('DatabaseHelper: coluna arquivado adicionada');
       } catch (e) {
-        debugPrint('DatabaseHelper: coluna arquivado já existe: $e');
+        // Column may already exist
       }
     }
     if (oldVersion < 6) {
@@ -183,7 +163,6 @@ class DatabaseHelper {
           FOREIGN KEY (historia_id) REFERENCES historia(id) ON DELETE CASCADE
         );
       ''');
-      debugPrint('DatabaseHelper: tabela historia_audios criada na upgrade');
       await db.execute('''
         CREATE TABLE historia_videos (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -195,14 +174,9 @@ class DatabaseHelper {
           FOREIGN KEY (historia_id) REFERENCES historia(id) ON DELETE CASCADE
         );
       ''');
-      debugPrint('DatabaseHelper: tabela historia_videos criada na upgrade');
     }
     if (oldVersion < 7) {
       // Migração: BLOB para sistema de arquivos
-      debugPrint(
-        'DatabaseHelper: iniciando migração v6 -> v7 (vídeos para arquivos)',
-      );
-
       // Criar nova tabela com caminhos
       await db.execute('''
         CREATE TABLE IF NOT EXISTS historia_videos_new (
@@ -215,17 +189,10 @@ class DatabaseHelper {
           FOREIGN KEY (historia_id) REFERENCES historia(id) ON DELETE CASCADE
         );
       ''');
-      debugPrint('DatabaseHelper: tabela historia_videos_new criada');
 
       // Tentar migrar dados existentes (apenas vídeos pequenos < 2MB)
       try {
         final videos = await db.query('historia_videos', limit: 100);
-        debugPrint(
-          'DatabaseHelper: encontrados ${videos.length} vídeos para migrar',
-        );
-
-        int migrated = 0;
-        int skipped = 0;
 
         for (final video in videos) {
           try {
@@ -255,31 +222,14 @@ class DatabaseHelper {
                   'duracao': video['duracao'],
                   'thumbnail_path': null,
                 });
-
-                migrated++;
-                debugPrint(
-                  'DatabaseHelper: vídeo $migrated migrado (${videoData.length} bytes)',
-                );
-              } else {
-                skipped++;
-                debugPrint(
-                  'DatabaseHelper: vídeo muito grande ignorado (${videoData.length} bytes)',
-                );
               }
             }
           } catch (e) {
-            debugPrint('DatabaseHelper: erro ao migrar vídeo individual: $e');
-            skipped++;
+            // Skip video on error
           }
         }
-
-        debugPrint(
-          'DatabaseHelper: migração concluída - $migrated migrados, $skipped ignorados',
-        );
       } catch (e) {
-        debugPrint(
-          'DatabaseHelper: tabela antiga não existe ou erro na migração: $e',
-        );
+        // Old table doesn't exist or migration error
       }
 
       // Dropar tabela antiga e renomear nova
@@ -287,7 +237,6 @@ class DatabaseHelper {
       await db.execute(
         'ALTER TABLE historia_videos_new RENAME TO historia_videos',
       );
-      debugPrint('DatabaseHelper: migração v6 -> v7 concluída');
     }
     if (oldVersion < 8) {
       try {
@@ -295,11 +244,8 @@ class DatabaseHelper {
         await db.execute(
           'ALTER TABLE historia ADD COLUMN data_exclusao TIMESTAMP;',
         );
-        debugPrint(
-          'DatabaseHelper: colunas excluido e data_exclusao adicionadas',
-        );
       } catch (e) {
-        debugPrint('DatabaseHelper: erro ao adicionar colunas de exclusão: $e');
+        // Columns may already exist
       }
     }
     if (oldVersion < 9) {
@@ -313,10 +259,6 @@ class DatabaseHelper {
 
         if (!hasVideoPath) {
           // Tabela ainda usa BLOB, precisa migrar
-          debugPrint(
-            'DatabaseHelper: corrigindo estrutura da tabela historia_videos...',
-          );
-
           // Criar nova tabela com estrutura correta
           await db.execute('''
             CREATE TABLE IF NOT EXISTS historia_videos_fixed (
@@ -335,13 +277,9 @@ class DatabaseHelper {
           await db.execute(
             'ALTER TABLE historia_videos_fixed RENAME TO historia_videos',
           );
-
-          debugPrint(
-            'DatabaseHelper: estrutura da tabela historia_videos corrigida',
-          );
         }
       } catch (e) {
-        debugPrint('DatabaseHelper: erro ao corrigir estrutura da tabela: $e');
+        // Error correcting table structure
       }
     }
     if (oldVersion < 10) {
@@ -356,21 +294,15 @@ class DatabaseHelper {
             FOREIGN KEY (historia_id) REFERENCES historia(id) ON DELETE CASCADE
           );
         ''');
-        debugPrint('DatabaseHelper: tabela notification_scheduled criada');
       } catch (e) {
-        debugPrint(
-          'DatabaseHelper: erro ao criar tabela notification_scheduled: $e',
-        );
+        // Error creating notification_scheduled table
       }
     }
     if (oldVersion < 11) {
       try {
         await db.execute('ALTER TABLE grupos ADD COLUMN emoticon TEXT;');
-        debugPrint(
-          'DatabaseHelper: coluna emoticon adicionada à tabela grupos',
-        );
       } catch (e) {
-        debugPrint('DatabaseHelper: erro ao adicionar coluna emoticon: $e');
+        // Column may already exist
       }
     }
   }
@@ -393,15 +325,10 @@ class DatabaseHelper {
   Future<void> resetDatabase() async {
     try {
       if (_database != null) {
-        debugPrint('DatabaseHelper: closing existing database connection...');
         await _database!.close();
         _database = null;
-        debugPrint(
-          'DatabaseHelper: database connection closed and cache cleared',
-        );
       }
     } catch (e) {
-      debugPrint('DatabaseHelper: erro ao resetar o banco: $e');
       rethrow;
     }
   }
@@ -429,10 +356,6 @@ class DatabaseHelper {
       'notification_id': notificationId,
       'scheduled_time': scheduledTime.toIso8601String(),
     });
-
-    debugPrint(
-      'DatabaseHelper: notificação $notificationId agendada para história $historiaId',
-    );
   }
 
   /// Busca notificação agendada para uma história
@@ -457,10 +380,6 @@ class DatabaseHelper {
       'notification_scheduled',
       where: 'historia_id = ?',
       whereArgs: [historiaId],
-    );
-
-    debugPrint(
-      'DatabaseHelper: notificação cancelada para história $historiaId',
     );
   }
 }

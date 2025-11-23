@@ -15,6 +15,8 @@ class GroupsScreen extends StatefulWidget {
 
 class _GroupsScreenState extends State<GroupsScreen> {
   List<Grupo> _grupos = [];
+  Map<String, int> _grupoCounts = {};
+  int _arquivadosCount = 0;
   bool _isLoading = true;
 
   @override
@@ -29,14 +31,42 @@ class _GroupsScreenState extends State<GroupsScreen> {
       final auth = Provider.of<AuthProvider>(context, listen: false);
       final userId = auth.user?.id;
       if (userId != null) {
-        final grupos = await GrupoHelper().getGruposByUser(userId);
+        final grupoHelper = GrupoHelper();
+        final todosGrupos = await grupoHelper.getGruposByUser(userId);
+
+        // Filtrar grupos que têm histórias e contar registros
+        final gruposComHistorias = <Grupo>[];
+        final counts = <String, int>{};
+
+        for (final grupo in todosGrupos) {
+          final count = await grupoHelper.countHistoriasInGrupo(
+            userId,
+            grupo.nome,
+          );
+          if (count > 0) {
+            gruposComHistorias.add(grupo);
+            counts[grupo.nome] = count;
+          }
+        }
+
+        // Contar arquivadas
+        final arquivadosCount = await grupoHelper.countArquivadas(userId);
+
         setState(() {
-          _grupos = grupos;
+          _grupos = gruposComHistorias;
+          _grupoCounts = counts;
+          _arquivadosCount = arquivadosCount;
         });
       }
     } finally {
       setState(() => _isLoading = false);
     }
+  }
+
+  Future<void> _navigateAndRefresh(Widget screen) async {
+    await Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
+    // Recarregar grupos ao voltar
+    _loadGrupos();
   }
 
   @override
@@ -54,15 +84,13 @@ class _GroupsScreenState extends State<GroupsScreen> {
                       const Divider(height: 1, thickness: 1),
                       ListTile(
                         title: const Text('Arquivados'),
+                        subtitle: Text(
+                          '$_arquivadosCount ${_arquivadosCount == 1 ? 'registro' : 'registros'}',
+                        ),
                         leading: const Icon(Icons.archive, color: Colors.grey),
                         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const ArchivedStoriesScreen(),
-                            ),
-                          );
+                          _navigateAndRefresh(const ArchivedStoriesScreen());
                         },
                       ),
                     ],
@@ -70,6 +98,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                 }
 
                 final grupo = _grupos[index];
+                final count = _grupoCounts[grupo.nome] ?? 0;
                 return ListTile(
                   leading: Container(
                     width: 40,
@@ -88,16 +117,11 @@ class _GroupsScreenState extends State<GroupsScreen> {
                   ),
                   title: Text(grupo.nome),
                   subtitle: Text(
-                    'Criado em ${grupo.dataCriacao?.toLocal().toString().split(' ')[0] ?? ''}',
+                    '$count ${count == 1 ? 'registro' : 'registros'}',
                   ),
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => GroupStoriesScreen(grupo: grupo),
-                      ),
-                    );
+                    _navigateAndRefresh(GroupStoriesScreen(grupo: grupo));
                   },
                 );
               },

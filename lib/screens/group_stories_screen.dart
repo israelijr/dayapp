@@ -38,7 +38,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
 
   bool _isCardView = true; // true = modo blocos, false = modo ícones
 
-  String _getEmoticonImage(String emoticon) {
+  String? _getEmoticonImage(String emoticon) {
     switch (emoticon) {
       case 'Feliz':
         return '1_feliz.png';
@@ -61,7 +61,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
       case 'Muito Triste':
         return '10_muito_triste.png';
       default:
-        return '1_feliz.png';
+        return null;
     }
   }
 
@@ -567,8 +567,15 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
       appBar: AppBar(
         title: Row(
           children: [
-            Image.asset('assets/icon/icon.png', width: 32, height: 32),
-            const SizedBox(width: 12),
+            if (widget.grupo.emoticon != null &&
+                widget.grupo.emoticon!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Text(
+                  widget.grupo.emoticon!,
+                  style: const TextStyle(fontSize: 24),
+                ),
+              ),
             Expanded(
               child: Text(
                 widget.grupo.nome,
@@ -980,7 +987,7 @@ class HistoriaFotosGrid extends StatelessWidget {
 class HistoriaMediaRow extends StatelessWidget {
   final int historiaId;
   final String? emoticon;
-  final String Function(String) getEmoticonImage;
+  final String? Function(String) getEmoticonImage;
 
   const HistoriaMediaRow({
     super.key,
@@ -1001,7 +1008,6 @@ class HistoriaMediaRow extends StatelessWidget {
 
         // Mostra erro se houver
         if (snapshot.hasError) {
-          debugPrint('Erro ao carregar mídia: ${snapshot.error}');
           return const SizedBox.shrink();
         }
 
@@ -1012,10 +1018,6 @@ class HistoriaMediaRow extends StatelessWidget {
         final data = snapshot.data!;
         final audios = data['audios'] as List<HistoriaAudio>;
         final videos = data['videos'] as List<v2.HistoriaVideo>;
-
-        debugPrint(
-          'HistoriaMediaRow [Grupo] - ID: $historiaId, Emoticon: $emoticon, Audios: ${audios.length}, Videos: ${videos.length}',
-        );
 
         // Se não tem emoticon nem mídia, não mostra nada
         if ((emoticon == null || emoticon!.isEmpty) &&
@@ -1043,12 +1045,26 @@ class HistoriaMediaRow extends StatelessWidget {
                       ),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Image.asset(
-                      'assets/image/${getEmoticonImage(emoticon!)}',
-                      width: 40,
-                      height: 40,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Icon(Icons.mood, size: 40);
+                    child: Builder(
+                      builder: (context) {
+                        final imagePath = getEmoticonImage(emoticon!);
+                        if (imagePath != null) {
+                          return Image.asset(
+                            'assets/image/$imagePath',
+                            width: 40,
+                            height: 40,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Icon(Icons.mood, size: 40);
+                            },
+                          );
+                        } else {
+                          return Center(
+                            child: Text(
+                              emoticon!,
+                              style: const TextStyle(fontSize: 32),
+                            ),
+                          );
+                        }
                       },
                     ),
                   ),
@@ -1088,12 +1104,9 @@ class HistoriaMediaRow extends StatelessWidget {
       final videos = await HistoriaVideoHelper().getVideosByHistoria(
         historiaId,
       );
-      debugPrint(
-        '_loadMediaData [Grupo] - Historia $historiaId: ${audios.length} áudios, ${videos.length} vídeos',
-      );
+
       return {'audios': audios, 'videos': videos};
     } catch (e) {
-      debugPrint('Erro em _loadMediaData [Grupo]: $e');
       return {'audios': <HistoriaAudio>[], 'videos': <v2.HistoriaVideo>[]};
     }
   }

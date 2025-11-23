@@ -48,7 +48,7 @@ class EmojiService {
         _groupedEmojis[emoji.group]!.add(emoji);
       }
     } catch (e) {
-      print('Error loading emojis: $e');
+
     }
   }
 

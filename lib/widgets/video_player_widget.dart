@@ -49,22 +49,16 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
       if (widget.videoPath != null) {
         // Vídeo existente - usar caminho direto
-        debugPrint(
-          'VideoPlayerWidget: carregando vídeo do caminho: ${widget.videoPath}',
-        );
+
         videoFile = File(widget.videoPath!);
 
         if (!await videoFile.exists()) {
-          debugPrint(
-            'VideoPlayerWidget: arquivo não encontrado: ${widget.videoPath}',
-          );
+
           throw Exception('Arquivo de vídeo não encontrado');
         }
       } else if (widget.videoData != null) {
         // Vídeo novo - criar arquivo temporário
-        debugPrint(
-          'VideoPlayerWidget: criando arquivo temporário para vídeo (${widget.videoData!.length} bytes)',
-        );
+        
         final tempDir = await getTemporaryDirectory();
         videoFile = File(
           '${tempDir.path}/temp_video_${DateTime.now().millisecondsSinceEpoch}.mp4',
@@ -91,7 +85,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         });
       }
     } catch (e) {
-      debugPrint('Erro ao inicializar vídeo: $e');
+
       if (mounted) {
         setState(() {
           _hasError = true;
@@ -113,7 +107,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
           return sizeInMB.toStringAsFixed(2);
         }
       } catch (e) {
-        debugPrint('Erro ao obter tamanho do vídeo: $e');
+
       }
     }
     return '?';

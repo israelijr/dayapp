@@ -24,7 +24,7 @@ class RewardedAdHelper {
         _isLoading = false;
       },
       onAdFailedToLoad: (error) {
-        print('Rewarded ad failed to load: $error');
+
         _isLoading = false;
       },
     );
@@ -38,7 +38,7 @@ class RewardedAdHelper {
     Function? onAdDismissed,
   }) async {
     if (_rewardedAd == null) {
-      print('Rewarded ad not ready yet');
+
       // Tenta carregar para a próxima vez
       load();
       return;
@@ -46,10 +46,10 @@ class RewardedAdHelper {
 
     _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
       onAdShowedFullScreenContent: (ad) {
-        print('Rewarded ad showed full screen');
+
       },
       onAdDismissedFullScreenContent: (ad) {
-        print('Rewarded ad dismissed');
+
         ad.dispose();
         _rewardedAd = null;
         onAdDismissed?.call();
@@ -57,7 +57,7 @@ class RewardedAdHelper {
         load();
       },
       onAdFailedToShowFullScreenContent: (ad, error) {
-        print('Rewarded ad failed to show: $error');
+
         ad.dispose();
         _rewardedAd = null;
         onAdDismissed?.call();
@@ -68,7 +68,7 @@ class RewardedAdHelper {
 
     await _rewardedAd!.show(
       onUserEarnedReward: (ad, reward) {
-        print('User earned reward: ${reward.amount} ${reward.type}');
+
         onRewarded(reward.amount.toInt(), reward.type);
       },
     );

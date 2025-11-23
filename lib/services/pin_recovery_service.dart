@@ -71,18 +71,18 @@ class PinRecoveryService {
         );
 
         if (launched) {
-          print('Cliente de e-mail aberto com sucesso');
+
           return true;
         }
       } catch (e) {
-        print('Erro ao abrir cliente de e-mail: $e');
+
       }
 
       // Fallback: retorna true para mostrar o código de forma segura
-      print('Nenhum app de e-mail encontrado - usando método alternativo');
+
       return true;
     } catch (e) {
-      print('Erro ao enviar código de recuperação: $e');
+
       return false;
     }
   }
@@ -147,7 +147,7 @@ class PinRecoveryService {
 
       return true;
     } catch (e) {
-      print('Erro ao verificar código de recuperação: $e');
+
       return false;
     }
   }
@@ -174,7 +174,7 @@ class PinRecoveryService {
 
       return remaining > 0 ? remaining : 0;
     } catch (e) {
-      print('Erro ao calcular tempo restante: $e');
+
       return null;
     }
   }

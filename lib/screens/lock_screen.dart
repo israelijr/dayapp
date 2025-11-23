@@ -77,7 +77,7 @@ class _LockScreenState extends State<LockScreen> {
         }
       }
     } catch (e) {
-      print('Erro na autenticação biométrica: $e');
+
       // Se deu erro, reseta a flag
       pinProvider.isAuthenticatingWithBiometrics = false;
       if (mounted) {

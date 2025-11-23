@@ -65,11 +65,10 @@ class InactivityService {
     final duration = Duration(minutes: timeoutMinutes);
 
     _inactivityTimer = Timer(duration, () {
-      debugPrint('Tempo de inatividade excedido');
+
       _onInactivityTimeout?.call();
     });
 
-    debugPrint('Timer de inatividade iniciado: $timeoutMinutes minutos');
   }
 
   /// Para o timer de inatividade
@@ -95,13 +94,9 @@ class InactivityService {
       final now = DateTime.now();
       final difference = now.difference(lastActivity);
 
-      debugPrint(
-        'Tempo desde última atividade: ${difference.inMinutes} minutos',
-      );
-
       return difference.inMinutes >= timeoutMinutes;
     } catch (e) {
-      debugPrint('Erro ao verificar tempo de inatividade: $e');
+
       return true;
     }
   }

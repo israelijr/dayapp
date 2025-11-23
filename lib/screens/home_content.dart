@@ -1001,16 +1001,16 @@ class HistoriaFotosGrid extends StatelessWidget {
                                 '+${total - 3}',
                                 style: const TextStyle(
                                   color: Colors.white,
-                                  fontSize: 26,
+                                  fontSize: 22,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
-                              const SizedBox(height: 4),
+                              const SizedBox(height: 2),
                               const Text(
                                 'mais',
                                 style: TextStyle(
                                   color: Colors.white70,
-                                  fontSize: 12,
+                                  fontSize: 10,
                                 ),
                               ),
                             ],
@@ -1116,7 +1116,7 @@ class HistoriaMediaRow extends StatelessWidget {
 
         // Mostra erro se houver
         if (snapshot.hasError) {
-          debugPrint('Erro ao carregar mídia: ${snapshot.error}');
+
           return const SizedBox.shrink();
         }
 
@@ -1127,10 +1127,6 @@ class HistoriaMediaRow extends StatelessWidget {
         final data = snapshot.data!;
         final audios = data['audios'] as List<HistoriaAudio>;
         final videos = data['videos'] as List<v2.HistoriaVideo>;
-
-        debugPrint(
-          'HistoriaMediaRow - ID: $historiaId, Emoticon: $emoticon, Audios: ${audios.length}, Videos: ${videos.length}',
-        );
 
         // Se não tem emoticon nem mídia, não mostra nada
         if ((emoticon == null || emoticon!.isEmpty) &&
@@ -1217,12 +1213,10 @@ class HistoriaMediaRow extends StatelessWidget {
       final videos = await HistoriaVideoHelper().getVideosByHistoria(
         historiaId,
       );
-      debugPrint(
-        '_loadMediaData - Historia $historiaId: ${audios.length} áudios, ${videos.length} vídeos',
-      );
+
       return {'audios': audios, 'videos': videos};
     } catch (e) {
-      debugPrint('Erro em _loadMediaData: $e');
+
       return {'audios': <HistoriaAudio>[], 'videos': <v2.HistoriaVideo>[]};
     }
   }

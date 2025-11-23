@@ -148,9 +148,7 @@ class NotificationHelper {
     );
 
     if (notificationTime == null) {
-      debugPrint(
-        'NotificationHelper: Não é possível agendar - horário no passado',
-      );
+
       return;
     }
 
@@ -161,9 +159,7 @@ class NotificationHelper {
     final notificationId = historiaId;
     
     if (Platform.isWindows) {
-      debugPrint(
-        'NotificationHelper: Windows - notificações agendadas não suportadas',
-      );
+
     } else {
       await _notificationService.scheduleNotification(
         id: notificationId,

@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+﻿import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,23 +21,21 @@ class BiometricService {
       final bool canAuthenticate =
           canAuthenticateWithBiometrics || await _localAuth.isDeviceSupported();
       return canAuthenticate;
-    } on PlatformException catch (e) {
-      debugPrint('Erro ao verificar biometria: $e');
+    } on PlatformException {
       return false;
     }
   }
 
-  /// Obtém a lista de tipos de biometria disponíveis
+  /// ObtÃ©m a lista de tipos de biometria disponÃ­veis
   Future<List<BiometricType>> getAvailableBiometrics() async {
     try {
       return await _localAuth.getAvailableBiometrics();
-    } on PlatformException catch (e) {
-      debugPrint('Erro ao obter biometrias disponíveis: $e');
+    } on PlatformException {
       return <BiometricType>[];
     }
   }
 
-  /// Autentica o usuário usando biometria
+  /// Autentica o usuÃ¡rio usando biometria
   Future<bool> authenticate({
     String reason = 'Por favor, autentique-se para acessar o aplicativo',
   }) async {
@@ -51,13 +48,12 @@ class BiometricService {
         ),
       );
       return didAuthenticate;
-    } on PlatformException catch (e) {
-      debugPrint('Erro ao autenticar: $e');
+    } on PlatformException {
       return false;
     }
   }
 
-  /// Verifica se a biometria está habilitada para o aplicativo
+  /// Verifica se a biometria estÃ¡ habilitada para o aplicativo
   Future<bool> isBiometricEnabled() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(_biometricEnabledKey) ?? false;
@@ -79,7 +75,7 @@ class BiometricService {
     await prefs.remove(_biometricPasswordKey);
   }
 
-  /// Obtém as credenciais salvas para login biométrico
+  /// ObtÃ©m as credenciais salvas para login biomÃ©trico
   Future<Map<String, String>?> getSavedCredentials() async {
     final prefs = await SharedPreferences.getInstance();
     final email = prefs.getString(_biometricEmailKey);
@@ -92,7 +88,7 @@ class BiometricService {
     return null;
   }
 
-  /// Obtém o texto descritivo dos tipos de biometria disponíveis
+  /// ObtÃ©m o texto descritivo dos tipos de biometria disponÃ­veis
   String getBiometricTypesText(List<BiometricType> types) {
     if (types.isEmpty) return 'Nenhuma';
 
@@ -106,7 +102,7 @@ class BiometricService {
           typeNames.add('Digital');
           break;
         case BiometricType.iris:
-          typeNames.add('Íris');
+          typeNames.add('Ãris');
           break;
         case BiometricType.strong:
           typeNames.add('Biometria forte');

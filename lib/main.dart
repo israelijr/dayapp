@@ -106,7 +106,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   final InactivityService _inactivityService = InactivityService();
   DateTime? _pausedTime;
-  static const _shortPauseDuration = Duration(seconds: 3);
 
   @override
   void initState() {
@@ -117,7 +116,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _inactivityService.initialize(
       onTimeout: () {
         if (widget.pinProvider.isPinEnabled) {
-          print('Timer de inatividade disparado - bloqueando app');
+
           widget.pinProvider.requireAuthentication();
         }
       },
@@ -153,7 +152,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         if (widget.pinProvider.isPinEnabled) {
           // Se estiver autenticando com biometria, não bloqueia
           if (widget.pinProvider.isAuthenticatingWithBiometrics) {
-            print('Retornando de autenticação biométrica - ignorando bloqueio');
+
             _inactivityService.startTimer();
             _pausedTime = null;
             // Reseta a flag pois já consumimos o evento de retorno

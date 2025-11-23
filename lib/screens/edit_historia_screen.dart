@@ -237,25 +237,16 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     final picked = await picker.pickImage(source: ImageSource.gallery);
     if (picked != null) {
       final bytes = await picked.readAsBytes();
-      debugPrint('>>> (EDIT) Imagem selecionada: ${bytes.length} bytes');
 
       // Compress image to avoid SQLite CursorWindow limit (2MB)
       final compressedBytes = await ImageCompressionHelper.compressImage(bytes);
-      debugPrint(
-        '>>> (EDIT) Imagem comprimida: ${compressedBytes.length} bytes',
-      );
 
       if (!mounted) return;
       setState(() {
         fotos.add(compressedBytes);
         fotoIds.add(0); // 0 indica nova foto
-        debugPrint(
-          '>>> (EDIT) Total de fotos: ${fotos.length}, fotoIds: $fotoIds',
-        );
         _checkForChanges();
       });
-    } else {
-      debugPrint('>>> (EDIT) Nenhuma imagem selecionada');
     }
   }
 
@@ -298,7 +289,6 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
       final videosDb = await HistoriaVideoHelper().getVideosByHistoria(
         widget.historia.id ?? 0,
       );
-      debugPrint('_loadVideos: ${videosDb.length} vídeos carregados');
       if (!mounted) return;
       setState(() {
         videos = videosDb
@@ -313,7 +303,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
         videoIds = videosDb.map((v) => v.id ?? 0).toList();
       });
     } catch (e) {
-      debugPrint('_loadVideos: erro ao carregar vídeos: $e');
+      // Error loading videos
     }
   }
 
@@ -347,7 +337,6 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
       context: context,
       builder: (context) => VideoRecorderWidget(
         onVideoRecorded: (video, duration) {
-          debugPrint('Vídeo recebido: ${video.length} bytes');
           setState(() {
             videos.add({
               'video': video,
@@ -356,9 +345,6 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
             });
             videoIds.add(0); // 0 indica novo vídeo
           });
-          debugPrint(
-            'Vídeo adicionado à lista. Total de vídeos: ${videos.length}',
-          );
         },
       ),
     );
@@ -465,18 +451,14 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     // Salva novos vídeos
     for (int i = 0; i < videos.length; i++) {
       if (videoIds[i] == 0) {
-        debugPrint(
-          'Salvando novo vídeo $i - Tamanho: ${videos[i]['video'].length} bytes, Duração: ${videos[i]['duration']}',
-        );
         try {
-          final videoId = await HistoriaVideoHelper().insertVideoFromBytes(
+          await HistoriaVideoHelper().insertVideoFromBytes(
             historiaId: widget.historia.id ?? 0,
             videoBytes: videos[i]['video'],
             duracao: videos[i]['duration'],
           );
-          debugPrint('Vídeo $i salvo com ID: $videoId');
         } catch (e) {
-          debugPrint('Erro ao salvar vídeo $i: $e');
+          // Error saving video
         }
       }
     }
@@ -682,32 +664,37 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                     // Title
                     TextField(
                       controller: titleController,
-                      style: theme.textTheme.headlineSmall,
+                      style: theme.textTheme.bodyLarge,
                       decoration: const InputDecoration(
-                        hintText: 'Título',
-                        border: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        contentPadding: EdgeInsets.zero,
+                        labelText: 'Título',
+                        hintText: 'Digite o título',
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 12,
+                        ),
                       ),
                       inputFormatters: [
                         SentenceCapitalizationTextInputFormatter(),
                       ],
                     ),
-                    const Divider(),
+                    const SizedBox(height: 16),
 
                     // Description
                     TextField(
                       key: const Key('description_field'),
                       controller: descriptionController,
-                      maxLines: null,
+                      maxLines: 5,
                       style: theme.textTheme.bodyLarge,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
+                        labelText: 'Descrição',
                         hintText: 'Escreva sua história...',
-                        border: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        contentPadding: EdgeInsets.zero,
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 12,
+                        ),
+                        alignLabelWithHint: true,
                       ),
                       inputFormatters: [
                         SentenceCapitalizationTextInputFormatter(),

@@ -35,7 +35,7 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
 
   bool _isCardView = true; // true = modo blocos, false = modo ícones
 
-  String _getEmoticonImage(String emoticon) {
+  String? _getEmoticonImage(String emoticon) {
     switch (emoticon) {
       case 'Feliz':
         return '1_feliz.png';
@@ -58,7 +58,7 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
       case 'Muito Triste':
         return '10_muito_triste.png';
       default:
-        return '1_feliz.png';
+        return null;
     }
   }
 
@@ -869,7 +869,6 @@ class HistoriaMediaRow extends StatelessWidget {
 
         // Mostra erro se houver
         if (snapshot.hasError) {
-          debugPrint('Erro ao carregar mídia: ${snapshot.error}');
           return const SizedBox.shrink();
         }
 
@@ -968,7 +967,6 @@ class HistoriaMediaRow extends StatelessWidget {
       );
       return {'audios': audios, 'videos': videos};
     } catch (e) {
-      debugPrint('Erro em _loadMediaData: $e');
       return {'audios': <HistoriaAudio>[], 'videos': <v2.HistoriaVideo>[]};
     }
   }

@@ -129,7 +129,7 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
       // Atualizar histórias do dia selecionado
       _updateSelectedHistorias(_selectedDay!);
     } catch (e) {
-      debugPrint('Erro ao carregar histórias: $e');
+
       setState(() => _isLoading = false);
     }
   }

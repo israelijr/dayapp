@@ -255,7 +255,104 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                       ),
-                      CircleAvatar(radius: 24, backgroundImage: profileImage),
+                      GestureDetector(
+                        onTap: () {
+                          // Mostrar foto ampliada em um diálogo
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return Dialog(
+                                backgroundColor: Colors.transparent,
+                                child: Stack(
+                                  children: [
+                                    Center(
+                                      child: Container(
+                                        constraints: BoxConstraints(
+                                          maxWidth:
+                                              MediaQuery.of(
+                                                context,
+                                              ).size.width *
+                                              0.9,
+                                          maxHeight:
+                                              MediaQuery.of(
+                                                context,
+                                              ).size.height *
+                                              0.9,
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                          child:
+                                              user?.fotoPerfil != null &&
+                                                  user!.fotoPerfil!.isNotEmpty
+                                              ? (user.fotoPerfil!.startsWith(
+                                                          'http',
+                                                        ) ||
+                                                        user.fotoPerfil!
+                                                            .startsWith('https')
+                                                    ? Image.network(
+                                                        user.fotoPerfil!,
+                                                        fit: BoxFit.contain,
+                                                        errorBuilder:
+                                                            (
+                                                              context,
+                                                              error,
+                                                              stackTrace,
+                                                            ) {
+                                                              return Image.asset(
+                                                                'assets/image/icone_pequeno.png',
+                                                                fit: BoxFit
+                                                                    .contain,
+                                                              );
+                                                            },
+                                                      )
+                                                    : (File(
+                                                            user.fotoPerfil!,
+                                                          ).existsSync()
+                                                          ? Image.file(
+                                                              File(
+                                                                user.fotoPerfil!,
+                                                              ),
+                                                              fit: BoxFit
+                                                                  .contain,
+                                                            )
+                                                          : Image.asset(
+                                                              'assets/image/icone_pequeno.png',
+                                                              fit: BoxFit
+                                                                  .contain,
+                                                            )))
+                                              : Image.asset(
+                                                  'assets/image/icone_pequeno.png',
+                                                  fit: BoxFit.contain,
+                                                ),
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 10,
+                                      right: 10,
+                                      child: IconButton(
+                                        icon: const Icon(
+                                          Icons.close,
+                                          color: Colors.white,
+                                          size: 30,
+                                        ),
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        child: CircleAvatar(
+                          radius: 24,
+                          backgroundImage: profileImage,
+                        ),
+                      ),
                     ],
                   );
                 },

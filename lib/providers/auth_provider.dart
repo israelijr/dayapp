@@ -15,16 +15,13 @@ class AuthProvider extends ChangeNotifier {
     String password, {
     bool remember = false,
   }) async {
-    debugPrint('Tentando login para: $email');
     final db = await DatabaseHelper().database;
     final result = await db.query(
       'users',
       where: 'email = ? AND senha = ?',
       whereArgs: [email, password],
     );
-    debugPrint('Resultado da consulta: ${result.length}');
     if (result.isNotEmpty) {
-      debugPrint('Login bem-sucedido!');
       _user = User.fromMap(result.first);
       if (remember) {
         final prefs = await SharedPreferences.getInstance();
@@ -33,7 +30,6 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
       return true;
     }
-    debugPrint('Login falhou: usuário ou senha inválidos');
     return false;
   }
 
@@ -44,26 +40,17 @@ class AuthProvider extends ChangeNotifier {
     DateTime? dtNascimento,
     String? fotoPerfil,
   }) async {
-    debugPrint('register: início');
     try {
-      debugPrint('register: obtendo instância do banco de dados...');
       final db = await DatabaseHelper().database;
-      debugPrint('register: instância do banco obtida');
-      debugPrint('register: verificando se email já existe...');
       final existing = await db.query(
         'users',
         where: 'email = ?',
         whereArgs: [email],
       );
-      debugPrint(
-        'register: resultado da consulta de email: ${existing.length}',
-      );
       if (existing.isNotEmpty) {
-        debugPrint('register: email já cadastrado');
         return false;
       }
       final uuid = const Uuid().v4();
-      debugPrint('register: inserindo novo usuário...');
       await db.insert('users', {
         'id': uuid,
         'nome': nome,
@@ -72,7 +59,6 @@ class AuthProvider extends ChangeNotifier {
         'dt_nascimento': dtNascimento?.toIso8601String(),
         'foto_perfil': fotoPerfil,
       });
-      debugPrint('register: usuário inserido com sucesso');
       _user = User(
         id: uuid,
         nome: nome,
@@ -82,9 +68,7 @@ class AuthProvider extends ChangeNotifier {
       );
       notifyListeners();
       return true;
-    } catch (e, stack) {
-      debugPrint('register: erro ao registrar usuário: $e');
-      debugPrint('register: stacktrace: $stack');
+    } catch (e) {
       return false;
     }
   }
@@ -145,7 +129,6 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
       return true;
     } catch (e) {
-      debugPrint('Erro ao atualizar usuário: $e');
       return false;
     }
   }
