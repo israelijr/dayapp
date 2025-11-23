@@ -1,0 +1,13 @@
+{
+    // Extensões desabilitadas neste workspace
+    "extensions.disabledWorkspace": [
+        "vscjava.vscode-java-debug",
+        "vscjava.vscode-java-pack",
+        "redhat.java",
+        "vscjava.vscode-java-dependency",
+        "vscjava.vscode-java-test",
+        "vscjava.vscode-maven",
+        "vscjava.vscode-gradle",
+        "ms-vscode.gradle"
+    ]
+}

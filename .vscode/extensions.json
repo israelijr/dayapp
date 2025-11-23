@@ -1,0 +1,18 @@
+{
+    "recommendations": [
+        "dart-code.dart-code",
+        "dart-code.flutter"
+    ],
+    "unwantedRecommendations": [
+        "vscjava.vscode-java-pack",
+        "redhat.java",
+        "vscjava.vscode-java-debug",
+        "vscjava.vscode-java-dependency",
+        "vscjava.vscode-java-test",
+        "vscjava.vscode-maven",
+        "vscjava.vscode-gradle",
+        "ms-vscode.gradle",
+        "vscjava.migrate-java-to-azure",
+        "vscjava.vscode-java-upgrade"
+    ]
+}
