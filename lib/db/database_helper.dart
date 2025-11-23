@@ -29,7 +29,7 @@ class DatabaseHelper {
       debugPrint('DatabaseHelper: abrindo banco em $path');
       return await openDatabase(
         path,
-        version: 10,
+        version: 11,
         onCreate: _onCreate,
         onUpgrade: _onUpgrade,
       );
@@ -114,6 +114,7 @@ class DatabaseHelper {
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           user_id TEXT NOT NULL,
           nome TEXT NOT NULL,
+          emoticon TEXT,
           data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         );
@@ -357,7 +358,19 @@ class DatabaseHelper {
         ''');
         debugPrint('DatabaseHelper: tabela notification_scheduled criada');
       } catch (e) {
-        debugPrint('DatabaseHelper: erro ao criar tabela notification_scheduled: $e');
+        debugPrint(
+          'DatabaseHelper: erro ao criar tabela notification_scheduled: $e',
+        );
+      }
+    }
+    if (oldVersion < 11) {
+      try {
+        await db.execute('ALTER TABLE grupos ADD COLUMN emoticon TEXT;');
+        debugPrint(
+          'DatabaseHelper: coluna emoticon adicionada à tabela grupos',
+        );
+      } catch (e) {
+        debugPrint('DatabaseHelper: erro ao adicionar coluna emoticon: $e');
       }
     }
   }
@@ -394,7 +407,7 @@ class DatabaseHelper {
   }
 
   // Métodos para gerenciar notificações agendadas
-  
+
   /// Agenda uma notificação para uma história
   Future<void> scheduleNotificationForHistoria(
     int historiaId,
@@ -402,26 +415,26 @@ class DatabaseHelper {
     DateTime scheduledTime,
   ) async {
     final db = await database;
-    
+
     // Cancela notificação existente se houver
     await db.delete(
       'notification_scheduled',
       where: 'historia_id = ?',
       whereArgs: [historiaId],
     );
-    
+
     // Insere nova notificação
     await db.insert('notification_scheduled', {
       'historia_id': historiaId,
       'notification_id': notificationId,
       'scheduled_time': scheduledTime.toIso8601String(),
     });
-    
+
     debugPrint(
       'DatabaseHelper: notificação $notificationId agendada para história $historiaId',
     );
   }
-  
+
   /// Busca notificação agendada para uma história
   Future<Map<String, dynamic>?> getScheduledNotification(int historiaId) async {
     final db = await database;
@@ -430,13 +443,13 @@ class DatabaseHelper {
       where: 'historia_id = ?',
       whereArgs: [historiaId],
     );
-    
+
     if (result.isNotEmpty) {
       return result.first;
     }
     return null;
   }
-  
+
   /// Cancela notificação agendada para uma história
   Future<void> cancelScheduledNotification(int historiaId) async {
     final db = await database;
@@ -445,7 +458,7 @@ class DatabaseHelper {
       where: 'historia_id = ?',
       whereArgs: [historiaId],
     );
-    
+
     debugPrint(
       'DatabaseHelper: notificação cancelada para história $historiaId',
     );

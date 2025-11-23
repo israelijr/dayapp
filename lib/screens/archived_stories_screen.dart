@@ -153,13 +153,13 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
             children: [
               SlidableAction(
                 onPressed: (context) async {
-                  // Restaurar (remover flag de arquivado)
+                  // Desarquivar (remover flag de arquivado)
                   await _updateHistoria(historia, updates: {'arquivado': null});
                 },
                 backgroundColor: Colors.green,
                 foregroundColor: Colors.white,
                 icon: Icons.restore,
-                label: 'Restaurar',
+                label: 'Desarquivar',
               ),
             ],
           ),
@@ -348,7 +348,7 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
         padding: const EdgeInsets.only(left: 20),
         color: Colors.green,
         child: const Text(
-          'Restaurar',
+          'Desarquivar',
           style: TextStyle(
             color: Colors.white,
             fontSize: 18,

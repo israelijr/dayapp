@@ -86,6 +86,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
   List<int> videoIds = []; // IDs dos vídeos existentes
   String? selectedEmoticon;
   String? selectedEmojiTranslation;
+  bool _isArchived = false;
 
   // Controle de alterações não salvas
   bool _hasUnsavedChanges = false;
@@ -94,6 +95,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
   late String _initialTags;
   late DateTime _initialDate;
   late String? _initialEmoticon;
+  late bool _initialIsArchived;
 
   String _capitalizeText(String text) {
     if (text.isEmpty) return text;
@@ -129,6 +131,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     tagsController = TextEditingController(text: widget.historia.tag ?? '');
     selectedDate = widget.historia.data;
     selectedEmoticon = widget.historia.emoticon;
+    _isArchived = widget.historia.arquivado == 'sim';
 
     // Salva valores iniciais para detectar mudanças
     _initialTitle = widget.historia.titulo;
@@ -136,6 +139,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     _initialTags = widget.historia.tag ?? '';
     _initialDate = widget.historia.data;
     _initialEmoticon = widget.historia.emoticon;
+    _initialIsArchived = widget.historia.arquivado == 'sim';
 
     // Adiciona listeners para detectar mudanças
     titleController.addListener(_checkForChanges);
@@ -207,7 +211,8 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
         descriptionController.text != _initialDescription ||
         tagsController.text != _initialTags ||
         selectedDate != _initialDate ||
-        selectedEmoticon != _initialEmoticon;
+        selectedEmoticon != _initialEmoticon ||
+        _isArchived != _initialIsArchived;
 
     if (hasChanges != _hasUnsavedChanges) {
       setState(() {
@@ -417,6 +422,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
         'emoticon': selectedEmoticon,
         'data': selectedDate.toIso8601String(),
         'data_update': DateTime.now().toIso8601String(),
+        'arquivado': _isArchived ? 'sim' : null,
       },
       where: 'id = ?',
       whereArgs: [widget.historia.id],
@@ -717,6 +723,21 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                         prefixIcon: Icon(Icons.tag),
                         border: OutlineInputBorder(),
                       ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Archive Switch
+                    SwitchListTile(
+                      title: const Text('Arquivado'),
+                      subtitle: const Text('Ocultar da tela inicial'),
+                      value: _isArchived,
+                      onChanged: (value) {
+                        setState(() {
+                          _isArchived = value;
+                          _checkForChanges();
+                        });
+                      },
+                      contentPadding: EdgeInsets.zero,
                     ),
                     const SizedBox(height: 24),
 

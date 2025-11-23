@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../db/grupo_helper.dart';
 import '../models/grupo.dart';
 import '../providers/auth_provider.dart';
+import '../widgets/emoji_selection_modal.dart';
+import '../services/emoji_service.dart';
 
 class GroupSelectionScreen extends StatefulWidget {
   const GroupSelectionScreen({super.key});
@@ -14,6 +16,8 @@ class GroupSelectionScreen extends StatefulWidget {
 
 class _GroupSelectionScreenState extends State<GroupSelectionScreen> {
   final TextEditingController _newGroupController = TextEditingController();
+  String? _selectedEmoticon;
+  String? _selectedEmojiTranslation;
 
   Future<List<Grupo>> _loadGrupos() async {
     final auth = Provider.of<AuthProvider>(context, listen: false);
@@ -53,11 +57,27 @@ class _GroupSelectionScreenState extends State<GroupSelectionScreen> {
     final newGrupo = Grupo(
       userId: userId,
       nome: newGroupName,
+      emoticon: _selectedEmoticon,
       dataCriacao: DateTime.now(),
     );
     await GrupoHelper().insertGrupo(newGrupo);
     if (!mounted) return;
     Navigator.pop(context, newGroupName);
+  }
+
+  Future<void> _pickEmoticon() async {
+    final Emoji? result = await showModalBottomSheet<Emoji>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const EmojiSelectionModal(),
+    );
+    if (result != null) {
+      setState(() {
+        _selectedEmoticon = result.char;
+        _selectedEmojiTranslation = result.translation;
+      });
+    }
   }
 
   @override
@@ -86,6 +106,21 @@ class _GroupSelectionScreenState extends State<GroupSelectionScreen> {
                     itemBuilder: (context, index) {
                       final grupo = grupos[index];
                       return ListTile(
+                        leading: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerHighest,
+                            shape: BoxShape.circle,
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            grupo.emoticon ?? '📁',
+                            style: const TextStyle(fontSize: 20),
+                          ),
+                        ),
                         title: Text(grupo.nome),
                         onTap: () => _selectGroup(grupo.nome),
                       );
@@ -93,22 +128,64 @@ class _GroupSelectionScreenState extends State<GroupSelectionScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
+                const Divider(),
+                const SizedBox(height: 16),
                 const Text(
                   'Criar Novo Grupo',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: _newGroupController,
-                  decoration: const InputDecoration(
-                    labelText: 'Nome do Grupo',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
                 const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: _createNewGroup,
-                  child: const Text('Criar e Selecionar'),
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: _pickEmoticon,
+                      child: Container(
+                        width: 56,
+                        height: 56,
+                        decoration: BoxDecoration(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.surfaceContainerHighest,
+                          shape: BoxShape.circle,
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          _selectedEmoticon ?? '😀',
+                          style: const TextStyle(fontSize: 28),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: TextField(
+                        controller: _newGroupController,
+                        decoration: const InputDecoration(
+                          labelText: 'Nome do Grupo',
+                          border: OutlineInputBorder(),
+                        ),
+                        textCapitalization: TextCapitalization.sentences,
+                      ),
+                    ),
+                  ],
+                ),
+                if (_selectedEmojiTranslation != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0, left: 8.0),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        _selectedEmojiTranslation!,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: _createNewGroup,
+                    child: const Text('Criar e Selecionar'),
+                  ),
                 ),
               ],
             );

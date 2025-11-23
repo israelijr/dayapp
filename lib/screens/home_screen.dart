@@ -6,6 +6,7 @@ import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
 import 'home_content.dart';
 import 'groups_screen.dart';
+import 'groups_maintenance_screen.dart';
 import 'edit_profile_screen.dart';
 import 'statistics_screen.dart';
 
@@ -283,6 +284,19 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             ListTile(
+              leading: const Icon(Icons.group),
+              title: const Text('Gerenciar Grupos'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const GroupsMaintenanceScreen(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
               leading: const Icon(Icons.delete),
               title: const Text('Lixeira'),
               onTap: () {
@@ -320,7 +334,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: _selectedIndex == 0
           ? HomeContent(isCardView: _isCardView)
-          : GroupsScreen(),
+          : const GroupsScreen(),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.pushNamed(context, '/create_historia');

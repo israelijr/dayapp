@@ -7,7 +7,6 @@ import '../services/inactivity_service.dart';
 import '../services/pin_recovery_service.dart';
 import '../services/notification_preferences_service.dart';
 import '../db/database_helper.dart';
-import 'manage_groups_screen.dart';
 import 'setup_pin_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -27,9 +26,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _biometricEnabled = false;
   bool _pinEnabled = false;
   int _inactivityTimeout = InactivityService.defaultTimeoutMinutes;
-  int _backgroundLockTimeout = InactivityService.defaultBackgroundTimeoutSeconds;
+  int _backgroundLockTimeout =
+      InactivityService.defaultBackgroundTimeoutSeconds;
   bool _notificationEnabled = true;
-  int _notificationAdvance = NotificationPreferencesService.defaultAdvanceMinutes;
+  int _notificationAdvance =
+      NotificationPreferencesService.defaultAdvanceMinutes;
   String? _userEmail;
   late PinProvider _pinProvider;
 
@@ -108,7 +109,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const Divider(),
           _buildBackupSection(context),
           const Divider(),
-          _buildGroupsSection(context),
           // Espaço para futuras configurações
         ],
       ),
@@ -551,21 +551,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildGroupsSection(BuildContext context) {
-    return ListTile(
-      leading: const Icon(Icons.group),
-      title: const Text('Gerenciar Grupos'),
-      subtitle: const Text('Editar e excluir grupos'),
-      trailing: const Icon(Icons.arrow_forward_ios),
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => ManageGroupsScreen()),
-        );
-      },
-    );
-  }
-
   void _showInactivityTimeoutDialog() {
     showDialog(
       context: context,
@@ -626,7 +611,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const SizedBox(height: 16),
             ...InactivityService.backgroundTimeoutOptions.map((seconds) {
               return RadioListTile<int>(
-                title: Text(InactivityService.getBackgroundTimeoutLabel(seconds)),
+                title: Text(
+                  InactivityService.getBackgroundTimeoutLabel(seconds),
+                ),
                 value: seconds,
                 groupValue: _backgroundLockTimeout,
                 onChanged: (value) async {
@@ -748,7 +735,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             leading: const Icon(Icons.access_time),
             title: const Text('Antecedência Padrão'),
             subtitle: Text(
-              NotificationPreferencesService.getAdvanceLabel(_notificationAdvance),
+              NotificationPreferencesService.getAdvanceLabel(
+                _notificationAdvance,
+              ),
             ),
             onTap: _showNotificationAdvanceDialog,
             dense: true,

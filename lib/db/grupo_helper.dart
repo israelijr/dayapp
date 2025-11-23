@@ -7,6 +7,16 @@ class GrupoHelper {
     return await db.insert('grupos', grupo.toMap());
   }
 
+  Future<int> updateGrupo(Grupo grupo) async {
+    final db = await DatabaseHelper().database;
+    return await db.update(
+      'grupos',
+      grupo.toMap(),
+      where: 'id = ?',
+      whereArgs: [grupo.id],
+    );
+  }
+
   Future<List<Grupo>> getGruposByUser(String userId) async {
     final db = await DatabaseHelper().database;
     final result = await db.query(
@@ -45,8 +55,8 @@ class GrupoHelper {
     // Primeiro, atualizar histórias que têm tag igual ao nome do grupo
     await db.update(
       'historia',
-      {'tag': null},
-      where: 'user_id = ? AND tag = ?',
+      {'grupo': null},
+      where: 'user_id = ? AND grupo = ?',
       whereArgs: [userId, grupoNome],
     );
     // Depois, excluir o grupo
