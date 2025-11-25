@@ -8,6 +8,7 @@ import 'screens/home_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/edit_profile_screen.dart';
 import 'screens/create_historia_screen.dart';
+import 'screens/splash_screen.dart';
 import 'package:provider/provider.dart';
 import 'providers/auth_provider.dart';
 import 'providers/theme_provider.dart';
@@ -193,8 +194,15 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               GlobalCupertinoLocalizations.delegate,
               FlutterQuillLocalizations.delegate,
             ],
-            initialRoute: widget.authProvider.isLoggedIn ? '/home' : '/login',
+            initialRoute: '/splash',
             routes: {
+              '/splash': (context) => SplashScreen(
+                onComplete: () {
+                  Navigator.of(context).pushReplacementNamed(
+                    widget.authProvider.isLoggedIn ? '/home' : '/login',
+                  );
+                },
+              ),
               '/login': (context) => const LoginScreen(),
               '/create_account': (context) => const CreateAccountScreen(),
               '/create_account_complement': (context) =>
