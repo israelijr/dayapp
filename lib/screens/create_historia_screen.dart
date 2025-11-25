@@ -21,6 +21,9 @@ import '../widgets/compact_video_icon.dart';
 import '../widgets/emoji_selection_modal.dart';
 import '../services/emoji_service.dart';
 import '../widgets/entry_toolbar.dart';
+import 'package:flutter_quill/flutter_quill.dart';
+import '../widgets/rich_text_editor_widget.dart';
+import '../helpers/rich_text_helper.dart';
 
 // Note: This file implements two UI features requested by the team:
 // 1) Importar arquivo .txt na descrição usando `file_selector` (_pickTxtFileForDescription).
@@ -78,7 +81,7 @@ class CreateHistoriaScreen extends StatefulWidget {
 
 class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
   final titleController = TextEditingController();
-  final TextEditingController descriptionController = TextEditingController();
+  late final QuillController richTextController;
   final tagsController = TextEditingController();
   final List<Uint8List> fotos = [];
   final List<Map<String, dynamic>> audios =
@@ -92,6 +95,47 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
 
   // Controle de alterações não salvas
   bool _hasUnsavedChanges = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Inicializa o controller do Rich Text
+    richTextController = QuillController.basic();
+    // Adiciona listeners para detectar mudanças
+    titleController.addListener(_checkForChanges);
+    richTextController.addListener(_checkForChanges);
+    tagsController.addListener(_checkForChanges);
+  }
+
+  void _checkForChanges() {
+    // Na tela de criação, qualquer coisa digitada é considerada mudança
+    final plainText = richTextController.document.toPlainText().trim();
+    final hasChanges =
+        titleController.text.isNotEmpty ||
+        plainText.isNotEmpty ||
+        tagsController.text.isNotEmpty ||
+        fotos.isNotEmpty ||
+        audios.isNotEmpty ||
+        videos.isNotEmpty ||
+        selectedEmoticon != null;
+
+    if (hasChanges != _hasUnsavedChanges) {
+      setState(() {
+        _hasUnsavedChanges = hasChanges;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    titleController.removeListener(_checkForChanges);
+    richTextController.removeListener(_checkForChanges);
+    tagsController.removeListener(_checkForChanges);
+    titleController.dispose();
+    richTextController.dispose();
+    tagsController.dispose();
+    super.dispose();
+  }
 
   String _capitalizeText(String text) {
     if (text.isEmpty) return text;
@@ -115,44 +159,6 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
     );
 
     return result;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    // Adiciona listeners para detectar mudanças
-    titleController.addListener(_checkForChanges);
-    descriptionController.addListener(_checkForChanges);
-    tagsController.addListener(_checkForChanges);
-  }
-
-  void _checkForChanges() {
-    // Na tela de criação, qualquer coisa digitada é considerada mudança
-    final hasChanges =
-        titleController.text.isNotEmpty ||
-        descriptionController.text.isNotEmpty ||
-        tagsController.text.isNotEmpty ||
-        fotos.isNotEmpty ||
-        audios.isNotEmpty ||
-        videos.isNotEmpty ||
-        selectedEmoticon != null;
-
-    if (hasChanges != _hasUnsavedChanges) {
-      setState(() {
-        _hasUnsavedChanges = hasChanges;
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    titleController.removeListener(_checkForChanges);
-    descriptionController.removeListener(_checkForChanges);
-    tagsController.removeListener(_checkForChanges);
-    titleController.dispose();
-    descriptionController.dispose();
-    tagsController.dispose();
-    super.dispose();
   }
 
   Future<void> _pickImage() async {
@@ -251,12 +257,13 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
   }
 
   Future<void> _showNotificationDialog(int historiaId) async {
+    final plainText = richTextController.document.toPlainText();
     await NotificationHelper().showNotificationDialog(
       context,
       historiaId,
       selectedDate,
       titleController.text,
-      descriptionController.text,
+      plainText,
     );
   }
 
@@ -282,13 +289,15 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
       final navigator = Navigator.of(context);
       final db = await DatabaseHelper().database;
 
+      // Converte o conteúdo do Rich Text para JSON
+      final richTextJson = RichTextHelper.controllerToJson(richTextController);
+      final plainText = richTextController.document.toPlainText().trim();
+
       // Salva a história (garante arquivado=null e grupo=null para aparecer na Home)
       final historiaId = await db.insert('historia', {
         'user_id': auth.user?.id ?? '',
         'titulo': _capitalizeText(titleController.text.trim()),
-        'descricao': descriptionController.text.trim().isEmpty
-            ? null
-            : _capitalizeText(descriptionController.text.trim()),
+        'descricao': plainText.isEmpty ? null : richTextJson,
         'tag': tagsController.text.trim().isEmpty
             ? null
             : tagsController.text.trim(),
@@ -355,10 +364,11 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
 
   void _expandDescriptionEditor() async {
     final navigator = Navigator.of(context);
+    final richTextJson = RichTextHelper.controllerToJson(richTextController);
     final result = await navigator.push<String>(
       PageRouteBuilder<String>(
         pageBuilder: (context, animation, secondaryAnimation) =>
-            RichTextEditorScreen(initialText: descriptionController.text),
+            RichTextEditorScreen(initialText: richTextJson),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           // Slide from bottom
           final slideTween = Tween(
@@ -386,7 +396,15 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
     if (result != null) {
       if (!mounted) return;
       setState(() {
-        descriptionController.text = result;
+        // Reconstrói o controller com o JSON retornado
+        final newController = RichTextHelper.smartController(result);
+        // Substitui todo o documento
+        richTextController.replaceText(
+          0,
+          richTextController.document.length - 1,
+          newController.document.toDelta(),
+          null,
+        );
       });
     }
   }
@@ -401,7 +419,12 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
 
       if (!mounted) return;
       setState(() {
-        descriptionController.text = content;
+        // Atualiza o Rich Text Controller com o conteúdo do arquivo
+        richTextController.document.delete(
+          0,
+          richTextController.document.length,
+        );
+        richTextController.document.insert(0, content);
       });
     } catch (e) {
       if (!mounted) return;
@@ -559,25 +582,27 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Description
-                    TextField(
-                      key: const Key('description_field'),
-                      controller: descriptionController,
-                      maxLines: 5,
-                      style: theme.textTheme.bodyLarge,
-                      decoration: const InputDecoration(
-                        labelText: 'Descrição',
-                        hintText: 'Escreva sua história...',
-                        border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 12,
-                        ),
-                        alignLabelWithHint: true,
+                    // Rich Text Description
+                    const Text(
+                      'Descrição',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
                       ),
-                      inputFormatters: [
-                        SentenceCapitalizationTextInputFormatter(),
-                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    RichTextEditorWidget(
+                      key: const Key('description_field'),
+                      controller: richTextController,
+                      hintText: 'Escreva sua história...',
+                      minLines: 8,
+                      maxLines: 15,
+                      showToolbar: true,
+                      onChanged: () {
+                        setState(() {
+                          _hasUnsavedChanges = true;
+                        });
+                      },
                     ),
                     const SizedBox(height: 16),
 

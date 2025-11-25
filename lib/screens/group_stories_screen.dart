@@ -18,6 +18,7 @@ import '../providers/pin_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../widgets/compact_audio_icon.dart';
 import '../widgets/compact_video_icon.dart';
+import '../widgets/rich_text_viewer_widget.dart';
 import 'create_historia_screen.dart';
 import 'edit_historia_screen.dart';
 import 'edit_profile_screen.dart';
@@ -304,11 +305,10 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
                       ),
                     ],
                     const SizedBox(height: 8),
-                    Text(
-                      historia.descricao ?? '',
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: Theme.of(context).textTheme.bodyMedium?.color,
+                    SizedBox(
+                      height: 80,
+                      child: RichTextViewerWidget(
+                        jsonContent: historia.descricao,
                       ),
                     ),
                     const SizedBox(height: 12),

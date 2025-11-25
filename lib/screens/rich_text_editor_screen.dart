@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_quill/flutter_quill.dart';
+import '../helpers/rich_text_helper.dart';
+import '../widgets/rich_text_editor_widget.dart';
 
 class SentenceCapitalizationTextInputFormatter extends TextInputFormatter {
   @override
@@ -286,19 +289,7 @@ class _RichTextEditorScreenState extends State<RichTextEditorScreen> {
                       ),
                       body: Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: TextField(
-                          controller: _controller,
-                          keyboardType: TextInputType.multiline,
-                          maxLines: null,
-                          expands: true,
-                          textAlignVertical: TextAlignVertical.top,
-                          inputFormatters: [
-                            SentenceCapitalizationTextInputFormatter(),
-                          ],
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
+                        child: _RichTextEditorBody(controller: _controller),
                       ),
                     ),
                   ),
@@ -346,6 +337,52 @@ class _RichTextEditorScreenState extends State<RichTextEditorScreen> {
   void dispose() {
     _controller.removeListener(_checkForChanges);
     _controller.dispose();
+    super.dispose();
+  }
+}
+
+/// Widget que encapsula o editor Rich Text
+class _RichTextEditorBody extends StatefulWidget {
+  final TextEditingController controller;
+
+  const _RichTextEditorBody({required this.controller});
+
+  @override
+  State<_RichTextEditorBody> createState() => _RichTextEditorBodyState();
+}
+
+class _RichTextEditorBodyState extends State<_RichTextEditorBody> {
+  late QuillController _quillController;
+
+  @override
+  void initState() {
+    super.initState();
+    // Inicializa o controller Quill com o texto do TextEditingController
+    _quillController = RichTextHelper.smartController(widget.controller.text);
+    // Sincroniza mudanças do Quill para o TextEditingController
+    _quillController.addListener(_syncToTextController);
+  }
+
+  void _syncToTextController() {
+    final json = RichTextHelper.controllerToJson(_quillController);
+    widget.controller.text = json;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RichTextEditorWidget(
+      controller: _quillController,
+      showToolbar: true,
+      minLines: 10,
+      maxLines: null,
+      hintText: 'Digite aqui...',
+    );
+  }
+
+  @override
+  void dispose() {
+    _quillController.removeListener(_syncToTextController);
+    _quillController.dispose();
     super.dispose();
   }
 }

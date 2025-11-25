@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'screens/login_screen.dart';
 import 'screens/create_account_screen.dart';
 import 'screens/create_account_complement_screen.dart';
@@ -190,6 +191,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
+              FlutterQuillLocalizations.delegate,
             ],
             initialRoute: widget.authProvider.isLoggedIn ? '/home' : '/login',
             routes: {

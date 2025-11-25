@@ -20,6 +20,9 @@ import '../services/emoji_service.dart';
 import '../widgets/entry_toolbar.dart';
 import '../helpers/notification_helper.dart';
 import '../helpers/image_compression_helper.dart';
+import 'package:flutter_quill/flutter_quill.dart';
+import '../widgets/rich_text_editor_widget.dart';
+import '../helpers/rich_text_helper.dart';
 
 class SentenceCapitalizationTextInputFormatter extends TextInputFormatter {
   @override
@@ -72,7 +75,7 @@ class EditHistoriaScreen extends StatefulWidget {
 
 class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
   late TextEditingController titleController;
-  late TextEditingController descriptionController;
+  late QuillController richTextController;
   late TextEditingController tagsController;
   late DateTime selectedDate;
   List<Uint8List> fotos = [];
@@ -123,8 +126,9 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
   void initState() {
     super.initState();
     titleController = TextEditingController(text: widget.historia.titulo);
-    descriptionController = TextEditingController(
-      text: widget.historia.descricao ?? '',
+    // Inicializa o Rich Text Controller com o conteúdo existente
+    richTextController = RichTextHelper.smartController(
+      widget.historia.descricao,
     );
     tagsController = TextEditingController(text: widget.historia.tag ?? '');
     selectedDate = widget.historia.data;
@@ -133,7 +137,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
 
     // Salva valores iniciais para detectar mudanças
     _initialTitle = widget.historia.titulo;
-    _initialDescription = widget.historia.descricao ?? '';
+    _initialDescription = richTextController.document.toPlainText();
     _initialTags = widget.historia.tag ?? '';
     _initialDate = widget.historia.data;
     _initialEmoticon = widget.historia.emoticon;
@@ -141,7 +145,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
 
     // Adiciona listeners para detectar mudanças
     titleController.addListener(_checkForChanges);
-    descriptionController.addListener(_checkForChanges);
+    richTextController.addListener(_checkForChanges);
     tagsController.addListener(_checkForChanges);
 
     _loadFotos();
@@ -204,9 +208,10 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
   }
 
   void _checkForChanges() {
+    final currentDescription = richTextController.document.toPlainText();
     final hasChanges =
         titleController.text != _initialTitle ||
-        descriptionController.text != _initialDescription ||
+        currentDescription != _initialDescription ||
         tagsController.text != _initialTags ||
         selectedDate != _initialDate ||
         selectedEmoticon != _initialEmoticon ||
@@ -397,7 +402,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
       historiaId,
       selectedDate,
       titleController.text,
-      descriptionController.text,
+      richTextController.document.toPlainText(),
     );
   }
 
@@ -407,9 +412,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
       'historia',
       {
         'titulo': _capitalizeText(titleController.text.trim()),
-        'descricao': descriptionController.text.trim().isEmpty
-            ? null
-            : _capitalizeText(descriptionController.text.trim()),
+        'descricao': RichTextHelper.controllerToJson(richTextController),
         'tag': tagsController.text.trim().isEmpty
             ? null
             : tagsController.text.trim(),
@@ -478,10 +481,11 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
 
   void _expandDescriptionEditor() async {
     final navigator = Navigator.of(context);
+    final richTextJson = RichTextHelper.controllerToJson(richTextController);
     final result = await navigator.push<String>(
       PageRouteBuilder<String>(
         pageBuilder: (context, animation, secondaryAnimation) =>
-            RichTextEditorScreen(initialText: descriptionController.text),
+            RichTextEditorScreen(initialText: richTextJson),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           // Slide from bottom
           final slideTween = Tween(
@@ -508,7 +512,15 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     if (result != null) {
       if (!mounted) return;
       setState(() {
-        descriptionController.text = result;
+        // Reconstrói o controller com o JSON retornado
+        final newController = RichTextHelper.smartController(result);
+        // Substitui todo o documento
+        richTextController.replaceText(
+          0,
+          richTextController.document.length - 1,
+          newController.document.toDelta(),
+          null,
+        );
       });
     }
   }
@@ -522,7 +534,11 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
       final content = await file.readAsString();
       if (!mounted) return;
       setState(() {
-        descriptionController.text = content;
+        richTextController.document.delete(
+          0,
+          richTextController.document.length,
+        );
+        richTextController.document.insert(0, content);
       });
     } catch (e) {
       if (!mounted) return;
@@ -551,10 +567,10 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
   @override
   void dispose() {
     titleController.removeListener(_checkForChanges);
-    descriptionController.removeListener(_checkForChanges);
+    richTextController.removeListener(_checkForChanges);
     tagsController.removeListener(_checkForChanges);
     titleController.dispose();
-    descriptionController.dispose();
+    richTextController.dispose();
     tagsController.dispose();
     super.dispose();
   }
@@ -690,24 +706,18 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                     const SizedBox(height: 16),
 
                     // Description
-                    TextField(
+                    RichTextEditorWidget(
                       key: const Key('description_field'),
-                      controller: descriptionController,
-                      maxLines: 5,
-                      style: theme.textTheme.bodyLarge,
-                      decoration: const InputDecoration(
-                        labelText: 'Descrição',
-                        hintText: 'Escreva sua história...',
-                        border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 12,
-                        ),
-                        alignLabelWithHint: true,
-                      ),
-                      inputFormatters: [
-                        SentenceCapitalizationTextInputFormatter(),
-                      ],
+                      controller: richTextController,
+                      hintText: 'Escreva sua história...',
+                      minLines: 8,
+                      maxLines: 15,
+                      showToolbar: true,
+                      onChanged: () {
+                        setState(() {
+                          _hasUnsavedChanges = true;
+                        });
+                      },
                     ),
                     const SizedBox(height: 16),
 

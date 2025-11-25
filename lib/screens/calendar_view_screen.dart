@@ -16,6 +16,7 @@ import '../providers/auth_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../widgets/compact_audio_icon.dart';
 import '../widgets/compact_video_icon.dart';
+import '../widgets/rich_text_viewer_widget.dart';
 import 'edit_historia_screen.dart';
 
 class CalendarViewScreen extends StatefulWidget {
@@ -129,7 +130,6 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
       // Atualizar histórias do dia selecionado
       _updateSelectedHistorias(_selectedDay!);
     } catch (e) {
-
       setState(() => _isLoading = false);
     }
   }
@@ -412,14 +412,9 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
               if (historia.descricao != null &&
                   historia.descricao!.isNotEmpty) ...[
                 const SizedBox(height: 8),
-                Text(
-                  historia.descricao!,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Theme.of(context).textTheme.bodyMedium?.color,
-                  ),
+                SizedBox(
+                  height: 50,
+                  child: RichTextViewerWidget(jsonContent: historia.descricao),
                 ),
               ],
               // Preview de fotos
@@ -563,7 +558,7 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
-          Text(historia.descricao!, style: const TextStyle(fontSize: 15)),
+          RichTextViewerWidget(jsonContent: historia.descricao),
           const SizedBox(height: 16),
         ],
 
