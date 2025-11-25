@@ -20,7 +20,6 @@ import '../providers/auth_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../widgets/compact_audio_icon.dart';
 import '../widgets/compact_video_icon.dart';
-import '../widgets/markdown_text.dart';
 import 'edit_historia_screen.dart';
 import 'group_selection_screen.dart';
 
@@ -278,8 +277,8 @@ class _HomeContentState extends State<HomeContent> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    MarkdownText(
-                      text: historia.descricao ?? '',
+                    Text(
+                      historia.descricao ?? '',
                       style: TextStyle(
                         fontSize: 15,
                         color: Theme.of(context).textTheme.bodyMedium?.color,
@@ -1116,7 +1115,6 @@ class HistoriaMediaRow extends StatelessWidget {
 
         // Mostra erro se houver
         if (snapshot.hasError) {
-
           return const SizedBox.shrink();
         }
 
@@ -1216,7 +1214,6 @@ class HistoriaMediaRow extends StatelessWidget {
 
       return {'audios': audios, 'videos': videos};
     } catch (e) {
-
       return {'audios': <HistoriaAudio>[], 'videos': <v2.HistoriaVideo>[]};
     }
   }

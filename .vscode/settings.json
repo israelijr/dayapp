@@ -128,5 +128,45 @@
         {
             "text": "Exemplos: 'feat(auth): adicionar login com PIN', 'fix(ui): corrigir exibição de anexos'"
         }
+    ],
+    
+    // Configurar IAs para sempre responder em português
+    "github.copilot.chat.localeOverride": "pt-BR",
+    "github.copilot.chat.welcomeMessage": "always",
+    "inlineChat.mode": "live",
+    
+    // Instruções globais para GitHub Copilot Chat
+    "github.copilot.chat.codeGeneration.instructions": [
+        {
+            "text": "Sempre responda em português do Brasil (pt-BR)."
+        },
+        {
+            "text": "Use comentários em português no código."
+        },
+        {
+            "text": "Explique o código e as soluções em português."
+        },
+        {
+            "text": "Nomeie variáveis e funções em inglês (convenção de programação), mas documente em português."
+        }
+    ],
+    
+    // Instruções para teste e documentação
+    "github.copilot.chat.testGeneration.instructions": [
+        {
+            "text": "Gere testes com comentários e descrições em português do Brasil."
+        },
+        {
+            "text": "Use nomes de testes descritivos em português quando apropriado."
+        }
+    ],
+    
+    "github.copilot.chat.documentationGeneration.instructions": [
+        {
+            "text": "Gere documentação em português do Brasil (pt-BR)."
+        },
+        {
+            "text": "Use formato claro e objetivo."
+        }
     ]
 }

@@ -44,7 +44,6 @@ dependencies:
   archive: ^3.6.1
   crypto: ^3.0.3
   google_mobile_ads: ^5.2.0
-  flutter_markdown: ^0.7.4+1
 
 dev_dependencies:
   flutter_test:

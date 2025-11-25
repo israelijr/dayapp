@@ -756,14 +756,20 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
 
     if (confirm == true) {
       final db = await DatabaseHelper().database;
+      // Atualiza histórias do grupo para voltar para a Home
+      // Remove os flags de grupo e arquivado para que apareçam na Home
       await db.update(
         'historia',
-        {'grupo': null, 'data_update': DateTime.now().toIso8601String()},
+        {
+          'grupo': null,
+          'arquivado': null,
+          'data_update': DateTime.now().toIso8601String(),
+        },
         where: 'user_id = ? AND grupo = ?',
         whereArgs: [userId, widget.grupo.nome],
       );
 
-      // Optionally remove the group from grupos table if present
+      // Remove o grupo da tabela grupos se presente
       try {
         await db.delete(
           'grupos',

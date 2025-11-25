@@ -21,8 +21,6 @@ import '../widgets/entry_toolbar.dart';
 import '../helpers/notification_helper.dart';
 import '../helpers/image_compression_helper.dart';
 
-import '../helpers/markdown_helper.dart';
-
 class SentenceCapitalizationTextInputFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
@@ -393,6 +391,16 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     }
   }
 
+  Future<void> _showNotificationDialog(int historiaId) async {
+    await NotificationHelper().showNotificationDialog(
+      context,
+      historiaId,
+      selectedDate,
+      titleController.text,
+      descriptionController.text,
+    );
+  }
+
   Future<void> _save() async {
     final db = await DatabaseHelper().database;
     await db.update(
@@ -414,16 +422,17 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
       whereArgs: [widget.historia.id],
     );
 
-    // Verifica se a data foi alterada e está futura
+    // Verifica se a data foi alterada
     if (selectedDate != _initialDate) {
-      // Reagendar notificação se a data mudou
-      await NotificationHelper().rescheduleEntryNotification(
-        widget.historia.id!,
-        _initialDate,
-        selectedDate,
-        titleController.text.trim(),
-        descriptionController.text.trim(),
-      );
+      // Cancela notificação existente (se houver)
+      await NotificationHelper().cancelEntryNotification(widget.historia.id!);
+
+      // Se a nova data permitir notificação (pelo menos 2 horas à frente), oferece criar notificação
+      if (NotificationHelper().shouldScheduleNotification(selectedDate)) {
+        if (mounted) {
+          await _showNotificationDialog(widget.historia.id!);
+        }
+      }
     }
 
     // Salva novas fotos
@@ -823,98 +832,6 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Expanded(
-                    child: IconButton(
-                      icon: const Icon(Icons.format_shapes),
-                      onPressed: () {
-                        // Trigger markdown modal
-                        showModalBottomSheet(
-                          context: context,
-                          builder: (context) => Container(
-                            padding: const EdgeInsets.symmetric(vertical: 20),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                ListTile(
-                                  leading: const Icon(Icons.format_bold),
-                                  title: const Text('Negrito'),
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                    MarkdownHelper.wrapSelection(
-                                      descriptionController,
-                                      '**',
-                                      '**',
-                                    );
-                                  },
-                                ),
-                                ListTile(
-                                  leading: const Icon(Icons.format_italic),
-                                  title: const Text('Itálico'),
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                    MarkdownHelper.wrapSelection(
-                                      descriptionController,
-                                      '*',
-                                      '*',
-                                    );
-                                  },
-                                ),
-                                ListTile(
-                                  leading: const Icon(Icons.strikethrough_s),
-                                  title: const Text('Tachado'),
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                    MarkdownHelper.wrapSelection(
-                                      descriptionController,
-                                      '~~',
-                                      '~~',
-                                    );
-                                  },
-                                ),
-                                ListTile(
-                                  leading: const Icon(Icons.title),
-                                  title: const Text('Título'),
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                    MarkdownHelper.formatHeading(
-                                      descriptionController,
-                                      1,
-                                    );
-                                  },
-                                ),
-                                ListTile(
-                                  leading: const Icon(
-                                    Icons.format_list_bulleted,
-                                  ),
-                                  title: const Text('Lista'),
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                    MarkdownHelper.toggleList(
-                                      descriptionController,
-                                      ordered: false,
-                                    );
-                                  },
-                                ),
-                                ListTile(
-                                  leading: const Icon(Icons.code),
-                                  title: const Text('Código'),
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                    MarkdownHelper.wrapSelection(
-                                      descriptionController,
-                                      '`',
-                                      '`',
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                      tooltip: 'Markdown',
-                    ),
-                  ),
                   Expanded(
                     child: IconButton(
                       icon: const Icon(Icons.upload_file),

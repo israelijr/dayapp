@@ -25,7 +25,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _biometricAvailable = false;
   bool _biometricEnabled = false;
   bool _pinEnabled = false;
-  int _inactivityTimeout = InactivityService.defaultTimeoutMinutes;
   int _backgroundLockTimeout =
       InactivityService.defaultBackgroundTimeoutSeconds;
   bool _notificationEnabled = true;
@@ -40,7 +39,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _pinProvider = Provider.of<PinProvider>(context, listen: false);
     _checkBiometricStatus();
     _checkPinStatus();
-    _loadInactivityTimeout();
     _loadBackgroundLockTimeout();
     _loadNotificationPreferences();
     _loadUserEmail();
@@ -61,13 +59,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     setState(() {
       _pinEnabled = enabled;
-    });
-  }
-
-  Future<void> _loadInactivityTimeout() async {
-    final timeout = await _inactivityService.getInactivityTimeout();
-    setState(() {
-      _inactivityTimeout = timeout;
     });
   }
 
@@ -203,15 +194,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
 
         if (_pinEnabled) ...[
-          ListTile(
-            leading: const Icon(Icons.timer_outlined),
-            title: const Text('Tempo de Inatividade'),
-            subtitle: Text(
-              'Bloquear após: ${InactivityService.getTimeoutLabel(_inactivityTimeout)}',
-            ),
-            onTap: _showInactivityTimeoutDialog,
-            dense: true,
-          ),
           ListTile(
             leading: const Icon(Icons.lock_clock),
             title: const Text('Bloqueio em Segundo Plano'),
@@ -548,52 +530,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ],
         );
       },
-    );
-  }
-
-  void _showInactivityTimeoutDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Tempo de Inatividade'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'Após quanto tempo de inatividade o app deve ser bloqueado?',
-            ),
-            const SizedBox(height: 16),
-            ...InactivityService.timeoutOptions.map((minutes) {
-              return RadioListTile<int>(
-                title: Text(InactivityService.getTimeoutLabel(minutes)),
-                value: minutes,
-                groupValue: _inactivityTimeout,
-                onChanged: (value) async {
-                  if (value != null) {
-                    await _inactivityService.setInactivityTimeout(value);
-                    await _loadInactivityTimeout();
-                    if (!mounted) return;
-                    Navigator.of(context).pop();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          'Tempo de inatividade: ${InactivityService.getTimeoutLabel(value)}',
-                        ),
-                      ),
-                    );
-                  }
-                },
-              );
-            }),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Fechar'),
-          ),
-        ],
-      ),
     );
   }
 

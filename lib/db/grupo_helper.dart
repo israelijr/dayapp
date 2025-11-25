@@ -53,10 +53,15 @@ class GrupoHelper {
     String userId,
   ) async {
     final db = await DatabaseHelper().database;
-    // Primeiro, atualizar histórias que têm tag igual ao nome do grupo
+    // Primeiro, atualizar histórias do grupo para voltar para a Home
+    // Remove os flags de grupo e arquivado para que apareçam na Home
     await db.update(
       'historia',
-      {'grupo': null},
+      {
+        'grupo': null,
+        'arquivado': null,
+        'data_update': DateTime.now().toIso8601String(),
+      },
       where: 'user_id = ? AND grupo = ?',
       whereArgs: [userId, grupoNome],
     );

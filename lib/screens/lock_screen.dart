@@ -27,7 +27,8 @@ class _LockScreenState extends State<LockScreen> {
   void initState() {
     super.initState();
     _checkBiometric();
-    _tryBiometricOnStart();
+    // Não chama mais a biometria automaticamente
+    // O usuário deve ver a tela de bloqueio primeiro e pode usar o botão de biometria se desejar
   }
 
   Future<void> _checkBiometric() async {
@@ -38,15 +39,6 @@ class _LockScreenState extends State<LockScreen> {
     });
   }
 
-  Future<void> _tryBiometricOnStart() async {
-    // Aguarda um pouco para a tela carregar
-    await Future.delayed(const Duration(milliseconds: 500));
-
-    if (_isBiometricAvailable && mounted) {
-      await _authenticateWithBiometric();
-    }
-  }
-
   Future<void> _authenticateWithBiometric() async {
     if (!mounted) return;
 
@@ -54,7 +46,7 @@ class _LockScreenState extends State<LockScreen> {
 
     try {
       setState(() => _isLoading = true);
-      
+
       // Sinaliza que estamos autenticando com biometria para evitar bloqueio por inatividade
       pinProvider.isAuthenticatingWithBiometrics = true;
 
@@ -77,7 +69,6 @@ class _LockScreenState extends State<LockScreen> {
         }
       }
     } catch (e) {
-
       // Se deu erro, reseta a flag
       pinProvider.isAuthenticatingWithBiometrics = false;
       if (mounted) {
