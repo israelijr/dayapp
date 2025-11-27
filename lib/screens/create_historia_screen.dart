@@ -1,29 +1,30 @@
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:intl/intl.dart';
-import '../db/database_helper.dart';
-import '../db/historia_foto_helper.dart';
-import '../db/historia_audio_helper.dart';
-import '../db/historia_video_helper.dart';
-import '../models/historia_foto.dart';
-import '../models/historia_audio.dart';
 import 'package:provider/provider.dart';
+
+import '../db/database_helper.dart';
+import '../db/historia_audio_helper.dart';
+import '../db/historia_foto_helper.dart';
+import '../db/historia_video_helper.dart';
+import '../helpers/notification_helper.dart';
+import '../helpers/rich_text_helper.dart';
+import '../models/historia_audio.dart';
+import '../models/historia_foto.dart';
 import '../providers/auth_provider.dart';
 import '../providers/refresh_provider.dart';
-import '../helpers/notification_helper.dart';
-import 'package:flutter/services.dart';
-import 'package:file_selector/file_selector.dart';
-import 'rich_text_editor_screen.dart';
+import '../services/emoji_service.dart';
 import '../widgets/audio_recorder_widget.dart';
-import '../widgets/video_recorder_widget.dart';
-import '../widgets/image_picker_widget.dart';
 import '../widgets/compact_audio_icon.dart';
 import '../widgets/compact_video_icon.dart';
 import '../widgets/emoji_selection_modal.dart';
-import '../services/emoji_service.dart';
 import '../widgets/entry_toolbar.dart';
-import 'package:flutter_quill/flutter_quill.dart';
+import '../widgets/image_picker_widget.dart';
 import '../widgets/rich_text_editor_widget.dart';
-import '../helpers/rich_text_helper.dart';
+import '../widgets/video_recorder_widget.dart';
+import 'rich_text_editor_screen.dart';
 
 // Note: This file implements two UI features requested by the team:
 // 1) Importar arquivo .txt na descrição usando `file_selector` (_pickTxtFileForDescription).
@@ -412,7 +413,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
 
   Future<void> _pickTxtFileForDescription() async {
     try {
-      final typeGroup = XTypeGroup(extensions: ['txt']);
+      const typeGroup = XTypeGroup(extensions: ['txt']);
       final files = await openFiles(acceptedTypeGroups: [typeGroup]);
       if (files.isEmpty) return; // canceled
       final file = files.first;

@@ -69,9 +69,7 @@ class AdService {
 
   /// Carrega um anúncio banner
   Future<BannerAd?> loadBannerAd({
-    AdSize adSize = AdSize.banner,
-    required Function(Ad ad) onAdLoaded,
-    required Function(Ad ad, LoadAdError error) onAdFailedToLoad,
+    required Function(Ad ad) onAdLoaded, required Function(Ad ad, LoadAdError error) onAdFailedToLoad, AdSize adSize = AdSize.banner,
   }) async {
     if (!_isInitialized) {
       await initialize();

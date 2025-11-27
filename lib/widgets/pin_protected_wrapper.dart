@@ -1,13 +1,15 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../providers/pin_provider.dart';
 import '../screens/lock_screen.dart';
-import 'dart:ui';
 
 class PinProtectedWrapper extends StatelessWidget {
   final Widget child;
 
-  const PinProtectedWrapper({super.key, required this.child});
+  const PinProtectedWrapper({required this.child, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +21,7 @@ class PinProtectedWrapper extends StatelessWidget {
               // Conteúdo com blur
               BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                child: Container(
+                child: ColoredBox(
                   color: Colors.black.withValues(alpha: 0.3 * 255),
                   child: this.child,
                 ),

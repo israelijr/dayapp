@@ -39,7 +39,7 @@ class EmojiService {
       final String response = await rootBundle.loadString('assets/emojis.json');
       final List<dynamic> data = json.decode(response);
       _emojis = data.map((json) => Emoji.fromJson(json)).toList();
-      
+
       _groupedEmojis = {};
       for (var emoji in _emojis) {
         if (!_groupedEmojis.containsKey(emoji.group)) {
@@ -48,12 +48,12 @@ class EmojiService {
         _groupedEmojis[emoji.group]!.add(emoji);
       }
     } catch (e) {
-
+      // Erro ao carregar emojis - lista ficará vazia
     }
   }
 
   Map<String, List<Emoji>> get groupedEmojis => _groupedEmojis;
-  
+
   List<String> get groups => _groupedEmojis.keys.toList();
 
   Emoji? findByChar(String char) {

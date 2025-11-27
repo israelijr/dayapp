@@ -1,17 +1,18 @@
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
 import '../db/database_helper.dart';
-import '../db/historia_foto_helper.dart';
 import '../db/historia_audio_helper.dart';
+import '../db/historia_foto_helper.dart';
 import '../db/historia_video_helper.dart';
 import '../models/grupo.dart';
 import '../models/historia.dart';
-import '../models/historia_foto.dart';
 import '../models/historia_audio.dart';
+import '../models/historia_foto.dart';
 import '../models/historia_video_v2.dart' as v2;
 import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
@@ -27,7 +28,7 @@ import 'group_selection_screen.dart';
 class GroupStoriesScreen extends StatefulWidget {
   final Grupo grupo;
 
-  const GroupStoriesScreen({super.key, required this.grupo});
+  const GroupStoriesScreen({required this.grupo, super.key});
 
   @override
   State<GroupStoriesScreen> createState() => _GroupStoriesScreenState();
@@ -191,7 +192,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
 
         return Slidable(
           startActionPane: ActionPane(
-            motion: BehindMotion(),
+            motion: const BehindMotion(),
             children: [
               SlidableAction(
                 onPressed: (context) async {
@@ -205,7 +206,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
             ],
           ),
           endActionPane: ActionPane(
-            motion: BehindMotion(),
+            motion: const BehindMotion(),
             children: [
               SlidableAction(
                 onPressed: (context) async {
@@ -788,8 +789,7 @@ class HistoriaFotosGrid extends StatelessWidget {
   final int historiaId;
   final double height;
   const HistoriaFotosGrid({
-    super.key,
-    required this.historiaId,
+    required this.historiaId, super.key,
     this.height = 120,
   });
 
@@ -889,7 +889,7 @@ class HistoriaFotosGrid extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                   if (isLast)
-                    Container(
+                    ColoredBox(
                       color: Colors.black45,
                       child: Center(
                         child: Text(
@@ -996,10 +996,8 @@ class HistoriaMediaRow extends StatelessWidget {
   final String? Function(String) getEmoticonImage;
 
   const HistoriaMediaRow({
-    super.key,
-    required this.historiaId,
+    required this.historiaId, required this.getEmoticonImage, super.key,
     this.emoticon,
-    required this.getEmoticonImage,
   });
 
   @override
@@ -1122,7 +1120,7 @@ class HistoriaMediaRow extends StatelessWidget {
 class HistoriaAudiosSection extends StatelessWidget {
   final int historiaId;
 
-  const HistoriaAudiosSection({super.key, required this.historiaId});
+  const HistoriaAudiosSection({required this.historiaId, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -1156,7 +1154,7 @@ class HistoriaAudiosSection extends StatelessWidget {
 class HistoriaVideosSection extends StatelessWidget {
   final int historiaId;
 
-  const HistoriaVideosSection({super.key, required this.historiaId});
+  const HistoriaVideosSection({required this.historiaId, super.key});
 
   @override
   Widget build(BuildContext context) {

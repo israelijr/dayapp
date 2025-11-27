@@ -1,7 +1,8 @@
-import 'database_helper.dart';
-import '../models/historia_video_v2.dart' as v2;
-import '../helpers/video_file_helper.dart';
 import 'package:flutter/foundation.dart';
+
+import '../helpers/video_file_helper.dart';
+import '../models/historia_video_v2.dart' as v2;
+import 'database_helper.dart';
 
 class HistoriaVideoHelper {
   // Novo método que recebe bytes e retorna o caminho salvo

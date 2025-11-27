@@ -8,9 +8,7 @@ class HistoriaAudio {
   final int? duracao; // duração em segundos
 
   HistoriaAudio({
-    this.id,
-    required this.historiaId,
-    required this.audio,
+    required this.historiaId, required this.audio, this.id,
     this.legenda,
     this.duracao,
   });

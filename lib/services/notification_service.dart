@@ -1,7 +1,8 @@
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:timezone/timezone.dart' as tz;
-import 'package:timezone/data/latest.dart' as tz;
 import 'dart:io';
+
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -29,7 +30,7 @@ class NotificationService {
     const LinuxInitializationSettings initializationSettingsLinux =
         LinuxInitializationSettings(defaultActionName: 'Open notification');
 
-    final InitializationSettings initializationSettings =
+    const InitializationSettings initializationSettings =
         InitializationSettings(
           android: initializationSettingsAndroid,
           iOS: initializationSettingsIOS,
@@ -75,7 +76,7 @@ class NotificationService {
     required DateTime scheduledDate,
     String? payload,
   }) async {
-    final notificationDetails = const NotificationDetails(
+    const notificationDetails = NotificationDetails(
       android: AndroidNotificationDetails(
         'historia_channel',
         'Histórias',
@@ -115,7 +116,9 @@ class NotificationService {
 
         // Lista notificações pendentes para debug
         await listPendingNotifications();
-      } catch (e) {}
+      } catch (e) {
+        // Erro ao agendar notificação - ignora silenciosamente
+      }
     }
   }
 

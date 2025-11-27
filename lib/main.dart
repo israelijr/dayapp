@@ -1,33 +1,35 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'screens/login_screen.dart';
-import 'screens/create_account_screen.dart';
-import 'screens/create_account_complement_screen.dart';
-import 'screens/home_screen.dart';
-import 'screens/settings_screen.dart';
-import 'screens/edit_profile_screen.dart';
-import 'screens/create_historia_screen.dart';
-import 'screens/splash_screen.dart';
-import 'package:provider/provider.dart';
-import 'providers/auth_provider.dart';
-import 'providers/theme_provider.dart';
-import 'providers/refresh_provider.dart';
-import 'providers/pin_provider.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'dart:io';
 import 'package:intl/date_symbol_data_local.dart';
-import 'services/notification_service.dart';
-import 'services/inactivity_service.dart';
-import 'services/ad_service.dart';
-import 'screens/edit_historia_screen.dart';
-import 'screens/calendar_view_screen.dart';
-import 'screens/backup_manager_screen.dart';
-import 'screens/trash_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+
 import 'db/database_helper.dart';
 import 'models/historia.dart';
-import 'widgets/pin_protected_wrapper.dart';
+import 'providers/auth_provider.dart';
+import 'providers/pin_provider.dart';
+import 'providers/refresh_provider.dart';
+import 'providers/theme_provider.dart';
+import 'screens/backup_manager_screen.dart';
+import 'screens/calendar_view_screen.dart';
+import 'screens/create_account_complement_screen.dart';
+import 'screens/create_account_screen.dart';
+import 'screens/create_historia_screen.dart';
+import 'screens/edit_historia_screen.dart';
+import 'screens/edit_profile_screen.dart';
+import 'screens/home_screen.dart';
+import 'screens/login_screen.dart';
+import 'screens/settings_screen.dart';
+import 'screens/splash_screen.dart';
+import 'screens/trash_screen.dart';
+import 'services/ad_service.dart';
+import 'services/inactivity_service.dart';
+import 'services/notification_service.dart';
 import 'theme/m3_expressive_theme.dart';
+import 'widgets/pin_protected_wrapper.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -63,9 +65,9 @@ void main() async {
   // Inicializar notificações
   await NotificationService().init((String? payload) async {
     if (payload != null) {
-      int? historiaId = int.tryParse(payload);
+      final int? historiaId = int.tryParse(payload);
       if (historiaId != null) {
-        Historia? historia = await DatabaseHelper().getHistoria(historiaId);
+        final Historia? historia = await DatabaseHelper().getHistoria(historiaId);
         if (historia != null) {
           navigatorKey.currentState?.push(
             MaterialPageRoute(
@@ -94,11 +96,7 @@ class MyApp extends StatefulWidget {
   final PinProvider pinProvider;
 
   const MyApp({
-    super.key,
-    required this.authProvider,
-    required this.themeProvider,
-    required this.refreshProvider,
-    required this.pinProvider,
+    required this.authProvider, required this.themeProvider, required this.refreshProvider, required this.pinProvider, super.key,
   });
 
   @override

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class SplashScreen extends StatefulWidget {
   final VoidCallback onComplete;
 
-  const SplashScreen({super.key, required this.onComplete});
+  const SplashScreen({required this.onComplete, super.key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -103,13 +103,13 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              const Color(0xFFE8D5F0), // Lilás claro
-              const Color(0xFFF5E8FA), // Lilás muito claro
+              Color(0xFFE8D5F0), // Lilás claro
+              Color(0xFFF5E8FA), // Lilás muito claro
               Colors.white,
             ],
           ),
@@ -155,7 +155,7 @@ class _SplashScreenState extends State<SplashScreen>
                                 BoxShadow(
                                   color: const Color(
                                     0xFF7B2CBF,
-                                  ).withOpacity(0.3),
+                                  ).withValues(alpha: 0.3),
                                   blurRadius: 40,
                                   spreadRadius: 5,
                                 ),
@@ -191,10 +191,10 @@ class _SplashScreenState extends State<SplashScreen>
                           child: ShaderMask(
                             shaderCallback: (bounds) {
                               return LinearGradient(
-                                colors: [
-                                  const Color(0xFF7B2CBF),
-                                  const Color(0xFF9D4EDD),
-                                  const Color(0xFF7B2CBF),
+                                colors: const [
+                                  Color(0xFF7B2CBF),
+                                  Color(0xFF9D4EDD),
+                                  Color(0xFF7B2CBF),
                                 ],
                                 stops: [
                                   0.0,
@@ -240,7 +240,9 @@ class _SplashScreenState extends State<SplashScreen>
                             borderRadius: BorderRadius.circular(10),
                             child: LinearProgressIndicator(
                               value: _progressAnimation.value,
-                              backgroundColor: Colors.white.withOpacity(0.3),
+                              backgroundColor: Colors.white.withValues(
+                                alpha: 0.3,
+                              ),
                               valueColor: const AlwaysStoppedAnimation<Color>(
                                 Color(0xFF7B2CBF),
                               ),
@@ -253,7 +255,9 @@ class _SplashScreenState extends State<SplashScreen>
                             'Carregando...',
                             style: TextStyle(
                               fontSize: 14,
-                              color: const Color(0xFF7B2CBF).withOpacity(0.7),
+                              color: const Color(
+                                0xFF7B2CBF,
+                              ).withValues(alpha: 0.7),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -306,7 +310,7 @@ class _CirclesPainter extends CustomPainter {
     ];
 
     for (var circle in circles) {
-      paint.color = (circle['color'] as Color).withOpacity(0.15);
+      paint.color = (circle['color'] as Color).withValues(alpha: 0.15);
       canvas.drawCircle(
         Offset(circle['x'] as double, circle['y'] as double),
         circle['radius'] as double,

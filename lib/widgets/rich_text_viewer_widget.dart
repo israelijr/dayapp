@@ -22,8 +22,7 @@ class RichTextViewerWidget extends StatelessWidget {
   final EdgeInsets? padding;
 
   const RichTextViewerWidget({
-    super.key,
-    required this.jsonContent,
+    required this.jsonContent, super.key,
     this.maxLines,
     this.textStyle,
     this.showOverflow = true,
@@ -70,8 +69,7 @@ class RichTextViewerCompactWidget extends StatelessWidget {
   final Color? textColor;
 
   const RichTextViewerCompactWidget({
-    super.key,
-    required this.jsonContent,
+    required this.jsonContent, super.key,
     this.maxLength = 150,
     this.textStyle,
     this.textColor,

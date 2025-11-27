@@ -7,11 +7,7 @@ class EntryToolbar extends StatelessWidget {
   final VoidCallback onSelectEmoji;
 
   const EntryToolbar({
-    super.key,
-    required this.onPickPhoto,
-    required this.onPickVideo,
-    required this.onRecordAudio,
-    required this.onSelectEmoji,
+    required this.onPickPhoto, required this.onPickVideo, required this.onRecordAudio, required this.onSelectEmoji, super.key,
   });
 
   @override

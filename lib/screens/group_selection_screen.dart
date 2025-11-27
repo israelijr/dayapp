@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 import '../db/grupo_helper.dart';
 import '../models/grupo.dart';
 import '../providers/auth_provider.dart';
-import '../widgets/emoji_selection_modal.dart';
 import '../services/emoji_service.dart';
+import '../widgets/emoji_selection_modal.dart';
 
 class GroupSelectionScreen extends StatefulWidget {
   const GroupSelectionScreen({super.key});

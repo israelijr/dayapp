@@ -6,9 +6,7 @@ class Grupo {
   final DateTime? dataCriacao;
 
   Grupo({
-    this.id,
-    required this.userId,
-    required this.nome,
+    required this.userId, required this.nome, this.id,
     this.emoticon,
     this.dataCriacao,
   });

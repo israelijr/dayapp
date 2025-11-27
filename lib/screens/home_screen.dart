@@ -1,13 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:io';
+
 import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
-import 'home_content.dart';
-import 'groups_screen.dart';
-import 'groups_maintenance_screen.dart';
 import 'edit_profile_screen.dart';
+import 'groups_maintenance_screen.dart';
+import 'groups_screen.dart';
+import 'home_content.dart';
 import 'statistics_screen.dart';
 
 class HomeScreen extends StatefulWidget {

@@ -1,8 +1,9 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../widgets/custom_text_field.dart';
-import '../providers/auth_provider.dart';
+
 import '../db/database_helper.dart';
+import '../providers/auth_provider.dart';
+import '../widgets/custom_text_field.dart';
 
 class CreateAccountScreen extends StatefulWidget {
   const CreateAccountScreen({super.key});

@@ -1,20 +1,21 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 // import 'dart:convert'; // not used
 import 'package:share_plus/share_plus.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
-import 'dart:typed_data';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
 
 import '../db/database_helper.dart';
-import '../db/historia_foto_helper.dart';
 import '../db/historia_audio_helper.dart';
+import '../db/historia_foto_helper.dart';
 import '../db/historia_video_helper.dart';
 import '../models/historia.dart';
-import '../models/historia_foto.dart';
 import '../models/historia_audio.dart';
+import '../models/historia_foto.dart';
 import '../models/historia_video_v2.dart' as v2;
 import '../providers/auth_provider.dart';
 import '../providers/refresh_provider.dart';
@@ -26,7 +27,7 @@ import 'group_selection_screen.dart';
 
 class HomeContent extends StatefulWidget {
   final bool isCardView;
-  const HomeContent({super.key, required this.isCardView});
+  const HomeContent({required this.isCardView, super.key});
 
   @override
   State<HomeContent> createState() => _HomeContentState();
@@ -187,7 +188,7 @@ class _HomeContentState extends State<HomeContent> {
 
         return Slidable(
           startActionPane: ActionPane(
-            motion: BehindMotion(),
+            motion: const BehindMotion(),
             children: [
               SlidableAction(
                 onPressed: (context) async {
@@ -201,7 +202,7 @@ class _HomeContentState extends State<HomeContent> {
             ],
           ),
           endActionPane: ActionPane(
-            motion: BehindMotion(),
+            motion: const BehindMotion(),
             children: [
               SlidableAction(
                 onPressed: (context) async {
@@ -577,8 +578,7 @@ class HistoriaFotosGrid extends StatelessWidget {
   final int historiaId;
   final double height;
   const HistoriaFotosGrid({
-    super.key,
-    required this.historiaId,
+    required this.historiaId, super.key,
     this.height = 120,
   });
 
@@ -1095,10 +1095,8 @@ class HistoriaMediaRow extends StatelessWidget {
   final String? Function(String) getEmoticonImage;
 
   const HistoriaMediaRow({
-    super.key,
-    required this.historiaId,
+    required this.historiaId, required this.getEmoticonImage, super.key,
     this.emoticon,
-    required this.getEmoticonImage,
   });
 
   @override
@@ -1221,7 +1219,7 @@ class HistoriaMediaRow extends StatelessWidget {
 class HistoriaAudiosSection extends StatelessWidget {
   final int historiaId;
 
-  const HistoriaAudiosSection({super.key, required this.historiaId});
+  const HistoriaAudiosSection({required this.historiaId, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -1255,7 +1253,7 @@ class HistoriaAudiosSection extends StatelessWidget {
 class HistoriaVideosSection extends StatelessWidget {
   final int historiaId;
 
-  const HistoriaVideosSection({super.key, required this.historiaId});
+  const HistoriaVideosSection({required this.historiaId, super.key});
 
   @override
   Widget build(BuildContext context) {

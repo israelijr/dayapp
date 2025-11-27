@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:video_player/video_player.dart';
 import 'dart:io';
+
+import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:video_player/video_player.dart';
 
 class VideoPlayerWidget extends StatefulWidget {
   final List<int>? videoData; // Para vídeos novos (bytes)
@@ -53,12 +54,11 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         videoFile = File(widget.videoPath!);
 
         if (!await videoFile.exists()) {
-
           throw Exception('Arquivo de vídeo não encontrado');
         }
       } else if (widget.videoData != null) {
         // Vídeo novo - criar arquivo temporário
-        
+
         final tempDir = await getTemporaryDirectory();
         videoFile = File(
           '${tempDir.path}/temp_video_${DateTime.now().millisecondsSinceEpoch}.mp4',
@@ -85,7 +85,6 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         });
       }
     } catch (e) {
-
       if (mounted) {
         setState(() {
           _hasError = true;
@@ -107,7 +106,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
           return sizeInMB.toStringAsFixed(2);
         }
       } catch (e) {
-
+        // Erro ao obter tamanho do vídeo
       }
     }
     return '?';
@@ -174,9 +173,9 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
             child: VideoPlayer(_controller!),
           ),
           if (!_isPlaying)
-            Container(
+            const ColoredBox(
               color: Colors.black38,
-              child: const Icon(
+              child: Icon(
                 Icons.play_arrow,
                 size: 64,
                 color: Colors.white,

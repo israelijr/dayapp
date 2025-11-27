@@ -46,7 +46,7 @@ void main() {
     test(
       'Deve verificar estrutura correta da tabela historia_videos',
       () async {
-        final result = await db.rawQuery("PRAGMA table_info(historia_videos)");
+        final result = await db.rawQuery('PRAGMA table_info(historia_videos)');
 
         // Verificar se tem as colunas corretas
         final columnNames = result.map((column) => column['name']).toList();

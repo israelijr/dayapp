@@ -1,7 +1,8 @@
 import 'dart:io';
+
 import 'package:flutter/foundation.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 
 /// Helper para gerenciar arquivos de vídeo no sistema de arquivos
 /// Evita o problema de "Row too big to fit into CursorWindow" do SQLite
@@ -42,7 +43,6 @@ class VideoFileHelper {
       }
       return null;
     } catch (e) {
-
       return null;
     }
   }
@@ -57,7 +57,6 @@ class VideoFileHelper {
       }
       return false;
     } catch (e) {
-
       return false;
     }
   }
@@ -85,9 +84,9 @@ class VideoFileHelper {
       if (file is File && !validPaths.contains(file.path)) {
         try {
           await file.delete();
-
         } catch (e) {
-
+          // Erro ao deletar vídeo órfão - ignora e continua
+          debugPrint('Erro ao deletar vídeo órfão: $e');
         }
       }
     }

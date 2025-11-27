@@ -7,9 +7,7 @@ class HistoriaVideo {
   final String? thumbnailPath; // Caminho da miniatura
 
   HistoriaVideo({
-    this.id,
-    required this.historiaId,
-    required this.videoPath,
+    required this.historiaId, required this.videoPath, this.id,
     this.legenda,
     this.duracao,
     this.thumbnailPath,

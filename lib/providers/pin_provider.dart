@@ -13,13 +13,9 @@ class PinProvider extends ChangeNotifier {
   bool get isPinEnabled => _isPinEnabled;
   bool get shouldShowPinScreen => _shouldShowPinScreen;
 
-  // Flag para evitar loop de bloqueio durante autenticação biométrica
-  bool _isAuthenticatingWithBiometrics = false;
-  bool get isAuthenticatingWithBiometrics => _isAuthenticatingWithBiometrics;
-  set isAuthenticatingWithBiometrics(bool value) {
-    _isAuthenticatingWithBiometrics = value;
-    // Não precisa notificar listeners para isso, é apenas controle interno/externo
-  }
+  /// Flag para evitar loop de bloqueio durante autenticação biométrica
+  /// Campo público pois é apenas controle interno/externo sem notificação de listeners
+  bool isAuthenticatingWithBiometrics = false;
 
   // Setters públicos para controle direto (usado por biometria)
   set isAuthenticated(bool value) {

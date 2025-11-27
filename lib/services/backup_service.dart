@@ -1,11 +1,13 @@
-﻿import 'dart:io';
+import 'dart:io';
+
+import 'package:archive/archive_io.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:archive/archive_io.dart';
 import 'package:share_plus/share_plus.dart';
-import '../helpers/video_file_helper.dart';
+import 'package:sqflite/sqflite.dart';
+
 import '../db/database_helper.dart';
+import '../helpers/video_file_helper.dart';
 
 /// ServiÃ§o simplificado de backup - apenas arquivo ZIP local
 class BackupService {
@@ -214,13 +216,15 @@ VersÃ£o: 1.0.0
       final restoredDb = findFile(extractDir, 'dayapp.db');
 
       if (restoredDb != null && await restoredDb.exists()) {
-        // Fechar todas as conexÃµes com o banco antes de deletar
+        // Fechar todas as conexões com o banco antes de deletar
         if (await currentDb.exists()) {
           try {
             await DatabaseHelper().resetDatabase();
             // Aguardar um pouco para garantir que o arquivo foi liberado
             await Future.delayed(const Duration(milliseconds: 500));
-          } catch (e) {}
+          } catch (e) {
+            // Erro ao resetar banco - continua mesmo assim
+          }
 
           await currentDb.delete();
         }

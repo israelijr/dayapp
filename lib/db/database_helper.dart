@@ -1,9 +1,11 @@
 import 'dart:io';
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart' as p;
+
 import 'package:flutter/foundation.dart';
-import '../models/historia.dart';
+import 'package:path/path.dart' as p;
+import 'package:sqflite/sqflite.dart';
+
 import '../helpers/video_file_helper.dart';
+import '../models/historia.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
@@ -252,7 +254,7 @@ class DatabaseHelper {
       // Garantir que a tabela historia_videos tenha a estrutura correta (video_path)
       try {
         // Verificar se a tabela existe e tem a estrutura correta
-        final result = await db.rawQuery("PRAGMA table_info(historia_videos)");
+        final result = await db.rawQuery('PRAGMA table_info(historia_videos)');
         final hasVideoPath = result.any(
           (column) => column['name'] == 'video_path',
         );

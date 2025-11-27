@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'secure_storage_service.dart';
 
 /// Serviço para recuperação de PIN por e-mail
 /// Gera códigos de recuperação e envia por e-mail
@@ -9,9 +10,11 @@ class PinRecoveryService {
   factory PinRecoveryService() => _instance;
   PinRecoveryService._internal();
 
+  final SecureStorageService _secureStorage = SecureStorageService();
+
   static const String _recoveryCodeKey = 'pin_recovery_code';
   static const String _recoveryCodeTimeKey = 'pin_recovery_code_time';
-  static const String _userEmailKey = 'user_email';
+  static const String _legacyUserEmailKey = 'user_email';
 
   /// Duração de validade do código de recuperação (em minutos)
   static const int recoveryCodeValidityMinutes = 15;
@@ -23,16 +26,34 @@ class PinRecoveryService {
     return code.toString();
   }
 
-  /// Salva o e-mail do usuário
+  /// Salva o e-mail do usuário (armazenamento seguro)
   Future<void> saveUserEmail(String email) async {
+    await _secureStorage.saveRecoveryEmail(email);
+
+    // Remove dados legados se existirem
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_userEmailKey, email);
+    await prefs.remove(_legacyUserEmailKey);
   }
 
   /// Obtém o e-mail do usuário salvo
+  /// Inclui migração de dados legados
   Future<String?> getUserEmail() async {
+    // Primeiro tenta do armazenamento seguro
+    final secureEmail = await _secureStorage.getRecoveryEmail();
+    if (secureEmail != null) return secureEmail;
+
+    // Verifica se há dados legados para migrar
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_userEmailKey);
+    final legacyEmail = prefs.getString(_legacyUserEmailKey);
+
+    if (legacyEmail != null) {
+      // Migra para armazenamento seguro
+      await _secureStorage.saveRecoveryEmail(legacyEmail);
+      await prefs.remove(_legacyUserEmailKey);
+      return legacyEmail;
+    }
+
+    return null;
   }
 
   /// Gera e envia um código de recuperação por e-mail
@@ -71,18 +92,16 @@ class PinRecoveryService {
         );
 
         if (launched) {
-
           return true;
         }
       } catch (e) {
-
+        // Não conseguiu abrir app de e-mail - usar fallback
       }
 
       // Fallback: retorna true para mostrar o código de forma segura
 
       return true;
     } catch (e) {
-
       return false;
     }
   }
@@ -147,7 +166,6 @@ class PinRecoveryService {
 
       return true;
     } catch (e) {
-
       return false;
     }
   }
@@ -174,7 +192,6 @@ class PinRecoveryService {
 
       return remaining > 0 ? remaining : 0;
     } catch (e) {
-
       return null;
     }
   }

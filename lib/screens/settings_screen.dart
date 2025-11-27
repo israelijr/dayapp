@@ -1,12 +1,18 @@
+// ignore_for_file: deprecated_member_use
+// TODO: Migrar RadioListTile para RadioGroup quando Flutter 3.32+ for estável
+// Os RadioListTile usam groupValue/onChanged que foram deprecados no Flutter 3.32+
+// A migração requer refatoração significativa dos dialogs para StatefulWidgets
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/theme_provider.dart';
+
+import '../db/database_helper.dart';
 import '../providers/pin_provider.dart';
+import '../providers/theme_provider.dart';
 import '../services/biometric_service.dart';
 import '../services/inactivity_service.dart';
-import '../services/pin_recovery_service.dart';
 import '../services/notification_preferences_service.dart';
-import '../db/database_helper.dart';
+import '../services/pin_recovery_service.dart';
 import 'setup_pin_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -247,10 +253,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
         if (_biometricEnabled)
-          ListTile(
-            leading: const Icon(Icons.info_outline),
-            title: const Text('Informações'),
-            subtitle: const Text(
+          const ListTile(
+            leading: Icon(Icons.info_outline),
+            title: Text('Informações'),
+            subtitle: Text(
               'A biometria está configurada. '
               'Você pode fazer login usando sua digital ou reconhecimento facial.',
             ),
@@ -536,7 +542,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _showBackgroundLockTimeoutDialog() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogBuilderContext) => AlertDialog(
         title: const Text('Bloqueio em Segundo Plano'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -554,10 +560,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 groupValue: _backgroundLockTimeout,
                 onChanged: (value) async {
                   if (value != null) {
+                    Navigator.of(
+                      dialogBuilderContext,
+                    ).pop(); // Fecha antes do await
                     await _inactivityService.setBackgroundLockTimeout(value);
                     await _loadBackgroundLockTimeout();
                     if (!mounted) return;
-                    Navigator.of(context).pop();
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
@@ -573,7 +581,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => Navigator.of(dialogBuilderContext).pop(),
             child: const Text('Fechar'),
           ),
         ],
@@ -586,7 +594,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogBuilderContext) => AlertDialog(
         title: const Text('E-mail para Recuperação'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -608,14 +616,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => Navigator.of(dialogBuilderContext).pop(),
             child: const Text('Cancelar'),
           ),
           ElevatedButton(
             onPressed: () async {
               final email = emailController.text.trim();
               if (email.isEmpty || !email.contains('@')) {
-                ScaffoldMessenger.of(context).showSnackBar(
+                ScaffoldMessenger.of(dialogBuilderContext).showSnackBar(
                   const SnackBar(
                     content: Text('E-mail inválido'),
                     backgroundColor: Colors.red,
@@ -624,11 +632,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 return;
               }
 
+              Navigator.of(dialogBuilderContext).pop(); // Fecha antes do await
               await _recoveryService.saveUserEmail(email);
               await _loadUserEmail();
 
               if (!mounted) return;
-              Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('E-mail salvo com sucesso!'),
@@ -694,7 +702,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _showNotificationAdvanceDialog() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogBuilderContext) => AlertDialog(
         title: const Text('Antecedência da Notificação'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -712,12 +720,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 groupValue: _notificationAdvance,
                 onChanged: (value) async {
                   if (value != null) {
+                    Navigator.of(context).pop(); // Fecha antes do await
                     await _notificationService.setDefaultNotificationAdvance(
                       value,
                     );
                     await _loadNotificationPreferences();
                     if (!mounted) return;
-                    Navigator.of(context).pop();
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
@@ -733,7 +741,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => Navigator.of(dialogBuilderContext).pop(),
             child: const Text('Fechar'),
           ),
         ],

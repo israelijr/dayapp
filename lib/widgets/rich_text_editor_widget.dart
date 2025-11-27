@@ -31,8 +31,7 @@ class RichTextEditorWidget extends StatefulWidget {
   final TextStyle? textStyle;
 
   const RichTextEditorWidget({
-    super.key,
-    required this.controller,
+    required this.controller, super.key,
     this.hintText,
     this.minLines = 5,
     this.maxLines,

@@ -1,13 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
-import 'dart:typed_data';
 import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class VideoRecorderWidget extends StatefulWidget {
   final Function(Uint8List video, int duration) onVideoRecorded;
 
-  const VideoRecorderWidget({super.key, required this.onVideoRecorded});
+  const VideoRecorderWidget({required this.onVideoRecorded, super.key});
 
   @override
   State<VideoRecorderWidget> createState() => _VideoRecorderWidgetState();
@@ -88,7 +89,7 @@ class _VideoRecorderWidgetState extends State<VideoRecorderWidget> {
         final bytes = await file.readAsBytes();
 
         // Estima duração (placeholder - pode ser melhorado com um plugin de metadata)
-        final estimatedDuration = 0; // Em segundos
+        const estimatedDuration = 0; // Em segundos
 
         widget.onVideoRecorded(bytes, estimatedDuration);
 
@@ -115,7 +116,7 @@ class _VideoRecorderWidgetState extends State<VideoRecorderWidget> {
         final bytes = await file.readAsBytes();
 
         // Duração pode ser estimada ou obtida através de metadata
-        final estimatedDuration = 0; // Em segundos
+        const estimatedDuration = 0; // Em segundos
 
         if (!mounted) return;
 

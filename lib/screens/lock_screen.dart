@@ -21,7 +21,7 @@ class _LockScreenState extends State<LockScreen> {
   bool _showError = false;
   bool _isBiometricAvailable = false;
   bool _showRecoveryDialog = false;
-  int _maxPinLength = 8; // PIN pode ter de 4 a 8 dígitos
+  final int _maxPinLength = 8; // PIN pode ter de 4 a 8 dígitos
 
   @override
   void initState() {
@@ -292,6 +292,8 @@ class _LockScreenState extends State<LockScreen> {
                     code,
                   );
 
+                  if (!context.mounted) return;
+
                   if (isValid) {
                     final pinProvider = Provider.of<PinProvider>(
                       dialogContext,
@@ -300,7 +302,7 @@ class _LockScreenState extends State<LockScreen> {
                     await pinProvider.enablePin(newPin);
                     await _recoveryService.clearRecoveryCode();
 
-                    if (!mounted) return;
+                    if (!context.mounted) return;
                     Navigator.of(dialogContext).pop();
                     _showMessage('PIN redefinido com sucesso!');
                   } else {
@@ -323,8 +325,8 @@ class _LockScreenState extends State<LockScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async => false, // Impede voltar
+    return PopScope(
+      canPop: false, // Impede voltar
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.surface,
         body: SafeArea(
@@ -410,14 +412,14 @@ class _LockScreenState extends State<LockScreen> {
 
               // Indicador de carregamento
               if (_isLoading)
-                Container(
+                const ColoredBox(
                   color: Colors.black26,
-                  child: const Center(child: CircularProgressIndicator()),
+                  child: Center(child: CircularProgressIndicator()),
                 ),
 
               // Dialog de recuperação
               if (_showRecoveryDialog)
-                Container(
+                ColoredBox(
                   color: Colors.black54,
                   child: Center(
                     child: Card(
@@ -556,7 +558,9 @@ class _LockScreenState extends State<LockScreen> {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+                color: Theme.of(
+                  context,
+                ).colorScheme.primary.withValues(alpha: 0.3),
                 width: 1,
               ),
             ),

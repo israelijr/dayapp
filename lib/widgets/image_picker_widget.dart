@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
-import 'dart:typed_data';
 import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 /// Widget de seleção de imagem que oferece opção de tirar foto ou buscar na galeria.
@@ -12,8 +13,7 @@ class ImagePickerWidget extends StatefulWidget {
   final int? imageQuality;
 
   const ImagePickerWidget({
-    super.key,
-    required this.onImagePicked,
+    required this.onImagePicked, super.key,
     this.maxWidth,
     this.maxHeight,
     this.imageQuality,

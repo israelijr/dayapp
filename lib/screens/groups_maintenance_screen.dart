@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../db/grupo_helper.dart';
 import '../models/grupo.dart';
 import '../providers/auth_provider.dart';
-import 'archived_stories_screen.dart';
-import '../widgets/emoji_selection_modal.dart';
 import '../services/emoji_service.dart';
+import '../widgets/emoji_selection_modal.dart';
+import 'archived_stories_screen.dart';
 
 class GroupsMaintenanceScreen extends StatefulWidget {
   const GroupsMaintenanceScreen({super.key});
@@ -177,6 +178,7 @@ class _GroupsMaintenanceScreenState extends State<GroupsMaintenanceScreen> {
     );
 
     if (confirm == true) {
+      if (!mounted) return;
       final auth = Provider.of<AuthProvider>(context, listen: false);
       final userId = auth.user?.id;
       if (userId != null && grupo.id != null) {

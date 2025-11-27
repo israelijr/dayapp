@@ -17,11 +17,8 @@ class Historia {
   final DateTime? dataExclusao;
 
   Historia({
-    this.id,
-    required this.userId,
+    required this.userId, required this.titulo, required this.data, this.id,
     this.assunto,
-    required this.titulo,
-    required this.data,
     this.tag,
     this.descricao,
     this.sentimento,
