@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import '../db/database_helper.dart';
 import '../db/historia_foto_helper.dart';
@@ -16,6 +15,7 @@ import 'package:file_selector/file_selector.dart';
 import 'rich_text_editor_screen.dart';
 import '../widgets/audio_recorder_widget.dart';
 import '../widgets/video_recorder_widget.dart';
+import '../widgets/image_picker_widget.dart';
 import '../widgets/compact_audio_icon.dart';
 import '../widgets/compact_video_icon.dart';
 import '../widgets/emoji_selection_modal.dart';
@@ -162,16 +162,17 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
   }
 
   Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(source: ImageSource.gallery);
-    if (picked != null) {
-      final bytes = await picked.readAsBytes();
-      if (!mounted) return;
-      setState(() {
-        fotos.add(bytes);
-        _checkForChanges();
-      });
-    }
+    showDialog(
+      context: context,
+      builder: (context) => ImagePickerWidget(
+        onImagePicked: (bytes) {
+          setState(() {
+            fotos.add(bytes);
+            _checkForChanges();
+          });
+        },
+      ),
+    );
   }
 
   void _removeFoto(int index) {

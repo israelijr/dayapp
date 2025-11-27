@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import '../models/historia.dart';
 import '../db/database_helper.dart';
@@ -13,6 +12,7 @@ import 'package:file_selector/file_selector.dart';
 import 'rich_text_editor_screen.dart';
 import '../widgets/audio_recorder_widget.dart';
 import '../widgets/video_recorder_widget.dart';
+import '../widgets/image_picker_widget.dart';
 import '../widgets/compact_audio_icon.dart';
 import '../widgets/compact_video_icon.dart';
 import '../widgets/emoji_selection_modal.dart';
@@ -236,21 +236,24 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
   }
 
   Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(source: ImageSource.gallery);
-    if (picked != null) {
-      final bytes = await picked.readAsBytes();
+    showDialog(
+      context: context,
+      builder: (context) => ImagePickerWidget(
+        onImagePicked: (bytes) async {
+          // Compress image to avoid SQLite CursorWindow limit (2MB)
+          final compressedBytes = await ImageCompressionHelper.compressImage(
+            bytes,
+          );
 
-      // Compress image to avoid SQLite CursorWindow limit (2MB)
-      final compressedBytes = await ImageCompressionHelper.compressImage(bytes);
-
-      if (!mounted) return;
-      setState(() {
-        fotos.add(compressedBytes);
-        fotoIds.add(0); // 0 indica nova foto
-        _checkForChanges();
-      });
-    }
+          if (!mounted) return;
+          setState(() {
+            fotos.add(compressedBytes);
+            fotoIds.add(0); // 0 indica nova foto
+            _checkForChanges();
+          });
+        },
+      ),
+    );
   }
 
   void _removeFoto(int index) async {
