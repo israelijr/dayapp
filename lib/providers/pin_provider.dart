@@ -17,6 +17,11 @@ class PinProvider extends ChangeNotifier {
   /// Campo público pois é apenas controle interno/externo sem notificação de listeners
   bool isAuthenticatingWithBiometrics = false;
 
+  /// Flag para evitar bloqueio quando o usuário está selecionando mídia externa
+  /// (galeria, câmera, file picker, etc.)
+  /// Quando o app vai para background para abrir a galeria/câmera, não deve bloquear
+  bool isPickingExternalMedia = false;
+
   // Setters públicos para controle direto (usado por biometria)
   set isAuthenticated(bool value) {
     _isAuthenticated = value;

@@ -3,6 +3,9 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/pin_provider.dart';
 
 /// Widget de seleção de imagem que oferece opção de tirar foto ou buscar na galeria.
 /// Segue o mesmo padrão de UX do AudioRecorderWidget e VideoRecorderWidget.
@@ -13,7 +16,8 @@ class ImagePickerWidget extends StatefulWidget {
   final int? imageQuality;
 
   const ImagePickerWidget({
-    required this.onImagePicked, super.key,
+    required this.onImagePicked,
+    super.key,
     this.maxWidth,
     this.maxHeight,
     this.imageQuality,
@@ -88,6 +92,10 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
 
   /// Seleciona uma imagem da galeria
   Future<void> _pickFromGallery() async {
+    // Seta flag para evitar bloqueio de tela quando o app vai para background
+    final pinProvider = context.read<PinProvider>();
+    pinProvider.isPickingExternalMedia = true;
+
     try {
       final XFile? picked = await _picker.pickImage(
         source: ImageSource.gallery,
@@ -115,6 +123,10 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
 
   /// Tira uma foto usando a câmera
   Future<void> _takePhoto() async {
+    // Seta flag para evitar bloqueio de tela quando o app vai para background
+    final pinProvider = context.read<PinProvider>();
+    pinProvider.isPickingExternalMedia = true;
+
     try {
       final XFile? photo = await _picker.pickImage(
         source: ImageSource.camera,

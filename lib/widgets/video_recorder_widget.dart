@@ -4,6 +4,9 @@ import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/pin_provider.dart';
 
 class VideoRecorderWidget extends StatefulWidget {
   final Function(Uint8List video, int duration) onVideoRecorded;
@@ -78,6 +81,10 @@ class _VideoRecorderWidgetState extends State<VideoRecorderWidget> {
   }
 
   Future<void> _pickVideoFile() async {
+    // Seta flag para evitar bloqueio de tela quando o app vai para background
+    final pinProvider = context.read<PinProvider>();
+    pinProvider.isPickingExternalMedia = true;
+
     try {
       final result = await FilePicker.platform.pickFiles(
         type: FileType.video,
@@ -105,6 +112,10 @@ class _VideoRecorderWidgetState extends State<VideoRecorderWidget> {
   }
 
   Future<void> _recordVideo() async {
+    // Seta flag para evitar bloqueio de tela quando o app vai para background
+    final pinProvider = context.read<PinProvider>();
+    pinProvider.isPickingExternalMedia = true;
+
     try {
       final XFile? video = await _picker.pickVideo(
         source: ImageSource.camera,

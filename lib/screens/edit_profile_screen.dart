@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/auth_provider.dart';
+import '../providers/pin_provider.dart';
 // ...existing code...
 import '../services/file_utils.dart';
 
@@ -140,6 +141,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> _pickImage() async {
+    // Seta flag para evitar bloqueio de tela quando o app vai para background
+    final pinProvider = context.read<PinProvider>();
+    pinProvider.isPickingExternalMedia = true;
+
     try {
       final picker = ImagePicker();
       final XFile? picked = await picker.pickImage(

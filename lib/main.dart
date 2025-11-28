@@ -67,7 +67,9 @@ void main() async {
     if (payload != null) {
       final int? historiaId = int.tryParse(payload);
       if (historiaId != null) {
-        final Historia? historia = await DatabaseHelper().getHistoria(historiaId);
+        final Historia? historia = await DatabaseHelper().getHistoria(
+          historiaId,
+        );
         if (historia != null) {
           navigatorKey.currentState?.push(
             MaterialPageRoute(
@@ -96,7 +98,11 @@ class MyApp extends StatefulWidget {
   final PinProvider pinProvider;
 
   const MyApp({
-    required this.authProvider, required this.themeProvider, required this.refreshProvider, required this.pinProvider, super.key,
+    required this.authProvider,
+    required this.themeProvider,
+    required this.refreshProvider,
+    required this.pinProvider,
+    super.key,
   });
 
   @override
@@ -155,6 +161,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             _pausedTime = null;
             // Reseta a flag pois já consumimos o evento de retorno
             widget.pinProvider.isAuthenticatingWithBiometrics = false;
+            return;
+          }
+
+          // Se estiver selecionando mídia externa (galeria, câmera, etc.), não bloqueia
+          if (widget.pinProvider.isPickingExternalMedia) {
+            _pausedTime = null;
+            // Reseta a flag pois já consumimos o evento de retorno
+            widget.pinProvider.isPickingExternalMedia = false;
             return;
           }
 

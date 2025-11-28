@@ -4,7 +4,10 @@ import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:record/record.dart';
+
+import '../providers/pin_provider.dart';
 
 class AudioRecorderWidget extends StatefulWidget {
   final Function(Uint8List audio, int duration) onAudioRecorded;
@@ -292,6 +295,10 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
   }
 
   Future<void> _pickAudioFile() async {
+    // Seta flag para evitar bloqueio de tela quando o app vai para background
+    final pinProvider = context.read<PinProvider>();
+    pinProvider.isPickingExternalMedia = true;
+
     try {
       final result = await FilePicker.platform.pickFiles(
         type: FileType.audio,
