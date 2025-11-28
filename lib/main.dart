@@ -22,6 +22,7 @@ import 'screens/edit_historia_screen.dart';
 import 'screens/edit_profile_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
+import 'screens/search_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/trash_screen.dart';
@@ -233,6 +234,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   const PinProtectedWrapper(child: BackupManagerScreen()),
               '/trash': (context) =>
                   const PinProtectedWrapper(child: TrashScreen()),
+              '/search': (context) =>
+                  const PinProtectedWrapper(child: SearchScreen()),
             },
           );
         },
