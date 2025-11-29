@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
@@ -10,8 +8,6 @@ import '../db/historia_audio_helper.dart';
 import '../db/historia_foto_helper.dart';
 import '../db/historia_video_helper.dart';
 import '../models/historia.dart';
-import '../models/historia_audio.dart';
-import '../models/historia_foto.dart';
 import '../models/historia_video_v2.dart' as v2;
 import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
@@ -37,30 +33,32 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
 
   bool _isCardView = true; // true = modo blocos, false = modo ícones
 
-  String? _getEmoticonImage(String emoticon) {
+  // Converte nomes de humor antigos para emojis Unicode
+  // Retorna null se já for um emoji (default case)
+  String? _convertLegacyEmoticon(String emoticon) {
     switch (emoticon) {
       case 'Feliz':
-        return '1_feliz.png';
+        return '😊';
       case 'Tranquilo':
-        return '2_tranquilo.png';
+        return '😌';
       case 'Aliviado':
-        return '3_aliviado.png';
+        return '😮‍💨';
       case 'Pensativo':
-        return '4_pensativo.png';
+        return '🤔';
       case 'Sono':
-        return '5_sono.png';
+        return '😴';
       case 'Preocupado':
-        return '6_preocupado.png';
+        return '😟';
       case 'Assustado':
-        return '7_assustado.png';
+        return '😨';
       case 'Bravo':
-        return '8_bravo.png';
+        return '😠';
       case 'Triste':
-        return '9_triste.png';
+        return '😢';
       case 'Muito Triste':
-        return '10_muito_triste.png';
+        return '😭';
       default:
-        return null;
+        return null; // Já é um emoji Unicode
     }
   }
 
@@ -150,8 +148,8 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
   }
 
   Widget _buildCardView(Historia historia) {
-    return FutureBuilder<List<HistoriaFoto>>(
-      future: HistoriaFotoHelper().getFotosByHistoria(historia.id ?? 0),
+    return FutureBuilder<List<FotoComBytes>>(
+      future: HistoriaFotoHelper().getFotosComBytesByHistoria(historia.id ?? 0),
       builder: (context, snapshot) {
         final hasImages = snapshot.hasData && snapshot.data!.isNotEmpty;
 
@@ -236,7 +234,7 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
                     HistoriaMediaRow(
                       historiaId: historia.id ?? 0,
                       emoticon: historia.emoticon,
-                      getEmoticonImage: _getEmoticonImage,
+                      convertLegacyEmoticon: _convertLegacyEmoticon,
                     ),
                     Text(
                       historia.titulo,
@@ -645,14 +643,15 @@ class HistoriaFotosGrid extends StatelessWidget {
   final int historiaId;
   final double height;
   const HistoriaFotosGrid({
-    required this.historiaId, super.key,
+    required this.historiaId,
+    super.key,
     this.height = 120,
   });
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<HistoriaFoto>>(
-      future: HistoriaFotoHelper().getFotosByHistoria(historiaId),
+    return FutureBuilder<List<FotoComBytes>>(
+      future: HistoriaFotoHelper().getFotosComBytesByHistoria(historiaId),
       builder: (context, snapshot) {
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return Container(
@@ -677,7 +676,7 @@ class HistoriaFotosGrid extends StatelessWidget {
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      content: Image.memory(Uint8List.fromList(fotos[0].foto)),
+                      content: Image.memory(fotos[0].bytes),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(),
@@ -689,7 +688,7 @@ class HistoriaFotosGrid extends StatelessWidget {
                 );
               },
               child: Image.memory(
-                Uint8List.fromList(fotos[0].foto),
+                fotos[0].bytes,
                 height: height,
                 width: double.infinity,
                 fit: BoxFit.cover,
@@ -717,7 +716,7 @@ class HistoriaFotosGrid extends StatelessWidget {
                     itemBuilder: (context, index) {
                       return InteractiveViewer(
                         child: Image.memory(
-                          Uint8List.fromList(displayFotos[index].foto),
+                          displayFotos[index].bytes,
                           fit: BoxFit.contain,
                         ),
                       );
@@ -739,10 +738,7 @@ class HistoriaFotosGrid extends StatelessWidget {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.memory(
-                    Uint8List.fromList(foto.foto),
-                    fit: BoxFit.cover,
-                  ),
+                  Image.memory(foto.bytes, fit: BoxFit.cover),
                   if (isLast)
                     ColoredBox(
                       color: Colors.black45,
@@ -769,7 +765,7 @@ class HistoriaFotosGrid extends StatelessWidget {
             child: GestureDetector(
               onTap: () => openViewer(0),
               child: Image.memory(
-                Uint8List.fromList(displayFotos[0].foto),
+                displayFotos[0].bytes,
                 height: height,
                 width: double.infinity,
                 fit: BoxFit.cover,
@@ -848,10 +844,12 @@ class HistoriaFotosGrid extends StatelessWidget {
 class HistoriaMediaRow extends StatelessWidget {
   final int historiaId;
   final String? emoticon;
-  final String? Function(String) getEmoticonImage;
+  final String? Function(String) convertLegacyEmoticon;
 
   const HistoriaMediaRow({
-    required this.historiaId, required this.getEmoticonImage, super.key,
+    required this.historiaId,
+    required this.convertLegacyEmoticon,
+    super.key,
     this.emoticon,
   });
 
@@ -875,7 +873,7 @@ class HistoriaMediaRow extends StatelessWidget {
         }
 
         final data = snapshot.data!;
-        final audios = data['audios'] as List<HistoriaAudio>;
+        final audios = data['audios'] as List<AudioComBytes>;
         final videos = data['videos'] as List<v2.HistoriaVideo>;
 
         // Se não tem emoticon nem mídia, não mostra nada
@@ -906,24 +904,15 @@ class HistoriaMediaRow extends StatelessWidget {
                     ),
                     child: Builder(
                       builder: (context) {
-                        final imagePath = getEmoticonImage(emoticon!);
-                        if (imagePath != null) {
-                          return Image.asset(
-                            'assets/image/$imagePath',
-                            width: 40,
-                            height: 40,
-                            errorBuilder: (context, error, stackTrace) {
-                              return const Icon(Icons.mood, size: 40);
-                            },
-                          );
-                        } else {
-                          return Center(
-                            child: Text(
-                              emoticon!,
-                              style: const TextStyle(fontSize: 32),
-                            ),
-                          );
-                        }
+                        // Converte emoticons legados para emojis
+                        final convertedEmoji = convertLegacyEmoticon(emoticon!);
+                        final displayEmoji = convertedEmoji ?? emoticon!;
+                        return Center(
+                          child: Text(
+                            displayEmoji,
+                            style: const TextStyle(fontSize: 32),
+                          ),
+                        );
                       },
                     ),
                   ),
@@ -932,7 +921,7 @@ class HistoriaMediaRow extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: CompactAudioIcon(
-                      audioData: audio.audio,
+                      audioData: audio.bytes,
                       duration: audio.duracao,
                     ),
                   );
@@ -957,7 +946,7 @@ class HistoriaMediaRow extends StatelessWidget {
 
   Future<Map<String, dynamic>> _loadMediaData() async {
     try {
-      final audios = await HistoriaAudioHelper().getAudiosByHistoria(
+      final audios = await HistoriaAudioHelper().getAudiosComBytesByHistoria(
         historiaId,
       );
       final videos = await HistoriaVideoHelper().getVideosByHistoria(
@@ -965,7 +954,7 @@ class HistoriaMediaRow extends StatelessWidget {
       );
       return {'audios': audios, 'videos': videos};
     } catch (e) {
-      return {'audios': <HistoriaAudio>[], 'videos': <v2.HistoriaVideo>[]};
+      return {'audios': <AudioComBytes>[], 'videos': <v2.HistoriaVideo>[]};
     }
   }
 }

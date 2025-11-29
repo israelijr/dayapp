@@ -15,6 +15,10 @@ class PinProtectedWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<PinProvider>(
       builder: (context, pinProvider, child) {
+        debugPrint(
+          'PinProtectedWrapper: shouldShowPinScreen=${pinProvider.shouldShowPinScreen}',
+        );
+
         if (pinProvider.shouldShowPinScreen) {
           return Stack(
             children: [
@@ -22,7 +26,7 @@ class PinProtectedWrapper extends StatelessWidget {
               BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                 child: ColoredBox(
-                  color: Colors.black.withValues(alpha: 0.3 * 255),
+                  color: Colors.black.withValues(alpha: 0.3),
                   child: this.child,
                 ),
               ),

@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -10,8 +8,6 @@ import '../db/historia_audio_helper.dart';
 import '../db/historia_foto_helper.dart';
 import '../db/historia_video_helper.dart';
 import '../models/historia.dart';
-import '../models/historia_audio.dart';
-import '../models/historia_foto.dart';
 import '../models/historia_video_v2.dart' as v2;
 import '../providers/auth_provider.dart';
 import '../providers/refresh_provider.dart';
@@ -36,30 +32,32 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
   bool _isLoading = true;
   RefreshProvider? _refreshProvider; // Salvar referência
 
-  String _getEmoticonImage(String emoticon) {
+  // Converte nomes de humor antigos para emojis Unicode
+  // Retorna o próprio valor se já for um emoji
+  String _convertLegacyEmoticon(String emoticon) {
     switch (emoticon) {
       case 'Feliz':
-        return '1_feliz.png';
+        return '😊';
       case 'Tranquilo':
-        return '2_tranquilo.png';
+        return '😌';
       case 'Aliviado':
-        return '3_aliviado.png';
+        return '😮‍💨';
       case 'Pensativo':
-        return '4_pensativo.png';
+        return '🤔';
       case 'Sono':
-        return '5_sono.png';
+        return '😴';
       case 'Preocupado':
-        return '6_preocupado.png';
+        return '😟';
       case 'Assustado':
-        return '7_assustado.png';
+        return '😨';
       case 'Bravo':
-        return '8_bravo.png';
+        return '😠';
       case 'Triste':
-        return '9_triste.png';
+        return '😢';
       case 'Muito Triste':
-        return '10_muito_triste.png';
+        return '😭';
       default:
-        return '1_feliz.png';
+        return emoticon; // Já é um emoji Unicode
     }
   }
 
@@ -346,16 +344,10 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
                       width: 40,
                       height: 40,
                       margin: const EdgeInsets.only(right: 12),
-                      child: Image.asset(
-                        'assets/image/${_getEmoticonImage(historia.emoticon!)}',
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Icon(
-                            Icons.sentiment_satisfied_alt,
-                            size: 40,
-                            color: Colors.grey[400],
-                          );
-                        },
+                      alignment: Alignment.center,
+                      child: Text(
+                        _convertLegacyEmoticon(historia.emoticon!),
+                        style: const TextStyle(fontSize: 32),
                       ),
                     ),
                   Expanded(
@@ -419,8 +411,8 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
                 ),
               ],
               // Preview de fotos
-              FutureBuilder<List<HistoriaFoto>>(
-                future: HistoriaFotoHelper().getFotosByHistoria(
+              FutureBuilder<List<FotoComBytes>>(
+                future: HistoriaFotoHelper().getFotosComBytesByHistoria(
                   historia.id ?? 0,
                 ),
                 builder: (context, snapshot) {
@@ -440,7 +432,7 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             image: DecorationImage(
-                              image: MemoryImage(Uint8List.fromList(foto.foto)),
+                              image: MemoryImage(foto.bytes),
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -514,16 +506,10 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
                 width: 60,
                 height: 60,
                 margin: const EdgeInsets.only(right: 16),
-                child: Image.asset(
-                  'assets/image/${_getEmoticonImage(historia.emoticon!)}',
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Icon(
-                      Icons.sentiment_satisfied_alt,
-                      size: 60,
-                      color: Colors.grey[400],
-                    );
-                  },
+                alignment: Alignment.center,
+                child: Text(
+                  _convertLegacyEmoticon(historia.emoticon!),
+                  style: const TextStyle(fontSize: 48),
                 ),
               ),
             Expanded(
@@ -564,8 +550,10 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
         ],
 
         // Fotos
-        FutureBuilder<List<HistoriaFoto>>(
-          future: HistoriaFotoHelper().getFotosByHistoria(historia.id ?? 0),
+        FutureBuilder<List<FotoComBytes>>(
+          future: HistoriaFotoHelper().getFotosComBytesByHistoria(
+            historia.id ?? 0,
+          ),
           builder: (context, snapshot) {
             if (!snapshot.hasData || snapshot.data!.isEmpty) {
               return const SizedBox.shrink();
@@ -593,7 +581,7 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
                     return ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: Image.memory(
-                        Uint8List.fromList(fotos[index].foto),
+                        fotos[index].bytes,
                         fit: BoxFit.cover,
                       ),
                     );
@@ -605,8 +593,10 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
           },
         ),
         // Áudios
-        FutureBuilder<List<HistoriaAudio>>(
-          future: HistoriaAudioHelper().getAudiosByHistoria(historia.id ?? 0),
+        FutureBuilder<List<AudioComBytes>>(
+          future: HistoriaAudioHelper().getAudiosComBytesByHistoria(
+            historia.id ?? 0,
+          ),
           builder: (context, snapshot) {
             if (!snapshot.hasData || snapshot.data!.isEmpty) {
               return const SizedBox.shrink();
@@ -626,7 +616,7 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
                   runSpacing: 8,
                   children: audios.map((audio) {
                     return CompactAudioIcon(
-                      audioData: audio.audio,
+                      audioData: audio.bytes,
                       duration: audio.duracao,
                     );
                   }).toList(),

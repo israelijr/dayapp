@@ -26,17 +26,30 @@ class _LockScreenState extends State<LockScreen> {
   @override
   void initState() {
     super.initState();
-    _checkBiometric();
-    // Não chama mais a biometria automaticamente
-    // O usuário deve ver a tela de bloqueio primeiro e pode usar o botão de biometria se desejar
+    _checkBiometricAndAutoAuthenticate();
   }
 
-  Future<void> _checkBiometric() async {
+  Future<void> _checkBiometricAndAutoAuthenticate() async {
     final isEnabled = await _biometricService.isBiometricEnabled();
     final isAvailable = await _biometricService.isBiometricAvailable();
+
+    if (!mounted) return;
+
     setState(() {
       _isBiometricAvailable = isEnabled && isAvailable;
     });
+
+    // Se biometria está habilitada e disponível, E não há PIN configurado,
+    // inicia autenticação biométrica automaticamente
+    final pinProvider = Provider.of<PinProvider>(context, listen: false);
+    if (_isBiometricAvailable && !pinProvider.isPinEnabled) {
+      // Aguarda um frame para garantir que a tela foi renderizada
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _authenticateWithBiometric();
+        }
+      });
+    }
   }
 
   Future<void> _authenticateWithBiometric() async {
@@ -325,6 +338,10 @@ class _LockScreenState extends State<LockScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final pinProvider = Provider.of<PinProvider>(context, listen: false);
+    final bool onlyBiometric =
+        _isBiometricAvailable && !pinProvider.isPinEnabled;
+
     return PopScope(
       canPop: false, // Impede voltar
       child: Scaffold(
@@ -338,9 +355,9 @@ class _LockScreenState extends State<LockScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Ícone de cadeado
+                      // Ícone de cadeado ou biometria
                       Icon(
-                        Icons.lock_outline,
+                        onlyBiometric ? Icons.fingerprint : Icons.lock_outline,
                         size: 80,
                         color: Theme.of(context).colorScheme.primary,
                       ),
@@ -354,33 +371,38 @@ class _LockScreenState extends State<LockScreen> {
                       const SizedBox(height: 8),
 
                       Text(
-                        'Digite seu PIN para continuar',
+                        onlyBiometric
+                            ? 'Use sua biometria para continuar'
+                            : 'Digite seu PIN para continuar',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Colors.grey[600],
                         ),
                       ),
                       const SizedBox(height: 40),
 
-                      // Indicadores de PIN
-                      _buildPinIndicators(),
+                      // Mostra PIN apenas se estiver habilitado
+                      if (pinProvider.isPinEnabled) ...[
+                        // Indicadores de PIN
+                        _buildPinIndicators(),
 
-                      if (_showError) ...[
-                        const SizedBox(height: 16),
-                        Text(
-                          'PIN incorreto. Tente novamente.',
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.error,
-                            fontWeight: FontWeight.w500,
+                        if (_showError) ...[
+                          const SizedBox(height: 16),
+                          Text(
+                            'PIN incorreto. Tente novamente.',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.error,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
-                        ),
+                        ],
+
+                        const SizedBox(height: 40),
+
+                        // Teclado numérico
+                        _buildNumericKeypad(),
+
+                        const SizedBox(height: 24),
                       ],
-
-                      const SizedBox(height: 40),
-
-                      // Teclado numérico
-                      _buildNumericKeypad(),
-
-                      const SizedBox(height: 24),
 
                       // Botão de biometria
                       if (_isBiometricAvailable) ...[
@@ -389,7 +411,11 @@ class _LockScreenState extends State<LockScreen> {
                               ? null
                               : _authenticateWithBiometric,
                           icon: const Icon(Icons.fingerprint),
-                          label: const Text('Usar Biometria'),
+                          label: Text(
+                            onlyBiometric
+                                ? 'Desbloquear com Biometria'
+                                : 'Usar Biometria',
+                          ),
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 32,
@@ -400,11 +426,12 @@ class _LockScreenState extends State<LockScreen> {
                         const SizedBox(height: 16),
                       ],
 
-                      // Link para recuperação
-                      TextButton(
-                        onPressed: _isLoading ? null : _showRecoveryOptions,
-                        child: const Text('Esqueci meu PIN'),
-                      ),
+                      // Link para recuperação - apenas se PIN estiver habilitado
+                      if (pinProvider.isPinEnabled)
+                        TextButton(
+                          onPressed: _isLoading ? null : _showRecoveryOptions,
+                          child: const Text('Esqueci meu PIN'),
+                        ),
                     ],
                   ),
                 ),

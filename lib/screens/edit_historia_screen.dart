@@ -8,12 +8,12 @@ import '../db/database_helper.dart';
 import '../db/historia_audio_helper.dart';
 import '../db/historia_foto_helper.dart';
 import '../db/historia_video_helper.dart';
+import '../helpers/audio_file_helper.dart';
 import '../helpers/image_compression_helper.dart';
 import '../helpers/notification_helper.dart';
+import '../helpers/photo_file_helper.dart';
 import '../helpers/rich_text_helper.dart';
 import '../models/historia.dart';
-import '../models/historia_audio.dart';
-import '../models/historia_foto.dart';
 import '../services/emoji_service.dart';
 import '../widgets/audio_recorder_widget.dart';
 import '../widgets/compact_audio_icon.dart';
@@ -168,30 +168,32 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     'Muito Triste',
   ];
 
-  String _getLegacyEmoticonImage(String emoticon) {
+  // Converte nomes de humor antigos para emojis Unicode
+  // Retorna o próprio valor se já for um emoji
+  String _convertLegacyEmoticon(String emoticon) {
     switch (emoticon) {
       case 'Feliz':
-        return '1_feliz.png';
+        return '😊';
       case 'Tranquilo':
-        return '2_tranquilo.png';
+        return '😌';
       case 'Aliviado':
-        return '3_aliviado.png';
+        return '😮‍💨';
       case 'Pensativo':
-        return '4_pensativo.png';
+        return '🤔';
       case 'Sono':
-        return '5_sono.png';
+        return '😴';
       case 'Preocupado':
-        return '6_preocupado.png';
+        return '😟';
       case 'Assustado':
-        return '7_assustado.png';
+        return '😨';
       case 'Bravo':
-        return '8_bravo.png';
+        return '😠';
       case 'Triste':
-        return '9_triste.png';
+        return '😢';
       case 'Muito Triste':
-        return '10_muito_triste.png';
+        return '😭';
       default:
-        return '1_feliz.png';
+        return emoticon; // Já é um emoji Unicode
     }
   }
 
@@ -230,9 +232,22 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
       widget.historia.id ?? 0,
     );
     if (!mounted) return;
+
+    // Carregar bytes das fotos do sistema de arquivos
+    final List<Uint8List> fotoBytes = [];
+    final List<int> ids = [];
+    for (final foto in fotosDb) {
+      final bytes = await PhotoFileHelper.readPhoto(foto.fotoPath);
+      if (bytes != null) {
+        fotoBytes.add(bytes);
+        ids.add(foto.id ?? 0);
+      }
+    }
+
+    if (!mounted) return;
     setState(() {
-      fotos = fotosDb.map((f) => Uint8List.fromList(f.foto)).toList();
-      fotoIds = fotosDb.map((f) => f.id ?? 0).toList();
+      fotos = fotoBytes;
+      fotoIds = ids;
     });
   }
 
@@ -278,16 +293,22 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
       widget.historia.id ?? 0,
     );
     if (!mounted) return;
+
+    // Carregar bytes dos áudios do sistema de arquivos
+    final List<Map<String, dynamic>> audioData = [];
+    final List<int> ids = [];
+    for (final audio in audiosDb) {
+      final bytes = await AudioFileHelper.readAudio(audio.audioPath);
+      if (bytes != null) {
+        audioData.add({'audio': bytes, 'duration': audio.duracao});
+        ids.add(audio.id ?? 0);
+      }
+    }
+
+    if (!mounted) return;
     setState(() {
-      audios = audiosDb
-          .map(
-            (a) => {
-              'audio': Uint8List.fromList(a.audio),
-              'duration': a.duracao,
-            },
-          )
-          .toList();
-      audioIds = audiosDb.map((a) => a.id ?? 0).toList();
+      audios = audioData;
+      audioIds = ids;
     });
   }
 
@@ -445,8 +466,9 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     // Salva novas fotos
     for (int i = 0; i < fotos.length; i++) {
       if (fotoIds[i] == 0) {
-        await HistoriaFotoHelper().insertFoto(
-          HistoriaFoto(historiaId: widget.historia.id ?? 0, foto: fotos[i]),
+        await HistoriaFotoHelper().insertFotoFromBytes(
+          historiaId: widget.historia.id ?? 0,
+          fotoBytes: fotos[i],
         );
       }
     }
@@ -454,12 +476,10 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     // Salva novos áudios
     for (int i = 0; i < audios.length; i++) {
       if (audioIds[i] == 0) {
-        await HistoriaAudioHelper().insertAudio(
-          HistoriaAudio(
-            historiaId: widget.historia.id ?? 0,
-            audio: audios[i]['audio'],
-            duracao: audios[i]['duration'],
-          ),
+        await HistoriaAudioHelper().insertAudioFromBytes(
+          historiaId: widget.historia.id ?? 0,
+          audioBytes: audios[i]['audio'],
+          duracao: audios[i]['duration'],
         );
       }
     }
@@ -666,13 +686,10 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                         const Spacer(),
                         if (selectedEmoticon != null)
                           Chip(
-                            avatar: legacyEmoticons.contains(selectedEmoticon)
-                                ? Image.asset(
-                                    'assets/image/${_getLegacyEmoticonImage(selectedEmoticon!)}',
-                                    width: 24,
-                                    height: 24,
-                                  )
-                                : Text(selectedEmoticon!),
+                            avatar: Text(
+                              _convertLegacyEmoticon(selectedEmoticon!),
+                              style: const TextStyle(fontSize: 20),
+                            ),
                             label: Text(
                               selectedEmojiTranslation ??
                                   selectedEmoticon ??

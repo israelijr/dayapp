@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
 /// Splash Screen com animações de fade-in, desfoque e pulsação
+/// Pode ser usada como tela de carregamento (onComplete opcional)
 class SplashScreen extends StatefulWidget {
-  final VoidCallback onComplete;
+  final VoidCallback? onComplete;
 
-  const SplashScreen({required this.onComplete, super.key});
+  const SplashScreen({this.onComplete, super.key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -16,13 +17,11 @@ class _SplashScreenState extends State<SplashScreen>
   late AnimationController _fadeController;
   late AnimationController _scaleController;
   late AnimationController _pulseController;
-  late AnimationController _progressController;
 
   // Animações
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
   late Animation<double> _pulseAnimation;
-  late Animation<double> _progressAnimation;
 
   @override
   void initState() {
@@ -59,15 +58,6 @@ class _SplashScreenState extends State<SplashScreen>
     _pulseAnimation = Tween<double>(begin: 1.0, end: 1.05).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
-
-    // Progresso (2 segundos total)
-    _progressController = AnimationController(
-      duration: const Duration(milliseconds: 2000),
-      vsync: this,
-    );
-    _progressAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _progressController, curve: Curves.easeInOut),
-    );
   }
 
   void _startAnimationSequence() async {
@@ -76,18 +66,20 @@ class _SplashScreenState extends State<SplashScreen>
 
     // Aguarda 200ms e inicia scale do ícone
     await Future.delayed(const Duration(milliseconds: 200));
+    if (!mounted) return;
     _scaleController.forward();
 
     // Aguarda mais 600ms e inicia pulsação (após o ícone estar visível)
     await Future.delayed(const Duration(milliseconds: 600));
+    if (!mounted) return;
     _pulseController.repeat(reverse: true);
 
-    // Inicia o progresso
-    _progressController.forward();
-
-    // Aguarda completar e chama callback (2 segundos total)
-    await Future.delayed(const Duration(milliseconds: 2000));
-    widget.onComplete();
+    // Se tem callback, chama após tempo mínimo de exibição
+    if (widget.onComplete != null) {
+      await Future.delayed(const Duration(milliseconds: 2000));
+      if (!mounted) return;
+      widget.onComplete!();
+    }
   }
 
   @override
@@ -95,7 +87,6 @@ class _SplashScreenState extends State<SplashScreen>
     _fadeController.dispose();
     _scaleController.dispose();
     _pulseController.dispose();
-    _progressController.dispose();
     super.dispose();
   }
 
@@ -227,7 +218,7 @@ class _SplashScreenState extends State<SplashScreen>
               right: 0,
               bottom: 60,
               child: AnimatedBuilder(
-                animation: _progressAnimation,
+                animation: _fadeAnimation,
                 builder: (context, child) {
                   return Opacity(
                     opacity: _fadeAnimation.value,
@@ -235,15 +226,12 @@ class _SplashScreenState extends State<SplashScreen>
                       padding: const EdgeInsets.symmetric(horizontal: 60),
                       child: Column(
                         children: [
-                          // Barra de progresso
+                          // Barra de progresso indeterminada (carregamento contínuo)
                           ClipRRect(
                             borderRadius: BorderRadius.circular(10),
-                            child: LinearProgressIndicator(
-                              value: _progressAnimation.value,
-                              backgroundColor: Colors.white.withValues(
-                                alpha: 0.3,
-                              ),
-                              valueColor: const AlwaysStoppedAnimation<Color>(
+                            child: const LinearProgressIndicator(
+                              backgroundColor: Color(0x4DFFFFFF),
+                              valueColor: AlwaysStoppedAnimation<Color>(
                                 Color(0xFF7B2CBF),
                               ),
                               minHeight: 6,

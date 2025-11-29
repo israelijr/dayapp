@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite/sqflite.dart';
 
+import '../helpers/audio_file_helper.dart';
+import '../helpers/photo_file_helper.dart';
 import '../helpers/video_file_helper.dart';
 import '../models/historia.dart';
 
@@ -26,7 +28,7 @@ class DatabaseHelper {
       final path = p.join(dbPath, 'dayapp.db');
       return await openDatabase(
         path,
-        version: 11,
+        version: 12,
         onCreate: _onCreate,
         onUpgrade: _onUpgrade,
       );
@@ -72,7 +74,7 @@ class DatabaseHelper {
         CREATE TABLE historia_fotos (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           historia_id INTEGER NOT NULL,
-          foto BLOB NOT NULL,
+          foto_path TEXT NOT NULL,
           legenda TEXT,
           FOREIGN KEY (historia_id) REFERENCES historia(id) ON DELETE CASCADE
         );
@@ -81,7 +83,7 @@ class DatabaseHelper {
         CREATE TABLE historia_audios (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           historia_id INTEGER NOT NULL,
-          audio BLOB NOT NULL,
+          audio_path TEXT NOT NULL,
           legenda TEXT,
           duracao INTEGER,
           FOREIGN KEY (historia_id) REFERENCES historia(id) ON DELETE CASCADE
@@ -306,6 +308,163 @@ class DatabaseHelper {
       } catch (e) {
         // Column may already exist
       }
+    }
+    if (oldVersion < 12) {
+      // Migração: Fotos e Áudios de BLOB para sistema de arquivos
+      await _migratePhotosToFileSystem(db);
+      await _migrateAudiosToFileSystem(db);
+    }
+  }
+
+  /// Migra fotos de BLOB para sistema de arquivos
+  Future<void> _migratePhotosToFileSystem(Database db) async {
+    try {
+      // Verificar se a tabela ainda usa BLOB
+      final result = await db.rawQuery('PRAGMA table_info(historia_fotos)');
+      final hasBlob = result.any((column) => column['name'] == 'foto');
+
+      if (!hasBlob) {
+        // Tabela já usa foto_path, não precisa migrar
+        return;
+      }
+
+      // Criar nova tabela com estrutura correta
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS historia_fotos_new (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          historia_id INTEGER NOT NULL,
+          foto_path TEXT NOT NULL,
+          legenda TEXT,
+          FOREIGN KEY (historia_id) REFERENCES historia(id) ON DELETE CASCADE
+        );
+      ''');
+
+      // Migrar fotos existentes (apenas fotos < 2MB para evitar erro de CursorWindow)
+      try {
+        final fotos = await db.query('historia_fotos', limit: 500);
+
+        for (final foto in fotos) {
+          try {
+            final fotoBlob = foto['foto'];
+            if (fotoBlob != null && fotoBlob is List<int>) {
+              final fotoData = Uint8List.fromList(fotoBlob);
+
+              // Só migra fotos < 2MB
+              if (fotoData.length < 2000000) {
+                final historiaId = foto['historia_id'] as int;
+
+                // Salvar no sistema de arquivos
+                final photosDir = await PhotoFileHelper.getPhotosDirectory();
+                final timestamp = DateTime.now().millisecondsSinceEpoch;
+                final fileName =
+                    'photo_${historiaId}_${timestamp}_migrated.jpg';
+                final filePath = p.join(photosDir.path, fileName);
+
+                final file = File(filePath);
+                await file.writeAsBytes(fotoData);
+
+                // Inserir na nova tabela
+                await db.insert('historia_fotos_new', {
+                  'historia_id': historiaId,
+                  'foto_path': filePath,
+                  'legenda': foto['legenda'],
+                });
+              }
+            }
+          } catch (e) {
+            // Pula foto com erro e continua
+            debugPrint('Erro ao migrar foto: $e');
+          }
+        }
+      } catch (e) {
+        // Erro na migração de fotos
+        debugPrint('Erro na migração de fotos: $e');
+      }
+
+      // Dropar tabela antiga e renomear nova
+      await db.execute('DROP TABLE IF EXISTS historia_fotos');
+      await db.execute(
+        'ALTER TABLE historia_fotos_new RENAME TO historia_fotos',
+      );
+    } catch (e) {
+      debugPrint('Erro na migração de fotos para sistema de arquivos: $e');
+    }
+  }
+
+  /// Migra áudios de BLOB para sistema de arquivos
+  Future<void> _migrateAudiosToFileSystem(Database db) async {
+    try {
+      // Verificar se a tabela ainda usa BLOB
+      final result = await db.rawQuery('PRAGMA table_info(historia_audios)');
+      final hasBlob = result.any((column) => column['name'] == 'audio');
+
+      if (!hasBlob) {
+        // Tabela já usa audio_path, não precisa migrar
+        return;
+      }
+
+      // Criar nova tabela com estrutura correta
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS historia_audios_new (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          historia_id INTEGER NOT NULL,
+          audio_path TEXT NOT NULL,
+          legenda TEXT,
+          duracao INTEGER,
+          FOREIGN KEY (historia_id) REFERENCES historia(id) ON DELETE CASCADE
+        );
+      ''');
+
+      // Migrar áudios existentes
+      try {
+        final audios = await db.query('historia_audios', limit: 500);
+
+        for (final audio in audios) {
+          try {
+            final audioBlob = audio['audio'];
+            if (audioBlob != null && audioBlob is List<int>) {
+              final audioData = Uint8List.fromList(audioBlob);
+
+              // Só migra áudios < 2MB
+              if (audioData.length < 2000000) {
+                final historiaId = audio['historia_id'] as int;
+
+                // Salvar no sistema de arquivos
+                final audiosDir = await AudioFileHelper.getAudiosDirectory();
+                final timestamp = DateTime.now().millisecondsSinceEpoch;
+                final fileName =
+                    'audio_${historiaId}_${timestamp}_migrated.m4a';
+                final filePath = p.join(audiosDir.path, fileName);
+
+                final file = File(filePath);
+                await file.writeAsBytes(audioData);
+
+                // Inserir na nova tabela
+                await db.insert('historia_audios_new', {
+                  'historia_id': historiaId,
+                  'audio_path': filePath,
+                  'legenda': audio['legenda'],
+                  'duracao': audio['duracao'],
+                });
+              }
+            }
+          } catch (e) {
+            // Pula áudio com erro e continua
+            debugPrint('Erro ao migrar áudio: $e');
+          }
+        }
+      } catch (e) {
+        // Erro na migração de áudios
+        debugPrint('Erro na migração de áudios: $e');
+      }
+
+      // Dropar tabela antiga e renomear nova
+      await db.execute('DROP TABLE IF EXISTS historia_audios');
+      await db.execute(
+        'ALTER TABLE historia_audios_new RENAME TO historia_audios',
+      );
+    } catch (e) {
+      debugPrint('Erro na migração de áudios para sistema de arquivos: $e');
     }
   }
 

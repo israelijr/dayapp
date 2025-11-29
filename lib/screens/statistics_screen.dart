@@ -191,33 +191,35 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     }
   }
 
-  String _getEmoticonImage(String emoticon) {
+  // Converte nomes de humor antigos para emojis Unicode
+  // Retorna o próprio valor se já for um emoji
+  String _convertLegacyEmoticon(String emoticon) {
     switch (emoticon.toLowerCase()) {
       case 'feliz':
-        return '1_feliz.png';
+        return '😊';
       case 'bem':
       case 'tranquilo':
-        return '2_tranquilo.png';
+        return '😌';
       case 'ok':
       case 'aliviado':
-        return '3_aliviado.png';
+        return '😮‍💨';
       case 'pensativo':
-        return '4_pensativo.png';
+        return '🤔';
       case 'sono':
-        return '5_sono.png';
+        return '😴';
       case 'preocupado':
-        return '6_preocupado.png';
+        return '😟';
       case 'assustado':
-        return '7_assustado.png';
+        return '😨';
       case 'bravo':
-        return '8_bravo.png';
+        return '😠';
       case 'triste':
-        return '9_triste.png';
+        return '😢';
       case 'infeliz':
       case 'muito triste':
-        return '10_muito_triste.png';
+        return '😭';
       default:
-        return '1_feliz.png';
+        return emoticon; // Já é um emoji Unicode
     }
   }
 
@@ -321,10 +323,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                         padding: const EdgeInsets.only(bottom: 12),
                         child: Row(
                           children: [
-                            Image.asset(
-                              'assets/image/${_getEmoticonImage(entry.key)}',
-                              width: 24,
-                              height: 24,
+                            Text(
+                              _convertLegacyEmoticon(entry.key),
+                              style: const TextStyle(fontSize: 24),
                             ),
                             const SizedBox(width: 8),
                             Expanded(
@@ -577,10 +578,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                                 ),
                               ),
                               const SizedBox(height: 6),
-                              Image.asset(
-                                'assets/image/${_getEmoticonImage(entry.key)}',
-                                width: 26,
-                                height: 26,
+                              Text(
+                                _convertLegacyEmoticon(entry.key),
+                                style: const TextStyle(fontSize: 24),
                               ),
                             ],
                           ),
@@ -619,10 +619,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                                   ),
                                 ),
                                 const SizedBox(height: 6),
-                                Image.asset(
-                                  'assets/image/${_getEmoticonImage(entry.key)}',
-                                  width: 26,
-                                  height: 26,
+                                Text(
+                                  _convertLegacyEmoticon(entry.key),
+                                  style: const TextStyle(fontSize: 24),
                                 ),
                               ],
                             ),

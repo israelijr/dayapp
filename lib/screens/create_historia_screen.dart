@@ -11,8 +11,6 @@ import '../db/historia_foto_helper.dart';
 import '../db/historia_video_helper.dart';
 import '../helpers/notification_helper.dart';
 import '../helpers/rich_text_helper.dart';
-import '../models/historia_audio.dart';
-import '../models/historia_foto.dart';
 import '../providers/auth_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../services/emoji_service.dart';
@@ -313,19 +311,18 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
 
       // Salva as fotos (se houver)
       for (final foto in fotos) {
-        await HistoriaFotoHelper().insertFoto(
-          HistoriaFoto(historiaId: historiaId, foto: foto),
+        await HistoriaFotoHelper().insertFotoFromBytes(
+          historiaId: historiaId,
+          fotoBytes: foto,
         );
       }
 
       // Salva os áudios (se houver)
       for (final audioData in audios) {
-        await HistoriaAudioHelper().insertAudio(
-          HistoriaAudio(
-            historiaId: historiaId,
-            audio: audioData['audio'],
-            duracao: audioData['duration'],
-          ),
+        await HistoriaAudioHelper().insertAudioFromBytes(
+          historiaId: historiaId,
+          audioBytes: audioData['audio'],
+          duracao: audioData['duration'],
         );
       }
 

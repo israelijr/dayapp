@@ -6,7 +6,6 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-// import 'dart:convert'; // not used
 import 'package:share_plus/share_plus.dart';
 
 import '../db/database_helper.dart';
@@ -14,11 +13,10 @@ import '../db/historia_audio_helper.dart';
 import '../db/historia_foto_helper.dart';
 import '../db/historia_video_helper.dart';
 import '../models/historia.dart';
-import '../models/historia_audio.dart';
-import '../models/historia_foto.dart';
 import '../models/historia_video_v2.dart' as v2;
 import '../providers/auth_provider.dart';
 import '../providers/refresh_provider.dart';
+import '../services/thumbnail_service.dart';
 import '../widgets/compact_audio_icon.dart';
 import '../widgets/compact_video_icon.dart';
 import '../widgets/rich_text_viewer_widget.dart';
@@ -34,50 +32,128 @@ class HomeContent extends StatefulWidget {
 }
 
 class _HomeContentState extends State<HomeContent> {
-  // Constants and state used by the home content
+  // Constantes e estado do componente home
   static const double cardMargin = 24.0;
+  static const int _pageSize = 15; // Número de histórias por página
+
   bool _isCardView = true;
 
-  String? _getEmoticonImage(String emoticon) {
-    switch (emoticon) {
-      case 'Feliz':
-        return '1_feliz.png';
-      case 'Tranquilo':
-        return '2_tranquilo.png';
-      case 'Aliviado':
-        return '3_aliviado.png';
-      case 'Pensativo':
-        return '4_pensativo.png';
-      case 'Sono':
-        return '5_sono.png';
-      case 'Preocupado':
-        return '6_preocupado.png';
-      case 'Assustado':
-        return '7_assustado.png';
-      case 'Bravo':
-        return '8_bravo.png';
-      case 'Triste':
-        return '9_triste.png';
-      case 'Muito Triste':
-        return '10_muito_triste.png';
-      default:
-        return null;
+  // Controle de paginação
+  final ScrollController _scrollController = ScrollController();
+  final List<Historia> _historias = [];
+  bool _isLoadingMore = false;
+  bool _hasMoreData = true;
+  bool _isInitialLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+    _loadInitialData();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  /// Detecta scroll perto do final para carregar mais dados
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      _loadMoreData();
     }
   }
 
-  Future<List<Historia>> _fetchHistorias() async {
+  /// Carrega os dados iniciais (primeira página)
+  Future<void> _loadInitialData() async {
+    setState(() {
+      _isInitialLoading = true;
+      _historias.clear();
+      _hasMoreData = true;
+    });
+
+    await _fetchHistoriasPaginated(offset: 0);
+
+    if (mounted) {
+      setState(() {
+        _isInitialLoading = false;
+      });
+    }
+  }
+
+  /// Carrega mais dados (próxima página)
+  Future<void> _loadMoreData() async {
+    if (_isLoadingMore || !_hasMoreData) return;
+
+    setState(() {
+      _isLoadingMore = true;
+    });
+
+    await _fetchHistoriasPaginated(offset: _historias.length);
+
+    if (mounted) {
+      setState(() {
+        _isLoadingMore = false;
+      });
+    }
+  }
+
+  /// Busca histórias com paginação
+  Future<void> _fetchHistoriasPaginated({required int offset}) async {
     final auth = Provider.of<AuthProvider>(context, listen: false);
     final userId = auth.user?.id ?? '';
     final db = await DatabaseHelper().database;
-    // Only show stories that are not grouped, not archived, and not deleted
+
     final result = await db.query(
       'historia',
       where:
           'user_id = ? AND grupo IS NULL AND arquivado IS NULL AND excluido IS NULL',
       whereArgs: [userId],
       orderBy: 'data DESC',
+      limit: _pageSize,
+      offset: offset,
     );
-    return result.map((map) => Historia.fromMap(map)).toList();
+
+    final newHistorias = result.map((map) => Historia.fromMap(map)).toList();
+
+    if (mounted) {
+      setState(() {
+        _historias.addAll(newHistorias);
+        _hasMoreData = newHistorias.length == _pageSize;
+      });
+    }
+  }
+
+  // Converte nomes de humor antigos para emojis Unicode
+  // Retorna null se já for um emoji (default case)
+  String? _convertLegacyEmoticon(String emoticon) {
+    switch (emoticon) {
+      case 'Feliz':
+        return '😊';
+      case 'Tranquilo':
+        return '😌';
+      case 'Aliviado':
+        return '😮‍💨';
+      case 'Pensativo':
+        return '🤔';
+      case 'Sono':
+        return '😴';
+      case 'Preocupado':
+        return '😟';
+      case 'Assustado':
+        return '😨';
+      case 'Bravo':
+        return '😠';
+      case 'Triste':
+        return '😢';
+      case 'Muito Triste':
+        return '😭';
+      default:
+        return null; // Já é um emoji Unicode
+    }
   }
 
   Future<void> _updateHistoria(
@@ -181,8 +257,8 @@ class _HomeContentState extends State<HomeContent> {
   }
 
   Widget _buildCardView(Historia historia) {
-    return FutureBuilder<List<HistoriaFoto>>(
-      future: HistoriaFotoHelper().getFotosByHistoria(historia.id ?? 0),
+    return FutureBuilder<List<FotoComBytes>>(
+      future: HistoriaFotoHelper().getFotosComBytesByHistoria(historia.id ?? 0),
       builder: (context, snapshot) {
         final hasImages = snapshot.hasData && snapshot.data!.isNotEmpty;
 
@@ -268,7 +344,7 @@ class _HomeContentState extends State<HomeContent> {
                     HistoriaMediaRow(
                       historiaId: historia.id ?? 0,
                       emoticon: historia.emoticon,
-                      getEmoticonImage: _getEmoticonImage,
+                      convertLegacyEmoticon: _convertLegacyEmoticon,
                     ),
                     Text(
                       historia.titulo,
@@ -498,78 +574,135 @@ class _HomeContentState extends State<HomeContent> {
     _isCardView = widget.isCardView;
     return Consumer<RefreshProvider>(
       builder: (context, refreshProvider, child) {
-        return FutureBuilder<List<Historia>>(
-          future: _fetchHistorias(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState != ConnectionState.done) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (snapshot.hasError) {
-              return Center(
-                child: Text('Erro ao carregar histórias: ${snapshot.error}'),
-              );
-            }
-            final historias = snapshot.data ?? [];
-            if (historias.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      'assets/image/home_vazia.png',
-                      width: 100,
-                      height: 100,
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Nenhuma história para exibir aqui.',
-                      style: TextStyle(fontSize: 18, color: Colors.grey),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Elas estão agrupadas ou arquivadas.',
-                      style: TextStyle(fontSize: 14, color: Colors.grey),
-                    ),
-                  ],
-                ),
-              );
-            }
-            return AnimatedSwitcher(
-              duration: const Duration(milliseconds: 450),
-              switchInCurve: Curves.easeOutCubic,
-              switchOutCurve: Curves.easeInCubic,
-              transitionBuilder: (child, animation) {
-                return FadeTransition(
-                  opacity: animation,
-                  child: ScaleTransition(
-                    scale: Tween<double>(begin: 0.98, end: 1.0).animate(
-                      CurvedAnimation(
-                        parent: animation,
-                        curve: Curves.easeOutBack,
-                      ),
-                    ),
-                    child: child,
-                  ),
-                );
-              },
-              child: ListView.builder(
-                key: ValueKey<bool>(_isCardView),
-                padding: const EdgeInsets.symmetric(
-                  vertical: 16,
-                  horizontal: 12,
-                ),
-                itemCount: historias.length,
-                itemBuilder: (context, index) {
-                  final historia = historias[index];
-                  return _isCardView
-                      ? _buildCardView(historia)
-                      : _buildIconView(historia);
-                },
-              ),
-            );
-          },
+        // Recarrega dados quando o RefreshProvider é atualizado
+        // Usa o refreshCounter como chave para detectar mudanças
+        return _PaginatedHomeContent(
+          key: ValueKey(refreshProvider.refreshCounter),
+          isCardView: _isCardView,
+          historias: _historias,
+          isInitialLoading: _isInitialLoading,
+          isLoadingMore: _isLoadingMore,
+          hasMoreData: _hasMoreData,
+          scrollController: _scrollController,
+          onRefresh: _loadInitialData,
+          buildCardView: _buildCardView,
+          buildIconView: _buildIconView,
         );
       },
+    );
+  }
+}
+
+/// Widget interno para conteúdo paginado
+class _PaginatedHomeContent extends StatefulWidget {
+  final bool isCardView;
+  final List<Historia> historias;
+  final bool isInitialLoading;
+  final bool isLoadingMore;
+  final bool hasMoreData;
+  final ScrollController scrollController;
+  final Future<void> Function() onRefresh;
+  final Widget Function(Historia) buildCardView;
+  final Widget Function(Historia) buildIconView;
+
+  const _PaginatedHomeContent({
+    required this.isCardView,
+    required this.historias,
+    required this.isInitialLoading,
+    required this.isLoadingMore,
+    required this.hasMoreData,
+    required this.scrollController,
+    required this.onRefresh,
+    required this.buildCardView,
+    required this.buildIconView,
+    super.key,
+  });
+
+  @override
+  State<_PaginatedHomeContent> createState() => _PaginatedHomeContentState();
+}
+
+class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
+  @override
+  void initState() {
+    super.initState();
+    // Recarrega dados quando a key muda (RefreshProvider foi atualizado)
+    widget.onRefresh();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Mostra loading inicial
+    if (widget.isInitialLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    // Mostra mensagem se não houver histórias
+    if (widget.historias.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset('assets/image/home_vazia.png', width: 100, height: 100),
+            const SizedBox(height: 16),
+            const Text(
+              'Nenhuma história para exibir aqui.',
+              style: TextStyle(fontSize: 18, color: Colors.grey),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Elas estão agrupadas ou arquivadas.',
+              style: TextStyle(fontSize: 14, color: Colors.grey),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Lista com paginação
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 450),
+      switchInCurve: Curves.easeOutCubic,
+      switchOutCurve: Curves.easeInCubic,
+      transitionBuilder: (child, animation) {
+        return FadeTransition(
+          opacity: animation,
+          child: ScaleTransition(
+            scale: Tween<double>(begin: 0.98, end: 1.0).animate(
+              CurvedAnimation(parent: animation, curve: Curves.easeOutBack),
+            ),
+            child: child,
+          ),
+        );
+      },
+      child: RefreshIndicator(
+        onRefresh: widget.onRefresh,
+        child: ListView.builder(
+          key: ValueKey<bool>(widget.isCardView),
+          controller: widget.scrollController,
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+          // +1 para o indicador de carregamento no final
+          itemCount: widget.historias.length + (widget.hasMoreData ? 1 : 0),
+          itemBuilder: (context, index) {
+            // Indicador de carregamento no final da lista
+            if (index == widget.historias.length) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: Center(
+                  child: widget.isLoadingMore
+                      ? const CircularProgressIndicator()
+                      : const SizedBox.shrink(),
+                ),
+              );
+            }
+
+            final historia = widget.historias[index];
+            return widget.isCardView
+                ? widget.buildCardView(historia)
+                : widget.buildIconView(historia);
+          },
+        ),
+      ),
     );
   }
 }
@@ -578,14 +711,15 @@ class HistoriaFotosGrid extends StatelessWidget {
   final int historiaId;
   final double height;
   const HistoriaFotosGrid({
-    required this.historiaId, super.key,
+    required this.historiaId,
+    super.key,
     this.height = 120,
   });
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<HistoriaFoto>>(
-      future: HistoriaFotoHelper().getFotosByHistoria(historiaId),
+    return FutureBuilder<List<FotoComBytes>>(
+      future: HistoriaFotoHelper().getFotosComBytesByHistoria(historiaId),
       builder: (context, snapshot) {
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return Container(
@@ -606,11 +740,12 @@ class HistoriaFotosGrid extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             child: GestureDetector(
               onTap: () {
+                // Abre visualizador com imagem em tamanho original
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      content: Image.memory(Uint8List.fromList(fotos[0].foto)),
+                      content: Image.memory(fotos[0].bytes),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(),
@@ -621,11 +756,14 @@ class HistoriaFotosGrid extends StatelessWidget {
                   },
                 );
               },
-              child: Image.memory(
-                Uint8List.fromList(fotos[0].foto),
+              // Usa thumbnail para preview na lista
+              child: SizedBox(
                 height: height,
                 width: double.infinity,
-                fit: BoxFit.cover,
+                child: _ThumbnailImage(
+                  imageBytes: fotos[0].bytes,
+                  identifier: 'foto_${fotos[0].id}',
+                ),
               ),
             ),
           );
@@ -637,10 +775,8 @@ class HistoriaFotosGrid extends StatelessWidget {
 
         void openViewer(int initialIndex) {
           final parentContext = context;
-          final images = displayFotos
-              .map((f) => Uint8List.fromList(f.foto))
-              .toList();
-          final ids = displayFotos.map((f) => f.id ?? -1).toList();
+          final images = displayFotos.map((f) => f.bytes).toList();
+          final ids = displayFotos.map((f) => f.id).toList();
 
           // Simpler dialog-based viewer (balanced parentheses)
           final localImages = List<Uint8List>.from(images);
@@ -900,13 +1036,9 @@ class HistoriaFotosGrid extends StatelessWidget {
                                                 label: 'Desfazer',
                                                 onPressed: () async {
                                                   await HistoriaFotoHelper()
-                                                      .insertFoto(
-                                                        HistoriaFoto(
-                                                          historiaId:
-                                                              historiaId,
-                                                          foto: deletedBytes,
-                                                          legenda: null,
-                                                        ),
+                                                      .insertFotoFromBytes(
+                                                        historiaId: historiaId,
+                                                        fotoBytes: deletedBytes,
                                                       );
                                                   refreshProviderForDialog
                                                       .refresh();
@@ -979,9 +1111,9 @@ class HistoriaFotosGrid extends StatelessWidget {
                     Semantics(
                       label: 'Foto ${index + 1} de $total',
                       image: true,
-                      child: Image.memory(
-                        Uint8List.fromList(foto.foto),
-                        fit: BoxFit.cover,
+                      child: _ThumbnailImage(
+                        imageBytes: foto.bytes,
+                        identifier: 'foto_${foto.id}',
                       ),
                     ),
                     if (isOverlay)
@@ -1092,10 +1224,12 @@ class HistoriaFotosGrid extends StatelessWidget {
 class HistoriaMediaRow extends StatelessWidget {
   final int historiaId;
   final String? emoticon;
-  final String? Function(String) getEmoticonImage;
+  final String? Function(String) convertLegacyEmoticon;
 
   const HistoriaMediaRow({
-    required this.historiaId, required this.getEmoticonImage, super.key,
+    required this.historiaId,
+    required this.convertLegacyEmoticon,
+    super.key,
     this.emoticon,
   });
 
@@ -1119,7 +1253,7 @@ class HistoriaMediaRow extends StatelessWidget {
         }
 
         final data = snapshot.data!;
-        final audios = data['audios'] as List<HistoriaAudio>;
+        final audios = data['audios'] as List<AudioComBytes>;
         final videos = data['videos'] as List<v2.HistoriaVideo>;
 
         // Se não tem emoticon nem mídia, não mostra nada
@@ -1150,24 +1284,15 @@ class HistoriaMediaRow extends StatelessWidget {
                     ),
                     child: Builder(
                       builder: (context) {
-                        final imagePath = getEmoticonImage(emoticon!);
-                        if (imagePath != null) {
-                          return Image.asset(
-                            'assets/image/$imagePath',
-                            width: 40,
-                            height: 40,
-                            errorBuilder: (context, error, stackTrace) {
-                              return const Icon(Icons.mood, size: 40);
-                            },
-                          );
-                        } else {
-                          return Center(
-                            child: Text(
-                              emoticon!,
-                              style: const TextStyle(fontSize: 32),
-                            ),
-                          );
-                        }
+                        // Converte emoticons legados para emojis
+                        final convertedEmoji = convertLegacyEmoticon(emoticon!);
+                        final displayEmoji = convertedEmoji ?? emoticon!;
+                        return Center(
+                          child: Text(
+                            displayEmoji,
+                            style: const TextStyle(fontSize: 32),
+                          ),
+                        );
                       },
                     ),
                   ),
@@ -1176,7 +1301,7 @@ class HistoriaMediaRow extends StatelessWidget {
                   return Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: CompactAudioIcon(
-                      audioData: audio.audio,
+                      audioData: audio.bytes,
                       duration: audio.duracao,
                     ),
                   );
@@ -1201,7 +1326,7 @@ class HistoriaMediaRow extends StatelessWidget {
 
   Future<Map<String, dynamic>> _loadMediaData() async {
     try {
-      final audios = await HistoriaAudioHelper().getAudiosByHistoria(
+      final audios = await HistoriaAudioHelper().getAudiosComBytesByHistoria(
         historiaId,
       );
       final videos = await HistoriaVideoHelper().getVideosByHistoria(
@@ -1210,7 +1335,7 @@ class HistoriaMediaRow extends StatelessWidget {
 
       return {'audios': audios, 'videos': videos};
     } catch (e) {
-      return {'audios': <HistoriaAudio>[], 'videos': <v2.HistoriaVideo>[]};
+      return {'audios': <AudioComBytes>[], 'videos': <v2.HistoriaVideo>[]};
     }
   }
 }
@@ -1223,8 +1348,8 @@ class HistoriaAudiosSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<HistoriaAudio>>(
-      future: HistoriaAudioHelper().getAudiosByHistoria(historiaId),
+    return FutureBuilder<List<AudioComBytes>>(
+      future: HistoriaAudioHelper().getAudiosComBytesByHistoria(historiaId),
       builder: (context, snapshot) {
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return const SizedBox.shrink();
@@ -1238,7 +1363,7 @@ class HistoriaAudiosSection extends StatelessWidget {
             runSpacing: 8,
             children: audios.map((audio) {
               return CompactAudioIcon(
-                audioData: audio.audio,
+                audioData: audio.bytes,
                 duration: audio.duracao,
               );
             }).toList(),
@@ -1276,6 +1401,81 @@ class HistoriaVideosSection extends StatelessWidget {
                 duration: video.duracao,
               );
             }).toList(),
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Widget para exibir thumbnail de imagem com cache
+/// Usa o ThumbnailService para gerar e cachear thumbnails
+class _ThumbnailImage extends StatefulWidget {
+  final Uint8List imageBytes;
+  final String identifier;
+
+  const _ThumbnailImage({required this.imageBytes, required this.identifier});
+
+  @override
+  State<_ThumbnailImage> createState() => _ThumbnailImageState();
+}
+
+class _ThumbnailImageState extends State<_ThumbnailImage> {
+  Uint8List? _thumbnailBytes;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadThumbnail();
+  }
+
+  Future<void> _loadThumbnail() async {
+    try {
+      final thumbnail = await ThumbnailService().getThumbnailFromBytes(
+        widget.imageBytes,
+        widget.identifier,
+      );
+      if (mounted) {
+        setState(() {
+          _thumbnailBytes = thumbnail;
+          _isLoading = false;
+        });
+      }
+    } catch (_) {
+      // Em caso de erro, usa imagem original
+      if (mounted) {
+        setState(() {
+          _thumbnailBytes = widget.imageBytes;
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Container(
+        color: Colors.grey[300],
+        child: const Center(
+          child: SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+        ),
+      );
+    }
+
+    return Image.memory(
+      _thumbnailBytes ?? widget.imageBytes,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) {
+        return Container(
+          color: Colors.grey[300],
+          child: const Center(
+            child: Icon(Icons.broken_image, color: Colors.grey),
           ),
         );
       },

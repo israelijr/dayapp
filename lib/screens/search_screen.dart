@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -7,7 +5,6 @@ import 'package:provider/provider.dart';
 import '../db/database_helper.dart';
 import '../db/historia_foto_helper.dart';
 import '../models/historia.dart';
-import '../models/historia_foto.dart';
 import '../providers/auth_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../services/emoji_service.dart';
@@ -599,8 +596,8 @@ class _SearchScreenState extends State<SearchScreen> {
 
   /// Card de uma história
   Widget _buildHistoriaCard(Historia historia) {
-    return FutureBuilder<List<HistoriaFoto>>(
-      future: HistoriaFotoHelper().getFotosByHistoria(historia.id ?? 0),
+    return FutureBuilder<List<FotoComBytes>>(
+      future: HistoriaFotoHelper().getFotosComBytesByHistoria(historia.id ?? 0),
       builder: (context, snapshot) {
         final hasImages = snapshot.hasData && snapshot.data!.isNotEmpty;
 
@@ -641,7 +638,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
                       child: Image.memory(
-                        Uint8List.fromList(snapshot.data!.first.foto),
+                        snapshot.data!.first.bytes,
                         height: 120,
                         width: double.infinity,
                         fit: BoxFit.cover,

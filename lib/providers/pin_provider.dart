@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
+import '../services/biometric_service.dart';
 import '../services/pin_service.dart';
 
 class PinProvider extends ChangeNotifier {
   final PinService _pinService = PinService();
+  final BiometricService _biometricService = BiometricService();
 
   bool _isAuthenticated = false;
   bool _isPinEnabled = false;
+  bool _isBiometricEnabled = false;
   bool _shouldShowPinScreen = false;
   bool _isUserLoggedIn = false;
 
   bool get isAuthenticated => _isAuthenticated;
   bool get isPinEnabled => _isPinEnabled;
+  bool get isBiometricEnabled => _isBiometricEnabled;
   bool get shouldShowPinScreen => _shouldShowPinScreen;
+
+  /// Retorna true se qualquer método de bloqueio está habilitado (PIN ou Biometria)
+  bool get isLockEnabled => _isPinEnabled || _isBiometricEnabled;
 
   /// Flag para evitar loop de bloqueio durante autenticação biométrica
   /// Campo público pois é apenas controle interno/externo sem notificação de listeners
@@ -42,19 +49,26 @@ class PinProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Inicializa o provider verificando se o PIN está habilitado
+  /// Inicializa o provider verificando se o PIN ou biometria estão habilitados
   /// Requer que o status de login do usuário seja informado
   Future<void> initialize({bool isUserLoggedIn = false}) async {
     _isUserLoggedIn = isUserLoggedIn;
     _isPinEnabled = await _pinService.isPinEnabled();
+    _isBiometricEnabled = await _biometricService.isBiometricEnabled();
 
-    // Só mostra tela de PIN se o usuário estiver logado E o PIN estiver habilitado
-    if (_isUserLoggedIn && _isPinEnabled) {
+    debugPrint(
+      'PinProvider.initialize: isUserLoggedIn=$_isUserLoggedIn, isPinEnabled=$_isPinEnabled, isBiometricEnabled=$_isBiometricEnabled',
+    );
+
+    // Mostra tela de bloqueio se o usuário estiver logado E algum método de bloqueio estiver habilitado
+    if (_isUserLoggedIn && isLockEnabled) {
       _isAuthenticated = false;
       _shouldShowPinScreen = true;
+      debugPrint('PinProvider.initialize: shouldShowPinScreen=true');
     } else {
       _isAuthenticated = true;
       _shouldShowPinScreen = false;
+      debugPrint('PinProvider.initialize: shouldShowPinScreen=false');
     }
 
     notifyListeners();
@@ -107,10 +121,26 @@ class PinProvider extends ChangeNotifier {
     }
   }
 
-  /// Força a exibição da tela de PIN (quando o app volta do background)
+  /// Força a exibição da tela de bloqueio (quando o app volta do background)
   void requireAuthentication() {
-    // Só exige autenticação se o usuário estiver logado E o PIN estiver habilitado
-    if (_isUserLoggedIn && _isPinEnabled) {
+    // Não bloqueia se está selecionando mídia externa (galeria, câmera, file picker)
+    if (isPickingExternalMedia) {
+      debugPrint(
+        'PinProvider.requireAuthentication: Ignorado - isPickingExternalMedia=true',
+      );
+      return;
+    }
+
+    // Não bloqueia se está autenticando com biometria
+    if (isAuthenticatingWithBiometrics) {
+      debugPrint(
+        'PinProvider.requireAuthentication: Ignorado - isAuthenticatingWithBiometrics=true',
+      );
+      return;
+    }
+
+    // Exige autenticação se o usuário estiver logado E algum método de bloqueio estiver habilitado
+    if (_isUserLoggedIn && isLockEnabled) {
       _isAuthenticated = false;
       _shouldShowPinScreen = true;
       notifyListeners();
@@ -120,8 +150,15 @@ class PinProvider extends ChangeNotifier {
   /// Verifica se o PIN está habilitado
   Future<bool> checkPinEnabled() async {
     _isPinEnabled = await _pinService.isPinEnabled();
+    _isBiometricEnabled = await _biometricService.isBiometricEnabled();
     notifyListeners();
     return _isPinEnabled;
+  }
+
+  /// Atualiza o status de biometria
+  Future<void> refreshBiometricStatus() async {
+    _isBiometricEnabled = await _biometricService.isBiometricEnabled();
+    notifyListeners();
   }
 
   /// Altera o PIN
@@ -149,13 +186,13 @@ class PinProvider extends ChangeNotifier {
     if (!isLoggedIn) {
       _isAuthenticated = true;
       _shouldShowPinScreen = false;
-    } else if (_isPinEnabled && !skipPinCheck) {
-      // Se o usuário fez login e o PIN está habilitado, requer autenticação
+    } else if (isLockEnabled && !skipPinCheck) {
+      // Se o usuário fez login e algum bloqueio está habilitado, requer autenticação
       // (mas não imediatamente após login manual)
       _isAuthenticated = false;
       _shouldShowPinScreen = true;
     } else {
-      // Login manual ou PIN não habilitado - usuário já está autenticado
+      // Login manual ou nenhum bloqueio habilitado - usuário já está autenticado
       _isAuthenticated = true;
       _shouldShowPinScreen = false;
     }

@@ -7,8 +7,6 @@ import '../db/historia_audio_helper.dart';
 import '../db/historia_foto_helper.dart';
 import '../db/historia_video_helper.dart';
 import '../models/historia.dart';
-import '../models/historia_audio.dart';
-import '../models/historia_foto.dart';
 import '../models/historia_video_v2.dart' as v2;
 import '../providers/auth_provider.dart';
 import '../providers/refresh_provider.dart';
@@ -246,30 +244,32 @@ class _TrashScreenState extends State<TrashScreen> {
     });
   }
 
-  String _getEmoticonImage(String emoticon) {
+  // Converte nomes de humor antigos para emojis Unicode
+  // Retorna o próprio valor se já for um emoji
+  String _convertLegacyEmoticon(String emoticon) {
     switch (emoticon) {
       case 'Feliz':
-        return '1_feliz.png';
+        return '😊';
       case 'Tranquilo':
-        return '2_tranquilo.png';
+        return '😌';
       case 'Aliviado':
-        return '3_aliviado.png';
+        return '😮‍💨';
       case 'Pensativo':
-        return '4_pensativo.png';
+        return '🤔';
       case 'Sono':
-        return '5_sono.png';
+        return '😴';
       case 'Preocupado':
-        return '6_preocupado.png';
+        return '😟';
       case 'Assustado':
-        return '7_assustado.png';
+        return '😨';
       case 'Bravo':
-        return '8_bravo.png';
+        return '😠';
       case 'Triste':
-        return '9_triste.png';
+        return '😢';
       case 'Muito Triste':
-        return '10_muito_triste.png';
+        return '😭';
       default:
-        return '1_feliz.png';
+        return emoticon; // Já é um emoji Unicode
     }
   }
 
@@ -315,10 +315,9 @@ class _TrashScreenState extends State<TrashScreen> {
                   if (historia.emoticon != null)
                     Padding(
                       padding: const EdgeInsets.only(right: 8),
-                      child: Image.asset(
-                        'assets/image/${_getEmoticonImage(historia.emoticon!)}',
-                        width: 32,
-                        height: 32,
+                      child: Text(
+                        _convertLegacyEmoticon(historia.emoticon!),
+                        style: const TextStyle(fontSize: 28),
                       ),
                     ),
                   Expanded(
@@ -378,15 +377,19 @@ class _TrashScreenState extends State<TrashScreen> {
               // Mostrar mídia anexada
               FutureBuilder(
                 future: Future.wait([
-                  HistoriaFotoHelper().getFotosByHistoria(historia.id ?? 0),
-                  HistoriaAudioHelper().getAudiosByHistoria(historia.id ?? 0),
+                  HistoriaFotoHelper().getFotosComBytesByHistoria(
+                    historia.id ?? 0,
+                  ),
+                  HistoriaAudioHelper().getAudiosComBytesByHistoria(
+                    historia.id ?? 0,
+                  ),
                   HistoriaVideoHelper().getVideosByHistoria(historia.id ?? 0),
                 ]),
                 builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
                   if (!snapshot.hasData) return const SizedBox.shrink();
 
-                  final fotos = snapshot.data![0] as List<HistoriaFoto>;
-                  final audios = snapshot.data![1] as List<HistoriaAudio>;
+                  final fotos = snapshot.data![0] as List<FotoComBytes>;
+                  final audios = snapshot.data![1] as List<AudioComBytes>;
                   final videos = snapshot.data![2] as List<v2.HistoriaVideo>;
 
                   final hasMedia =

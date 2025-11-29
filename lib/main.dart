@@ -36,60 +36,172 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initializeDateFormatting('pt_BR', null);
-  // Inicializa sqflite_common_ffi apenas em desktop
-  if (!identical(0, 0.0)) {
-    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-      sqfliteFfiInit();
-      databaseFactory = databaseFactoryFfi;
-    }
+
+  // Inicializa sqflite_common_ffi apenas em desktop (rápido, necessário antes do DB)
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
   }
 
-  // Inicializar AuthProvider e tentar auto-login
-  final authProvider = AuthProvider();
-  await authProvider.tryAutoLogin();
+  // Inicialização de data/hora (rápida e necessária para formatação)
+  await initializeDateFormatting('pt_BR', null);
 
-  // Inicializar ThemeProvider
-  final themeProvider = ThemeProvider();
-  await themeProvider.waitForLoad();
+  // Inicia o app IMEDIATAMENTE com a tela de carregamento
+  // As inicializações pesadas serão feitas em background
+  runApp(const AppLoader());
+}
 
-  // Inicializar RefreshProvider
-  final refreshProvider = RefreshProvider();
+/// Widget que carrega o app de forma assíncrona
+/// Mostra a splash screen enquanto inicializa os providers
+class AppLoader extends StatefulWidget {
+  const AppLoader({super.key});
 
-  // Inicializar PinProvider (passa o status de login do usuário)
-  final pinProvider = PinProvider();
-  await pinProvider.initialize(isUserLoggedIn: authProvider.isLoggedIn);
+  @override
+  State<AppLoader> createState() => _AppLoaderState();
+}
 
-  // Inicializar Google Mobile Ads
-  await AdService().initialize();
+class _AppLoaderState extends State<AppLoader> {
+  late Future<AppInitData> _initFuture;
 
-  // Inicializar notificações
-  await NotificationService().init((String? payload) async {
-    if (payload != null) {
-      final int? historiaId = int.tryParse(payload);
-      if (historiaId != null) {
-        final Historia? historia = await DatabaseHelper().getHistoria(
-          historiaId,
-        );
-        if (historia != null) {
-          navigatorKey.currentState?.push(
-            MaterialPageRoute(
-              builder: (context) => EditHistoriaScreen(historia: historia),
-            ),
+  @override
+  void initState() {
+    super.initState();
+    _initFuture = _initializeApp();
+  }
+
+  /// Inicializa todos os providers e serviços necessários
+  Future<AppInitData> _initializeApp() async {
+    // Inicializar AuthProvider e tentar auto-login
+    final authProvider = AuthProvider();
+    await authProvider.tryAutoLogin();
+
+    // Inicializar ThemeProvider
+    final themeProvider = ThemeProvider();
+    await themeProvider.waitForLoad();
+
+    // Inicializar RefreshProvider
+    final refreshProvider = RefreshProvider();
+
+    // Inicializar PinProvider (passa o status de login do usuário)
+    final pinProvider = PinProvider();
+    await pinProvider.initialize(isUserLoggedIn: authProvider.isLoggedIn);
+
+    // Inicializar Google Mobile Ads (em paralelo com notificações)
+    final adsFuture = AdService().initialize();
+
+    // Inicializar notificações
+    final notificationsFuture = NotificationService().init((
+      String? payload,
+    ) async {
+      if (payload != null) {
+        final int? historiaId = int.tryParse(payload);
+        if (historiaId != null) {
+          final Historia? historia = await DatabaseHelper().getHistoria(
+            historiaId,
           );
+          if (historia != null) {
+            navigatorKey.currentState?.push(
+              MaterialPageRoute(
+                builder: (context) => EditHistoriaScreen(historia: historia),
+              ),
+            );
+          }
         }
       }
-    }
-  });
+    });
 
-  runApp(
-    MyApp(
+    // Aguarda inicializações em paralelo
+    await Future.wait([adsFuture, notificationsFuture]);
+
+    return AppInitData(
       authProvider: authProvider,
       themeProvider: themeProvider,
       refreshProvider: refreshProvider,
       pinProvider: pinProvider,
-    ),
-  );
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<AppInitData>(
+      future: _initFuture,
+      builder: (context, snapshot) {
+        // Enquanto carrega, mostra a splash screen bonita com animações
+        // A native splash (cor sólida) já foi removida, agora mostramos a splash do Flutter
+        if (snapshot.connectionState != ConnectionState.done) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: M3ExpressiveTheme.getLightTheme(),
+            darkTheme: M3ExpressiveTheme.getDarkTheme(),
+            home: const SplashScreen(),
+          );
+        }
+
+        // Se houve erro na inicialização
+        if (snapshot.hasError) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: M3ExpressiveTheme.getLightTheme(),
+            darkTheme: M3ExpressiveTheme.getDarkTheme(),
+            home: Scaffold(
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      size: 64,
+                      color: Colors.red,
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Erro ao inicializar o app',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    const SizedBox(height: 8),
+                    Text('${snapshot.error}', textAlign: TextAlign.center),
+                    const SizedBox(height: 24),
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _initFuture = _initializeApp();
+                        });
+                      },
+                      child: const Text('Tentar novamente'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }
+
+        // Inicialização completa - carrega o app principal
+        final data = snapshot.data!;
+        return MyApp(
+          authProvider: data.authProvider,
+          themeProvider: data.themeProvider,
+          refreshProvider: data.refreshProvider,
+          pinProvider: data.pinProvider,
+        );
+      },
+    );
+  }
+}
+
+/// Classe para armazenar os dados inicializados
+class AppInitData {
+  final AuthProvider authProvider;
+  final ThemeProvider themeProvider;
+  final RefreshProvider refreshProvider;
+  final PinProvider pinProvider;
+
+  AppInitData({
+    required this.authProvider,
+    required this.themeProvider,
+    required this.refreshProvider,
+    required this.pinProvider,
+  });
 }
 
 class MyApp extends StatefulWidget {
@@ -118,6 +230,15 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+
+    // Garante que o estado do PIN seja notificado após o widget estar montado
+    // Isso força o PinProtectedWrapper a reagir ao estado inicial
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.pinProvider.shouldShowPinScreen) {
+        // Força uma notificação para garantir que os listeners reajam
+        widget.pinProvider.requireAuthentication();
+      }
+    });
   }
 
   @override
@@ -156,7 +277,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         break;
       case AppLifecycleState.resumed:
         // App voltou para foreground
-        if (widget.pinProvider.isPinEnabled && _pausedTime != null) {
+        if (widget.pinProvider.isLockEnabled && _pausedTime != null) {
           // Se estiver autenticando com biometria, não bloqueia
           if (widget.pinProvider.isAuthenticatingWithBiometrics) {
             _pausedTime = null;
@@ -207,15 +328,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               GlobalCupertinoLocalizations.delegate,
               FlutterQuillLocalizations.delegate,
             ],
-            initialRoute: '/splash',
+            // Vai direto para home ou login (splash já foi mostrada durante carregamento)
+            initialRoute: widget.authProvider.isLoggedIn ? '/home' : '/login',
             routes: {
-              '/splash': (context) => SplashScreen(
-                onComplete: () {
-                  Navigator.of(context).pushReplacementNamed(
-                    widget.authProvider.isLoggedIn ? '/home' : '/login',
-                  );
-                },
-              ),
               '/login': (context) => const LoginScreen(),
               '/create_account': (context) => const CreateAccountScreen(),
               '/create_account_complement': (context) =>

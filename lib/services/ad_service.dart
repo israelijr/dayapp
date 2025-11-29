@@ -11,6 +11,10 @@ class AdService {
   bool _isInitialized = false;
   bool get isInitialized => _isInitialized;
 
+  /// Verifica se a plataforma atual suporta anúncios
+  /// Google Mobile Ads só está disponível em Android e iOS
+  bool get isSupported => Platform.isAndroid || Platform.isIOS;
+
   // IDs de teste do AdMob (substitua pelos seus IDs de produção)
   // Obtenha seus IDs em: https://admob.google.com
   static const String _testBannerAdUnitId =
@@ -32,8 +36,15 @@ class AdService {
   static const bool _useTestIds = true; // Altere para false em produção
 
   /// Inicializa o SDK do Google Mobile Ads
+  /// Só inicializa em plataformas suportadas (Android e iOS)
   Future<void> initialize() async {
     if (_isInitialized) return;
+
+    // Não inicializa em plataformas não suportadas (Windows, Linux, macOS, Web)
+    if (!isSupported) {
+      _isInitialized = false;
+      return;
+    }
 
     await MobileAds.instance.initialize();
     _isInitialized = true;
@@ -69,7 +80,9 @@ class AdService {
 
   /// Carrega um anúncio banner
   Future<BannerAd?> loadBannerAd({
-    required Function(Ad ad) onAdLoaded, required Function(Ad ad, LoadAdError error) onAdFailedToLoad, AdSize adSize = AdSize.banner,
+    required Function(Ad ad) onAdLoaded,
+    required Function(Ad ad, LoadAdError error) onAdFailedToLoad,
+    AdSize adSize = AdSize.banner,
   }) async {
     if (!_isInitialized) {
       await initialize();
