@@ -7,9 +7,7 @@ class HistoriaFoto {
   final String? legenda;
 
   HistoriaFoto({
-    this.id,
-    required this.historiaId,
-    required this.foto,
+    required this.historiaId, required this.foto, this.id,
     this.legenda,
   });
 

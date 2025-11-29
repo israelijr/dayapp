@@ -1,8 +1,8 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:timezone/timezone.dart' as tz;
-import 'package:timezone/data/latest.dart' as tz;
 import 'dart:io';
+
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -13,7 +13,13 @@ class NotificationService {
       FlutterLocalNotificationsPlugin();
 
   Future<void> init(Function(String?) onSelectNotification) async {
+    // Inicializa timezones
     tz.initializeTimeZones();
+
+    // CRÍTICO: Define o timezone local para São Paulo (Brasil)
+    // Sem isso, notificações são agendadas em UTC causando erro de 3h
+    final brazilLocation = tz.getLocation('America/Sao_Paulo');
+    tz.setLocalLocation(brazilLocation);
 
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -24,7 +30,7 @@ class NotificationService {
     const LinuxInitializationSettings initializationSettingsLinux =
         LinuxInitializationSettings(defaultActionName: 'Open notification');
 
-    final InitializationSettings initializationSettings =
+    const InitializationSettings initializationSettings =
         InitializationSettings(
           android: initializationSettingsAndroid,
           iOS: initializationSettingsIOS,
@@ -43,11 +49,24 @@ class NotificationService {
   }
 
   Future<void> _requestPermissions() async {
-    await flutterLocalNotificationsPlugin
+    final androidImplementation = flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin
-        >()
-        ?.requestNotificationsPermission();
+        >();
+
+    if (androidImplementation != null) {
+      // Solicita permissão de notificações
+      await androidImplementation.requestNotificationsPermission();
+
+      // Android 12+ requer permissão específica para alarmes exatos
+      await androidImplementation.requestExactAlarmsPermission();
+
+      // Verifica se a permissão está realmente ativa
+      final canScheduleExact = await androidImplementation
+          .canScheduleExactNotifications();
+
+      if (canScheduleExact == false) {}
+    }
   }
 
   Future<void> scheduleNotification({
@@ -57,10 +76,7 @@ class NotificationService {
     required DateTime scheduledDate,
     String? payload,
   }) async {
-    debugPrint(
-      'NotificationService: Agendando notificação ID $id para $scheduledDate',
-    );
-    final notificationDetails = const NotificationDetails(
+    const notificationDetails = NotificationDetails(
       android: AndroidNotificationDetails(
         'historia_channel',
         'Histórias',
@@ -75,9 +91,7 @@ class NotificationService {
     if (Platform.isWindows) {
       // Para Windows, notificações agendadas podem não ser suportadas
       // Vamos mostrar uma notificação imediata para teste
-      debugPrint(
-        'NotificationService: Windows - mostrando notificação imediata',
-      );
+
       await flutterLocalNotificationsPlugin.show(
         id,
         title,
@@ -87,7 +101,6 @@ class NotificationService {
       );
     } else {
       // Para outras plataformas, usar zonedSchedule
-      debugPrint('NotificationService: Agendando zonedSchedule');
       try {
         await flutterLocalNotificationsPlugin.zonedSchedule(
           id,
@@ -95,20 +108,27 @@ class NotificationService {
           body,
           tz.TZDateTime.from(scheduledDate, tz.local),
           notificationDetails,
-          androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
           uiLocalNotificationDateInterpretation:
               UILocalNotificationDateInterpretation.absoluteTime,
           payload: payload,
         );
-        debugPrint('NotificationService: Notificação agendada com sucesso');
+
+        // Lista notificações pendentes para debug
+        await listPendingNotifications();
       } catch (e) {
-        debugPrint('NotificationService: Erro ao agendar notificação: $e');
+        // Erro ao agendar notificação - ignora silenciosamente
       }
     }
   }
 
   Future<void> cancelNotification(int id) async {
     await flutterLocalNotificationsPlugin.cancel(id);
+  }
+
+  /// Lista todas as notificações pendentes (para debug)
+  Future<void> listPendingNotifications() async {
+    await flutterLocalNotificationsPlugin.pendingNotificationRequests();
   }
 
   Future<void> showImmediateNotification({

@@ -1,15 +1,23 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'dart:typed_data';
 
 import '../db/database_helper.dart';
+import '../db/historia_audio_helper.dart';
 import '../db/historia_foto_helper.dart';
+import '../db/historia_video_helper.dart';
 import '../models/historia.dart';
+import '../models/historia_audio.dart';
 import '../models/historia_foto.dart';
+import '../models/historia_video_v2.dart' as v2;
 import '../providers/auth_provider.dart';
 import '../providers/refresh_provider.dart';
+import '../widgets/compact_audio_icon.dart';
+import '../widgets/compact_video_icon.dart';
+import '../widgets/rich_text_viewer_widget.dart';
 import 'edit_historia_screen.dart';
 
 class CalendarViewScreen extends StatefulWidget {
@@ -123,7 +131,6 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
       // Atualizar histórias do dia selecionado
       _updateSelectedHistorias(_selectedDay!);
     } catch (e) {
-      debugPrint('Erro ao carregar histórias: $e');
       setState(() => _isLoading = false);
     }
   }
@@ -406,14 +413,9 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
               if (historia.descricao != null &&
                   historia.descricao!.isNotEmpty) ...[
                 const SizedBox(height: 8),
-                Text(
-                  historia.descricao!,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Theme.of(context).textTheme.bodyMedium?.color,
-                  ),
+                SizedBox(
+                  height: 50,
+                  child: RichTextViewerWidget(jsonContent: historia.descricao),
                 ),
               ],
               // Preview de fotos
@@ -557,7 +559,7 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
-          Text(historia.descricao!, style: const TextStyle(fontSize: 15)),
+          RichTextViewerWidget(jsonContent: historia.descricao),
           const SizedBox(height: 16),
         ],
 
@@ -596,6 +598,70 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
                       ),
                     );
                   },
+                ),
+                const SizedBox(height: 16),
+              ],
+            );
+          },
+        ),
+        // Áudios
+        FutureBuilder<List<HistoriaAudio>>(
+          future: HistoriaAudioHelper().getAudiosByHistoria(historia.id ?? 0),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const SizedBox.shrink();
+            }
+
+            final audios = snapshot.data!;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Áudios:',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: audios.map((audio) {
+                    return CompactAudioIcon(
+                      audioData: audio.audio,
+                      duration: audio.duracao,
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 16),
+              ],
+            );
+          },
+        ),
+        // Vídeos
+        FutureBuilder<List<v2.HistoriaVideo>>(
+          future: HistoriaVideoHelper().getVideosByHistoria(historia.id ?? 0),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const SizedBox.shrink();
+            }
+
+            final videos = snapshot.data!;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Vídeos:',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: videos.map((video) {
+                    return CompactVideoIcon(
+                      videoPath: video.videoPath,
+                      duration: video.duracao,
+                    );
+                  }).toList(),
                 ),
               ],
             );

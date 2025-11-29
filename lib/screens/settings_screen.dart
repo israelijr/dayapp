@@ -1,10 +1,18 @@
+// ignore_for_file: deprecated_member_use
+// TODO: Migrar RadioListTile para RadioGroup quando Flutter 3.32+ for estável
+// Os RadioListTile usam groupValue/onChanged que foram deprecados no Flutter 3.32+
+// A migração requer refatoração significativa dos dialogs para StatefulWidgets
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/theme_provider.dart';
-import '../providers/pin_provider.dart';
-import '../services/biometric_service.dart';
+
 import '../db/database_helper.dart';
-import 'manage_groups_screen.dart';
+import '../providers/pin_provider.dart';
+import '../providers/theme_provider.dart';
+import '../services/biometric_service.dart';
+import '../services/inactivity_service.dart';
+import '../services/notification_preferences_service.dart';
+import '../services/pin_recovery_service.dart';
 import 'setup_pin_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -16,9 +24,19 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   final BiometricService _biometricService = BiometricService();
+  final InactivityService _inactivityService = InactivityService();
+  final PinRecoveryService _recoveryService = PinRecoveryService();
+  final NotificationPreferencesService _notificationService =
+      NotificationPreferencesService();
   bool _biometricAvailable = false;
   bool _biometricEnabled = false;
   bool _pinEnabled = false;
+  int _backgroundLockTimeout =
+      InactivityService.defaultBackgroundTimeoutSeconds;
+  bool _notificationEnabled = true;
+  int _notificationAdvance =
+      NotificationPreferencesService.defaultAdvanceMinutes;
+  String? _userEmail;
   late PinProvider _pinProvider;
 
   @override
@@ -27,6 +45,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _pinProvider = Provider.of<PinProvider>(context, listen: false);
     _checkBiometricStatus();
     _checkPinStatus();
+    _loadBackgroundLockTimeout();
+    _loadNotificationPreferences();
+    _loadUserEmail();
   }
 
   Future<void> _checkBiometricStatus() async {
@@ -47,6 +68,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
   }
 
+  Future<void> _loadBackgroundLockTimeout() async {
+    final timeout = await _inactivityService.getBackgroundLockTimeout();
+    setState(() {
+      _backgroundLockTimeout = timeout;
+    });
+  }
+
+  Future<void> _loadUserEmail() async {
+    final email = await _recoveryService.getUserEmail();
+    setState(() {
+      _userEmail = email;
+    });
+  }
+
+  Future<void> _loadNotificationPreferences() async {
+    final enabled = await _notificationService.isNotificationEnabled();
+    final advance = await _notificationService.getDefaultNotificationAdvance();
+    setState(() {
+      _notificationEnabled = enabled;
+      _notificationAdvance = advance;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,9 +102,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const Divider(),
           _buildBiometricSection(context),
           const Divider(),
+          _buildNotificationSection(context),
+          const Divider(),
           _buildBackupSection(context),
           const Divider(),
-          _buildGroupsSection(context),
           // Espaço para futuras configurações
         ],
       ),
@@ -154,16 +199,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
           ),
 
-        if (_pinEnabled)
-          const ListTile(
-            leading: Icon(Icons.info_outline),
-            title: Text('Informações'),
+        if (_pinEnabled) ...[
+          ListTile(
+            leading: const Icon(Icons.lock_clock),
+            title: const Text('Bloqueio em Segundo Plano'),
             subtitle: Text(
-              'O PIN será solicitado sempre que você abrir o aplicativo '
-              'ou voltar de outro aplicativo.',
+              'Bloquear após: ${InactivityService.getBackgroundTimeoutLabel(_backgroundLockTimeout)}',
             ),
+            onTap: _showBackgroundLockTimeoutDialog,
             dense: true,
           ),
+          ListTile(
+            leading: const Icon(Icons.email_outlined),
+            title: const Text('E-mail para Recuperação'),
+            subtitle: Text(_userEmail ?? 'Não configurado'),
+            onTap: _showEmailDialog,
+            dense: true,
+          ),
+        ],
 
         const Divider(),
 
@@ -200,10 +253,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
         if (_biometricEnabled)
-          ListTile(
-            leading: const Icon(Icons.info_outline),
-            title: const Text('Informações'),
-            subtitle: const Text(
+          const ListTile(
+            leading: Icon(Icons.info_outline),
+            title: Text('Informações'),
+            subtitle: Text(
               'A biometria está configurada. '
               'Você pode fazer login usando sua digital ou reconhecimento facial.',
             ),
@@ -486,18 +539,213 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildGroupsSection(BuildContext context) {
-    return ListTile(
-      leading: const Icon(Icons.group),
-      title: const Text('Gerenciar Grupos'),
-      subtitle: const Text('Editar e excluir grupos'),
-      trailing: const Icon(Icons.arrow_forward_ios),
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => ManageGroupsScreen()),
-        );
-      },
+  void _showBackgroundLockTimeoutDialog() {
+    showDialog(
+      context: context,
+      builder: (dialogBuilderContext) => AlertDialog(
+        title: const Text('Bloqueio em Segundo Plano'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Após quanto tempo em segundo plano o app deve ser bloqueado?',
+            ),
+            const SizedBox(height: 16),
+            ...InactivityService.backgroundTimeoutOptions.map((seconds) {
+              return RadioListTile<int>(
+                title: Text(
+                  InactivityService.getBackgroundTimeoutLabel(seconds),
+                ),
+                value: seconds,
+                groupValue: _backgroundLockTimeout,
+                onChanged: (value) async {
+                  if (value != null) {
+                    Navigator.of(
+                      dialogBuilderContext,
+                    ).pop(); // Fecha antes do await
+                    await _inactivityService.setBackgroundLockTimeout(value);
+                    await _loadBackgroundLockTimeout();
+                    if (!mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'Bloqueio em segundo plano: ${InactivityService.getBackgroundTimeoutLabel(value)}',
+                        ),
+                      ),
+                    );
+                  }
+                },
+              );
+            }),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogBuilderContext).pop(),
+            child: const Text('Fechar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showEmailDialog() {
+    final emailController = TextEditingController(text: _userEmail);
+
+    showDialog(
+      context: context,
+      builder: (dialogBuilderContext) => AlertDialog(
+        title: const Text('E-mail para Recuperação'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Configure um e-mail para recuperar seu PIN caso esqueça.',
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: emailController,
+              decoration: const InputDecoration(
+                labelText: 'E-mail',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.email),
+              ),
+              keyboardType: TextInputType.emailAddress,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogBuilderContext).pop(),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final email = emailController.text.trim();
+              if (email.isEmpty || !email.contains('@')) {
+                ScaffoldMessenger.of(dialogBuilderContext).showSnackBar(
+                  const SnackBar(
+                    content: Text('E-mail inválido'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+                return;
+              }
+
+              Navigator.of(dialogBuilderContext).pop(); // Fecha antes do await
+              await _recoveryService.saveUserEmail(email);
+              await _loadUserEmail();
+
+              if (!mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('E-mail salvo com sucesso!'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            },
+            child: const Text('Salvar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNotificationSection(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Text(
+            'Notificações',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+        ),
+        ListTile(
+          leading: const Icon(Icons.notifications),
+          title: const Text('Notificações de Entradas'),
+          subtitle: Text(_notificationEnabled ? 'Habilitado' : 'Desabilitado'),
+          trailing: Switch(
+            value: _notificationEnabled,
+            onChanged: (value) async {
+              await _notificationService.setNotificationEnabled(value);
+              await _loadNotificationPreferences();
+            },
+          ),
+        ),
+        if (_notificationEnabled)
+          ListTile(
+            leading: const Icon(Icons.access_time),
+            title: const Text('Antecedência Padrão'),
+            subtitle: Text(
+              NotificationPreferencesService.getAdvanceLabel(
+                _notificationAdvance,
+              ),
+            ),
+            onTap: _showNotificationAdvanceDialog,
+            dense: true,
+          ),
+        if (_notificationEnabled)
+          const ListTile(
+            leading: Icon(Icons.info_outline),
+            title: Text('Informação'),
+            subtitle: Text(
+              'Entradas com data pelo menos 2 horas à frente podem ter notificações agendadas.',
+            ),
+            dense: true,
+          ),
+      ],
+    );
+  }
+
+  void _showNotificationAdvanceDialog() {
+    showDialog(
+      context: context,
+      builder: (dialogBuilderContext) => AlertDialog(
+        title: const Text('Antecedência da Notificação'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Com quanto tempo de antecedência você quer ser notificado?',
+            ),
+            const SizedBox(height: 16),
+            ...NotificationPreferencesService.advanceOptions.map((minutes) {
+              return RadioListTile<int>(
+                title: Text(
+                  NotificationPreferencesService.getAdvanceLabel(minutes),
+                ),
+                value: minutes,
+                groupValue: _notificationAdvance,
+                onChanged: (value) async {
+                  if (value != null) {
+                    Navigator.of(context).pop(); // Fecha antes do await
+                    await _notificationService.setDefaultNotificationAdvance(
+                      value,
+                    );
+                    await _loadNotificationPreferences();
+                    if (!mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'Antecedência padrão: ${NotificationPreferencesService.getAdvanceLabel(value)}',
+                        ),
+                      ),
+                    );
+                  }
+                },
+              );
+            }),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogBuilderContext).pop(),
+            child: const Text('Fechar'),
+          ),
+        ],
+      ),
     );
   }
 }

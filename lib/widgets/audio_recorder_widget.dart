@@ -1,14 +1,18 @@
-import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
-import 'dart:typed_data';
 import 'dart:io';
-import 'package:record/record.dart';
+import 'dart:typed_data';
+
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:record/record.dart';
+
+import '../providers/pin_provider.dart';
 
 class AudioRecorderWidget extends StatefulWidget {
   final Function(Uint8List audio, int duration) onAudioRecorded;
 
-  const AudioRecorderWidget({super.key, required this.onAudioRecorded});
+  const AudioRecorderWidget({required this.onAudioRecorded, super.key});
 
   @override
   State<AudioRecorderWidget> createState() => _AudioRecorderWidgetState();
@@ -291,6 +295,10 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
   }
 
   Future<void> _pickAudioFile() async {
+    // Seta flag para evitar bloqueio de tela quando o app vai para background
+    final pinProvider = context.read<PinProvider>();
+    pinProvider.isPickingExternalMedia = true;
+
     try {
       final result = await FilePicker.platform.pickFiles(
         type: FileType.audio,
@@ -302,7 +310,7 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
         final bytes = await file.readAsBytes();
 
         // Estima duração (placeholder - pode ser melhorado com um plugin de metadata)
-        final estimatedDuration = 0; // Em segundos
+        const estimatedDuration = 0; // Em segundos
 
         widget.onAudioRecorded(bytes, estimatedDuration);
 

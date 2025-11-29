@@ -8,8 +8,7 @@ class CompactAudioIcon extends StatelessWidget {
   final VoidCallback? onDelete;
 
   const CompactAudioIcon({
-    super.key,
-    required this.audioData,
+    required this.audioData, super.key,
     this.duration,
     this.onDelete,
   });

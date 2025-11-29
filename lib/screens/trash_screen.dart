@@ -3,15 +3,16 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../db/database_helper.dart';
-import '../db/historia_foto_helper.dart';
 import '../db/historia_audio_helper.dart';
+import '../db/historia_foto_helper.dart';
 import '../db/historia_video_helper.dart';
 import '../models/historia.dart';
-import '../models/historia_foto.dart';
 import '../models/historia_audio.dart';
+import '../models/historia_foto.dart';
 import '../models/historia_video_v2.dart' as v2;
 import '../providers/auth_provider.dart';
 import '../providers/refresh_provider.dart';
+import '../widgets/rich_text_viewer_widget.dart';
 
 class TrashScreen extends StatefulWidget {
   const TrashScreen({super.key});
@@ -358,10 +359,9 @@ class _TrashScreenState extends State<TrashScreen> {
               if (historia.descricao != null &&
                   historia.descricao!.isNotEmpty) ...[
                 const SizedBox(height: 8),
-                Text(
-                  historia.descricao!,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
+                SizedBox(
+                  height: 60,
+                  child: RichTextViewerWidget(jsonContent: historia.descricao),
                 ),
               ],
               if (historia.dataExclusao != null) ...[

@@ -1,31 +1,33 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 // import 'dart:convert'; // not used
 import 'package:share_plus/share_plus.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
-import 'dart:typed_data';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
 
 import '../db/database_helper.dart';
-import '../db/historia_foto_helper.dart';
 import '../db/historia_audio_helper.dart';
+import '../db/historia_foto_helper.dart';
 import '../db/historia_video_helper.dart';
 import '../models/historia.dart';
-import '../models/historia_foto.dart';
 import '../models/historia_audio.dart';
+import '../models/historia_foto.dart';
 import '../models/historia_video_v2.dart' as v2;
 import '../providers/auth_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../widgets/compact_audio_icon.dart';
 import '../widgets/compact_video_icon.dart';
+import '../widgets/rich_text_viewer_widget.dart';
 import 'edit_historia_screen.dart';
 import 'group_selection_screen.dart';
 
 class HomeContent extends StatefulWidget {
   final bool isCardView;
-  const HomeContent({super.key, required this.isCardView});
+  const HomeContent({required this.isCardView, super.key});
 
   @override
   State<HomeContent> createState() => _HomeContentState();
@@ -36,7 +38,7 @@ class _HomeContentState extends State<HomeContent> {
   static const double cardMargin = 24.0;
   bool _isCardView = true;
 
-  String _getEmoticonImage(String emoticon) {
+  String? _getEmoticonImage(String emoticon) {
     switch (emoticon) {
       case 'Feliz':
         return '1_feliz.png';
@@ -59,7 +61,7 @@ class _HomeContentState extends State<HomeContent> {
       case 'Muito Triste':
         return '10_muito_triste.png';
       default:
-        return '1_feliz.png';
+        return null;
     }
   }
 
@@ -186,7 +188,7 @@ class _HomeContentState extends State<HomeContent> {
 
         return Slidable(
           startActionPane: ActionPane(
-            motion: BehindMotion(),
+            motion: const BehindMotion(),
             children: [
               SlidableAction(
                 onPressed: (context) async {
@@ -200,7 +202,7 @@ class _HomeContentState extends State<HomeContent> {
             ],
           ),
           endActionPane: ActionPane(
-            motion: BehindMotion(),
+            motion: const BehindMotion(),
             children: [
               SlidableAction(
                 onPressed: (context) async {
@@ -277,11 +279,10 @@ class _HomeContentState extends State<HomeContent> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Text(
-                      historia.descricao ?? '',
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: Theme.of(context).textTheme.bodyMedium?.color,
+                    SizedBox(
+                      height: 80,
+                      child: RichTextViewerWidget(
+                        jsonContent: historia.descricao,
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -577,8 +578,7 @@ class HistoriaFotosGrid extends StatelessWidget {
   final int historiaId;
   final double height;
   const HistoriaFotosGrid({
-    super.key,
-    required this.historiaId,
+    required this.historiaId, super.key,
     this.height = 120,
   });
 
@@ -998,16 +998,16 @@ class HistoriaFotosGrid extends StatelessWidget {
                                 '+${total - 3}',
                                 style: const TextStyle(
                                   color: Colors.white,
-                                  fontSize: 26,
+                                  fontSize: 22,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
-                              const SizedBox(height: 4),
+                              const SizedBox(height: 2),
                               const Text(
                                 'mais',
                                 style: TextStyle(
                                   color: Colors.white70,
-                                  fontSize: 12,
+                                  fontSize: 10,
                                 ),
                               ),
                             ],
@@ -1092,13 +1092,11 @@ class HistoriaFotosGrid extends StatelessWidget {
 class HistoriaMediaRow extends StatelessWidget {
   final int historiaId;
   final String? emoticon;
-  final String Function(String) getEmoticonImage;
+  final String? Function(String) getEmoticonImage;
 
   const HistoriaMediaRow({
-    super.key,
-    required this.historiaId,
+    required this.historiaId, required this.getEmoticonImage, super.key,
     this.emoticon,
-    required this.getEmoticonImage,
   });
 
   @override
@@ -1113,7 +1111,6 @@ class HistoriaMediaRow extends StatelessWidget {
 
         // Mostra erro se houver
         if (snapshot.hasError) {
-          debugPrint('Erro ao carregar mídia: ${snapshot.error}');
           return const SizedBox.shrink();
         }
 
@@ -1124,10 +1121,6 @@ class HistoriaMediaRow extends StatelessWidget {
         final data = snapshot.data!;
         final audios = data['audios'] as List<HistoriaAudio>;
         final videos = data['videos'] as List<v2.HistoriaVideo>;
-
-        debugPrint(
-          'HistoriaMediaRow - ID: $historiaId, Emoticon: $emoticon, Audios: ${audios.length}, Videos: ${videos.length}',
-        );
 
         // Se não tem emoticon nem mídia, não mostra nada
         if ((emoticon == null || emoticon!.isEmpty) &&
@@ -1155,12 +1148,26 @@ class HistoriaMediaRow extends StatelessWidget {
                       ),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Image.asset(
-                      'assets/image/${getEmoticonImage(emoticon!)}',
-                      width: 40,
-                      height: 40,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Icon(Icons.mood, size: 40);
+                    child: Builder(
+                      builder: (context) {
+                        final imagePath = getEmoticonImage(emoticon!);
+                        if (imagePath != null) {
+                          return Image.asset(
+                            'assets/image/$imagePath',
+                            width: 40,
+                            height: 40,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Icon(Icons.mood, size: 40);
+                            },
+                          );
+                        } else {
+                          return Center(
+                            child: Text(
+                              emoticon!,
+                              style: const TextStyle(fontSize: 32),
+                            ),
+                          );
+                        }
                       },
                     ),
                   ),
@@ -1200,12 +1207,9 @@ class HistoriaMediaRow extends StatelessWidget {
       final videos = await HistoriaVideoHelper().getVideosByHistoria(
         historiaId,
       );
-      debugPrint(
-        '_loadMediaData - Historia $historiaId: ${audios.length} áudios, ${videos.length} vídeos',
-      );
+
       return {'audios': audios, 'videos': videos};
     } catch (e) {
-      debugPrint('Erro em _loadMediaData: $e');
       return {'audios': <HistoriaAudio>[], 'videos': <v2.HistoriaVideo>[]};
     }
   }
@@ -1215,7 +1219,7 @@ class HistoriaMediaRow extends StatelessWidget {
 class HistoriaAudiosSection extends StatelessWidget {
   final int historiaId;
 
-  const HistoriaAudiosSection({super.key, required this.historiaId});
+  const HistoriaAudiosSection({required this.historiaId, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -1249,7 +1253,7 @@ class HistoriaAudiosSection extends StatelessWidget {
 class HistoriaVideosSection extends StatelessWidget {
   final int historiaId;
 
-  const HistoriaVideosSection({super.key, required this.historiaId});
+  const HistoriaVideosSection({required this.historiaId, super.key});
 
   @override
   Widget build(BuildContext context) {

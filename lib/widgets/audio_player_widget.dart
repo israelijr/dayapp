@@ -1,13 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'dart:io';
+
+import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 class AudioPlayerWidget extends StatefulWidget {
   final List<int> audioData;
   final int? duration;
 
-  const AudioPlayerWidget({super.key, required this.audioData, this.duration});
+  const AudioPlayerWidget({required this.audioData, super.key, this.duration});
 
   @override
   State<AudioPlayerWidget> createState() => _AudioPlayerWidgetState();
@@ -126,9 +127,9 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 SliderTheme(
-                  data: SliderThemeData(
+                  data: const SliderThemeData(
                     trackHeight: 2,
-                    thumbShape: const RoundSliderThumbShape(
+                    thumbShape: RoundSliderThumbShape(
                       enabledThumbRadius: 6,
                     ),
                   ),

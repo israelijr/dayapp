@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 import '../db/grupo_helper.dart';
 import '../models/grupo.dart';
 import '../providers/auth_provider.dart';
-import 'group_stories_screen.dart';
 import 'archived_stories_screen.dart';
+import 'group_stories_screen.dart';
 
 class GroupsScreen extends StatefulWidget {
   const GroupsScreen({super.key});
@@ -15,75 +15,118 @@ class GroupsScreen extends StatefulWidget {
 }
 
 class _GroupsScreenState extends State<GroupsScreen> {
-  Future<List<Grupo>> _loadGrupos() async {
-    final auth = Provider.of<AuthProvider>(context, listen: false);
-    final userId = auth.user?.id;
-    if (userId == null) return [];
-    return await GrupoHelper().getGruposByUser(userId);
+  List<Grupo> _grupos = [];
+  Map<String, int> _grupoCounts = {};
+  int _arquivadosCount = 0;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadGrupos();
+  }
+
+  Future<void> _loadGrupos() async {
+    setState(() => _isLoading = true);
+    try {
+      final auth = Provider.of<AuthProvider>(context, listen: false);
+      final userId = auth.user?.id;
+      if (userId != null) {
+        final grupoHelper = GrupoHelper();
+        final todosGrupos = await grupoHelper.getGruposByUser(userId);
+
+        // Filtrar grupos que têm histórias e contar registros
+        final gruposComHistorias = <Grupo>[];
+        final counts = <String, int>{};
+
+        for (final grupo in todosGrupos) {
+          final count = await grupoHelper.countHistoriasInGrupo(
+            userId,
+            grupo.nome,
+          );
+          if (count > 0) {
+            gruposComHistorias.add(grupo);
+            counts[grupo.nome] = count;
+          }
+        }
+
+        // Contar arquivadas
+        final arquivadosCount = await grupoHelper.countArquivadas(userId);
+
+        setState(() {
+          _grupos = gruposComHistorias;
+          _grupoCounts = counts;
+          _arquivadosCount = arquivadosCount;
+        });
+      }
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _navigateAndRefresh(Widget screen) async {
+    await Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
+    // Recarregar grupos ao voltar
+    _loadGrupos();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Grupos')),
-      body: FutureBuilder<List<Grupo>>(
-        future: _loadGrupos(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          final grupos = snapshot.data ?? [];
-          return ListView.builder(
-            itemCount: grupos.length + 1, // +1 para o item "Arquivados"
-            itemBuilder: (context, index) {
-              // Último item é "Arquivados"
-              if (index == grupos.length) {
-                return Column(
-                  children: [
-                    const Divider(height: 1, thickness: 1),
-                    ListTile(
-                      title: const Text('Arquivados'),
-                      leading: const Icon(Icons.archive, color: Colors.grey),
-                      trailing: const Icon(Icons.arrow_forward_ios),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const ArchivedStoriesScreen(),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                );
-              }
-
-              // Itens normais dos grupos
-              final grupo = grupos[index];
-              return Column(
-                children: [
-                  ListTile(
-                    title: Text(grupo.nome),
-                    subtitle: Text(
-                      'Criado em ${grupo.dataCriacao?.toLocal().toString().split(' ')[0] ?? ''}',
-                    ),
-                    trailing: const Icon(Icons.arrow_forward_ios),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => GroupStoriesScreen(grupo: grupo),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              itemCount: _grupos.length + 1,
+              itemBuilder: (context, index) {
+                if (index == _grupos.length) {
+                  return Column(
+                    children: [
+                      const Divider(height: 1, thickness: 1),
+                      ListTile(
+                        title: const Text('Arquivados'),
+                        subtitle: Text(
+                          '$_arquivadosCount ${_arquivadosCount == 1 ? 'registro' : 'registros'}',
                         ),
-                      );
-                    },
+                        leading: const Icon(Icons.archive, color: Colors.grey),
+                        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                        onTap: () {
+                          _navigateAndRefresh(const ArchivedStoriesScreen());
+                        },
+                      ),
+                    ],
+                  );
+                }
+
+                final grupo = _grupos[index];
+                final count = _grupoCounts[grupo.nome] ?? 0;
+                return ListTile(
+                  leading: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.surfaceContainerHighest,
+                      shape: BoxShape.circle,
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      grupo.emoticon ?? '📁',
+                      style: const TextStyle(fontSize: 20),
+                    ),
                   ),
-                  if (index < grupos.length - 1) const Divider(height: 1),
-                ],
-              );
-            },
-          );
-        },
-      ),
+                  title: Text(grupo.nome),
+                  subtitle: Text(
+                    '$count ${count == 1 ? 'registro' : 'registros'}',
+                  ),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                  onTap: () {
+                    _navigateAndRefresh(GroupStoriesScreen(grupo: grupo));
+                  },
+                );
+              },
+            ),
     );
   }
 }

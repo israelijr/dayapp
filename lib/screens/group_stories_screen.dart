@@ -1,23 +1,25 @@
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
 import '../db/database_helper.dart';
-import '../db/historia_foto_helper.dart';
 import '../db/historia_audio_helper.dart';
+import '../db/historia_foto_helper.dart';
 import '../db/historia_video_helper.dart';
 import '../models/grupo.dart';
 import '../models/historia.dart';
-import '../models/historia_foto.dart';
 import '../models/historia_audio.dart';
+import '../models/historia_foto.dart';
 import '../models/historia_video_v2.dart' as v2;
 import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../widgets/compact_audio_icon.dart';
 import '../widgets/compact_video_icon.dart';
+import '../widgets/rich_text_viewer_widget.dart';
 import 'create_historia_screen.dart';
 import 'edit_historia_screen.dart';
 import 'edit_profile_screen.dart';
@@ -26,7 +28,7 @@ import 'group_selection_screen.dart';
 class GroupStoriesScreen extends StatefulWidget {
   final Grupo grupo;
 
-  const GroupStoriesScreen({super.key, required this.grupo});
+  const GroupStoriesScreen({required this.grupo, super.key});
 
   @override
   State<GroupStoriesScreen> createState() => _GroupStoriesScreenState();
@@ -38,7 +40,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
 
   bool _isCardView = true; // true = modo blocos, false = modo ícones
 
-  String _getEmoticonImage(String emoticon) {
+  String? _getEmoticonImage(String emoticon) {
     switch (emoticon) {
       case 'Feliz':
         return '1_feliz.png';
@@ -61,7 +63,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
       case 'Muito Triste':
         return '10_muito_triste.png';
       default:
-        return '1_feliz.png';
+        return null;
     }
   }
 
@@ -190,7 +192,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
 
         return Slidable(
           startActionPane: ActionPane(
-            motion: BehindMotion(),
+            motion: const BehindMotion(),
             children: [
               SlidableAction(
                 onPressed: (context) async {
@@ -204,7 +206,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
             ],
           ),
           endActionPane: ActionPane(
-            motion: BehindMotion(),
+            motion: const BehindMotion(),
             children: [
               SlidableAction(
                 onPressed: (context) async {
@@ -304,11 +306,10 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
                       ),
                     ],
                     const SizedBox(height: 8),
-                    Text(
-                      historia.descricao ?? '',
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: Theme.of(context).textTheme.bodyMedium?.color,
+                    SizedBox(
+                      height: 80,
+                      child: RichTextViewerWidget(
+                        jsonContent: historia.descricao,
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -567,8 +568,15 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
       appBar: AppBar(
         title: Row(
           children: [
-            Image.asset('assets/icon/icon.png', width: 32, height: 32),
-            const SizedBox(width: 12),
+            if (widget.grupo.emoticon != null &&
+                widget.grupo.emoticon!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: Text(
+                  widget.grupo.emoticon!,
+                  style: const TextStyle(fontSize: 24),
+                ),
+              ),
             Expanded(
               child: Text(
                 widget.grupo.nome,
@@ -749,14 +757,20 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
 
     if (confirm == true) {
       final db = await DatabaseHelper().database;
+      // Atualiza histórias do grupo para voltar para a Home
+      // Remove os flags de grupo e arquivado para que apareçam na Home
       await db.update(
         'historia',
-        {'grupo': null, 'data_update': DateTime.now().toIso8601String()},
+        {
+          'grupo': null,
+          'arquivado': null,
+          'data_update': DateTime.now().toIso8601String(),
+        },
         where: 'user_id = ? AND grupo = ?',
         whereArgs: [userId, widget.grupo.nome],
       );
 
-      // Optionally remove the group from grupos table if present
+      // Remove o grupo da tabela grupos se presente
       try {
         await db.delete(
           'grupos',
@@ -775,8 +789,7 @@ class HistoriaFotosGrid extends StatelessWidget {
   final int historiaId;
   final double height;
   const HistoriaFotosGrid({
-    super.key,
-    required this.historiaId,
+    required this.historiaId, super.key,
     this.height = 120,
   });
 
@@ -876,7 +889,7 @@ class HistoriaFotosGrid extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                   if (isLast)
-                    Container(
+                    ColoredBox(
                       color: Colors.black45,
                       child: Center(
                         child: Text(
@@ -980,13 +993,11 @@ class HistoriaFotosGrid extends StatelessWidget {
 class HistoriaMediaRow extends StatelessWidget {
   final int historiaId;
   final String? emoticon;
-  final String Function(String) getEmoticonImage;
+  final String? Function(String) getEmoticonImage;
 
   const HistoriaMediaRow({
-    super.key,
-    required this.historiaId,
+    required this.historiaId, required this.getEmoticonImage, super.key,
     this.emoticon,
-    required this.getEmoticonImage,
   });
 
   @override
@@ -1001,7 +1012,6 @@ class HistoriaMediaRow extends StatelessWidget {
 
         // Mostra erro se houver
         if (snapshot.hasError) {
-          debugPrint('Erro ao carregar mídia: ${snapshot.error}');
           return const SizedBox.shrink();
         }
 
@@ -1012,10 +1022,6 @@ class HistoriaMediaRow extends StatelessWidget {
         final data = snapshot.data!;
         final audios = data['audios'] as List<HistoriaAudio>;
         final videos = data['videos'] as List<v2.HistoriaVideo>;
-
-        debugPrint(
-          'HistoriaMediaRow [Grupo] - ID: $historiaId, Emoticon: $emoticon, Audios: ${audios.length}, Videos: ${videos.length}',
-        );
 
         // Se não tem emoticon nem mídia, não mostra nada
         if ((emoticon == null || emoticon!.isEmpty) &&
@@ -1043,12 +1049,26 @@ class HistoriaMediaRow extends StatelessWidget {
                       ),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Image.asset(
-                      'assets/image/${getEmoticonImage(emoticon!)}',
-                      width: 40,
-                      height: 40,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Icon(Icons.mood, size: 40);
+                    child: Builder(
+                      builder: (context) {
+                        final imagePath = getEmoticonImage(emoticon!);
+                        if (imagePath != null) {
+                          return Image.asset(
+                            'assets/image/$imagePath',
+                            width: 40,
+                            height: 40,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Icon(Icons.mood, size: 40);
+                            },
+                          );
+                        } else {
+                          return Center(
+                            child: Text(
+                              emoticon!,
+                              style: const TextStyle(fontSize: 32),
+                            ),
+                          );
+                        }
                       },
                     ),
                   ),
@@ -1088,12 +1108,9 @@ class HistoriaMediaRow extends StatelessWidget {
       final videos = await HistoriaVideoHelper().getVideosByHistoria(
         historiaId,
       );
-      debugPrint(
-        '_loadMediaData [Grupo] - Historia $historiaId: ${audios.length} áudios, ${videos.length} vídeos',
-      );
+
       return {'audios': audios, 'videos': videos};
     } catch (e) {
-      debugPrint('Erro em _loadMediaData [Grupo]: $e');
       return {'audios': <HistoriaAudio>[], 'videos': <v2.HistoriaVideo>[]};
     }
   }
@@ -1103,7 +1120,7 @@ class HistoriaMediaRow extends StatelessWidget {
 class HistoriaAudiosSection extends StatelessWidget {
   final int historiaId;
 
-  const HistoriaAudiosSection({super.key, required this.historiaId});
+  const HistoriaAudiosSection({required this.historiaId, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -1137,7 +1154,7 @@ class HistoriaAudiosSection extends StatelessWidget {
 class HistoriaVideosSection extends StatelessWidget {
   final int historiaId;
 
-  const HistoriaVideosSection({super.key, required this.historiaId});
+  const HistoriaVideosSection({required this.historiaId, super.key});
 
   @override
   Widget build(BuildContext context) {

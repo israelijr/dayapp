@@ -1,10 +1,22 @@
-import 'database_helper.dart';
+import 'package:sqflite/sqflite.dart' as sqflite_lib;
+
 import '../models/grupo.dart';
+import 'database_helper.dart';
 
 class GrupoHelper {
   Future<int> insertGrupo(Grupo grupo) async {
     final db = await DatabaseHelper().database;
     return await db.insert('grupos', grupo.toMap());
+  }
+
+  Future<int> updateGrupo(Grupo grupo) async {
+    final db = await DatabaseHelper().database;
+    return await db.update(
+      'grupos',
+      grupo.toMap(),
+      where: 'id = ?',
+      whereArgs: [grupo.id],
+    );
   }
 
   Future<List<Grupo>> getGruposByUser(String userId) async {
@@ -42,14 +54,39 @@ class GrupoHelper {
     String userId,
   ) async {
     final db = await DatabaseHelper().database;
-    // Primeiro, atualizar histórias que têm tag igual ao nome do grupo
+    // Primeiro, atualizar histórias do grupo para voltar para a Home
+    // Remove os flags de grupo e arquivado para que apareçam na Home
     await db.update(
       'historia',
-      {'tag': null},
-      where: 'user_id = ? AND tag = ?',
+      {
+        'grupo': null,
+        'arquivado': null,
+        'data_update': DateTime.now().toIso8601String(),
+      },
+      where: 'user_id = ? AND grupo = ?',
       whereArgs: [userId, grupoNome],
     );
     // Depois, excluir o grupo
     await db.delete('grupos', where: 'id = ?', whereArgs: [grupoId]);
+  }
+
+  /// Conta o número de histórias em um grupo específico (não arquivadas e não excluídas)
+  Future<int> countHistoriasInGrupo(String userId, String grupoNome) async {
+    final db = await DatabaseHelper().database;
+    final result = await db.rawQuery(
+      'SELECT COUNT(*) as count FROM historia WHERE user_id = ? AND grupo = ? AND arquivado IS NULL AND excluido IS NULL',
+      [userId, grupoNome],
+    );
+    return sqflite_lib.Sqflite.firstIntValue(result) ?? 0;
+  }
+
+  /// Conta o número de histórias arquivadas (não excluídas)
+  Future<int> countArquivadas(String userId) async {
+    final db = await DatabaseHelper().database;
+    final result = await db.rawQuery(
+      'SELECT COUNT(*) as count FROM historia WHERE user_id = ? AND arquivado IS NOT NULL AND excluido IS NULL',
+      [userId],
+    );
+    return sqflite_lib.Sqflite.firstIntValue(result) ?? 0;
   }
 }

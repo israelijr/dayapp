@@ -9,9 +9,7 @@ class CustomTextField extends StatelessWidget {
   final bool enabled;
 
   const CustomTextField({
-    super.key,
-    required this.label,
-    required this.controller,
+    required this.label, required this.controller, super.key,
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
     this.suffixIcon,

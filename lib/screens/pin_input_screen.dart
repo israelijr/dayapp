@@ -1,8 +1,10 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+
 import '../providers/pin_provider.dart';
-import 'dart:ui';
 
 class PinInputScreen extends StatefulWidget {
   const PinInputScreen({super.key});

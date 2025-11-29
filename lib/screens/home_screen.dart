@@ -1,12 +1,16 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:io';
+
 import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
-import 'home_content.dart';
-import 'groups_screen.dart';
 import 'edit_profile_screen.dart';
+import 'groups_maintenance_screen.dart';
+import 'groups_screen.dart';
+import 'home_content.dart';
+import 'search_screen.dart';
 import 'statistics_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -66,116 +70,129 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Image.asset('assets/icon/icon.png', width: 32, height: 32),
             const SizedBox(width: 12),
-            const Text('DayApp', style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(
+              _selectedIndex == 0
+                  ? 'DayApp'
+                  : _selectedIndex == 1
+                  ? 'Grupos'
+                  : 'Pesquisar',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
           ],
         ),
         actions: [
-          Builder(
-            builder: (context) {
-              const duration = Duration(milliseconds: 300);
-              Widget buildToggle(
-                String asset,
-                bool active,
-                String tooltip,
-                VoidCallback onTap,
-              ) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 6.0),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(8),
-                    onTap: () {
-                      onTap();
-                    },
-                    child: AnimatedContainer(
-                      duration: duration,
-                      curve: Curves.easeInOut,
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: active
-                            ? Theme.of(
-                                context,
-                              ).colorScheme.secondary.withValues(alpha: 0.14)
-                            : Colors.transparent,
-                        borderRadius: BorderRadius.circular(8),
-                        border: active
-                            ? Border.all(
-                                color: Theme.of(context).colorScheme.secondary,
-                                width: 1.2,
-                              )
-                            : null,
-                        boxShadow: active
-                            ? [
-                                BoxShadow(
-                                  color: Theme.of(context).colorScheme.secondary
-                                      .withValues(alpha: 0.08),
-                                  blurRadius: 6,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ]
-                            : null,
-                      ),
-                      child: AnimatedScale(
-                        duration: duration,
-                        curve: Curves.easeOutBack,
-                        scale: active ? 1.05 : 1.0,
-                        child: Image.asset(asset, width: 28, height: 28),
-                      ),
-                    ),
-                  ),
-                );
-              }
-
-              return Row(
-                children: [
-                  buildToggle(
-                    'assets/image/card.png',
-                    _isCardView,
-                    'Ver em cards grandes',
-                    () {
-                      setState(() {
-                        _isCardView = true;
-                      });
-                      _saveLayoutPreference(true);
-                    },
-                  ),
-                  buildToggle(
-                    'assets/image/icone_pequeno.png',
-                    !_isCardView,
-                    'Ver em cards reduzidos',
-                    () {
-                      setState(() {
-                        _isCardView = false;
-                      });
-                      _saveLayoutPreference(false);
-                    },
-                  ),
-                  Padding(
+          // Só mostra os botões de visualização na aba Home
+          if (_selectedIndex == 0)
+            Builder(
+              builder: (context) {
+                const duration = Duration(milliseconds: 300);
+                Widget buildToggle(
+                  String asset,
+                  bool active,
+                  String tooltip,
+                  VoidCallback onTap,
+                ) {
+                  return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 6.0),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(8),
                       onTap: () {
-                        Navigator.pushNamed(context, '/calendar');
+                        onTap();
                       },
-                      child: Tooltip(
-                        message: 'Ver calendário',
-                        child: Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Image.asset(
-                            'assets/image/calendario.png',
-                            width: 28,
-                            height: 28,
+                      child: AnimatedContainer(
+                        duration: duration,
+                        curve: Curves.easeInOut,
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: active
+                              ? Theme.of(
+                                  context,
+                                ).colorScheme.secondary.withValues(alpha: 0.14)
+                              : Colors.transparent,
+                          borderRadius: BorderRadius.circular(8),
+                          border: active
+                              ? Border.all(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.secondary,
+                                  width: 1.2,
+                                )
+                              : null,
+                          boxShadow: active
+                              ? [
+                                  BoxShadow(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .secondary
+                                        .withValues(alpha: 0.08),
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ]
+                              : null,
+                        ),
+                        child: AnimatedScale(
+                          duration: duration,
+                          curve: Curves.easeOutBack,
+                          scale: active ? 1.05 : 1.0,
+                          child: Image.asset(asset, width: 28, height: 28),
+                        ),
+                      ),
+                    ),
+                  );
+                }
+
+                return Row(
+                  children: [
+                    buildToggle(
+                      'assets/image/card.png',
+                      _isCardView,
+                      'Ver em cards grandes',
+                      () {
+                        setState(() {
+                          _isCardView = true;
+                        });
+                        _saveLayoutPreference(true);
+                      },
+                    ),
+                    buildToggle(
+                      'assets/image/icone_pequeno.png',
+                      !_isCardView,
+                      'Ver em cards reduzidos',
+                      () {
+                        setState(() {
+                          _isCardView = false;
+                        });
+                        _saveLayoutPreference(false);
+                      },
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 6.0),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(8),
+                        onTap: () {
+                          Navigator.pushNamed(context, '/calendar');
+                        },
+                        child: Tooltip(
+                          message: 'Ver calendário',
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Image.asset(
+                              'assets/image/calendario.png',
+                              width: 28,
+                              height: 28,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              );
-            },
-          ),
+                  ],
+                );
+              },
+            ),
         ],
       ),
       drawer: Drawer(
@@ -254,7 +271,104 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                       ),
-                      CircleAvatar(radius: 24, backgroundImage: profileImage),
+                      GestureDetector(
+                        onTap: () {
+                          // Mostrar foto ampliada em um diálogo
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return Dialog(
+                                backgroundColor: Colors.transparent,
+                                child: Stack(
+                                  children: [
+                                    Center(
+                                      child: Container(
+                                        constraints: BoxConstraints(
+                                          maxWidth:
+                                              MediaQuery.of(
+                                                context,
+                                              ).size.width *
+                                              0.9,
+                                          maxHeight:
+                                              MediaQuery.of(
+                                                context,
+                                              ).size.height *
+                                              0.9,
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                          child:
+                                              user?.fotoPerfil != null &&
+                                                  user!.fotoPerfil!.isNotEmpty
+                                              ? (user.fotoPerfil!.startsWith(
+                                                          'http',
+                                                        ) ||
+                                                        user.fotoPerfil!
+                                                            .startsWith('https')
+                                                    ? Image.network(
+                                                        user.fotoPerfil!,
+                                                        fit: BoxFit.contain,
+                                                        errorBuilder:
+                                                            (
+                                                              context,
+                                                              error,
+                                                              stackTrace,
+                                                            ) {
+                                                              return Image.asset(
+                                                                'assets/image/icone_pequeno.png',
+                                                                fit: BoxFit
+                                                                    .contain,
+                                                              );
+                                                            },
+                                                      )
+                                                    : (File(
+                                                            user.fotoPerfil!,
+                                                          ).existsSync()
+                                                          ? Image.file(
+                                                              File(
+                                                                user.fotoPerfil!,
+                                                              ),
+                                                              fit: BoxFit
+                                                                  .contain,
+                                                            )
+                                                          : Image.asset(
+                                                              'assets/image/icone_pequeno.png',
+                                                              fit: BoxFit
+                                                                  .contain,
+                                                            )))
+                                              : Image.asset(
+                                                  'assets/image/icone_pequeno.png',
+                                                  fit: BoxFit.contain,
+                                                ),
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 10,
+                                      right: 10,
+                                      child: IconButton(
+                                        icon: const Icon(
+                                          Icons.close,
+                                          color: Colors.white,
+                                          size: 30,
+                                        ),
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        child: CircleAvatar(
+                          radius: 24,
+                          backgroundImage: profileImage,
+                        ),
+                      ),
                     ],
                   );
                 },
@@ -279,6 +393,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const StatisticsScreen()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.group),
+              title: const Text('Gerenciar Grupos'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const GroupsMaintenanceScreen(),
+                  ),
                 );
               },
             ),
@@ -320,14 +447,19 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: _selectedIndex == 0
           ? HomeContent(isCardView: _isCardView)
-          : GroupsScreen(),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.pushNamed(context, '/create_historia');
-        },
-        icon: const Icon(Icons.add),
-        label: const Text('Nova História'),
-      ),
+          : _selectedIndex == 1
+          ? const GroupsScreen()
+          : const SearchScreen(),
+      // Mostra o FAB apenas nas abas Home e Grupos
+      floatingActionButton: _selectedIndex != 2
+          ? FloatingActionButton.extended(
+              onPressed: () {
+                Navigator.pushNamed(context, '/create_historia');
+              },
+              icon: const Icon(Icons.add),
+              label: const Text('Nova História'),
+            )
+          : null,
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
         onDestinationSelected: _onItemTapped,
@@ -341,6 +473,11 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: Icon(Icons.group_outlined),
             selectedIcon: Icon(Icons.group),
             label: 'Grupos',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.search_outlined),
+            selectedIcon: Icon(Icons.search),
+            label: 'Pesquisar',
           ),
         ],
       ),

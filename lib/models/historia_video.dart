@@ -9,9 +9,7 @@ class HistoriaVideo {
   final List<int>? thumbnail; // miniatura do vídeo
 
   HistoriaVideo({
-    this.id,
-    required this.historiaId,
-    required this.video,
+    required this.historiaId, required this.video, this.id,
     this.legenda,
     this.duracao,
     this.thumbnail,

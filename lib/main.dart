@@ -1,29 +1,36 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'screens/login_screen.dart';
-import 'screens/create_account_screen.dart';
-import 'screens/create_account_complement_screen.dart';
-import 'screens/home_screen.dart';
-import 'screens/settings_screen.dart';
-import 'screens/edit_profile_screen.dart';
-import 'screens/create_historia_screen.dart';
-import 'package:provider/provider.dart';
-import 'providers/auth_provider.dart';
-import 'providers/theme_provider.dart';
-import 'providers/refresh_provider.dart';
-import 'providers/pin_provider.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'dart:io';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'services/notification_service.dart';
-import 'screens/edit_historia_screen.dart';
-import 'screens/calendar_view_screen.dart';
-import 'screens/backup_manager_screen.dart';
-import 'screens/trash_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+
 import 'db/database_helper.dart';
 import 'models/historia.dart';
-import 'widgets/pin_protected_wrapper.dart';
+import 'providers/auth_provider.dart';
+import 'providers/pin_provider.dart';
+import 'providers/refresh_provider.dart';
+import 'providers/theme_provider.dart';
+import 'screens/backup_manager_screen.dart';
+import 'screens/calendar_view_screen.dart';
+import 'screens/create_account_complement_screen.dart';
+import 'screens/create_account_screen.dart';
+import 'screens/create_historia_screen.dart';
+import 'screens/edit_historia_screen.dart';
+import 'screens/edit_profile_screen.dart';
+import 'screens/home_screen.dart';
+import 'screens/login_screen.dart';
+import 'screens/search_screen.dart';
+import 'screens/settings_screen.dart';
+import 'screens/splash_screen.dart';
+import 'screens/trash_screen.dart';
+import 'services/ad_service.dart';
+import 'services/inactivity_service.dart';
+import 'services/notification_service.dart';
 import 'theme/m3_expressive_theme.dart';
+import 'widgets/pin_protected_wrapper.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -53,12 +60,17 @@ void main() async {
   final pinProvider = PinProvider();
   await pinProvider.initialize(isUserLoggedIn: authProvider.isLoggedIn);
 
+  // Inicializar Google Mobile Ads
+  await AdService().initialize();
+
   // Inicializar notificações
   await NotificationService().init((String? payload) async {
     if (payload != null) {
-      int? historiaId = int.tryParse(payload);
+      final int? historiaId = int.tryParse(payload);
       if (historiaId != null) {
-        Historia? historia = await DatabaseHelper().getHistoria(historiaId);
+        final Historia? historia = await DatabaseHelper().getHistoria(
+          historiaId,
+        );
         if (historia != null) {
           navigatorKey.currentState?.push(
             MaterialPageRoute(
@@ -87,11 +99,11 @@ class MyApp extends StatefulWidget {
   final PinProvider pinProvider;
 
   const MyApp({
-    super.key,
     required this.authProvider,
     required this.themeProvider,
     required this.refreshProvider,
     required this.pinProvider,
+    super.key,
   });
 
   @override
@@ -99,8 +111,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  final InactivityService _inactivityService = InactivityService();
   DateTime? _pausedTime;
-  static const _shortPauseDuration = Duration(seconds: 3);
 
   @override
   void initState() {
@@ -112,6 +124,23 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  Future<void> _checkBackgroundLock() async {
+    if (_pausedTime == null) return;
+
+    // Verifica o tempo em segundo plano
+    final pauseDuration = DateTime.now().difference(_pausedTime!);
+    final backgroundTimeoutSeconds = await _inactivityService
+        .getBackgroundLockTimeout();
+    final backgroundTimeout = Duration(seconds: backgroundTimeoutSeconds);
+
+    // Bloqueia se o tempo de pausa excedeu o configurado
+    if (pauseDuration > backgroundTimeout) {
+      widget.pinProvider.requireAuthentication();
+    }
+
+    _pausedTime = null;
   }
 
   @override
@@ -127,18 +156,24 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         break;
       case AppLifecycleState.resumed:
         // App voltou para foreground
-        if (widget.pinProvider.isPinEnabled) {
-          if (_pausedTime != null) {
-            final pauseDuration = DateTime.now().difference(_pausedTime!);
-            // Se foi uma pausa curta (ex: abrir seletor de mídia), não pede PIN
-            if (pauseDuration > _shortPauseDuration) {
-              widget.pinProvider.requireAuthentication();
-            }
-          } else {
-            // Se não temos registro de quando pausou, pede PIN por segurança
-            widget.pinProvider.requireAuthentication();
+        if (widget.pinProvider.isPinEnabled && _pausedTime != null) {
+          // Se estiver autenticando com biometria, não bloqueia
+          if (widget.pinProvider.isAuthenticatingWithBiometrics) {
+            _pausedTime = null;
+            // Reseta a flag pois já consumimos o evento de retorno
+            widget.pinProvider.isAuthenticatingWithBiometrics = false;
+            return;
           }
-          _pausedTime = null;
+
+          // Se estiver selecionando mídia externa (galeria, câmera, etc.), não bloqueia
+          if (widget.pinProvider.isPickingExternalMedia) {
+            _pausedTime = null;
+            // Reseta a flag pois já consumimos o evento de retorno
+            widget.pinProvider.isPickingExternalMedia = false;
+            return;
+          }
+
+          _checkBackgroundLock();
         }
         break;
       case AppLifecycleState.detached:
@@ -170,9 +205,17 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
+              FlutterQuillLocalizations.delegate,
             ],
-            initialRoute: widget.authProvider.isLoggedIn ? '/home' : '/login',
+            initialRoute: '/splash',
             routes: {
+              '/splash': (context) => SplashScreen(
+                onComplete: () {
+                  Navigator.of(context).pushReplacementNamed(
+                    widget.authProvider.isLoggedIn ? '/home' : '/login',
+                  );
+                },
+              ),
               '/login': (context) => const LoginScreen(),
               '/create_account': (context) => const CreateAccountScreen(),
               '/create_account_complement': (context) =>
@@ -191,6 +234,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   const PinProtectedWrapper(child: BackupManagerScreen()),
               '/trash': (context) =>
                   const PinProtectedWrapper(child: TrashScreen()),
+              '/search': (context) =>
+                  const PinProtectedWrapper(child: SearchScreen()),
             },
           );
         },

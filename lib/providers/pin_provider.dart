@@ -13,6 +13,35 @@ class PinProvider extends ChangeNotifier {
   bool get isPinEnabled => _isPinEnabled;
   bool get shouldShowPinScreen => _shouldShowPinScreen;
 
+  /// Flag para evitar loop de bloqueio durante autenticação biométrica
+  /// Campo público pois é apenas controle interno/externo sem notificação de listeners
+  bool isAuthenticatingWithBiometrics = false;
+
+  /// Flag para evitar bloqueio quando o usuário está selecionando mídia externa
+  /// (galeria, câmera, file picker, etc.)
+  /// Quando o app vai para background para abrir a galeria/câmera, não deve bloquear
+  bool isPickingExternalMedia = false;
+
+  // Setters públicos para controle direto (usado por biometria)
+  set isAuthenticated(bool value) {
+    _isAuthenticated = value;
+    notifyListeners();
+  }
+
+  set shouldShowPinScreen(bool value) {
+    _shouldShowPinScreen = value;
+    notifyListeners();
+  }
+
+  /// Método público para autenticação por biometria
+  void authenticateWithBiometric() {
+    _isAuthenticated = true;
+    _shouldShowPinScreen = false;
+    // Não resetamos a flag aqui. Deixamos o main.dart resetar quando consumir o evento
+    // ou o LockScreen resetar em caso de erro.
+    notifyListeners();
+  }
+
   /// Inicializa o provider verificando se o PIN está habilitado
   /// Requer que o status de login do usuário seja informado
   Future<void> initialize({bool isUserLoggedIn = false}) async {

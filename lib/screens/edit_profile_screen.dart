@@ -1,11 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'dart:io';
+
+import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/auth_provider.dart';
+import '../providers/pin_provider.dart';
 // ...existing code...
 import '../services/file_utils.dart';
-import 'package:intl/intl.dart';
-import '../providers/auth_provider.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -25,33 +28,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   String? _pickedImagePath;
   AuthProvider? _authProvider; // Salvar referência
 
-  // Helper para mostrar SnackBar sem conflitos de Hero
-  Future<void> _showSnackBar(String message) async {
+  // Helper para mostrar SnackBar
+  void _showSnackBar(String message) {
     if (!mounted) return;
 
-    // Remove TUDO antes
-    ScaffoldMessenger.of(context)
-      ..removeCurrentSnackBar()
-      ..clearSnackBars();
-
-    // Aguarda Hero limpar completamente
-    await Future.delayed(const Duration(milliseconds: 150));
-
-    if (!mounted) return;
-
-    // Mostra novo SnackBar com action invisível para mudar Hero tag
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 2),
-        // Action invisível força Hero tag diferente
-        action: SnackBarAction(
-          label: ' ',
-          onPressed: () {},
-          textColor: Colors.transparent,
-        ),
-      ),
+      SnackBar(content: Text(message), duration: const Duration(seconds: 2)),
     );
   }
 
@@ -129,11 +111,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     });
 
     if (success) {
-      // Mostrar mensagem de sucesso sem conflitos de Hero
-      await _showSnackBar('Perfil atualizado com sucesso!');
+      // Mostrar mensagem de sucesso
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Perfil atualizado com sucesso!'),
+          duration: Duration(seconds: 2),
+        ),
+      );
 
-      // Aguardar usuário ver mensagem
-      await Future.delayed(const Duration(milliseconds: 500));
+      // Aguardar um pouco para usuário ver a mensagem
+      await Future.delayed(const Duration(milliseconds: 800));
+
+      if (!mounted) return;
+
+      // Remover o SnackBar antes de voltar
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+
+      // Pequeno delay para garantir que o SnackBar foi removido
+      await Future.delayed(const Duration(milliseconds: 100));
 
       if (!mounted) return;
       Navigator.of(context).pop();
@@ -145,6 +141,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> _pickImage() async {
+    // Seta flag para evitar bloqueio de tela quando o app vai para background
+    final pinProvider = context.read<PinProvider>();
+    pinProvider.isPickingExternalMedia = true;
+
     try {
       final picker = ImagePicker();
       final XFile? picked = await picker.pickImage(
@@ -170,8 +170,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         });
       }
     } catch (e) {
-      // Mostrar erro sem conflitos de Hero
-      await _showSnackBar('Erro ao selecionar imagem');
+      // Mostrar erro
+      _showSnackBar('Erro ao selecionar imagem');
     }
   }
 

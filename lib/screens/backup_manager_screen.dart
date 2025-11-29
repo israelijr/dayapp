@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+
 import '../services/backup_service.dart';
 
 class BackupManagerScreen extends StatefulWidget {
@@ -18,189 +19,239 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Gerenciar Backup'), elevation: 0),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Informação sobre backup
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+      body: Stack(
+        children: [
+          // Conteúdo principal
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Informação sobre backup
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(
-                          Icons.info_outline,
-                          color: Theme.of(context).primaryColor,
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.info_outline,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            const SizedBox(width: 8),
+                            const Text(
+                              'Sobre o Backup',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(height: 12),
                         const Text(
-                          'Sobre o Backup',
+                          'O backup completo inclui:\n'
+                          '• Banco de dados (histórias, textos, fotos, áudios)\n'
+                          '• Arquivos de vídeo\n\n'
+                          'Um arquivo ZIP será criado e você pode salvá-lo onde quiser:\n'
+                          '• OneDrive\n'
+                          '• Google Drive\n'
+                          '• Email\n'
+                          '• Qualquer outro local',
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // Backup em Arquivo ZIP
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.folder_zip,
+                              color: Colors.green[700],
+                              size: 28,
+                            ),
+                            const SizedBox(width: 12),
+                            const Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Backup Completo',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Arquivo ZIP com todos os seus dados',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          '📦 Criar Backup:',
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 14,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    const Text(
-                      'O backup completo inclui:\n'
-                      '• Banco de dados (histórias, textos, fotos, áudios)\n'
-                      '• Arquivos de vídeo\n\n'
-                      'Um arquivo ZIP será criado e você pode salvá-lo onde quiser:\n'
-                      '• OneDrive\n'
-                      '• Google Drive\n'
-                      '• Email\n'
-                      '• Qualquer outro local',
-                      style: TextStyle(fontSize: 14),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            // Backup em Arquivo ZIP
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.folder_zip,
-                          color: Colors.green[700],
-                          size: 28,
+                        const SizedBox(height: 8),
+                        const Text(
+                          'Gera um arquivo ZIP que você pode salvar no OneDrive, Google Drive, email ou qualquer outro local.',
+                          style: TextStyle(fontSize: 13),
                         ),
-                        const SizedBox(width: 12),
-                        const Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Backup Completo',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                'Arquivo ZIP com todos os seus dados',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ],
+                        const SizedBox(height: 12),
+                        ElevatedButton.icon(
+                          onPressed: _isLoading ? null : _createAndShareBackup,
+                          icon: const Icon(Icons.share),
+                          label: const Text('Criar e Compartilhar Backup'),
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(double.infinity, 48),
+                            backgroundColor: Colors.green,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        const Divider(),
+                        const SizedBox(height: 12),
+                        const Text(
+                          '📥 Restaurar Backup:',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          'Selecione um arquivo de backup (ZIP) anteriormente criado para restaurar todos os seus dados.',
+                          style: TextStyle(fontSize: 13),
+                        ),
+                        const SizedBox(height: 12),
+                        ElevatedButton.icon(
+                          onPressed: _isLoading ? null : _restoreFromFile,
+                          icon: const Icon(Icons.file_upload),
+                          label: const Text('Restaurar de Arquivo'),
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(double.infinity, 48),
+                            backgroundColor: Colors.deepOrange,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      '📦 Criar Backup:',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Gera um arquivo ZIP que você pode salvar no OneDrive, Google Drive, email ou qualquer outro local.',
-                      style: TextStyle(fontSize: 13),
-                    ),
-                    const SizedBox(height: 12),
-                    ElevatedButton.icon(
-                      onPressed: _isLoading ? null : _createAndShareBackup,
-                      icon: const Icon(Icons.share),
-                      label: const Text('Criar e Compartilhar Backup'),
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(double.infinity, 48),
-                        backgroundColor: Colors.green,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    const Divider(),
-                    const SizedBox(height: 12),
-                    const Text(
-                      '📥 Restaurar Backup:',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      'Selecione um arquivo de backup (ZIP) anteriormente criado para restaurar todos os seus dados.',
-                      style: TextStyle(fontSize: 13),
-                    ),
-                    const SizedBox(height: 12),
-                    ElevatedButton.icon(
-                      onPressed: _isLoading ? null : _restoreFromFile,
-                      icon: const Icon(Icons.file_upload),
-                      label: const Text('Restaurar de Arquivo'),
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(double.infinity, 48),
-                        backgroundColor: Colors.deepOrange,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
 
-            const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-            // Status/Progresso
-            if (_isLoading || _statusMessage.isNotEmpty)
-              Card(
-                color: _isLoading
-                    ? Colors.blue[50]
-                    : _statusMessage.contains('sucesso')
-                    ? Colors.green[50]
-                    : Colors.red[50],
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      if (_isLoading) ...[
-                        const CircularProgressIndicator(),
-                        const SizedBox(height: 16),
-                        const LinearProgressIndicator(),
-                      ] else
-                        Icon(
-                          _statusMessage.contains('sucesso')
-                              ? Icons.check_circle
-                              : Icons.error,
-                          color: _statusMessage.contains('sucesso')
-                              ? Colors.green
-                              : Colors.red,
-                          size: 48,
-                        ),
-                      const SizedBox(height: 12),
-                      Text(
-                        _statusMessage.isEmpty && _isLoading
-                            ? 'Processando...'
-                            : _statusMessage,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
+                // Mensagem de status (quando não está carregando)
+                if (!_isLoading && _statusMessage.isNotEmpty)
+                  Card(
+                    color:
+                        (_statusMessage.contains('sucesso') ||
+                            _statusMessage.contains('criado'))
+                        ? Colors.green[50]
+                        : Colors.red[50],
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        children: [
+                          Icon(
+                            (_statusMessage.contains('sucesso') ||
+                                    _statusMessage.contains('criado'))
+                                ? Icons.check_circle
+                                : Icons.error,
+                            color:
+                                (_statusMessage.contains('sucesso') ||
+                                    _statusMessage.contains('criado'))
+                                ? Colors.green
+                                : Colors.red,
+                            size: 32,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              _statusMessage,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
+
+          // Overlay de carregamento - cobre toda a tela
+          if (_isLoading)
+            Container(
+              color: Colors.black54,
+              child: Center(
+                child: Card(
+                  margin: const EdgeInsets.all(32),
+                  child: Padding(
+                    padding: const EdgeInsets.all(32),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const SizedBox(
+                          width: 60,
+                          height: 60,
+                          child: CircularProgressIndicator(strokeWidth: 5),
+                        ),
+                        const SizedBox(height: 24),
+                        Text(
+                          _statusMessage.isEmpty
+                              ? 'Processando...'
+                              : _statusMessage,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        const SizedBox(
+                          width: 200,
+                          child: LinearProgressIndicator(),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          'Por favor, aguarde...',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-          ],
-        ),
+            ),
+        ],
       ),
     );
   }
@@ -301,6 +352,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
       });
 
       // Mostrar diálogo de sucesso
+      if (!mounted) return;
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -322,10 +374,12 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
         ),
       );
     } catch (e) {
-      setState(() {
-        _isLoading = false;
-        _statusMessage = 'Erro ao restaurar: $e';
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _statusMessage = 'Erro ao restaurar: $e';
+        });
+      }
     }
   }
 }

@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'secure_storage_service.dart';
 
 class BiometricService {
   static final BiometricService _instance = BiometricService._internal();
@@ -9,10 +9,12 @@ class BiometricService {
   BiometricService._internal();
 
   final LocalAuthentication _localAuth = LocalAuthentication();
+  final SecureStorageService _secureStorage = SecureStorageService();
 
-  static const String _biometricEnabledKey = 'biometric_enabled';
-  static const String _biometricEmailKey = 'biometric_email';
-  static const String _biometricPasswordKey = 'biometric_password';
+  // Chaves legadas para migração (SharedPreferences inseguro)
+  static const String _legacyBiometricEnabledKey = 'biometric_enabled';
+  static const String _legacyBiometricEmailKey = 'biometric_email';
+  static const String _legacyBiometricPasswordKey = 'biometric_password';
 
   /// Verifica se o dispositivo suporta biometria
   Future<bool> isBiometricAvailable() async {
@@ -22,23 +24,21 @@ class BiometricService {
       final bool canAuthenticate =
           canAuthenticateWithBiometrics || await _localAuth.isDeviceSupported();
       return canAuthenticate;
-    } on PlatformException catch (e) {
-      debugPrint('Erro ao verificar biometria: $e');
+    } on PlatformException {
       return false;
     }
   }
 
-  /// Obtém a lista de tipos de biometria disponíveis
+  /// ObtÃ©m a lista de tipos de biometria disponÃ­veis
   Future<List<BiometricType>> getAvailableBiometrics() async {
     try {
       return await _localAuth.getAvailableBiometrics();
-    } on PlatformException catch (e) {
-      debugPrint('Erro ao obter biometrias disponíveis: $e');
+    } on PlatformException {
       return <BiometricType>[];
     }
   }
 
-  /// Autentica o usuário usando biometria
+  /// Autentica o usuÃ¡rio usando biometria
   Future<bool> authenticate({
     String reason = 'Por favor, autentique-se para acessar o aplicativo',
   }) async {
@@ -47,56 +47,103 @@ class BiometricService {
         localizedReason: reason,
         options: const AuthenticationOptions(
           stickyAuth: true,
-          biometricOnly: false,
+          biometricOnly: true,
         ),
       );
       return didAuthenticate;
-    } on PlatformException catch (e) {
-      debugPrint('Erro ao autenticar: $e');
+    } on PlatformException {
       return false;
     }
   }
 
   /// Verifica se a biometria está habilitada para o aplicativo
+  /// Inclui migração automática de dados legados
   Future<bool> isBiometricEnabled() async {
+    // Primeiro verifica no armazenamento seguro
+    final secureEnabled = await _secureStorage.isBiometricEnabled();
+    if (secureEnabled) return true;
+
+    // Verifica se há dados legados para migrar
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(_biometricEnabledKey) ?? false;
+    final legacyEnabled = prefs.getBool(_legacyBiometricEnabledKey) ?? false;
+
+    if (legacyEnabled) {
+      // Migra dados legados para armazenamento seguro
+      await _migrateLegacyData();
+      return true;
+    }
+
+    return false;
   }
 
-  /// Habilita a biometria para o aplicativo
+  /// Habilita a biometria para o aplicativo (armazenamento seguro)
   Future<void> enableBiometric(String email, String password) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_biometricEnabledKey, true);
-    await prefs.setString(_biometricEmailKey, email);
-    await prefs.setString(_biometricPasswordKey, password);
+    await _secureStorage.saveBiometricCredentials(email, password);
+
+    // Remove dados legados se existirem
+    await _removeLegacyData();
   }
 
   /// Desabilita a biometria para o aplicativo
   Future<void> disableBiometric() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_biometricEnabledKey);
-    await prefs.remove(_biometricEmailKey);
-    await prefs.remove(_biometricPasswordKey);
+    await _secureStorage.removeBiometricCredentials();
+
+    // Remove dados legados se existirem
+    await _removeLegacyData();
   }
 
-  /// Obtém as credenciais salvas para login biométrico
+  /// Obtém as credenciais salvas para login biométrico (armazenamento seguro)
   Future<Map<String, String>?> getSavedCredentials() async {
-    final prefs = await SharedPreferences.getInstance();
-    final email = prefs.getString(_biometricEmailKey);
-    final password = prefs.getString(_biometricPasswordKey);
+    // Primeiro tenta do armazenamento seguro
+    final secureCredentials = await _secureStorage.getBiometricCredentials();
+    if (secureCredentials != null) {
+      return secureCredentials;
+    }
 
-    if (email != null && password != null) {
-      return {'email': email, 'password': password};
+    // Verifica se há dados legados para migrar
+    final prefs = await SharedPreferences.getInstance();
+    final legacyEmail = prefs.getString(_legacyBiometricEmailKey);
+    final legacyPassword = prefs.getString(_legacyBiometricPasswordKey);
+
+    if (legacyEmail != null && legacyPassword != null) {
+      // Migra para armazenamento seguro
+      await _secureStorage.saveBiometricCredentials(
+        legacyEmail,
+        legacyPassword,
+      );
+      await _removeLegacyData();
+      return {'email': legacyEmail, 'password': legacyPassword};
     }
 
     return null;
   }
 
-  /// Obtém o texto descritivo dos tipos de biometria disponíveis
+  /// Migra dados legados do SharedPreferences para SecureStorage
+  Future<void> _migrateLegacyData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final email = prefs.getString(_legacyBiometricEmailKey);
+    final password = prefs.getString(_legacyBiometricPasswordKey);
+
+    if (email != null && password != null) {
+      await _secureStorage.saveBiometricCredentials(email, password);
+    }
+
+    await _removeLegacyData();
+  }
+
+  /// Remove dados legados do SharedPreferences
+  Future<void> _removeLegacyData() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_legacyBiometricEnabledKey);
+    await prefs.remove(_legacyBiometricEmailKey);
+    await prefs.remove(_legacyBiometricPasswordKey);
+  }
+
+  /// ObtÃ©m o texto descritivo dos tipos de biometria disponÃ­veis
   String getBiometricTypesText(List<BiometricType> types) {
     if (types.isEmpty) return 'Nenhuma';
 
-    List<String> typeNames = [];
+    final List<String> typeNames = [];
     for (var type in types) {
       switch (type) {
         case BiometricType.face:

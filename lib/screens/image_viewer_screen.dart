@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:flutter/services.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../db/historia_foto_helper.dart';
 
@@ -12,8 +12,7 @@ class ImageViewerScreen extends StatefulWidget {
   final int? historiaId; // optional for context
   final int initialIndex;
   const ImageViewerScreen({
-    super.key,
-    required this.images,
+    required this.images, super.key,
     this.photoIds,
     this.historiaId,
     this.initialIndex = 0,

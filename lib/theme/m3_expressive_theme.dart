@@ -128,7 +128,7 @@ class M3ExpressiveTheme {
       ),
 
       // NAVIGATION DRAWER
-      drawerTheme: DrawerThemeData(
+      drawerTheme: const DrawerThemeData(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
             topRight: Radius.circular(20),
@@ -146,7 +146,7 @@ class M3ExpressiveTheme {
       ),
 
       // BOTTOM SHEETS - modal bottom sheets
-      bottomSheetTheme: BottomSheetThemeData(
+      bottomSheetTheme: const BottomSheetThemeData(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(28), // Aumentado de 20 para 28
@@ -288,7 +288,7 @@ class M3ExpressiveTheme {
         ),
       ),
 
-      drawerTheme: DrawerThemeData(
+      drawerTheme: const DrawerThemeData(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
             topRight: Radius.circular(20),
@@ -302,7 +302,7 @@ class M3ExpressiveTheme {
         elevation: 6,
       ),
 
-      bottomSheetTheme: BottomSheetThemeData(
+      bottomSheetTheme: const BottomSheetThemeData(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
         ),

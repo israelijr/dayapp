@@ -1,16 +1,24 @@
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
 import '../db/database_helper.dart';
+import '../db/historia_audio_helper.dart';
 import '../db/historia_foto_helper.dart';
+import '../db/historia_video_helper.dart';
 import '../models/historia.dart';
+import '../models/historia_audio.dart';
 import '../models/historia_foto.dart';
+import '../models/historia_video_v2.dart' as v2;
 import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
 import '../providers/refresh_provider.dart';
+import '../widgets/compact_audio_icon.dart';
+import '../widgets/compact_video_icon.dart';
+import '../widgets/rich_text_viewer_widget.dart';
 import 'create_historia_screen.dart';
 import 'edit_historia_screen.dart';
 import 'edit_profile_screen.dart';
@@ -29,7 +37,7 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
 
   bool _isCardView = true; // true = modo blocos, false = modo ícones
 
-  String _getEmoticonImage(String emoticon) {
+  String? _getEmoticonImage(String emoticon) {
     switch (emoticon) {
       case 'Feliz':
         return '1_feliz.png';
@@ -52,7 +60,7 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
       case 'Muito Triste':
         return '10_muito_triste.png';
       default:
-        return '1_feliz.png';
+        return null;
     }
   }
 
@@ -149,22 +157,22 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
 
         return Slidable(
           startActionPane: ActionPane(
-            motion: BehindMotion(),
+            motion: const BehindMotion(),
             children: [
               SlidableAction(
                 onPressed: (context) async {
-                  // Restaurar (remover flag de arquivado)
+                  // Desarquivar (remover flag de arquivado)
                   await _updateHistoria(historia, updates: {'arquivado': null});
                 },
                 backgroundColor: Colors.green,
                 foregroundColor: Colors.white,
                 icon: Icons.restore,
-                label: 'Restaurar',
+                label: 'Desarquivar',
               ),
             ],
           ),
           endActionPane: ActionPane(
-            motion: BehindMotion(),
+            motion: const BehindMotion(),
             children: [
               SlidableAction(
                 onPressed: (context) async {
@@ -224,6 +232,12 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
                       ),
                       const SizedBox(height: 12),
                     ],
+                    // Linha combinada: Emoticon + Áudios + Vídeos
+                    HistoriaMediaRow(
+                      historiaId: historia.id ?? 0,
+                      emoticon: historia.emoticon,
+                      getEmoticonImage: _getEmoticonImage,
+                    ),
                     Text(
                       historia.titulo,
                       style: TextStyle(
@@ -232,15 +246,6 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
                         color: Theme.of(context).textTheme.titleLarge?.color,
                       ),
                     ),
-                    if (historia.emoticon != null &&
-                        historia.emoticon!.isNotEmpty) ...[
-                      const SizedBox(height: 8),
-                      Image.asset(
-                        'assets/image/${_getEmoticonImage(historia.emoticon!)}',
-                        width: 32,
-                        height: 32,
-                      ),
-                    ],
                     if (historia.tag != null && historia.tag!.isNotEmpty) ...[
                       const SizedBox(height: 8),
                       Container(
@@ -267,11 +272,10 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
                       ),
                     ],
                     const SizedBox(height: 8),
-                    Text(
-                      historia.descricao ?? '',
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: Theme.of(context).textTheme.bodyMedium?.color,
+                    SizedBox(
+                      height: 80,
+                      child: RichTextViewerWidget(
+                        jsonContent: historia.descricao,
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -348,7 +352,7 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
         padding: const EdgeInsets.only(left: 20),
         color: Colors.green,
         child: const Text(
-          'Restaurar',
+          'Desarquivar',
           style: TextStyle(
             color: Colors.white,
             fontSize: 18,
@@ -641,8 +645,7 @@ class HistoriaFotosGrid extends StatelessWidget {
   final int historiaId;
   final double height;
   const HistoriaFotosGrid({
-    super.key,
-    required this.historiaId,
+    required this.historiaId, super.key,
     this.height = 120,
   });
 
@@ -741,7 +744,7 @@ class HistoriaFotosGrid extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                   if (isLast)
-                    Container(
+                    ColoredBox(
                       color: Colors.black45,
                       child: Center(
                         child: Text(
@@ -838,5 +841,131 @@ class HistoriaFotosGrid extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+// Widget para exibir emoticon + áudios + vídeos em uma linha horizontal
+class HistoriaMediaRow extends StatelessWidget {
+  final int historiaId;
+  final String? emoticon;
+  final String? Function(String) getEmoticonImage;
+
+  const HistoriaMediaRow({
+    required this.historiaId, required this.getEmoticonImage, super.key,
+    this.emoticon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<Map<String, dynamic>>(
+      future: _loadMediaData(),
+      builder: (context, snapshot) {
+        // Mostra loading enquanto carrega
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const SizedBox.shrink();
+        }
+
+        // Mostra erro se houver
+        if (snapshot.hasError) {
+          return const SizedBox.shrink();
+        }
+
+        if (!snapshot.hasData) {
+          return const SizedBox.shrink();
+        }
+
+        final data = snapshot.data!;
+        final audios = data['audios'] as List<HistoriaAudio>;
+        final videos = data['videos'] as List<v2.HistoriaVideo>;
+
+        // Se não tem emoticon nem mídia, não mostra nada
+        if ((emoticon == null || emoticon!.isEmpty) &&
+            audios.isEmpty &&
+            videos.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        return Padding(
+          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+          child: SizedBox(
+            height: 64,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: [
+                // Emoticon
+                if (emoticon != null && emoticon!.isNotEmpty)
+                  Container(
+                    margin: const EdgeInsets.only(right: 8),
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Theme.of(context).dividerColor,
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Builder(
+                      builder: (context) {
+                        final imagePath = getEmoticonImage(emoticon!);
+                        if (imagePath != null) {
+                          return Image.asset(
+                            'assets/image/$imagePath',
+                            width: 40,
+                            height: 40,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Icon(Icons.mood, size: 40);
+                            },
+                          );
+                        } else {
+                          return Center(
+                            child: Text(
+                              emoticon!,
+                              style: const TextStyle(fontSize: 32),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                // Áudios
+                ...audios.map((audio) {
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: CompactAudioIcon(
+                      audioData: audio.audio,
+                      duration: audio.duracao,
+                    ),
+                  );
+                }),
+                // Vídeos
+                ...videos.map((video) {
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: CompactVideoIcon(
+                      videoPath: video.videoPath,
+                      duration: video.duracao,
+                    ),
+                  );
+                }),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<Map<String, dynamic>> _loadMediaData() async {
+    try {
+      final audios = await HistoriaAudioHelper().getAudiosByHistoria(
+        historiaId,
+      );
+      final videos = await HistoriaVideoHelper().getVideosByHistoria(
+        historiaId,
+      );
+      return {'audios': audios, 'videos': videos};
+    } catch (e) {
+      return {'audios': <HistoriaAudio>[], 'videos': <v2.HistoriaVideo>[]};
+    }
   }
 }
