@@ -30,8 +30,14 @@ class RichTextEditorWidget extends StatefulWidget {
   /// Estilo customizado para o editor
   final TextStyle? textStyle;
 
+  /// Se true, o editor expande para ocupar todo o espaço disponível
+  /// Use true quando o widget estiver em um contexto com altura definida (Scaffold body)
+  /// Use false quando estiver dentro de SingleChildScrollView
+  final bool expand;
+
   const RichTextEditorWidget({
-    required this.controller, super.key,
+    required this.controller,
+    super.key,
     this.hintText,
     this.minLines = 5,
     this.maxLines,
@@ -39,6 +45,7 @@ class RichTextEditorWidget extends StatefulWidget {
     this.onChanged,
     this.readOnly = false,
     this.textStyle,
+    this.expand = false,
   });
 
   @override
@@ -74,8 +81,44 @@ class _RichTextEditorWidgetState extends State<RichTextEditorWidget> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
+    // Widget do editor com decoração
+    Widget editorContainer = Container(
+      constraints: widget.expand
+          ? null
+          : BoxConstraints(
+              minHeight: widget.minLines * 20.0,
+              maxHeight: widget.maxLines != null
+                  ? widget.maxLines! * 20.0
+                  : double.infinity,
+            ),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        border: Border.all(color: theme.colorScheme.outlineVariant),
+        borderRadius: widget.showToolbar && !widget.readOnly
+            ? const BorderRadius.only(
+                bottomLeft: Radius.circular(8),
+                bottomRight: Radius.circular(8),
+              )
+            : BorderRadius.circular(8),
+      ),
+      child: QuillEditor(
+        controller: widget.controller,
+        focusNode: _focusNode,
+        scrollController: _scrollController,
+        config: QuillEditorConfig(
+          placeholder: widget.hintText ?? 'Digite aqui...',
+          padding: const EdgeInsets.all(12),
+        ),
+      ),
+    );
+
+    // Se expand é true, envolve com Expanded para ocupar o espaço disponível
+    if (widget.expand) {
+      editorContainer = Expanded(child: editorContainer);
+    }
+
     return Column(
-      mainAxisSize: MainAxisSize.min,
+      mainAxisSize: widget.expand ? MainAxisSize.max : MainAxisSize.min,
       children: [
         // Toolbar de formatação (se habilitada)
         if (widget.showToolbar && !widget.readOnly) ...[
@@ -121,33 +164,7 @@ class _RichTextEditorWidgetState extends State<RichTextEditorWidget> {
         ],
 
         // Editor de texto
-        Container(
-          constraints: BoxConstraints(
-            minHeight: widget.minLines * 20.0,
-            maxHeight: widget.maxLines != null
-                ? widget.maxLines! * 20.0
-                : double.infinity,
-          ),
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surface,
-            border: Border.all(color: theme.colorScheme.outlineVariant),
-            borderRadius: widget.showToolbar && !widget.readOnly
-                ? const BorderRadius.only(
-                    bottomLeft: Radius.circular(8),
-                    bottomRight: Radius.circular(8),
-                  )
-                : BorderRadius.circular(8),
-          ),
-          child: QuillEditor(
-            controller: widget.controller,
-            focusNode: _focusNode,
-            scrollController: _scrollController,
-            config: QuillEditorConfig(
-              placeholder: widget.hintText ?? 'Digite aqui...',
-              padding: const EdgeInsets.all(12),
-            ),
-          ),
-        ),
+        editorContainer,
       ],
     );
   }

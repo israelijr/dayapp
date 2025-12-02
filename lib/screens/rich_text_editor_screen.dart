@@ -287,9 +287,13 @@ class _RichTextEditorScreenState extends State<RichTextEditorScreen> {
                           ),
                         ),
                       ),
-                      body: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: _RichTextEditorBody(controller: _controller),
+                      // Usa resizeToAvoidBottomInset para ajustar o layout quando o teclado aparece
+                      resizeToAvoidBottomInset: true,
+                      body: SafeArea(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: _RichTextEditorBody(controller: _controller),
+                        ),
                       ),
                     ),
                   ),
@@ -376,6 +380,7 @@ class _RichTextEditorBodyState extends State<_RichTextEditorBody> {
       minLines: 10,
       maxLines: null,
       hintText: 'Digite aqui...',
+      expand: true, // Expande para ocupar todo o espaço disponível na tela
     );
   }
 
