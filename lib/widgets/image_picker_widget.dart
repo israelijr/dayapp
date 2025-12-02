@@ -104,6 +104,10 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
         imageQuality: widget.imageQuality,
       );
 
+      // Reseta a flag após retornar do app externo (independente de sucesso ou cancelamento)
+      // O main.dart também reseta no resumed, mas garantimos aqui para cobrir todos os casos
+      pinProvider.isPickingExternalMedia = false;
+
       if (picked != null) {
         final file = File(picked.path);
         final bytes = await file.readAsBytes();
@@ -114,6 +118,9 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
         Navigator.of(context).pop();
       }
     } catch (e) {
+      // Garante reset da flag em caso de erro
+      pinProvider.isPickingExternalMedia = false;
+
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
@@ -134,6 +141,9 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
         maxHeight: widget.maxHeight,
         imageQuality: widget.imageQuality,
       );
+
+      // Reseta a flag após retornar do app externo (independente de sucesso ou cancelamento)
+      pinProvider.isPickingExternalMedia = false;
 
       if (photo != null) {
         final file = File(photo.path);
@@ -157,6 +167,9 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
         }
       }
     } catch (e) {
+      // Garante reset da flag em caso de erro
+      pinProvider.isPickingExternalMedia = false;
+
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,

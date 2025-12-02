@@ -260,10 +260,16 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
   }
 
   Future<void> _createAndShareBackup() async {
+    // Obter o PinProvider para evitar bloqueio durante compartilhamento
+    final pinProvider = Provider.of<PinProvider>(context, listen: false);
+
     setState(() {
       _isLoading = true;
       _statusMessage = 'Iniciando backup...';
     });
+
+    // Seta flag para evitar bloqueio de tela quando o app vai para background
+    pinProvider.isPickingExternalMedia = true;
 
     try {
       await _backupService.shareBackupFile(
@@ -274,6 +280,9 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
         },
       );
 
+      // Reseta a flag após retornar do app externo
+      pinProvider.isPickingExternalMedia = false;
+
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -282,6 +291,9 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
         });
       }
     } catch (e) {
+      // Garante reset da flag em caso de erro
+      pinProvider.isPickingExternalMedia = false;
+
       if (mounted) {
         setState(() {
           _isLoading = false;

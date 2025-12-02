@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 import '../db/database_helper.dart';
 import '../db/historia_audio_helper.dart';
@@ -14,6 +15,7 @@ import '../helpers/notification_helper.dart';
 import '../helpers/photo_file_helper.dart';
 import '../helpers/rich_text_helper.dart';
 import '../models/historia.dart';
+import '../providers/pin_provider.dart';
 import '../services/emoji_service.dart';
 import '../widgets/audio_recorder_widget.dart';
 import '../widgets/compact_audio_icon.dart';
@@ -550,9 +552,17 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
   }
 
   Future<void> _pickTxtFileForDescription() async {
+    // Seta flag para evitar bloqueio de tela quando o app vai para background
+    final pinProvider = context.read<PinProvider>();
+    pinProvider.isPickingExternalMedia = true;
+
     try {
       const typeGroup = XTypeGroup(extensions: ['txt']);
       final files = await openFiles(acceptedTypeGroups: [typeGroup]);
+
+      // Reseta a flag após retornar do app externo (independente de sucesso ou cancelamento)
+      pinProvider.isPickingExternalMedia = false;
+
       if (files.isEmpty) return; // canceled
       final file = files.first;
       final content = await file.readAsString();
@@ -565,6 +575,9 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
         richTextController.document.insert(0, content);
       });
     } catch (e) {
+      // Garante reset da flag em caso de erro
+      pinProvider.isPickingExternalMedia = false;
+
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,

@@ -12,6 +12,7 @@ import '../db/historia_video_helper.dart';
 import '../helpers/notification_helper.dart';
 import '../helpers/rich_text_helper.dart';
 import '../providers/auth_provider.dart';
+import '../providers/pin_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../services/emoji_service.dart';
 import '../widgets/audio_recorder_widget.dart';
@@ -409,9 +410,17 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
   }
 
   Future<void> _pickTxtFileForDescription() async {
+    // Seta flag para evitar bloqueio de tela quando o app vai para background
+    final pinProvider = context.read<PinProvider>();
+    pinProvider.isPickingExternalMedia = true;
+
     try {
       const typeGroup = XTypeGroup(extensions: ['txt']);
       final files = await openFiles(acceptedTypeGroups: [typeGroup]);
+
+      // Reseta a flag após retornar do app externo (independente de sucesso ou cancelamento)
+      pinProvider.isPickingExternalMedia = false;
+
       if (files.isEmpty) return; // canceled
       final file = files.first;
       final content = await file.readAsString();
@@ -426,6 +435,9 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
         richTextController.document.insert(0, content);
       });
     } catch (e) {
+      // Garante reset da flag em caso de erro
+      pinProvider.isPickingExternalMedia = false;
+
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,

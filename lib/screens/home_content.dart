@@ -15,6 +15,7 @@ import '../db/historia_video_helper.dart';
 import '../models/historia.dart';
 import '../models/historia_video_v2.dart' as v2;
 import '../providers/auth_provider.dart';
+import '../providers/pin_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../services/thumbnail_service.dart';
 import '../widgets/compact_audio_icon.dart';
@@ -930,6 +931,14 @@ class HistoriaFotosGrid extends StatelessWidget {
                                       final messenger = ScaffoldMessenger.of(
                                         parentContext,
                                       );
+                                      // Seta flag para evitar bloqueio de tela quando o app vai para background
+                                      final pinProvider =
+                                          Provider.of<PinProvider>(
+                                            parentContext,
+                                            listen: false,
+                                          );
+                                      pinProvider.isPickingExternalMedia = true;
+
                                       try {
                                         final bytes = localImages[currentIndex];
                                         final tempDir =
@@ -942,7 +951,15 @@ class HistoriaFotosGrid extends StatelessWidget {
                                         await Share.shareXFiles([
                                           XFile(file.path),
                                         ]);
+
+                                        // Reseta a flag após retornar do app externo
+                                        pinProvider.isPickingExternalMedia =
+                                            false;
                                       } catch (_) {
+                                        // Garante reset da flag em caso de erro
+                                        pinProvider.isPickingExternalMedia =
+                                            false;
+
                                         messenger.showSnackBar(
                                           const SnackBar(
                                             content: Text(

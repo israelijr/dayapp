@@ -153,6 +153,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         maxHeight: 1024,
         imageQuality: 85,
       );
+
+      // Reseta a flag após retornar do app externo (independente de sucesso ou cancelamento)
+      pinProvider.isPickingExternalMedia = false;
+
       if (picked != null) {
         final File tmpFile = File(picked.path);
         final oldPath = _pickedImagePath;
@@ -170,6 +174,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         });
       }
     } catch (e) {
+      // Garante reset da flag em caso de erro
+      pinProvider.isPickingExternalMedia = false;
+
       // Mostrar erro
       _showSnackBar('Erro ao selecionar imagem');
     }

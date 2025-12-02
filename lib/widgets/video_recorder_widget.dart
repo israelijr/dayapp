@@ -91,6 +91,9 @@ class _VideoRecorderWidgetState extends State<VideoRecorderWidget> {
         allowMultiple: false,
       );
 
+      // Reseta a flag após retornar do app externo (independente de sucesso ou cancelamento)
+      pinProvider.isPickingExternalMedia = false;
+
       if (result != null && result.files.single.path != null) {
         final file = File(result.files.single.path!);
         final bytes = await file.readAsBytes();
@@ -104,6 +107,9 @@ class _VideoRecorderWidgetState extends State<VideoRecorderWidget> {
         Navigator.of(context).pop();
       }
     } catch (e) {
+      // Garante reset da flag em caso de erro
+      pinProvider.isPickingExternalMedia = false;
+
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
@@ -121,6 +127,9 @@ class _VideoRecorderWidgetState extends State<VideoRecorderWidget> {
         source: ImageSource.camera,
         maxDuration: const Duration(minutes: 10), // Limite de 10 minutos
       );
+
+      // Reseta a flag após retornar do app externo (independente de sucesso ou cancelamento)
+      pinProvider.isPickingExternalMedia = false;
 
       if (video != null) {
         final file = File(video.path);
@@ -149,6 +158,9 @@ class _VideoRecorderWidgetState extends State<VideoRecorderWidget> {
         }
       }
     } catch (e) {
+      // Garante reset da flag em caso de erro
+      pinProvider.isPickingExternalMedia = false;
+
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,

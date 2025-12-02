@@ -305,6 +305,9 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
         allowMultiple: false,
       );
 
+      // Reseta a flag após retornar do app externo (independente de sucesso ou cancelamento)
+      pinProvider.isPickingExternalMedia = false;
+
       if (result != null && result.files.single.path != null) {
         final file = File(result.files.single.path!);
         final bytes = await file.readAsBytes();
@@ -318,6 +321,9 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
         Navigator.of(context).pop();
       }
     } catch (e) {
+      // Garante reset da flag em caso de erro
+      pinProvider.isPickingExternalMedia = false;
+
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,

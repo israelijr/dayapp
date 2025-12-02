@@ -2,9 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../db/historia_foto_helper.dart';
+import '../providers/pin_provider.dart';
 
 class ImageViewerScreen extends StatefulWidget {
   final List<Uint8List> images;
@@ -12,7 +14,8 @@ class ImageViewerScreen extends StatefulWidget {
   final int? historiaId; // optional for context
   final int initialIndex;
   const ImageViewerScreen({
-    required this.images, super.key,
+    required this.images,
+    super.key,
     this.photoIds,
     this.historiaId,
     this.initialIndex = 0,
@@ -40,6 +43,10 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
   }
 
   Future<void> _shareCurrent() async {
+    // Seta flag para evitar bloqueio de tela quando o app vai para background
+    final pinProvider = context.read<PinProvider>();
+    pinProvider.isPickingExternalMedia = true;
+
     try {
       final bytes = widget.images[_currentIndex];
       // ignore: deprecated_member_use
@@ -50,7 +57,13 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
           name: 'image_${_currentIndex + 1}.png',
         ),
       ]);
+
+      // Reseta a flag após retornar do app externo
+      pinProvider.isPickingExternalMedia = false;
     } catch (e) {
+      // Garante reset da flag em caso de erro
+      pinProvider.isPickingExternalMedia = false;
+
       // fallback: copy base64 to clipboard
       try {
         final bytes = widget.images[_currentIndex];
