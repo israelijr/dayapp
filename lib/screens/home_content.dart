@@ -647,7 +647,7 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/image/home_vazia.png', width: 100, height: 100),
+            Image.asset('assets/image/home_vazia.png', width: 250, height: 250),
             const SizedBox(height: 16),
             const Text(
               'Nenhuma história para exibir aqui.',
