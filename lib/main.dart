@@ -30,7 +30,7 @@ import 'services/ad_service.dart';
 import 'services/inactivity_service.dart';
 import 'services/notification_service.dart';
 import 'theme/m3_expressive_theme.dart';
-import 'widgets/pin_protected_wrapper.dart';
+import 'widgets/global_lock_overlay.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -364,6 +364,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               GlobalCupertinoLocalizations.delegate,
               FlutterQuillLocalizations.delegate,
             ],
+            // Overlay global de bloqueio - preserva estado de todas as telas
+            builder: (context, child) {
+              return GlobalLockOverlay(child: child ?? const SizedBox.shrink());
+            },
             // Vai direto para home ou login (splash já foi mostrada durante carregamento)
             initialRoute: widget.authProvider.isLoggedIn ? '/home' : '/login',
             routes: {
@@ -371,22 +375,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               '/create_account': (context) => const CreateAccountScreen(),
               '/create_account_complement': (context) =>
                   const CreateAccountComplementScreen(),
-              '/home': (context) =>
-                  const PinProtectedWrapper(child: HomeScreen()),
-              '/create_historia': (context) =>
-                  const PinProtectedWrapper(child: CreateHistoriaScreen()),
-              '/edit_profile': (context) =>
-                  const PinProtectedWrapper(child: EditProfileScreen()),
-              '/settings': (context) =>
-                  const PinProtectedWrapper(child: SettingsScreen()),
-              '/calendar': (context) =>
-                  const PinProtectedWrapper(child: CalendarViewScreen()),
-              '/backup-manager': (context) =>
-                  const PinProtectedWrapper(child: BackupManagerScreen()),
-              '/trash': (context) =>
-                  const PinProtectedWrapper(child: TrashScreen()),
-              '/search': (context) =>
-                  const PinProtectedWrapper(child: SearchScreen()),
+              '/home': (context) => const HomeScreen(),
+              '/create_historia': (context) => const CreateHistoriaScreen(),
+              '/edit_profile': (context) => const EditProfileScreen(),
+              '/settings': (context) => const SettingsScreen(),
+              '/calendar': (context) => const CalendarViewScreen(),
+              '/backup-manager': (context) => const BackupManagerScreen(),
+              '/trash': (context) => const TrashScreen(),
+              '/search': (context) => const SearchScreen(),
             },
           );
         },
