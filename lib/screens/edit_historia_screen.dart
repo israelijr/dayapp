@@ -257,16 +257,24 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     showDialog(
       context: context,
       builder: (context) => ImagePickerWidget(
-        onImagePicked: (bytes) async {
-          // Compress image to avoid SQLite CursorWindow limit (2MB)
-          final compressedBytes = await ImageCompressionHelper.compressImage(
-            bytes,
-          );
+        allowMultiple: true,
+        onMultipleImagesPicked: (imagesList) async {
+          // Comprime cada imagem para evitar limite do SQLite CursorWindow (2MB)
+          final List<Uint8List> compressedImages = [];
+          final List<int> newIds = [];
+
+          for (final bytes in imagesList) {
+            final compressedBytes = await ImageCompressionHelper.compressImage(
+              bytes,
+            );
+            compressedImages.add(compressedBytes);
+            newIds.add(0); // 0 indica nova foto
+          }
 
           if (!mounted) return;
           setState(() {
-            fotos.add(compressedBytes);
-            fotoIds.add(0); // 0 indica nova foto
+            fotos.addAll(compressedImages);
+            fotoIds.addAll(newIds);
             _checkForChanges();
           });
         },
@@ -341,10 +349,14 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     showDialog(
       context: context,
       builder: (context) => AudioRecorderWidget(
-        onAudioRecorded: (audio, duration) {
+        allowMultiple: true,
+        onMultipleAudiosSelected: (audiosList) {
           setState(() {
-            audios.add({'audio': audio, 'duration': duration});
-            audioIds.add(0); // 0 indica novo áudio
+            for (final audioData in audiosList) {
+              audios.add(audioData);
+              audioIds.add(0); // 0 indica novo áudio
+            }
+            _checkForChanges();
           });
         },
       ),
@@ -366,14 +378,18 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     showDialog(
       context: context,
       builder: (context) => VideoRecorderWidget(
-        onVideoRecorded: (video, duration) {
+        allowMultiple: true,
+        onMultipleVideosSelected: (videosList) {
           setState(() {
-            videos.add({
-              'video': video,
-              'thumbnail': null,
-              'duration': duration,
-            });
-            videoIds.add(0); // 0 indica novo vídeo
+            for (final videoData in videosList) {
+              videos.add({
+                'video': videoData['video'],
+                'thumbnail': null,
+                'duration': videoData['duration'],
+              });
+              videoIds.add(0); // 0 indica novo vídeo
+            }
+            _checkForChanges();
           });
         },
       ),

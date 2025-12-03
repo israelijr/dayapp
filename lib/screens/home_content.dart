@@ -628,7 +628,10 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
   void initState() {
     super.initState();
     // Recarrega dados quando a key muda (RefreshProvider foi atualizado)
-    widget.onRefresh();
+    // Usa addPostFrameCallback para evitar setState durante build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.onRefresh();
+    });
   }
 
   @override

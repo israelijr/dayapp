@@ -8,20 +8,34 @@ import 'package:provider/provider.dart';
 import '../providers/pin_provider.dart';
 
 /// Widget de seleção de imagem que oferece opção de tirar foto ou buscar na galeria.
+/// Suporta seleção múltipla de imagens da galeria.
 /// Segue o mesmo padrão de UX do AudioRecorderWidget e VideoRecorderWidget.
 class ImagePickerWidget extends StatefulWidget {
-  final Function(Uint8List image) onImagePicked;
+  /// Callback para quando uma única imagem é selecionada (compatibilidade)
+  final Function(Uint8List image)? onImagePicked;
+
+  /// Callback para quando múltiplas imagens são selecionadas
+  final Function(List<Uint8List> images)? onMultipleImagesPicked;
+
   final double? maxWidth;
   final double? maxHeight;
   final int? imageQuality;
 
+  /// Se true, permite seleção múltipla na galeria
+  final bool allowMultiple;
+
   const ImagePickerWidget({
-    required this.onImagePicked,
+    this.onImagePicked,
+    this.onMultipleImagesPicked,
     super.key,
     this.maxWidth,
     this.maxHeight,
     this.imageQuality,
-  });
+    this.allowMultiple = true,
+  }) : assert(
+         onImagePicked != null || onMultipleImagesPicked != null,
+         'Deve fornecer onImagePicked ou onMultipleImagesPicked',
+       );
 
   @override
   State<ImagePickerWidget> createState() => _ImagePickerWidgetState();
@@ -29,6 +43,7 @@ class ImagePickerWidget extends StatefulWidget {
 
 class _ImagePickerWidgetState extends State<ImagePickerWidget> {
   final ImagePicker _picker = ImagePicker();
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -40,48 +55,65 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
           children: [
             const Icon(Icons.photo_camera, size: 64, color: Colors.deepPurple),
             const SizedBox(height: 16),
-            const Text(
-              'Adicionar Foto',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            Text(
+              widget.allowMultiple ? 'Adicionar Fotos' : 'Adicionar Foto',
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 24),
-            const Text(
-              'Escolha uma opção:',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: _pickFromGallery,
-              icon: const Icon(Icons.photo_library),
-              label: const Text('Buscar na galeria'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
-                ),
-                minimumSize: const Size(double.infinity, 48),
+            if (_isLoading)
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: CircularProgressIndicator(),
+              )
+            else ...[
+              Text(
+                widget.allowMultiple
+                    ? 'Escolha uma opção (galeria permite múltiplas fotos):'
+                    : 'Escolha uma opção:',
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 14),
               ),
-            ),
-            const SizedBox(height: 12),
-            OutlinedButton.icon(
-              onPressed: _takePhoto,
-              icon: const Icon(Icons.camera_alt),
-              label: const Text('Tirar uma foto'),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.deepPurple,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
+              const SizedBox(height: 24),
+              ElevatedButton.icon(
+                onPressed: widget.allowMultiple
+                    ? _pickMultipleFromGallery
+                    : _pickFromGallery,
+                icon: Icon(
+                  widget.allowMultiple ? Icons.photo_library : Icons.photo,
                 ),
-                minimumSize: const Size(double.infinity, 48),
+                label: Text(
+                  widget.allowMultiple
+                      ? 'Selecionar da galeria'
+                      : 'Buscar na galeria',
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepPurple,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                  minimumSize: const Size(double.infinity, 48),
+                ),
               ),
-            ),
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: _takePhoto,
+                icon: const Icon(Icons.camera_alt),
+                label: const Text('Tirar uma foto'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.deepPurple,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                  minimumSize: const Size(double.infinity, 48),
+                ),
+              ),
+            ],
             const SizedBox(height: 16),
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
               child: const Text('Cancelar'),
             ),
           ],
@@ -90,7 +122,76 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
     );
   }
 
-  /// Seleciona uma imagem da galeria
+  /// Seleciona múltiplas imagens da galeria
+  Future<void> _pickMultipleFromGallery() async {
+    // Seta flag para evitar bloqueio de tela quando o app vai para background
+    final pinProvider = context.read<PinProvider>();
+    pinProvider.isPickingExternalMedia = true;
+
+    try {
+      final List<XFile> pickedFiles = await _picker.pickMultiImage(
+        maxWidth: widget.maxWidth,
+        maxHeight: widget.maxHeight,
+        imageQuality: widget.imageQuality,
+      );
+
+      // Se o usuário cancelou, reseta a flag e retorna
+      if (pickedFiles.isEmpty) {
+        pinProvider.isPickingExternalMedia = false;
+        return;
+      }
+
+      if (!mounted) {
+        pinProvider.isPickingExternalMedia = false;
+        return;
+      }
+      setState(() => _isLoading = true);
+
+      final List<Uint8List> imageBytes = [];
+      for (final xFile in pickedFiles) {
+        final file = File(xFile.path);
+        final bytes = await file.readAsBytes();
+        imageBytes.add(bytes);
+      }
+
+      // Usa callback de múltiplas imagens se disponível, senão chama o de única para cada
+      if (widget.onMultipleImagesPicked != null) {
+        widget.onMultipleImagesPicked!(imageBytes);
+      } else if (widget.onImagePicked != null) {
+        for (final bytes in imageBytes) {
+          widget.onImagePicked!(bytes);
+        }
+      }
+
+      // Reseta a flag após processar as imagens
+      pinProvider.isPickingExternalMedia = false;
+
+      if (!mounted) return;
+      Navigator.of(context).pop();
+
+      // Mensagem de sucesso
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            imageBytes.length == 1
+                ? 'Imagem adicionada com sucesso!'
+                : '${imageBytes.length} imagens adicionadas com sucesso!',
+          ),
+        ),
+      );
+    } catch (e) {
+      // Garante reset da flag em caso de erro
+      pinProvider.isPickingExternalMedia = false;
+
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Erro ao selecionar imagens: $e')));
+    }
+  }
+
+  /// Seleciona uma imagem da galeria (modo único)
   Future<void> _pickFromGallery() async {
     // Seta flag para evitar bloqueio de tela quando o app vai para background
     final pinProvider = context.read<PinProvider>();
@@ -104,19 +205,26 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
         imageQuality: widget.imageQuality,
       );
 
-      // Reseta a flag após retornar do app externo (independente de sucesso ou cancelamento)
-      // O main.dart também reseta no resumed, mas garantimos aqui para cobrir todos os casos
+      // Se o usuário cancelou, reseta a flag e retorna
+      if (picked == null) {
+        pinProvider.isPickingExternalMedia = false;
+        return;
+      }
+
+      final file = File(picked.path);
+      final bytes = await file.readAsBytes();
+
+      if (widget.onImagePicked != null) {
+        widget.onImagePicked!(bytes);
+      } else if (widget.onMultipleImagesPicked != null) {
+        widget.onMultipleImagesPicked!([bytes]);
+      }
+
+      // Reseta a flag após processar a imagem
       pinProvider.isPickingExternalMedia = false;
 
-      if (picked != null) {
-        final file = File(picked.path);
-        final bytes = await file.readAsBytes();
-
-        widget.onImagePicked(bytes);
-
-        if (!mounted) return;
-        Navigator.of(context).pop();
-      }
+      if (!mounted) return;
+      Navigator.of(context).pop();
     } catch (e) {
       // Garante reset da flag em caso de erro
       pinProvider.isPickingExternalMedia = false;
@@ -142,29 +250,37 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
         imageQuality: widget.imageQuality,
       );
 
-      // Reseta a flag após retornar do app externo (independente de sucesso ou cancelamento)
+      // Se o usuário cancelou, reseta a flag e retorna
+      if (photo == null) {
+        pinProvider.isPickingExternalMedia = false;
+        return;
+      }
+
+      final file = File(photo.path);
+      final bytes = await file.readAsBytes();
+
+      if (widget.onImagePicked != null) {
+        widget.onImagePicked!(bytes);
+      } else if (widget.onMultipleImagesPicked != null) {
+        widget.onMultipleImagesPicked!([bytes]);
+      }
+
+      // Reseta a flag após processar a foto
       pinProvider.isPickingExternalMedia = false;
 
-      if (photo != null) {
-        final file = File(photo.path);
-        final bytes = await file.readAsBytes();
+      if (!mounted) return;
+      Navigator.of(context).pop();
 
-        widget.onImagePicked(bytes);
+      // Mensagem de sucesso
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Foto capturada com sucesso!')),
+      );
 
-        if (!mounted) return;
-        Navigator.of(context).pop();
-
-        // Mensagem de sucesso
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Foto capturada com sucesso!')),
-        );
-
-        // Limpa o arquivo temporário se necessário
-        try {
-          await file.delete();
-        } catch (_) {
-          // Ignora erro ao deletar arquivo temporário
-        }
+      // Limpa o arquivo temporário se necessário
+      try {
+        await file.delete();
+      } catch (_) {
+        // Ignora erro ao deletar arquivo temporário
       }
     } catch (e) {
       // Garante reset da flag em caso de erro

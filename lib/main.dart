@@ -250,14 +250,44 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Future<void> _checkBackgroundLock() async {
     if (_pausedTime == null) return;
 
+    debugPrint(
+      'LOCK: _checkBackgroundLock chamado, isPickingExternalMedia=${widget.pinProvider.isPickingExternalMedia}',
+    );
+
+    // Verifica novamente as flags antes de bloquear
+    // (pode ter mudado durante a execução assíncrona)
+    if (widget.pinProvider.isPickingExternalMedia) {
+      debugPrint('LOCK: Ignorando bloqueio - isPickingExternalMedia=true');
+      _pausedTime = null;
+      return;
+    }
+
+    if (widget.pinProvider.isAuthenticatingWithBiometrics) {
+      debugPrint(
+        'LOCK: Ignorando bloqueio - isAuthenticatingWithBiometrics=true',
+      );
+      _pausedTime = null;
+      return;
+    }
+
     // Verifica o tempo em segundo plano
     final pauseDuration = DateTime.now().difference(_pausedTime!);
     final backgroundTimeoutSeconds = await _inactivityService
         .getBackgroundLockTimeout();
     final backgroundTimeout = Duration(seconds: backgroundTimeoutSeconds);
 
+    // Verifica novamente após o await (pode ter mudado)
+    if (widget.pinProvider.isPickingExternalMedia) {
+      debugPrint(
+        'LOCK: Ignorando bloqueio após await - isPickingExternalMedia=true',
+      );
+      _pausedTime = null;
+      return;
+    }
+
     // Bloqueia se o tempo de pausa excedeu o configurado
     if (pauseDuration > backgroundTimeout) {
+      debugPrint('LOCK: Chamando requireAuthentication');
       widget.pinProvider.requireAuthentication();
     }
 
@@ -267,6 +297,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
+
+    debugPrint(
+      'LIFECYCLE: $state, isPickingExternalMedia=${widget.pinProvider.isPickingExternalMedia}',
+    );
 
     switch (state) {
       case AppLifecycleState.paused:
@@ -280,20 +314,22 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         if (widget.pinProvider.isLockEnabled && _pausedTime != null) {
           // Se estiver autenticando com biometria, não bloqueia
           if (widget.pinProvider.isAuthenticatingWithBiometrics) {
+            debugPrint(
+              'LIFECYCLE: Ignorando - isAuthenticatingWithBiometrics=true',
+            );
             _pausedTime = null;
-            // Reseta a flag pois já consumimos o evento de retorno
             widget.pinProvider.isAuthenticatingWithBiometrics = false;
             return;
           }
 
-          // Se estiver selecionando mídia externa (galeria, câmera, etc.), não bloqueia
+          // Se estiver selecionando mídia externa (galeria, câmera, file picker, backup, etc.), não bloqueia
           if (widget.pinProvider.isPickingExternalMedia) {
+            debugPrint('LIFECYCLE: Ignorando - isPickingExternalMedia=true');
             _pausedTime = null;
-            // Reseta a flag pois já consumimos o evento de retorno
-            widget.pinProvider.isPickingExternalMedia = false;
             return;
           }
 
+          debugPrint('LIFECYCLE: Chamando _checkBackgroundLock');
           _checkBackgroundLock();
         }
         break;

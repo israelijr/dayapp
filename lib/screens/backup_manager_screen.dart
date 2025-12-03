@@ -263,13 +263,14 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
     // Obter o PinProvider para evitar bloqueio durante compartilhamento
     final pinProvider = Provider.of<PinProvider>(context, listen: false);
 
+    // Seta flag ANTES de qualquer operação para evitar bloqueio
+    pinProvider.isPickingExternalMedia = true;
+    debugPrint('BACKUP: Flag isPickingExternalMedia = true');
+
     setState(() {
       _isLoading = true;
       _statusMessage = 'Iniciando backup...';
     });
-
-    // Seta flag para evitar bloqueio de tela quando o app vai para background
-    pinProvider.isPickingExternalMedia = true;
 
     try {
       await _backupService.shareBackupFile(
@@ -280,8 +281,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
         },
       );
 
-      // Reseta a flag após retornar do app externo
-      pinProvider.isPickingExternalMedia = false;
+      debugPrint('BACKUP: Compartilhamento concluído');
 
       if (mounted) {
         setState(() {
@@ -290,7 +290,14 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
               'Arquivo de backup criado! Use o menu de compartilhamento para salvá-lo.';
         });
       }
+
+      // Aguarda um tempo para garantir que todos os eventos de lifecycle foram processados
+      // antes de resetar a flag (o share sheet pode disparar múltiplos eventos resumed)
+      await Future.delayed(const Duration(milliseconds: 500));
+      debugPrint('BACKUP: Resetando flag após delay');
+      pinProvider.isPickingExternalMedia = false;
     } catch (e) {
+      debugPrint('BACKUP: Erro, resetando flag: $e');
       // Garante reset da flag em caso de erro
       pinProvider.isPickingExternalMedia = false;
 
@@ -307,34 +314,31 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
     // Obter o PinProvider para evitar bloqueio durante seleção de arquivo
     final pinProvider = Provider.of<PinProvider>(context, listen: false);
 
-    // Salvar o estado atual do shouldShowPinScreen para restaurar depois se necessário
-    final previousShouldShowPinScreen = pinProvider.shouldShowPinScreen;
+    // Seta flag ANTES de qualquer operação para evitar bloqueio
+    pinProvider.isPickingExternalMedia = true;
+    debugPrint('RESTORE: Flag isPickingExternalMedia = true');
 
     try {
-      // Marcar que estamos selecionando mídia externa E forçar shouldShowPinScreen = false
-      // Isso previne que o PinProtectedWrapper mostre a tela de bloqueio
-      pinProvider.isPickingExternalMedia = true;
-      pinProvider.shouldShowPinScreen = false;
-
       // Selecionar arquivo ZIP
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['zip'],
       );
 
-      // Manter shouldShowPinScreen = false durante toda a operação
-      // Não desmarcar isPickingExternalMedia ainda, pois o main.dart fará isso
-
       if (result == null || result.files.single.path == null) {
-        // Usuário cancelou a seleção - restaurar estado do PIN
+        // Usuário cancelou a seleção - aguarda antes de resetar
+        debugPrint('RESTORE: Usuário cancelou, aguardando antes de resetar');
+        await Future.delayed(const Duration(milliseconds: 500));
         pinProvider.isPickingExternalMedia = false;
-        pinProvider.shouldShowPinScreen = previousShouldShowPinScreen;
         return;
       }
 
       final filePath = result.files.single.path!;
 
-      if (!mounted) return;
+      if (!mounted) {
+        pinProvider.isPickingExternalMedia = false;
+        return;
+      }
 
       // Confirmar restauração
       final confirmed = await showDialog<bool>(
@@ -360,9 +364,9 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
       );
 
       if (confirmed != true) {
-        // Usuário cancelou a confirmação - restaurar estado do PIN
+        // Usuário cancelou a confirmação
+        debugPrint('RESTORE: Usuário cancelou confirmação, resetando flag');
         pinProvider.isPickingExternalMedia = false;
-        pinProvider.shouldShowPinScreen = previousShouldShowPinScreen;
         return;
       }
 
@@ -383,10 +387,17 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
         },
       );
 
-      if (!mounted) return;
+      if (!mounted) {
+        pinProvider.isPickingExternalMedia = false;
+        return;
+      }
 
       // Notificar provider para atualizar todas as telas
       Provider.of<RefreshProvider>(context, listen: false).refresh();
+
+      debugPrint('RESTORE: Restauração concluída, resetando flag');
+      // Reseta a flag após processamento completo
+      pinProvider.isPickingExternalMedia = false;
 
       setState(() {
         _isLoading = false;
@@ -417,9 +428,9 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
         ),
       );
     } catch (e) {
-      // Garantir que as flags sejam restauradas em caso de erro
+      debugPrint('RESTORE: Erro, resetando flag: $e');
+      // Garantir que a flag seja resetada em caso de erro
       pinProvider.isPickingExternalMedia = false;
-      pinProvider.shouldShowPinScreen = previousShouldShowPinScreen;
 
       if (mounted) {
         setState(() {

@@ -165,9 +165,10 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
     showDialog(
       context: context,
       builder: (context) => ImagePickerWidget(
-        onImagePicked: (bytes) {
+        allowMultiple: true,
+        onMultipleImagesPicked: (imagesList) {
           setState(() {
-            fotos.add(bytes);
+            fotos.addAll(imagesList);
             _checkForChanges();
           });
         },
@@ -186,9 +187,10 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
     showDialog(
       context: context,
       builder: (context) => AudioRecorderWidget(
-        onAudioRecorded: (audio, duration) {
+        allowMultiple: true,
+        onMultipleAudiosSelected: (audiosList) {
           setState(() {
-            audios.add({'audio': audio, 'duration': duration});
+            audios.addAll(audiosList);
             _checkForChanges();
           });
         },
@@ -207,13 +209,16 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
     showDialog(
       context: context,
       builder: (context) => VideoRecorderWidget(
-        onVideoRecorded: (video, duration) {
+        allowMultiple: true,
+        onMultipleVideosSelected: (videosList) {
           setState(() {
-            videos.add({
-              'video': video,
-              'thumbnail': null,
-              'duration': duration,
-            });
+            for (final videoData in videosList) {
+              videos.add({
+                'video': videoData['video'],
+                'thumbnail': null,
+                'duration': videoData['duration'],
+              });
+            }
             _checkForChanges();
           });
         },
