@@ -122,7 +122,12 @@ class _HomeContentState extends State<HomeContent> {
 
     if (mounted) {
       setState(() {
-        _historias.addAll(newHistorias);
+        // Evita duplicatas verificando IDs existentes
+        final existingIds = _historias.map((h) => h.id).toSet();
+        final filteredHistorias = newHistorias
+            .where((h) => !existingIds.contains(h.id))
+            .toList();
+        _historias.addAll(filteredHistorias);
         _hasMoreData = newHistorias.length == _pageSize;
       });
     }
@@ -624,13 +629,19 @@ class _PaginatedHomeContent extends StatefulWidget {
 }
 
 class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
+  bool _hasRefreshed = false;
+
   @override
   void initState() {
     super.initState();
     // Recarrega dados quando a key muda (RefreshProvider foi atualizado)
     // Usa addPostFrameCallback para evitar setState durante build
+    // Só executa uma vez por instância do widget
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      widget.onRefresh();
+      if (!_hasRefreshed) {
+        _hasRefreshed = true;
+        widget.onRefresh();
+      }
     });
   }
 
