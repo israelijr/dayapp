@@ -155,8 +155,8 @@ class AudioComBytes {
   AudioComBytes({
     required this.id,
     required this.bytes,
+    required this.audioPath,
     this.duracao,
     this.legenda,
-    required this.audioPath,
   });
 }

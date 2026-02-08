@@ -33,7 +33,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
   // Verifica se a plataforma suporta video_player
   bool get _isPlatformSupported {
-    return Platform.isAndroid || Platform.isIOS;
+    return Platform.isAndroid || Platform.isIOS || Platform.isLinux;
   }
 
   @override
@@ -175,11 +175,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
           if (!_isPlaying)
             const ColoredBox(
               color: Colors.black38,
-              child: Icon(
-                Icons.play_arrow,
-                size: 64,
-                color: Colors.white,
-              ),
+              child: Icon(Icons.play_arrow, size: 64, color: Colors.white),
             ),
           Positioned.fill(
             child: GestureDetector(

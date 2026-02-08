@@ -23,18 +23,17 @@ class NotificationHelper {
   }
 
   /// Calcula o horário da notificação baseado na antecedência
-  DateTime? calculateNotificationTime(
-    DateTime entryDate,
-    int advanceMinutes,
-  ) {
+  DateTime? calculateNotificationTime(DateTime entryDate, int advanceMinutes) {
     // Notificação ANTES da data da entrada
-    final notificationTime = entryDate.subtract(Duration(minutes: advanceMinutes));
-    
+    final notificationTime = entryDate.subtract(
+      Duration(minutes: advanceMinutes),
+    );
+
     // Verifica se a notificação não seria no passado
     if (notificationTime.isBefore(DateTime.now())) {
       return null;
     }
-    
+
     return notificationTime;
   }
 
@@ -57,7 +56,7 @@ class NotificationHelper {
 
     // Obtém a antecedência padrão
     final defaultAdvance = await _prefsService.getDefaultNotificationAdvance();
-    
+
     if (!context.mounted) return;
 
     int? selectedAdvanceMinutes;
@@ -73,47 +72,43 @@ class NotificationHelper {
                 'Quando você gostaria de ser notificado sobre esta entrada?',
               ),
             ),
-            ...NotificationPreferencesService.advanceOptions.map(
-              (minutes) {
-                final notificationTime =
-                    calculateNotificationTime(entryDate, minutes);
-                final isDefault = minutes == defaultAdvance;
-                
-                // Desabilita opção se resultar em notificação no passado
-                final isEnabled = notificationTime != null;
-                
-                return SimpleDialogOption(
-                  onPressed: isEnabled
-                      ? () {
-                          selectedAdvanceMinutes = minutes;
-                          Navigator.of(context).pop();
-                        }
-                      : null,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          NotificationPreferencesService.getAdvanceLabel(
-                            minutes,
-                          ),
-                          style: TextStyle(
-                            color: isEnabled ? null : Colors.grey,
-                          ),
+            ...NotificationPreferencesService.advanceOptions.map((minutes) {
+              final notificationTime = calculateNotificationTime(
+                entryDate,
+                minutes,
+              );
+              final isDefault = minutes == defaultAdvance;
+
+              // Desabilita opção se resultar em notificação no passado
+              final isEnabled = notificationTime != null;
+
+              return SimpleDialogOption(
+                onPressed: isEnabled
+                    ? () {
+                        selectedAdvanceMinutes = minutes;
+                        Navigator.of(context).pop();
+                      }
+                    : null,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        NotificationPreferencesService.getAdvanceLabel(minutes),
+                        style: TextStyle(color: isEnabled ? null : Colors.grey),
+                      ),
+                    ),
+                    if (isDefault)
+                      const Padding(
+                        padding: EdgeInsets.only(left: 8.0),
+                        child: Chip(
+                          label: Text('Padrão', style: TextStyle(fontSize: 10)),
+                          visualDensity: VisualDensity.compact,
                         ),
                       ),
-                      if (isDefault)
-                        const Padding(
-                          padding: EdgeInsets.only(left: 8.0),
-                          child: Chip(
-                            label: Text('Padrão', style: TextStyle(fontSize: 10)),
-                            visualDensity: VisualDensity.compact,
-                          ),
-                        ),
-                    ],
-                  ),
-                );
-              },
-            ),
+                  ],
+                ),
+              );
+            }),
           ],
         );
       },
@@ -127,7 +122,7 @@ class NotificationHelper {
         description,
         selectedAdvanceMinutes!,
       );
-      
+
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Notificação agendada com sucesso')),
@@ -150,7 +145,6 @@ class NotificationHelper {
     );
 
     if (notificationTime == null) {
-
       return;
     }
 
@@ -159,10 +153,8 @@ class NotificationHelper {
 
     // Agenda a nova notificação
     final notificationId = historiaId;
-    
-    if (Platform.isWindows) {
 
-    } else {
+    if (!Platform.isWindows) {
       await _notificationService.scheduleNotification(
         id: notificationId,
         title: 'Lembrete: $title',
@@ -174,7 +166,7 @@ class NotificationHelper {
       // Salva no banco de dados
       await DatabaseHelper().scheduleNotificationForHistoria(
         historiaId,
-notificationId,
+        notificationId,
         notificationTime,
       );
     }
@@ -206,7 +198,8 @@ notificationId,
 
     // Se a nova data permitir, agenda novamente
     if (shouldScheduleNotification(newDate)) {
-      final defaultAdvance = await _prefsService.getDefaultNotificationAdvance();
+      final defaultAdvance = await _prefsService
+          .getDefaultNotificationAdvance();
       await scheduleEntryNotification(
         historiaId,
         newDate,

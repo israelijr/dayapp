@@ -148,7 +148,7 @@ class FotoComBytes {
   FotoComBytes({
     required this.id,
     required this.bytes,
-    this.legenda,
     required this.fotoPath,
+    this.legenda,
   });
 }
