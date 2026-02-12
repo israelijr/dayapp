@@ -48,6 +48,7 @@ dependencies:
   vsc_quill_delta_to_html: ^1.0.2
   flutter_secure_storage: ^9.2.4
   sqflite_common_ffi_web: ^1.1.1
+  package_info_plus: ^8.0.2
 
 dev_dependencies:
   flutter_test:

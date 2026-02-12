@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
@@ -270,6 +271,63 @@ class _LoginScreenState extends State<LoginScreen> {
                       decoration: TextDecoration.underline,
                     ),
                   ),
+                ),
+                const SizedBox(height: 24),
+                // Informações de contato e privacidade
+                Column(
+                  children: [
+                    const Text(
+                      'Precisa de ajuda?',
+                      style: TextStyle(color: Colors.white70, fontSize: 14),
+                    ),
+                    const SizedBox(height: 8),
+                    GestureDetector(
+                      onTap: () async {
+                        final Uri emailUri = Uri(
+                          scheme: 'mailto',
+                          path: 'israelijr.app@gmail.com',
+                          queryParameters: {
+                            'subject': 'Suporte DayApp - Login',
+                            'body':
+                                'Olá, preciso de ajuda com o login no DayApp...',
+                          },
+                        );
+                        if (await canLaunchUrl(emailUri)) {
+                          await launchUrl(emailUri);
+                        }
+                      },
+                      child: const Text(
+                        'israelijr.app@gmail.com',
+                        style: TextStyle(
+                          color: Colors.white,
+                          decoration: TextDecoration.underline,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    GestureDetector(
+                      onTap: () async {
+                        const url =
+                            'https://sites.google.com/view/politicadeprivacidade-dayapp/início';
+                        final Uri uri = Uri.parse(url);
+                        if (await canLaunchUrl(uri)) {
+                          await launchUrl(
+                            uri,
+                            mode: LaunchMode.externalApplication,
+                          );
+                        }
+                      },
+                      child: const Text(
+                        'Política de Privacidade',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          decoration: TextDecoration.underline,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

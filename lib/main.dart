@@ -15,6 +15,7 @@ import 'providers/auth_provider.dart';
 import 'providers/pin_provider.dart';
 import 'providers/refresh_provider.dart';
 import 'providers/theme_provider.dart';
+import 'screens/about_screen.dart';
 import 'screens/backup_manager_screen.dart';
 import 'screens/calendar_view_screen.dart';
 import 'screens/create_account_complement_screen.dart';
@@ -22,6 +23,7 @@ import 'screens/create_account_screen.dart';
 import 'screens/create_historia_screen.dart';
 import 'screens/edit_historia_screen.dart';
 import 'screens/edit_profile_screen.dart';
+import 'screens/help_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/search_screen.dart';
@@ -385,7 +387,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               '/create_historia': (context) => const CreateHistoriaScreen(),
               '/edit_profile': (context) => const EditProfileScreen(),
               '/settings': (context) => const SettingsScreen(),
+              '/help': (context) => const HelpScreen(),
               '/calendar': (context) => const CalendarViewScreen(),
+              '/about': (context) => const AboutScreen(),
               '/backup-manager': (context) => const BackupManagerScreen(),
               '/trash': (context) => const TrashScreen(),
               '/search': (context) => const SearchScreen(),
