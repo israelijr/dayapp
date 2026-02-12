@@ -2,10 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
+import '../services/auto_backup_service.dart';
 import 'edit_profile_screen.dart';
 import 'groups_maintenance_screen.dart';
 import 'groups_screen.dart';
@@ -435,8 +437,31 @@ class _HomeScreenState extends State<HomeScreen> {
                   context,
                   listen: false,
                 );
+
+                // Fecha o drawer antes de iniciar o backup
+                navigator.pop();
+
+                // Executa backup automático ao fazer logout
+                final autoBackup = AutoBackupService();
+                final configured = await autoBackup.isConfigured();
+                if (configured && mounted) {
+                  final zipPath = await _showAutoBackupProgress(autoBackup);
+                  // Abre a tela de compartilhamento para o usuário escolher onde salvar
+                  if (zipPath != null) {
+                    try {
+                      // ignore: deprecated_member_use
+                      await Share.shareXFiles(
+                        [XFile(zipPath)],
+                        subject: 'Backup Automático DayApp',
+                        text: 'Backup automático do DayApp',
+                      );
+                    } catch (e) {
+                      // Silencia erro se o usuário cancelar o compartilhamento
+                    }
+                  }
+                }
+
                 await auth.logout();
-                // Atualiza o status de login no PinProvider
                 pinProvider.updateUserLoginStatus(false);
                 if (!mounted) return;
                 navigator.pushReplacementNamed('/login');
@@ -482,5 +507,65 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
     );
+  }
+
+  /// Exibe dialog de progresso durante o backup automático ao fazer logout.
+  /// Retorna o caminho do ZIP criado, ou null em caso de erro/cancelamento.
+  Future<String?> _showAutoBackupProgress(AutoBackupService autoBackup) async {
+    // Controlador para atualizar o texto de progresso
+    final progressNotifier = ValueNotifier<String>('Iniciando backup...');
+    String? resultPath;
+
+    // Inicia o backup antes de abrir o dialog
+    final backupFuture = autoBackup.executeBackup(
+      onProgress: (message) {
+        progressNotifier.value = message;
+      },
+    );
+
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        // Fecha o dialog quando o backup terminar
+        backupFuture.then((zipPath) {
+          resultPath = zipPath;
+          if (dialogContext.mounted) {
+            Navigator.of(dialogContext).pop();
+          }
+        });
+
+        return PopScope(
+          canPop: false,
+          child: AlertDialog(
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const CircularProgressIndicator(),
+                const SizedBox(height: 20),
+                const Text(
+                  'Backup Automático',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                ValueListenableBuilder<String>(
+                  valueListenable: progressNotifier,
+                  builder: (context, message, _) {
+                    return Text(
+                      message,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 13),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    progressNotifier.dispose();
+    return resultPath;
   }
 }

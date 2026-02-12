@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../db/database_helper.dart';
 import '../providers/pin_provider.dart';
 import '../providers/theme_provider.dart';
+import '../services/auto_backup_service.dart';
 import '../services/biometric_service.dart';
 import '../services/inactivity_service.dart';
 import '../services/notification_preferences_service.dart';
@@ -28,6 +29,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final PinRecoveryService _recoveryService = PinRecoveryService();
   final NotificationPreferencesService _notificationService =
       NotificationPreferencesService();
+  final AutoBackupService _autoBackupService = AutoBackupService();
   bool _biometricAvailable = false;
   bool _biometricEnabled = false;
   bool _pinEnabled = false;
@@ -39,6 +41,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String? _userEmail;
   late PinProvider _pinProvider;
 
+  // Estado do backup automático
+  bool _autoBackupEnabled = false;
+  DateTime? _lastAutoBackupTime;
+
   @override
   void initState() {
     super.initState();
@@ -48,6 +54,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _loadBackgroundLockTimeout();
     _loadNotificationPreferences();
     _loadUserEmail();
+    _loadAutoBackupSettings();
   }
 
   Future<void> _checkBiometricStatus() async {
@@ -88,6 +95,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() {
       _notificationEnabled = enabled;
       _notificationAdvance = advance;
+    });
+  }
+
+  Future<void> _loadAutoBackupSettings() async {
+    final enabled = await _autoBackupService.isEnabled();
+    final lastBackup = await _autoBackupService.getLastBackupTime();
+    setState(() {
+      _autoBackupEnabled = enabled;
+      _lastAutoBackupTime = lastBackup;
     });
   }
 
@@ -451,8 +467,72 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Navigator.pushNamed(context, '/backup-manager');
           },
         ),
+        const Divider(indent: 16, endIndent: 16),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Text(
+            'Backup Automático',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          ),
+        ),
+        SwitchListTile(
+          secondary: const Icon(Icons.backup),
+          title: const Text('Backup ao Sair'),
+          subtitle: Text(
+            _autoBackupEnabled
+                ? 'Backup será criado ao fazer logout'
+                : 'Desabilitado',
+          ),
+          value: _autoBackupEnabled,
+          onChanged: (value) async {
+            await _autoBackupService.setEnabled(value);
+            await _loadAutoBackupSettings();
+          },
+        ),
+        if (_autoBackupEnabled) ...[
+          if (_lastAutoBackupTime != null)
+            ListTile(
+              leading: const Icon(Icons.history),
+              title: const Text('Último Backup Automático'),
+              subtitle: Text(_formatLastBackupTime(_lastAutoBackupTime!)),
+              dense: true,
+            ),
+          const ListTile(
+            leading: Icon(Icons.info_outline),
+            title: Text('Informação'),
+            subtitle: Text(
+              'Ao fazer logout, um backup será criado e você poderá '
+              'escolher onde salvar (pasta local, Google Drive, etc).',
+            ),
+            dense: true,
+          ),
+        ],
       ],
     );
+  }
+
+  /// Formata a data do último backup para exibição
+  String _formatLastBackupTime(DateTime dateTime) {
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+
+    final day = dateTime.day.toString().padLeft(2, '0');
+    final month = dateTime.month.toString().padLeft(2, '0');
+    final year = dateTime.year;
+    final hour = dateTime.hour.toString().padLeft(2, '0');
+    final minute = dateTime.minute.toString().padLeft(2, '0');
+
+    final formatted = '$day/$month/$year às $hour:$minute';
+
+    if (difference.inMinutes < 1) {
+      return '$formatted (agora)';
+    } else if (difference.inMinutes < 60) {
+      return '$formatted (${difference.inMinutes} min atrás)';
+    } else if (difference.inHours < 24) {
+      return '$formatted (${difference.inHours}h atrás)';
+    } else {
+      return '$formatted (${difference.inDays} dia(s) atrás)';
+    }
   }
 
   @override
