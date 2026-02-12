@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
@@ -33,7 +34,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
   // Verifica se a plataforma suporta video_player
   bool get _isPlatformSupported {
-    return Platform.isAndroid || Platform.isIOS || Platform.isLinux;
+    return !kIsWeb &&
+        (Platform.isAndroid || Platform.isIOS || Platform.isLinux);
   }
 
   @override

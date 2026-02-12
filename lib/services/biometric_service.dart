@@ -1,8 +1,11 @@
+import 'dart:io'; // Para Platform.isLinux
+
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'secure_storage_service.dart';
-import 'dart:io'; // Para Platform.isLinux
 
 class BiometricService {
   static final BiometricService _instance = BiometricService._internal();
@@ -19,8 +22,8 @@ class BiometricService {
 
   /// Verifica se o dispositivo suporta biometria
   Future<bool> isBiometricAvailable() async {
-    // Desabilita biometria no Linux
-    if (Platform.isLinux) return false;
+    // Desabilita biometria na web e no Linux
+    if (kIsWeb || Platform.isLinux) return false;
     try {
       final bool canAuthenticateWithBiometrics =
           await _localAuth.canCheckBiometrics;
@@ -34,8 +37,8 @@ class BiometricService {
 
   /// Obtém a lista de tipos de biometria disponíveis
   Future<List<BiometricType>> getAvailableBiometrics() async {
-    // Desabilita biometria no Linux
-    if (Platform.isLinux) return <BiometricType>[];
+    // Desabilita biometria na web e no Linux
+    if (kIsWeb || Platform.isLinux) return <BiometricType>[];
     try {
       return await _localAuth.getAvailableBiometrics();
     } on PlatformException {
@@ -47,8 +50,8 @@ class BiometricService {
   Future<bool> authenticate({
     String reason = 'Por favor, autentique-se para acessar o aplicativo',
   }) async {
-    // Desabilita biometria no Linux
-    if (Platform.isLinux) return false;
+    // Desabilita biometria na web e no Linux
+    if (kIsWeb || Platform.isLinux) return false;
     try {
       final bool didAuthenticate = await _localAuth.authenticate(
         localizedReason: reason,

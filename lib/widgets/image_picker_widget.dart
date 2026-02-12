@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -149,8 +148,7 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
 
       final List<Uint8List> imageBytes = [];
       for (final xFile in pickedFiles) {
-        final file = File(xFile.path);
-        final bytes = await file.readAsBytes();
+        final bytes = await xFile.readAsBytes();
         imageBytes.add(bytes);
       }
 
@@ -211,8 +209,7 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
         return;
       }
 
-      final file = File(picked.path);
-      final bytes = await file.readAsBytes();
+      final bytes = await picked.readAsBytes();
 
       if (widget.onImagePicked != null) {
         widget.onImagePicked!(bytes);
@@ -256,8 +253,7 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
         return;
       }
 
-      final file = File(photo.path);
-      final bytes = await file.readAsBytes();
+      final bytes = await photo.readAsBytes();
 
       if (widget.onImagePicked != null) {
         widget.onImagePicked!(bytes);
@@ -275,13 +271,6 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Foto capturada com sucesso!')),
       );
-
-      // Limpa o arquivo temporário se necessário
-      try {
-        await file.delete();
-      } catch (_) {
-        // Ignora erro ao deletar arquivo temporário
-      }
     } catch (e) {
       // Garante reset da flag em caso de erro
       pinProvider.isPickingExternalMedia = false;

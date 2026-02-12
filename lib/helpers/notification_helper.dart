@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 import '../db/database_helper.dart';
@@ -154,7 +155,7 @@ class NotificationHelper {
     // Agenda a nova notificação
     final notificationId = historiaId;
 
-    if (!Platform.isWindows) {
+    if (!kIsWeb && !Platform.isWindows) {
       await _notificationService.scheduleNotification(
         id: notificationId,
         title: 'Lembrete: $title',

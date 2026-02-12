@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -88,7 +89,7 @@ class NotificationService {
       linux: LinuxNotificationDetails(),
     );
 
-    if (Platform.isWindows) {
+    if (!kIsWeb && Platform.isWindows) {
       // Para Windows, notificações agendadas podem não ser suportadas
       // Vamos mostrar uma notificação imediata para teste
 

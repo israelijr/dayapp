@@ -699,10 +699,13 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                     // Header: Date and Emoji
                     Row(
                       children: [
-                        Text(
-                          dateFormat.format(selectedDate),
-                          style: theme.textTheme.labelLarge?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
+                        Flexible(
+                          child: Text(
+                            dateFormat.format(selectedDate),
+                            style: theme.textTheme.labelLarge?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         IconButton(
@@ -714,23 +717,26 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                         ),
                         const Spacer(),
                         if (selectedEmoticon != null)
-                          Chip(
-                            avatar: Text(
-                              _convertLegacyEmoticon(selectedEmoticon!),
-                              style: const TextStyle(fontSize: 20),
+                          Flexible(
+                            child: Chip(
+                              avatar: Text(
+                                _convertLegacyEmoticon(selectedEmoticon!),
+                                style: const TextStyle(fontSize: 20),
+                              ),
+                              label: Text(
+                                selectedEmojiTranslation ??
+                                    selectedEmoticon ??
+                                    '',
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              onDeleted: () {
+                                setState(() {
+                                  selectedEmoticon = null;
+                                  selectedEmojiTranslation = null;
+                                  _checkForChanges();
+                                });
+                              },
                             ),
-                            label: Text(
-                              selectedEmojiTranslation ??
-                                  selectedEmoticon ??
-                                  '',
-                            ),
-                            onDeleted: () {
-                              setState(() {
-                                selectedEmoticon = null;
-                                selectedEmojiTranslation = null;
-                                _checkForChanges();
-                              });
-                            },
                           ),
                       ],
                     ),

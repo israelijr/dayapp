@@ -1,4 +1,6 @@
 import 'dart:io';
+
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 /// Serviço para gerenciar anúncios do Google AdMob
@@ -13,7 +15,7 @@ class AdService {
 
   /// Verifica se a plataforma atual suporta anúncios
   /// Google Mobile Ads só está disponível em Android e iOS
-  bool get isSupported => Platform.isAndroid || Platform.isIOS;
+  bool get isSupported => !kIsWeb && (Platform.isAndroid || Platform.isIOS);
 
   // IDs de teste do AdMob (substitua pelos seus IDs de produção)
   // Obtenha seus IDs em: https://admob.google.com
