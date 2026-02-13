@@ -14,6 +14,7 @@ import '../services/biometric_service.dart';
 import '../services/inactivity_service.dart';
 import '../services/notification_preferences_service.dart';
 import '../services/pin_recovery_service.dart';
+import '../services/secure_storage_service.dart';
 import 'setup_pin_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -232,6 +233,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
             onTap: _showEmailDialog,
             dense: true,
           ),
+        ] else if (_biometricEnabled) ...[
+          // Mostra opção de timeout mesmo quando só biometria está habilitada
+          ListTile(
+            leading: const Icon(Icons.lock_clock),
+            title: const Text('Bloqueio em Segundo Plano'),
+            subtitle: Text(
+              'Bloquear após: ${InactivityService.getBackgroundTimeoutLabel(_backgroundLockTimeout)}',
+            ),
+            onTap: _showBackgroundLockTimeoutDialog,
+            dense: true,
+          ),
         ],
 
         const Divider(),
@@ -353,15 +365,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       return;
                     }
 
-                    // Verifica as credenciais
+                    // Verifica as credenciais usando hash
                     final db = await DatabaseHelper().database;
                     final result = await db.query(
                       'users',
-                      where: 'email = ? AND senha = ?',
-                      whereArgs: [email, password],
+                      where: 'email = ?',
+                      whereArgs: [email],
                     );
 
                     if (result.isEmpty) {
+                      if (!mounted) return;
+                      // ignore: use_build_context_synchronously
+                      ScaffoldMessenger.of(outerContext).showSnackBar(
+                        const SnackBar(
+                          content: Text('E-mail ou senha inválidos'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                      return;
+                    }
+
+                    // Verifica a senha com o hash armazenado
+                    final storedPassword = result.first['senha'] as String;
+                    final secureStorage = SecureStorageService();
+                    if (!secureStorage.verifyPassword(
+                      password,
+                      storedPassword,
+                    )) {
                       if (!mounted) return;
                       // ignore: use_build_context_synchronously
                       ScaffoldMessenger.of(outerContext).showSnackBar(
@@ -620,51 +650,182 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _showBackgroundLockTimeoutDialog() {
+    // Determina a unidade e o valor com base no timeout atual
+    String selectedUnit = 'min';
+    int displayValue = 0;
+
+    if (_backgroundLockTimeout == 0) {
+      displayValue = 0;
+      selectedUnit = 'min';
+    } else if (_backgroundLockTimeout >= 3600 &&
+        _backgroundLockTimeout % 3600 == 0) {
+      displayValue = _backgroundLockTimeout ~/ 3600;
+      selectedUnit = 'h';
+    } else if (_backgroundLockTimeout >= 60 &&
+        _backgroundLockTimeout % 60 == 0) {
+      displayValue = _backgroundLockTimeout ~/ 60;
+      selectedUnit = 'min';
+    } else {
+      displayValue = _backgroundLockTimeout;
+      selectedUnit = 'seg';
+    }
+
+    final controller = TextEditingController(
+      text: displayValue == 0 ? '' : displayValue.toString(),
+    );
+
     showDialog(
       context: context,
-      builder: (dialogBuilderContext) => AlertDialog(
-        title: const Text('Bloqueio em Segundo Plano'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'Após quanto tempo em segundo plano o app deve ser bloqueado?',
-            ),
-            const SizedBox(height: 16),
-            ...InactivityService.backgroundTimeoutOptions.map((seconds) {
-              return RadioListTile<int>(
-                title: Text(
-                  InactivityService.getBackgroundTimeoutLabel(seconds),
+      builder: (dialogBuilderContext) => StatefulBuilder(
+        builder: (context, setDialogState) {
+          // Converte o valor digitado para segundos
+          int calculateSeconds() {
+            final text = controller.text.trim();
+            if (text.isEmpty) return 0;
+            final value = int.tryParse(text) ?? 0;
+            if (value <= 0) return 0;
+            switch (selectedUnit) {
+              case 'seg':
+                return value;
+              case 'min':
+                return value * 60;
+              case 'h':
+                return value * 3600;
+              default:
+                return value * 60;
+            }
+          }
+
+          final currentSeconds = calculateSeconds();
+
+          return AlertDialog(
+            title: const Text('Bloqueio em Segundo Plano'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Após quanto tempo em segundo plano o app deve ser bloqueado?',
                 ),
-                value: seconds,
-                groupValue: _backgroundLockTimeout,
-                onChanged: (value) async {
-                  if (value != null) {
-                    Navigator.of(
-                      dialogBuilderContext,
-                    ).pop(); // Fecha antes do await
-                    await _inactivityService.setBackgroundLockTimeout(value);
-                    await _loadBackgroundLockTimeout();
-                    if (!mounted) return;
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          'Bloqueio em segundo plano: ${InactivityService.getBackgroundTimeoutLabel(value)}',
+                const SizedBox(height: 20),
+
+                // Campo de entrada com seletor de unidade
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: TextField(
+                        controller: controller,
+                        decoration: InputDecoration(
+                          labelText: 'Tempo',
+                          hintText: '0 = imediato',
+                          border: const OutlineInputBorder(),
+                          suffixText: selectedUnit,
                         ),
+                        keyboardType: TextInputType.number,
+                        onChanged: (_) => setDialogState(() {}),
                       ),
-                    );
-                  }
+                    ),
+                    const SizedBox(width: 12),
+                    // Seletor de unidade
+                    SegmentedButton<String>(
+                      segments: const [
+                        ButtonSegment(value: 'seg', label: Text('seg')),
+                        ButtonSegment(value: 'min', label: Text('min')),
+                        ButtonSegment(value: 'h', label: Text('h')),
+                      ],
+                      selected: {selectedUnit},
+                      onSelectionChanged: (value) {
+                        setDialogState(() {
+                          selectedUnit = value.first;
+                        });
+                      },
+                      style: const ButtonStyle(
+                        visualDensity: VisualDensity.compact,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 8),
+                // Mostra o valor resultante
+                Text(
+                  'Resultado: ${InactivityService.getBackgroundTimeoutLabel(currentSeconds)}',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
+                ),
+
+                const SizedBox(height: 16),
+                // Atalhos rápidos
+                const Text(
+                  'Sugestões:',
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 4,
+                  children: [
+                    for (final seconds
+                        in InactivityService.backgroundTimeoutOptions)
+                      ActionChip(
+                        label: Text(
+                          InactivityService.getBackgroundTimeoutLabel(seconds),
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                        backgroundColor: currentSeconds == seconds
+                            ? Theme.of(context).colorScheme.primaryContainer
+                            : null,
+                        onPressed: () {
+                          // Determina unidade e valor para o atalho
+                          if (seconds == 0) {
+                            controller.text = '';
+                            setDialogState(() => selectedUnit = 'min');
+                          } else if (seconds >= 3600 && seconds % 3600 == 0) {
+                            controller.text = (seconds ~/ 3600).toString();
+                            setDialogState(() => selectedUnit = 'h');
+                          } else if (seconds >= 60 && seconds % 60 == 0) {
+                            controller.text = (seconds ~/ 60).toString();
+                            setDialogState(() => selectedUnit = 'min');
+                          } else {
+                            controller.text = seconds.toString();
+                            setDialogState(() => selectedUnit = 'seg');
+                          }
+                        },
+                      ),
+                  ],
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogBuilderContext).pop(),
+                child: const Text('Cancelar'),
+              ),
+              FilledButton(
+                onPressed: () async {
+                  final scaffoldMessenger = ScaffoldMessenger.of(context);
+                  Navigator.of(dialogBuilderContext).pop();
+                  await _inactivityService.setBackgroundLockTimeout(
+                    currentSeconds,
+                  );
+                  await _loadBackgroundLockTimeout();
+                  if (!mounted) return;
+                  scaffoldMessenger.showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'Bloqueio em segundo plano: ${InactivityService.getBackgroundTimeoutLabel(currentSeconds)}',
+                      ),
+                    ),
+                  );
                 },
-              );
-            }),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogBuilderContext).pop(),
-            child: const Text('Fechar'),
-          ),
-        ],
+                child: const Text('Salvar'),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

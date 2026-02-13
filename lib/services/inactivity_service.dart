@@ -26,20 +26,35 @@ class InactivityService {
     await prefs.setInt(_backgroundLockTimeoutKey, seconds);
   }
 
-  /// Opções de tempo de bloqueio em segundo plano disponíveis (em segundos)
+  /// Opções rápidas de tempo de bloqueio em segundo plano (em segundos)
   static const List<int> backgroundTimeoutOptions = [
     0, // Imediato
     15, // 15 segundos
     30, // 30 segundos
     60, // 1 minuto
     300, // 5 minutos
+    600, // 10 minutos
+    1800, // 30 minutos
+    3600, // 1 hora
   ];
 
   /// Retorna o texto descritivo para opções de bloqueio em segundo plano
   static String getBackgroundTimeoutLabel(int seconds) {
     if (seconds == 0) return 'Imediatamente';
     if (seconds < 60) return '$seconds segundos';
-    final minutes = seconds ~/ 60;
-    return minutes == 1 ? '1 minuto' : '$minutes minutos';
+    if (seconds < 3600) {
+      final minutes = seconds ~/ 60;
+      final remainingSeconds = seconds % 60;
+      if (remainingSeconds == 0) {
+        return minutes == 1 ? '1 minuto' : '$minutes minutos';
+      }
+      return '$minutes min $remainingSeconds seg';
+    }
+    final hours = seconds ~/ 3600;
+    final remainingMinutes = (seconds % 3600) ~/ 60;
+    if (remainingMinutes == 0) {
+      return hours == 1 ? '1 hora' : '$hours horas';
+    }
+    return '$hours h $remainingMinutes min';
   }
 }

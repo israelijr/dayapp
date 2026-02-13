@@ -465,6 +465,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   // Abre a tela de compartilhamento para o usuário escolher onde salvar
                   if (zipPath != null) {
                     try {
+                      // Evita bloqueio ao voltar do share sheet
+                      pinProvider.isPickingExternalMedia = true;
                       // ignore: deprecated_member_use
                       await Share.shareXFiles(
                         [XFile(zipPath)],
@@ -473,6 +475,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     } catch (e) {
                       // Silencia erro se o usuário cancelar o compartilhamento
+                    } finally {
+                      pinProvider.isPickingExternalMedia = false;
                     }
                   }
                 }

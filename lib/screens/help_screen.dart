@@ -127,7 +127,27 @@ class HelpScreen extends StatelessWidget {
               ),
               _buildHelpItem(
                 'PIN de Segurança',
-                'Configure PIN para proteger o acesso ao app. Use biometria se disponível.',
+                'Configure um PIN de 4 a 8 dígitos para proteger o acesso ao app.',
+              ),
+              _buildHelpItem(
+                'Biometria',
+                'Use digital ou reconhecimento facial para desbloquear o app rapidamente, se disponível no dispositivo.',
+              ),
+              _buildHelpItem(
+                'Desbloqueio por Senha',
+                'Além de PIN e biometria, você pode desbloquear o app usando a senha da sua conta. Útil caso esqueça o PIN ou a biometria falhe.',
+              ),
+              _buildHelpItem(
+                'Bloqueio em Segundo Plano',
+                'Quando o app é minimizado ou você troca para outro app, ele é bloqueado automaticamente após o tempo configurado. Você pode definir o tempo livremente nas configurações (segundos, minutos ou horas).',
+              ),
+              _buildHelpItem(
+                'Exceções de Bloqueio',
+                'O app não bloqueia quando você usa recursos internos que abrem outros apps — como selecionar fotos da galeria, gravar vídeos, escolher local de backup ou compartilhar histórias.',
+              ),
+              _buildHelpItem(
+                'Recuperação de PIN',
+                'Esqueceu o PIN? Use a opção "Esqueci meu PIN" na tela de bloqueio. Um código de recuperação será enviado para o e-mail cadastrado.',
               ),
             ],
           ),
@@ -150,8 +170,8 @@ class HelpScreen extends StatelessWidget {
                 'Configure lembretes para escrever no diário.',
               ),
               _buildHelpItem(
-                'Bloqueio Automático',
-                'Defina tempo de inatividade para bloqueio automático.',
+                'Bloqueio em Segundo Plano',
+                'Defina por quanto tempo o app pode ficar em segundo plano antes de ser bloqueado. Você pode usar valores em segundos, minutos ou horas, com total liberdade.',
               ),
               _buildHelpItem(
                 'Backup',

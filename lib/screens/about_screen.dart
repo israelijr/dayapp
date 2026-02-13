@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../providers/pin_provider.dart';
 
 class AboutScreen extends StatefulWidget {
   const AboutScreen({super.key});
@@ -232,6 +235,10 @@ class _AboutScreenState extends State<AboutScreen> {
             const SizedBox(height: 12),
             InkWell(
               onTap: () async {
+                final pinProvider = Provider.of<PinProvider>(
+                  context,
+                  listen: false,
+                );
                 final Uri emailUri = Uri(
                   scheme: 'mailto',
                   path: 'israelijr.app@gmail.com',
@@ -242,7 +249,15 @@ class _AboutScreenState extends State<AboutScreen> {
                   },
                 );
                 if (await canLaunchUrl(emailUri)) {
-                  await launchUrl(emailUri);
+                  pinProvider.isPickingExternalMedia = true;
+                  try {
+                    await launchUrl(emailUri);
+                  } finally {
+                    // Reseta após um breve delay para cobrir a transição
+                    Future.delayed(const Duration(seconds: 2), () {
+                      pinProvider.isPickingExternalMedia = false;
+                    });
+                  }
                 }
               },
               child: Row(
@@ -272,11 +287,23 @@ class _AboutScreenState extends State<AboutScreen> {
             const SizedBox(height: 8),
             InkWell(
               onTap: () async {
+                final pinProvider = Provider.of<PinProvider>(
+                  context,
+                  listen: false,
+                );
                 const url =
                     'https://sites.google.com/view/politicadeprivacidade-dayapp/início';
                 final Uri uri = Uri.parse(url);
                 if (await canLaunchUrl(uri)) {
-                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                  pinProvider.isPickingExternalMedia = true;
+                  try {
+                    await launchUrl(uri, mode: LaunchMode.externalApplication);
+                  } finally {
+                    // Reseta após um breve delay para cobrir a transição
+                    Future.delayed(const Duration(seconds: 2), () {
+                      pinProvider.isPickingExternalMedia = false;
+                    });
+                  }
                 }
               },
               child: Row(

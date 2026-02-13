@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
 import '../services/biometric_service.dart';
 import '../services/pin_recovery_service.dart';
@@ -23,10 +24,31 @@ class _LockScreenState extends State<LockScreen> {
   bool _showRecoveryDialog = false;
   final int _maxPinLength = 8; // PIN pode ter de 4 a 8 dígitos
 
+  /// Controla se está mostrando o modo de desbloqueio por senha
+  bool _showPasswordMode = false;
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _obscurePassword = true;
+  String? _passwordError;
+
   @override
   void initState() {
     super.initState();
     _checkBiometricAndAutoAuthenticate();
+    // Pré-preenche o email do usuário logado
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        _emailController.text = authProvider.user?.email ?? '';
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
   Future<void> _checkBiometricAndAutoAuthenticate() async {
@@ -87,6 +109,42 @@ class _LockScreenState extends State<LockScreen> {
       if (mounted) {
         setState(() => _isLoading = false);
       }
+    }
+  }
+
+  /// Autentica com a senha da conta do usuário
+  Future<void> _authenticateWithPassword() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+
+    if (email.isEmpty || password.isEmpty) {
+      setState(() {
+        _passwordError = 'Preencha o e-mail e a senha';
+      });
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _passwordError = null;
+    });
+
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final pinProvider = Provider.of<PinProvider>(context, listen: false);
+
+    final isValid = await authProvider.login(email, password);
+
+    if (!mounted) return;
+
+    if (isValid) {
+      // Autenticação por senha bem-sucedida — desbloqueia o app
+      pinProvider.authenticateWithBiometric();
+      _passwordController.clear();
+    } else {
+      setState(() {
+        _passwordError = 'E-mail ou senha incorretos';
+        _isLoading = false;
+      });
     }
   }
 
@@ -371,7 +429,9 @@ class _LockScreenState extends State<LockScreen> {
                       const SizedBox(height: 8),
 
                       Text(
-                        onlyBiometric
+                        _showPasswordMode
+                            ? 'Digite sua senha para continuar'
+                            : onlyBiometric
                             ? 'Use sua biometria para continuar'
                             : 'Digite seu PIN para continuar',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -380,58 +440,97 @@ class _LockScreenState extends State<LockScreen> {
                       ),
                       const SizedBox(height: 40),
 
-                      // Mostra PIN apenas se estiver habilitado
-                      if (pinProvider.isPinEnabled) ...[
-                        // Indicadores de PIN
-                        _buildPinIndicators(),
-
-                        if (_showError) ...[
-                          const SizedBox(height: 16),
-                          Text(
-                            'PIN incorreto. Tente novamente.',
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.error,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-
-                        const SizedBox(height: 40),
-
-                        // Teclado numérico
-                        _buildNumericKeypad(),
-
-                        const SizedBox(height: 24),
-                      ],
-
-                      // Botão de biometria
-                      if (_isBiometricAvailable) ...[
-                        ElevatedButton.icon(
-                          onPressed: _isLoading
-                              ? null
-                              : _authenticateWithBiometric,
-                          icon: const Icon(Icons.fingerprint),
+                      // Modo de desbloqueio por SENHA
+                      if (_showPasswordMode) ...[
+                        _buildPasswordForm(),
+                        const SizedBox(height: 16),
+                        // Botão para voltar ao modo PIN/biometria
+                        TextButton.icon(
+                          onPressed: () {
+                            setState(() {
+                              _showPasswordMode = false;
+                              _passwordError = null;
+                              _passwordController.clear();
+                            });
+                          },
+                          icon: const Icon(Icons.pin, size: 18),
                           label: Text(
-                            onlyBiometric
-                                ? 'Desbloquear com Biometria'
+                            pinProvider.isPinEnabled
+                                ? 'Usar PIN'
                                 : 'Usar Biometria',
                           ),
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 32,
-                              vertical: 12,
+                        ),
+                      ] else ...[
+                        // Mostra PIN apenas se estiver habilitado
+                        if (pinProvider.isPinEnabled) ...[
+                          // Indicadores de PIN
+                          _buildPinIndicators(),
+
+                          if (_showError) ...[
+                            const SizedBox(height: 16),
+                            Text(
+                              'PIN incorreto. Tente novamente.',
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.error,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+
+                          const SizedBox(height: 40),
+
+                          // Teclado numérico
+                          _buildNumericKeypad(),
+
+                          const SizedBox(height: 24),
+                        ],
+
+                        // Botão de biometria
+                        if (_isBiometricAvailable) ...[
+                          ElevatedButton.icon(
+                            onPressed: _isLoading
+                                ? null
+                                : _authenticateWithBiometric,
+                            icon: const Icon(Icons.fingerprint),
+                            label: Text(
+                              onlyBiometric
+                                  ? 'Desbloquear com Biometria'
+                                  : 'Usar Biometria',
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 32,
+                                vertical: 12,
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 16),
-                      ],
+                          const SizedBox(height: 16),
+                        ],
 
-                      // Link para recuperação - apenas se PIN estiver habilitado
-                      if (pinProvider.isPinEnabled)
-                        TextButton(
-                          onPressed: _isLoading ? null : _showRecoveryOptions,
-                          child: const Text('Esqueci meu PIN'),
+                        // Botão para usar senha da conta
+                        TextButton.icon(
+                          onPressed: _isLoading
+                              ? null
+                              : () {
+                                  setState(() {
+                                    _showPasswordMode = true;
+                                    _showError = false;
+                                    _enteredPin.clear();
+                                  });
+                                },
+                          icon: const Icon(Icons.password, size: 18),
+                          label: const Text('Usar Senha da Conta'),
                         ),
+
+                        const SizedBox(height: 8),
+
+                        // Link para recuperação - apenas se PIN estiver habilitado
+                        if (pinProvider.isPinEnabled)
+                          TextButton(
+                            onPressed: _isLoading ? null : _showRecoveryOptions,
+                            child: const Text('Esqueci meu PIN'),
+                          ),
+                      ],
                     ],
                   ),
                 ),
@@ -502,6 +601,71 @@ class _LockScreenState extends State<LockScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  /// Formulário de desbloqueio por senha da conta
+  Widget _buildPasswordForm() {
+    return SizedBox(
+      width: 320,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            controller: _emailController,
+            decoration: const InputDecoration(
+              labelText: 'E-mail',
+              border: OutlineInputBorder(),
+              prefixIcon: Icon(Icons.email_outlined),
+            ),
+            keyboardType: TextInputType.emailAddress,
+            textInputAction: TextInputAction.next,
+            enabled: !_isLoading,
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _passwordController,
+            decoration: InputDecoration(
+              labelText: 'Senha',
+              border: const OutlineInputBorder(),
+              prefixIcon: const Icon(Icons.lock_outline),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                ),
+                onPressed: () {
+                  setState(() => _obscurePassword = !_obscurePassword);
+                },
+              ),
+            ),
+            obscureText: _obscurePassword,
+            textInputAction: TextInputAction.done,
+            enabled: !_isLoading,
+            onSubmitted: (_) => _authenticateWithPassword(),
+          ),
+          if (_passwordError != null) ...[
+            const SizedBox(height: 12),
+            Text(
+              _passwordError!,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.error,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+          const SizedBox(height: 20),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: _isLoading ? null : _authenticateWithPassword,
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 14),
+              ),
+              child: const Text('Desbloquear'),
+            ),
+          ),
+        ],
       ),
     );
   }
