@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../providers/auth_provider.dart';
 import '../services/password_recovery_service.dart';
+import '../services/pin_recovery_service.dart';
 import '../widgets/custom_text_field.dart';
 
 /// Tela de recuperação de senha por token enviado por e-mail.
@@ -20,6 +21,7 @@ class PasswordRecoveryScreen extends StatefulWidget {
 
 class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
   final PasswordRecoveryService _recoveryService = PasswordRecoveryService();
+  final PinRecoveryService _pinRecoveryService = PinRecoveryService();
 
   final emailController = TextEditingController();
   final codeController = TextEditingController();
@@ -35,6 +37,22 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
   /// Etapa atual do fluxo de recuperação
   /// 0 = informar e-mail, 1 = digitar código, 2 = nova senha
   int currentStep = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRecoveryEmail();
+  }
+
+  /// Carrega o email de recuperação cadastrado (se existir)
+  Future<void> _loadRecoveryEmail() async {
+    final email = await _pinRecoveryService.getUserEmail();
+    if (email != null && email.isNotEmpty && mounted) {
+      setState(() {
+        emailController.text = email;
+      });
+    }
+  }
 
   @override
   void dispose() {

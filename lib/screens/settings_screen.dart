@@ -202,6 +202,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ListTile(
             leading: const Icon(Icons.edit),
             title: const Text('Alterar PIN'),
+            // contentPadding: const EdgeInsets.only(left: 57.0),
             dense: true,
             onTap: () async {
               final result = await Navigator.push<bool>(
@@ -224,14 +225,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
               'Bloquear após: ${InactivityService.getBackgroundTimeoutLabel(_backgroundLockTimeout)}',
             ),
             onTap: _showBackgroundLockTimeoutDialog,
-            dense: true,
           ),
           ListTile(
             leading: const Icon(Icons.email_outlined),
             title: const Text('E-mail para Recuperação'),
             subtitle: Text(_userEmail ?? 'Não configurado'),
             onTap: _showEmailDialog,
-            dense: true,
           ),
         ] else if (_biometricEnabled) ...[
           // Mostra opção de timeout mesmo quando só biometria está habilitada
@@ -242,7 +241,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               'Bloquear após: ${InactivityService.getBackgroundTimeoutLabel(_backgroundLockTimeout)}',
             ),
             onTap: _showBackgroundLockTimeoutDialog,
-            dense: true,
           ),
         ],
 
@@ -699,7 +697,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           final currentSeconds = calculateSeconds();
 
           return AlertDialog(
-            title: const Text('Bloqueio em Segundo Plano'),
+            title: const Text(
+              'Bloqueio em Segundo Plano',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -836,7 +837,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (dialogBuilderContext) => AlertDialog(
-        title: const Text('E-mail para Recuperação'),
+        title: const Text(
+          'E-mail para Recuperação',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

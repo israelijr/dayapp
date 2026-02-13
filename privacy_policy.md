@@ -1,6 +1,6 @@
 # Política de Privacidade - DayApp
 
-**Última atualização:** 05 de outubro de 2025
+**Última atualização:** 13 de fevereiro de 2026
 
 ## 1. Introdução
 
@@ -126,10 +126,14 @@ Esses compartilhamentos são **voluntários** e controlados inteiramente por voc
 Implementamos medidas de segurança para proteger seus dados:
 
 ✅ **Armazenamento local criptografado** pelo sistema Android  
-✅ **Autenticação biométrica** opcional para acesso ao app  
+✅ **Autenticação biométrica** opcional para acesso ao app (impressão digital/Face ID)  
+✅ **PIN de desbloqueio** configurável (4 a 8 dígitos)  
+✅ **Bloqueio automático em segundo plano** com tempo configurável  
+✅ **Armazenamento seguro de credenciais** sensíveis (flutter_secure_storage)  
 ✅ **Backups criptografados** em formato ZIP protegido  
-✅ **Nenhuma transmissão de dados** para servidores externos  
-✅ **Isolamento de dados** do aplicativo (sandbox do Android)
+✅ **Nenhuma transmissão de dados pessoais** para servidores externos  
+✅ **Isolamento de dados** do aplicativo (sandbox do Android)  
+✅ **E-mail de recuperação** para redefinição de PIN
 
 ### 7.2 Responsabilidade do Usuário
 
@@ -174,7 +178,7 @@ Não coletamos intencionalmente informações de crianças menores de 13 anos. S
 
 ## 10. Serviços de Terceiros
 
-###  Bibliotecas e SDKs
+### 10.1 Bibliotecas e SDKs
 
 O DayApp usa as seguintes bibliotecas de código aberto:
 
@@ -183,6 +187,24 @@ O DayApp usa as seguintes bibliotecas de código aberto:
 - **Bibliotecas de código aberto** listadas em [pub.dev](https://pub.dev)
 
 Essas bibliotecas **NÃO coletam nem transmitem** dados pessoais.
+
+### 10.2 Anúncios
+
+O DayApp pode exibir anúncios através do **Google AdMob** para manter o aplicativo gratuito.
+
+- Os anúncios são exibidos de forma **NÃO personalizada**
+- **NÃO coletamos** dados pessoais para fins publicitários
+- **NÃO compartilhamos** suas informações com anunciantes
+- O conteúdo do seu diário **NUNCA** é usado para segmentação de anúncios
+
+O Google AdMob pode coletar identificadores de dispositivo apenas para exibição de anúncios genéricos, em conformidade com a [política de privacidade do Google](https://policies.google.com/privacy).
+
+### 10.3 Analytics e Rastreamento
+
+❌ **Não usamos** Google Analytics  
+❌ **Não usamos** sistemas de rastreamento comportamental  
+❌ **Não usamos** cookies  
+❌ **Não rastreamos** sua localização
 
 ---
 
@@ -255,13 +277,15 @@ Brasil
 ### ✅ O que o DayApp faz:
 - Armazena seus dados LOCALMENTE no seu dispositivo
 - Permite criar backups manuais opcionais
-- Protege seus dados com biometria
-- Não compartilha dados com terceiros
+- Protege seus dados com biometria e/ou PIN
+- Pode exibir anúncios NÃO personalizados (Google AdMob)
+- Não compartilha dados pessoais com terceiros
 
 ### ❌ O que o DayApp NÃO faz:
-- NÃO envia dados para servidores
+- NÃO envia seus dados pessoais para servidores
 - NÃO usa serviços de nuvem automáticos
 - NÃO vende ou compartilha seus dados
+- NÃO usa anúncios personalizados baseados em seus dados
 - NÃO rastreia seu comportamento
 
 ---
@@ -282,4 +306,4 @@ Se você não concordar com esta política, por favor, não use o aplicativo.
 
 ---
 
-*Esta política de privacidade foi criada em 05 de outubro de 2025 e está sujeita a alterações.*
+*Esta política de privacidade foi criada em 05 de outubro de 2025 e atualizada em 13 de fevereiro de 2026.*
