@@ -1,0 +1,651 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/auth_provider.dart';
+import '../services/password_recovery_service.dart';
+import '../widgets/custom_text_field.dart';
+
+/// Tela de recuperação de senha por token enviado por e-mail.
+/// Fluxo em etapas:
+/// 1. Informar e-mail cadastrado
+/// 2. Enviar código de recuperação por e-mail
+/// 3. Digitar o código recebido
+/// 4. Definir nova senha
+class PasswordRecoveryScreen extends StatefulWidget {
+  const PasswordRecoveryScreen({super.key});
+
+  @override
+  State<PasswordRecoveryScreen> createState() => _PasswordRecoveryScreenState();
+}
+
+class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
+  final PasswordRecoveryService _recoveryService = PasswordRecoveryService();
+
+  final emailController = TextEditingController();
+  final codeController = TextEditingController();
+  final newPasswordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+
+  bool loading = false;
+  bool obscureNewPassword = true;
+  bool obscureConfirmPassword = true;
+  String? errorMessage;
+  String? successMessage;
+
+  /// Etapa atual do fluxo de recuperação
+  /// 0 = informar e-mail, 1 = digitar código, 2 = nova senha
+  int currentStep = 0;
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    codeController.dispose();
+    newPasswordController.dispose();
+    confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  /// Etapa 1: Verificar se o e-mail existe e enviar código de recuperação
+  Future<void> _sendRecoveryCode() async {
+    final email = emailController.text.trim();
+
+    if (email.isEmpty) {
+      setState(() => errorMessage = 'Informe seu e-mail.');
+      return;
+    }
+
+    // Validação básica de formato de e-mail
+    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+$').hasMatch(email)) {
+      setState(() => errorMessage = 'Informe um e-mail válido.');
+      return;
+    }
+
+    setState(() {
+      loading = true;
+      errorMessage = null;
+      successMessage = null;
+    });
+
+    // Verifica se o e-mail está cadastrado
+    final auth = Provider.of<AuthProvider>(context, listen: false);
+    final exists = await auth.emailExists(email);
+
+    if (!mounted) return;
+
+    if (!exists) {
+      setState(() {
+        loading = false;
+        errorMessage = 'E-mail não encontrado. Verifique e tente novamente.';
+      });
+      return;
+    }
+
+    // Gera e envia o código de recuperação
+    final success = await _recoveryService.sendRecoveryCode(email);
+
+    if (!mounted) return;
+
+    setState(() => loading = false);
+
+    if (success) {
+      setState(() {
+        currentStep = 1;
+        successMessage =
+            'Código enviado para $email! Verifique sua caixa de entrada.';
+        errorMessage = null;
+      });
+    } else {
+      setState(() {
+        errorMessage =
+            'Erro ao enviar o código. Verifique sua conexão e tente novamente.';
+      });
+    }
+  }
+
+  /// Etapa 2: Verificar o código de recuperação
+  Future<void> _verifyCode() async {
+    final code = codeController.text.trim();
+
+    if (code.length != 6) {
+      setState(() => errorMessage = 'O código deve ter 6 dígitos.');
+      return;
+    }
+
+    setState(() {
+      loading = true;
+      errorMessage = null;
+      successMessage = null;
+    });
+
+    final isValid = await _recoveryService.verifyRecoveryCode(code);
+
+    if (!mounted) return;
+
+    setState(() => loading = false);
+
+    if (isValid) {
+      setState(() {
+        currentStep = 2;
+        successMessage = 'Código verificado! Defina sua nova senha.';
+        errorMessage = null;
+      });
+    } else {
+      setState(() {
+        errorMessage = 'Código inválido ou expirado. Tente novamente.';
+      });
+    }
+  }
+
+  /// Etapa 3: Definir nova senha
+  Future<void> _resetPassword() async {
+    final newPassword = newPasswordController.text;
+    final confirmPassword = confirmPasswordController.text;
+
+    if (newPassword.isEmpty) {
+      setState(() => errorMessage = 'Informe a nova senha.');
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setState(
+        () => errorMessage = 'A senha deve ter pelo menos 6 caracteres.',
+      );
+      return;
+    }
+
+    if (newPassword != confirmPassword) {
+      setState(() => errorMessage = 'As senhas não coincidem.');
+      return;
+    }
+
+    setState(() {
+      loading = true;
+      errorMessage = null;
+      successMessage = null;
+    });
+
+    final email = emailController.text.trim();
+    final auth = Provider.of<AuthProvider>(context, listen: false);
+    final success = await auth.updatePasswordByEmail(email, newPassword);
+
+    if (!mounted) return;
+
+    if (success) {
+      // Limpa o código de recuperação usado
+      await _recoveryService.clearRecoveryCode();
+
+      if (!mounted) return;
+
+      setState(() => loading = false);
+
+      // Mostra mensagem de sucesso e volta para o login
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Senha redefinida com sucesso! Faça login com a nova senha.',
+          ),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 3),
+        ),
+      );
+
+      Navigator.of(context).pop();
+    } else {
+      setState(() {
+        loading = false;
+        errorMessage = 'Erro ao redefinir a senha. Tente novamente.';
+      });
+    }
+  }
+
+  /// Reenvia o código de recuperação
+  Future<void> _resendCode() async {
+    final email = emailController.text.trim();
+
+    setState(() {
+      loading = true;
+      errorMessage = null;
+      successMessage = null;
+    });
+
+    final success = await _recoveryService.sendRecoveryCode(email);
+
+    if (!mounted) return;
+
+    setState(() => loading = false);
+
+    if (success) {
+      setState(() {
+        successMessage = 'Novo código enviado! Verifique sua caixa de entrada.';
+      });
+    } else {
+      setState(() {
+        errorMessage = 'Erro ao reenviar código. Tente novamente.';
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFB388FF),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: const Text(
+          'Recuperar Senha',
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
+      body: Center(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Ícone e título
+                const Icon(Icons.lock_reset, size: 64, color: Colors.white),
+                const SizedBox(height: 16),
+                Text(
+                  _getStepTitle(),
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  _getStepSubtitle(),
+                  style: const TextStyle(fontSize: 14, color: Colors.white70),
+                  textAlign: TextAlign.center,
+                ),
+
+                // Indicador de etapas
+                const SizedBox(height: 24),
+                _buildStepIndicator(),
+
+                const SizedBox(height: 24),
+
+                // Mensagens de sucesso/erro
+                if (successMessage != null) ...[
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.green.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: Colors.green.withValues(alpha: 0.5),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.check_circle,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            successMessage!,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+                if (errorMessage != null) ...[
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.red.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: Colors.red.withValues(alpha: 0.5),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.error_outline,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            errorMessage!,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+
+                // Campos de cada etapa
+                _buildStepContent(),
+
+                const SizedBox(height: 24),
+
+                // Botão principal
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF5E35B1),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    onPressed: loading ? null : _getStepAction(),
+                    child: loading
+                        ? const SizedBox(
+                            height: 18,
+                            width: 18,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : Text(
+                            _getStepButtonLabel(),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                  ),
+                ),
+
+                // Botões secundários
+                if (currentStep == 1) ...[
+                  const SizedBox(height: 12),
+                  TextButton(
+                    onPressed: loading ? null : _resendCode,
+                    child: const Text(
+                      'Reenviar código',
+                      style: TextStyle(
+                        color: Colors.white,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                  FutureBuilder<int?>(
+                    future: _recoveryService.getRemainingTime(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData && snapshot.data != null) {
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Text(
+                            'Código expira em ${snapshot.data} minutos',
+                            style: const TextStyle(
+                              color: Colors.white70,
+                              fontSize: 12,
+                            ),
+                          ),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                ],
+
+                if (currentStep > 0) ...[
+                  const SizedBox(height: 8),
+                  TextButton(
+                    onPressed: loading
+                        ? null
+                        : () {
+                            setState(() {
+                              currentStep = 0;
+                              errorMessage = null;
+                              successMessage = null;
+                              codeController.clear();
+                              newPasswordController.clear();
+                              confirmPasswordController.clear();
+                            });
+                          },
+                    child: const Text(
+                      'Voltar ao início',
+                      style: TextStyle(color: Colors.white70, fontSize: 13),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Constrói o indicador visual de etapas
+  Widget _buildStepIndicator() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _buildStepDot(0, 'E-mail'),
+        _buildStepLine(0),
+        _buildStepDot(1, 'Código'),
+        _buildStepLine(1),
+        _buildStepDot(2, 'Senha'),
+      ],
+    );
+  }
+
+  Widget _buildStepDot(int step, String label) {
+    final isActive = currentStep >= step;
+    final isCurrent = currentStep == step;
+
+    return Column(
+      children: [
+        Container(
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: isActive
+                ? const Color(0xFF5E35B1)
+                : Colors.white.withValues(alpha: 0.3),
+            border: isCurrent
+                ? Border.all(color: Colors.white, width: 2)
+                : null,
+          ),
+          child: Center(
+            child: isActive && !isCurrent
+                ? const Icon(Icons.check, color: Colors.white, size: 18)
+                : Text(
+                    '${step + 1}',
+                    style: TextStyle(
+                      color: isActive ? Colors.white : Colors.white70,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: TextStyle(
+            color: isActive ? Colors.white : Colors.white70,
+            fontSize: 11,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStepLine(int afterStep) {
+    final isActive = currentStep > afterStep;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 18),
+      child: Container(
+        width: 40,
+        height: 2,
+        color: isActive
+            ? const Color(0xFF5E35B1)
+            : Colors.white.withValues(alpha: 0.3),
+      ),
+    );
+  }
+
+  /// Constrói os campos da etapa atual
+  Widget _buildStepContent() {
+    switch (currentStep) {
+      case 0:
+        return _buildEmailStep();
+      case 1:
+        return _buildCodeStep();
+      case 2:
+        return _buildNewPasswordStep();
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+
+  /// Etapa 0: Campo de e-mail
+  Widget _buildEmailStep() {
+    return CustomTextField(
+      label: 'Informe seu e-mail cadastrado',
+      controller: emailController,
+      keyboardType: TextInputType.emailAddress,
+    );
+  }
+
+  /// Etapa 1: Campo do código de recuperação
+  Widget _buildCodeStep() {
+    return Column(
+      children: [
+        Text(
+          'E-mail: ${emailController.text.trim()}',
+          style: const TextStyle(color: Colors.white70, fontSize: 13),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: codeController,
+          decoration: InputDecoration(
+            labelText: 'Código de recuperação (6 dígitos)',
+            prefixIcon: const Icon(Icons.lock_outline),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+          ),
+          keyboardType: TextInputType.number,
+          maxLength: 6,
+          style: const TextStyle(
+            fontSize: 24,
+            letterSpacing: 8,
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+
+  /// Etapa 2: Campos de nova senha
+  Widget _buildNewPasswordStep() {
+    return Column(
+      children: [
+        CustomTextField(
+          label: 'Nova senha (mínimo 6 caracteres)',
+          controller: newPasswordController,
+          obscureText: obscureNewPassword,
+          suffixIcon: IconButton(
+            icon: Icon(
+              obscureNewPassword ? Icons.visibility_off : Icons.visibility,
+            ),
+            onPressed: () =>
+                setState(() => obscureNewPassword = !obscureNewPassword),
+          ),
+        ),
+        CustomTextField(
+          label: 'Confirmar nova senha',
+          controller: confirmPasswordController,
+          obscureText: obscureConfirmPassword,
+          suffixIcon: IconButton(
+            icon: Icon(
+              obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
+            ),
+            onPressed: () => setState(
+              () => obscureConfirmPassword = !obscureConfirmPassword,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Retorna o título da etapa atual
+  String _getStepTitle() {
+    switch (currentStep) {
+      case 0:
+        return 'Informe seu e-mail';
+      case 1:
+        return 'Digite o código';
+      case 2:
+        return 'Nova senha';
+      default:
+        return '';
+    }
+  }
+
+  /// Retorna o subtítulo da etapa atual
+  String _getStepSubtitle() {
+    switch (currentStep) {
+      case 0:
+        return 'Enviaremos um código de recuperação para o e-mail cadastrado na sua conta.';
+      case 1:
+        return 'Insira o código de 6 dígitos que foi enviado para o seu e-mail.';
+      case 2:
+        return 'Defina uma nova senha segura para sua conta.';
+      default:
+        return '';
+    }
+  }
+
+  /// Retorna o label do botão principal da etapa atual
+  String _getStepButtonLabel() {
+    switch (currentStep) {
+      case 0:
+        return 'Enviar código';
+      case 1:
+        return 'Verificar código';
+      case 2:
+        return 'Redefinir senha';
+      default:
+        return '';
+    }
+  }
+
+  /// Retorna a ação do botão principal da etapa atual
+  VoidCallback _getStepAction() {
+    switch (currentStep) {
+      case 0:
+        return _sendRecoveryCode;
+      case 1:
+        return _verifyCode;
+      case 2:
+        return _resetPassword;
+      default:
+        return () {};
+    }
+  }
+}

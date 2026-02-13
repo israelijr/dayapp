@@ -26,6 +26,7 @@ import 'screens/edit_profile_screen.dart';
 import 'screens/help_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
+import 'screens/password_recovery_screen.dart';
 import 'screens/search_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/splash_screen.dart';
@@ -380,6 +381,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             initialRoute: widget.authProvider.isLoggedIn ? '/home' : '/login',
             routes: {
               '/login': (context) => const LoginScreen(),
+              '/password_recovery': (context) => const PasswordRecoveryScreen(),
               '/create_account': (context) => const CreateAccountScreen(),
               '/create_account_complement': (context) =>
                   const CreateAccountComplementScreen(),

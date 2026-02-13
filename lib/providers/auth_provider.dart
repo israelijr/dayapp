@@ -124,6 +124,46 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  /// Verifica se existe um usuário com o e-mail informado
+  Future<bool> emailExists(String email) async {
+    final db = await DatabaseHelper().database;
+    final result = await db.query(
+      'users',
+      where: 'email = ?',
+      whereArgs: [email],
+    );
+    return result.isNotEmpty;
+  }
+
+  /// Atualiza a senha de um usuário pelo e-mail (usado na recuperação de senha)
+  Future<bool> updatePasswordByEmail(String email, String newPassword) async {
+    try {
+      final db = await DatabaseHelper().database;
+      final result = await db.query(
+        'users',
+        where: 'email = ?',
+        whereArgs: [email],
+      );
+
+      if (result.isEmpty) return false;
+
+      // Gera hash seguro para a nova senha
+      final salt = _secureStorage.generateSalt();
+      final hashedPassword = _secureStorage.hashPassword(newPassword, salt);
+
+      await db.update(
+        'users',
+        {'senha': hashedPassword},
+        where: 'email = ?',
+        whereArgs: [email],
+      );
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   Future<bool> updateUser({
     required String nome,
     required String email,

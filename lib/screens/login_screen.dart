@@ -259,6 +259,19 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                   ),
                 ),
+                const SizedBox(height: 12),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, '/password_recovery');
+                  },
+                  child: const Text(
+                    'Esqueci minha senha',
+                    style: TextStyle(
+                      color: Colors.white,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 16),
                 GestureDetector(
                   onTap: () {

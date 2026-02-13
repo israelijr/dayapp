@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../services/backup_service.dart';
@@ -449,16 +450,20 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
           title: const Text('✅ Restauração Concluída'),
           content: const Text(
             'O backup foi restaurado com sucesso!\n\n'
-            'Todas as suas histórias foram restauradas ao estado do backup.',
+            'Todas as suas histórias foram restauradas ao estado do backup.\n\n'
+            'É necessário fazer login novamente para completar o processo.',
           ),
           actions: [
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
+                final navigator = Navigator.of(context);
                 Navigator.pop(dialogContext);
-                // Voltar para a tela principal, removendo todas as telas intermediárias
-                Navigator.of(context).popUntil((route) => route.isFirst);
+                // Faz logout e redireciona para o login
+                final auth = Provider.of<AuthProvider>(context, listen: false);
+                await auth.logout();
+                navigator.pushNamedAndRemoveUntil('/login', (route) => false);
               },
-              child: const Text('OK'),
+              child: const Text('Fazer Login'),
             ),
           ],
         ),

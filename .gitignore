@@ -75,3 +75,6 @@ serviceAccountKey.json
 *.p12
 *.pem
 *.crt
+
+# Configuração SMTP (credenciais de e-mail)
+lib/services/smtp_config.dart
