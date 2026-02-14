@@ -32,6 +32,7 @@ import 'screens/settings_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/trash_screen.dart';
 import 'services/ad_service.dart';
+import 'services/engagement_service.dart';
 import 'services/inactivity_service.dart';
 import 'services/notification_service.dart';
 import 'theme/m3_expressive_theme.dart';
@@ -103,6 +104,16 @@ class _AppLoaderState extends State<AppLoader> {
       String? payload,
     ) async {
       if (payload != null) {
+        // Verifica se é uma notificação de engajamento
+        if (payload == 'engagement') {
+          // Registra que o usuário interagiu com a notificação
+          await EngagementService().registerAppUsage();
+          // Navega para a tela inicial (o app decidirá se precisa de login)
+          // Como o app já está abrindo, a rota inicial será respeitada
+          return;
+        }
+
+        // Notificação de história - tenta abrir a história específica
         final int? historiaId = int.tryParse(payload);
         if (historiaId != null) {
           final Historia? historia = await DatabaseHelper().getHistoria(
@@ -119,8 +130,11 @@ class _AppLoaderState extends State<AppLoader> {
       }
     });
 
+    // Inicializar serviço de engajamento e registrar uso do app
+    final engagementFuture = EngagementService().registerAppUsage();
+
     // Aguarda inicializações em paralelo
-    await Future.wait([adsFuture, notificationsFuture]);
+    await Future.wait([adsFuture, notificationsFuture, engagementFuture]);
 
     return AppInitData(
       authProvider: authProvider,
@@ -319,6 +333,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         _pausedTime = DateTime.now();
         break;
       case AppLifecycleState.resumed:
+        // Registra uso do app para notificações de engajamento
+        EngagementService().registerAppUsage();
+
         // App voltou para foreground
         if (widget.pinProvider.isLockEnabled && _pausedTime != null) {
           // Se estiver autenticando com biometria, não bloqueia

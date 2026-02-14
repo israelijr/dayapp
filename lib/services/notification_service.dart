@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -17,10 +18,15 @@ class NotificationService {
     // Inicializa timezones
     tz.initializeTimeZones();
 
-    // CRÍTICO: Define o timezone local para São Paulo (Brasil)
-    // Sem isso, notificações são agendadas em UTC causando erro de 3h
-    final brazilLocation = tz.getLocation('America/Sao_Paulo');
-    tz.setLocalLocation(brazilLocation);
+    // Obtém o timezone local do dispositivo do usuário
+    try {
+      final timezoneInfo = await FlutterTimezone.getLocalTimezone();
+      final location = tz.getLocation(timezoneInfo.identifier);
+      tz.setLocalLocation(location);
+    } catch (e) {
+      // Fallback para UTC se não conseguir obter o timezone
+      // Isso evita crashes em dispositivos com configurações incomuns
+    }
 
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -127,9 +133,9 @@ class NotificationService {
     await flutterLocalNotificationsPlugin.cancel(id);
   }
 
-  /// Lista todas as notificações pendentes (para debug)
-  Future<void> listPendingNotifications() async {
-    await flutterLocalNotificationsPlugin.pendingNotificationRequests();
+  /// Lista todas as notificações pendentes
+  Future<List<PendingNotificationRequest>> listPendingNotifications() async {
+    return await flutterLocalNotificationsPlugin.pendingNotificationRequests();
   }
 
   Future<void> showImmediateNotification({
@@ -157,5 +163,56 @@ class NotificationService {
       notificationDetails,
       payload: payload,
     );
+  }
+
+  /// Agenda uma notificação de engajamento para convidar o usuário a usar o app
+  ///
+  /// Usa um canal específico para notificações de engajamento
+  Future<void> scheduleEngagementNotification({
+    required int id,
+    required String title,
+    required String body,
+    required DateTime scheduledDate,
+    String? payload,
+  }) async {
+    const notificationDetails = NotificationDetails(
+      android: AndroidNotificationDetails(
+        'reflection_reminders_channel',
+        'Lembretes de Reflexão',
+        channelDescription: 'Lembretes carinhosos para registrar suas memórias',
+        importance: Importance.high,
+        priority: Priority.high,
+        icon: '@mipmap/ic_launcher',
+        playSound: true,
+        enableVibration: true,
+        showWhen: true,
+      ),
+      iOS: DarwinNotificationDetails(),
+      linux: LinuxNotificationDetails(),
+    );
+
+    if (!kIsWeb && Platform.isWindows) {
+      // Para Windows, notificações agendadas podem não ser suportadas
+      // Ignora silenciosamente
+      return;
+    }
+
+    try {
+      final tzDateTime = tz.TZDateTime.from(scheduledDate, tz.local);
+
+      await flutterLocalNotificationsPlugin.zonedSchedule(
+        id,
+        title,
+        body,
+        tzDateTime,
+        notificationDetails,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        payload: payload,
+      );
+    } catch (e) {
+      // Erro ao agendar notificação de engajamento - ignora silenciosamente
+    }
   }
 }

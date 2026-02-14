@@ -8,6 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
 import '../services/auto_backup_service.dart';
+import '../services/battery_optimization_service.dart';
+import '../widgets/battery_optimization_dialog.dart';
 import 'edit_profile_screen.dart';
 import 'groups_maintenance_screen.dart';
 import 'groups_screen.dart';
@@ -31,6 +33,23 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _loadLayoutPreference();
+    _checkBatteryOptimization();
+  }
+
+  /// Verifica se a otimização de bateria está desabilitada
+  /// e mostra o dialog se necessário
+  Future<void> _checkBatteryOptimization() async {
+    // Aguarda um pouco para não atrapalhar o carregamento inicial
+    await Future.delayed(const Duration(seconds: 2));
+
+    if (!mounted) return;
+
+    final batteryService = BatteryOptimizationService();
+    final shouldShow = await batteryService.shouldShowBatteryWarning();
+
+    if (shouldShow && mounted) {
+      await BatteryOptimizationDialog.show(context);
+    }
   }
 
   Future<void> _loadLayoutPreference() async {

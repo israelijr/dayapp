@@ -10,7 +10,9 @@ import '../db/database_helper.dart';
 import '../providers/pin_provider.dart';
 import '../providers/theme_provider.dart';
 import '../services/auto_backup_service.dart';
+import '../services/battery_optimization_service.dart';
 import '../services/biometric_service.dart';
+import '../services/engagement_service.dart';
 import '../services/inactivity_service.dart';
 import '../services/notification_preferences_service.dart';
 import '../services/pin_recovery_service.dart';
@@ -31,6 +33,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final NotificationPreferencesService _notificationService =
       NotificationPreferencesService();
   final AutoBackupService _autoBackupService = AutoBackupService();
+  final EngagementService _engagementService = EngagementService();
+  final BatteryOptimizationService _batteryService =
+      BatteryOptimizationService();
   bool _biometricAvailable = false;
   bool _biometricEnabled = false;
   bool _pinEnabled = false;
@@ -39,6 +44,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _notificationEnabled = true;
   int _notificationAdvance =
       NotificationPreferencesService.defaultAdvanceMinutes;
+  bool _engagementNotificationsEnabled = true;
+  bool? _batteryOptimizationDisabled;
   String? _userEmail;
   late PinProvider _pinProvider;
 
@@ -93,9 +100,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _loadNotificationPreferences() async {
     final enabled = await _notificationService.isNotificationEnabled();
     final advance = await _notificationService.getDefaultNotificationAdvance();
+    final engagementEnabled = await _engagementService.isEnabled();
+    final batteryDisabled = await _batteryService
+        .isBatteryOptimizationDisabled();
     setState(() {
       _notificationEnabled = enabled;
       _notificationAdvance = advance;
+      _engagementNotificationsEnabled = engagementEnabled;
+      _batteryOptimizationDisabled = batteryDisabled;
     });
   }
 
@@ -938,6 +950,54 @@ class _SettingsScreenState extends State<SettingsScreen> {
             subtitle: Text(
               'Entradas com data pelo menos 2 horas à frente podem ter notificações agendadas.',
             ),
+            dense: true,
+          ),
+        const Divider(),
+        ListTile(
+          leading: const Icon(Icons.auto_awesome),
+          title: const Text('Lembretes de Reflexão'),
+          subtitle: Text(
+            _engagementNotificationsEnabled
+                ? 'Reserve um momento para você'
+                : 'Desabilitado',
+          ),
+          trailing: Switch(
+            value: _engagementNotificationsEnabled,
+            onChanged: (value) async {
+              await _engagementService.setEnabled(value);
+              await _loadNotificationPreferences();
+            },
+          ),
+        ),
+        if (_engagementNotificationsEnabled)
+          const ListTile(
+            leading: Icon(Icons.info_outline),
+            title: Text('Sobre lembretes'),
+            subtitle: Text(
+              'Você receberá um lembrete carinhoso para registrar suas memórias e reflexões se ficar alguns dias sem abrir o app.',
+            ),
+            dense: true,
+          ),
+        if (_engagementNotificationsEnabled &&
+            _batteryOptimizationDisabled == false)
+          ListTile(
+            leading: const Icon(Icons.battery_alert, color: Colors.orange),
+            title: const Text('Otimização de Bateria'),
+            subtitle: const Text(
+              'Lembretes podem não funcionar. Toque para configurar.',
+            ),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () async {
+              await _batteryService.requestDisableBatteryOptimization();
+              await _loadNotificationPreferences();
+            },
+          ),
+        if (_engagementNotificationsEnabled &&
+            _batteryOptimizationDisabled == true)
+          const ListTile(
+            leading: Icon(Icons.check_circle, color: Colors.green),
+            title: Text('Otimização de Bateria'),
+            subtitle: Text('Configurado corretamente'),
             dense: true,
           ),
       ],
