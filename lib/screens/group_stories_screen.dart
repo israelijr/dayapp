@@ -278,6 +278,100 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
                         color: Theme.of(context).textTheme.titleLarge?.color,
                       ),
                     ),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      height: 80,
+                      child: RichTextViewerWidget(
+                        jsonContent: historia.descricao,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    // Data
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            if (historia.emoticon != null &&
+                                historia.emoticon!.isNotEmpty)
+                              Builder(
+                                builder: (context) {
+                                  final convertedEmoji = _convertLegacyEmoticon(
+                                    historia.emoticon!,
+                                  );
+                                  final displayEmoji =
+                                      convertedEmoji ?? historia.emoticon!;
+                                  return Text(
+                                    displayEmoji,
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      height: 1,
+                                    ),
+                                  );
+                                },
+                              ),
+                            if (historia.emoticon != null &&
+                                historia.emoticon!.isNotEmpty)
+                              const SizedBox(width: 6),
+                            Text(
+                              DateFormat(
+                                'dd/MM/yyyy HH:mm',
+                                'pt_BR',
+                              ).format(historia.data),
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Theme.of(
+                                  context,
+                                ).textTheme.bodySmall?.color,
+                              ),
+                            ),
+                          ],
+                        ),
+                        PopupMenuButton<String>(
+                          icon: Icon(
+                            Icons.more_horiz,
+                            color: Theme.of(context).iconTheme.color,
+                          ),
+                          onSelected: (value) async {
+                            if (value == 'edit') {
+                              final navigator = Navigator.of(context);
+                              final refreshProvider =
+                                  Provider.of<RefreshProvider>(
+                                    context,
+                                    listen: false,
+                                  );
+                              navigator
+                                  .push(
+                                    MaterialPageRoute(
+                                      builder: (_) => EditHistoriaScreen(
+                                        historia: historia,
+                                      ),
+                                    ),
+                                  )
+                                  .then((updated) {
+                                    if (!mounted) return;
+                                    if (updated == true) {
+                                      refreshProvider.refresh();
+                                    }
+                                  });
+                            } else if (value == 'delete') {
+                              await _deleteHistoria(historia);
+                            }
+                          },
+                          itemBuilder: (context) => [
+                            const PopupMenuItem(
+                              value: 'edit',
+                              child: Text('Editar'),
+                            ),
+                            const PopupMenuItem(
+                              value: 'delete',
+                              child: Text('Excluir'),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    // Tags da história
                     if (historia.tag != null && historia.tag!.isNotEmpty) ...[
                       const SizedBox(height: 8),
                       Container(
@@ -303,94 +397,6 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
                         ),
                       ),
                     ],
-                    const SizedBox(height: 8),
-                    SizedBox(
-                      height: 80,
-                      child: RichTextViewerWidget(
-                        jsonContent: historia.descricao,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          DateFormat(
-                            'dd/MM/yyyy HH:mm',
-                            'pt_BR',
-                          ).format(historia.data),
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Theme.of(context).textTheme.bodySmall?.color,
-                          ),
-                        ),
-                        PopupMenuButton<String>(
-                          icon: Icon(
-                            Icons.more_horiz,
-                            color: Theme.of(context).iconTheme.color,
-                          ),
-                          onSelected: (value) async {
-                            if (value == 'edit') {
-                              final refreshProvider =
-                                  Provider.of<RefreshProvider>(
-                                    context,
-                                    listen: false,
-                                  );
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) =>
-                                      EditHistoriaScreen(historia: historia),
-                                ),
-                              ).then((updated) {
-                                if (!mounted) return;
-                                if (updated == true) {
-                                  refreshProvider.refresh();
-                                }
-                              });
-                            } else if (value == 'delete') {
-                              await _deleteHistoria(historia);
-                            } else if (value == 'desagrupar') {
-                              final refreshProvider =
-                                  Provider.of<RefreshProvider>(
-                                    context,
-                                    listen: false,
-                                  );
-                              final messenger = ScaffoldMessenger.of(context);
-                              await _updateHistoria(
-                                historia,
-                                updates: {
-                                  'tag': null,
-                                  'arquivado': null,
-                                  'grupo': null,
-                                },
-                              );
-                              if (!mounted) return;
-                              refreshProvider.refresh();
-                              messenger.showSnackBar(
-                                const SnackBar(
-                                  content: Text('História desagrupada'),
-                                ),
-                              );
-                            }
-                          },
-                          itemBuilder: (context) => [
-                            const PopupMenuItem(
-                              value: 'edit',
-                              child: Text('Editar'),
-                            ),
-                            const PopupMenuItem(
-                              value: 'desagrupar',
-                              child: Text('Desagrupar'),
-                            ),
-                            const PopupMenuItem(
-                              value: 'delete',
-                              child: Text('Excluir'),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
                   ],
                 ),
               ),
@@ -463,10 +469,27 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
                   : Colors.grey[200],
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(
-              Icons.image,
-              color: Theme.of(context).iconTheme.color,
-              size: 24,
+            child: Center(
+              child: Builder(
+                builder: (context) {
+                  if (historia.emoticon != null &&
+                      historia.emoticon!.isNotEmpty) {
+                    final converted = _convertLegacyEmoticon(
+                      historia.emoticon!,
+                    );
+                    final display = converted ?? historia.emoticon!;
+                    return Text(
+                      display,
+                      style: const TextStyle(fontSize: 20, height: 1),
+                    );
+                  }
+                  return Icon(
+                    Icons.image,
+                    color: Theme.of(context).iconTheme.color,
+                    size: 24,
+                  );
+                },
+              ),
             ),
           ),
           title: Text(
@@ -1021,46 +1044,20 @@ class HistoriaMediaRow extends StatelessWidget {
         final audios = data['audios'] as List<AudioComBytes>;
         final videos = data['videos'] as List<v2.HistoriaVideo>;
 
-        // Se não tem emoticon nem mídia, não mostra nada
-        if ((emoticon == null || emoticon!.isEmpty) &&
-            audios.isEmpty &&
-            videos.isEmpty) {
+        // Se não tem mídia (áudios ou vídeos), não mostra nada aqui.
+        // Emoticon agora é exibido na linha da data, então não reserva altura por ele.
+        if (audios.isEmpty && videos.isEmpty) {
           return const SizedBox.shrink();
         }
 
         return Padding(
-          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+          padding: EdgeInsets.zero,
           child: SizedBox(
             height: 64,
             child: ListView(
               scrollDirection: Axis.horizontal,
               children: [
-                // Emoticon
-                if (emoticon != null && emoticon!.isNotEmpty)
-                  Container(
-                    margin: const EdgeInsets.only(right: 8),
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Theme.of(context).dividerColor,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Builder(
-                      builder: (context) {
-                        // Converte emoticons legados para emojis
-                        final convertedEmoji = convertLegacyEmoticon(emoticon!);
-                        final displayEmoji = convertedEmoji ?? emoticon!;
-                        return Center(
-                          child: Text(
-                            displayEmoji,
-                            style: const TextStyle(fontSize: 32),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
+                // Emoticon: removido do row de mídia (será mostrado na linha da data)
                 // Áudios
                 ...audios.map((audio) {
                   return Padding(

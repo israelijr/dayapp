@@ -368,18 +368,46 @@ class _HomeContentState extends State<HomeContent> {
                       ),
                     ),
                     const SizedBox(height: 12),
+                    // Data
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          DateFormat(
-                            'dd/MM/yyyy HH:mm',
-                            'pt_BR',
-                          ).format(historia.data),
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Theme.of(context).textTheme.bodySmall?.color,
-                          ),
+                        Row(
+                          children: [
+                            if (historia.emoticon != null &&
+                                historia.emoticon!.isNotEmpty)
+                              Builder(
+                                builder: (context) {
+                                  final convertedEmoji = _convertLegacyEmoticon(
+                                    historia.emoticon!,
+                                  );
+                                  final displayEmoji =
+                                      convertedEmoji ?? historia.emoticon!;
+                                  return Text(
+                                    displayEmoji,
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      height: 1,
+                                    ),
+                                  );
+                                },
+                              ),
+                            if (historia.emoticon != null &&
+                                historia.emoticon!.isNotEmpty)
+                              const SizedBox(width: 6),
+                            Text(
+                              DateFormat(
+                                'dd/MM/yyyy HH:mm',
+                                'pt_BR',
+                              ).format(historia.data),
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: Theme.of(
+                                  context,
+                                ).textTheme.bodySmall?.color,
+                              ),
+                            ),
+                          ],
                         ),
                         PopupMenuButton<String>(
                           icon: Icon(
@@ -425,6 +453,32 @@ class _HomeContentState extends State<HomeContent> {
                         ),
                       ],
                     ),
+                    // Tags da história
+                    if (historia.tag != null && historia.tag!.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.blue[700]
+                              : Colors.blue[100],
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          historia.tag!,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                ? Colors.blue[100]
+                                : Colors.blue[800],
+                          ),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -497,10 +551,27 @@ class _HomeContentState extends State<HomeContent> {
                   : Colors.grey[200],
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(
-              Icons.image,
-              color: Theme.of(context).iconTheme.color,
-              size: 24,
+            child: Center(
+              child: Builder(
+                builder: (context) {
+                  if (historia.emoticon != null &&
+                      historia.emoticon!.isNotEmpty) {
+                    final converted = _convertLegacyEmoticon(
+                      historia.emoticon!,
+                    );
+                    final display = converted ?? historia.emoticon!;
+                    return Text(
+                      display,
+                      style: const TextStyle(fontSize: 20, height: 1),
+                    );
+                  }
+                  return Icon(
+                    Icons.image,
+                    color: Theme.of(context).iconTheme.color,
+                    size: 24,
+                  );
+                },
+              ),
             ),
           ),
           title: Text(
@@ -1287,46 +1358,20 @@ class HistoriaMediaRow extends StatelessWidget {
         final audios = data['audios'] as List<AudioComBytes>;
         final videos = data['videos'] as List<v2.HistoriaVideo>;
 
-        // Se não tem emoticon nem mídia, não mostra nada
-        if ((emoticon == null || emoticon!.isEmpty) &&
-            audios.isEmpty &&
-            videos.isEmpty) {
+        // Se não tem mídia (áudios ou vídeos), não mostra nada aqui.
+        // Emoticon agora é exibido na linha da data, então não reserva altura por ele.
+        if (audios.isEmpty && videos.isEmpty) {
           return const SizedBox.shrink();
         }
 
         return Padding(
-          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+          padding: EdgeInsets.zero,
           child: SizedBox(
             height: 64,
             child: ListView(
               scrollDirection: Axis.horizontal,
               children: [
-                // Emoticon
-                if (emoticon != null && emoticon!.isNotEmpty)
-                  Container(
-                    margin: const EdgeInsets.only(right: 8),
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Theme.of(context).dividerColor,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Builder(
-                      builder: (context) {
-                        // Converte emoticons legados para emojis
-                        final convertedEmoji = convertLegacyEmoticon(emoticon!);
-                        final displayEmoji = convertedEmoji ?? emoticon!;
-                        return Center(
-                          child: Text(
-                            displayEmoji,
-                            style: const TextStyle(fontSize: 32),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
+                // Emoticon: removido do row de mídia (será mostrado na linha da data)
                 // Áudios
                 ...audios.map((audio) {
                   return Padding(
