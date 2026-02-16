@@ -266,11 +266,15 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
                                   );
                                   final displayEmoji =
                                       convertedEmoji ?? historia.emoticon!;
-                                  return Text(
-                                    displayEmoji,
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      height: 1,
+                                  return Container(
+                                    width: 36,
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      displayEmoji,
+                                      style: const TextStyle(
+                                        fontSize: 22,
+                                        height: 1,
+                                      ),
                                     ),
                                   );
                                 },
@@ -278,16 +282,20 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
                             if (historia.emoticon != null &&
                                 historia.emoticon!.isNotEmpty)
                               const SizedBox(width: 6),
-                            Text(
-                              DateFormat(
-                                'dd/MM/yyyy HH:mm',
-                                'pt_BR',
-                              ).format(historia.data),
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: Theme.of(
-                                  context,
-                                ).textTheme.bodySmall?.color,
+                            SizedBox(
+                              width: 140,
+                              child: Text(
+                                DateFormat(
+                                  'dd/MM/yyyy HH:mm',
+                                  'pt_BR',
+                                ).format(historia.data),
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Theme.of(
+                                    context,
+                                  ).textTheme.bodySmall?.color,
+                                ),
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],
@@ -430,8 +438,8 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: ListTile(
           leading: Container(
-            width: 40,
-            height: 40,
+            width: 48,
+            height: 48,
             decoration: BoxDecoration(
               color: Theme.of(context).brightness == Brightness.dark
                   ? Colors.grey[800]
@@ -455,7 +463,7 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
                   return Icon(
                     Icons.image,
                     color: Theme.of(context).iconTheme.color,
-                    size: 24,
+                    size: 26,
                   );
                 },
               ),

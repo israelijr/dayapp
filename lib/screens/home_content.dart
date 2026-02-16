@@ -395,16 +395,20 @@ class _HomeContentState extends State<HomeContent> {
                             if (historia.emoticon != null &&
                                 historia.emoticon!.isNotEmpty)
                               const SizedBox(width: 6),
-                            Text(
-                              DateFormat(
-                                'dd/MM/yyyy HH:mm',
-                                'pt_BR',
-                              ).format(historia.data),
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: Theme.of(
-                                  context,
-                                ).textTheme.bodySmall?.color,
+                            SizedBox(
+                              width: 140,
+                              child: Text(
+                                DateFormat(
+                                  'dd/MM/yyyy HH:mm',
+                                  'pt_BR',
+                                ).format(historia.data),
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Theme.of(
+                                    context,
+                                  ).textTheme.bodySmall?.color,
+                                ),
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],
@@ -543,8 +547,8 @@ class _HomeContentState extends State<HomeContent> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         child: ListTile(
           leading: Container(
-            width: 40,
-            height: 40,
+            width: 48,
+            height: 48,
             decoration: BoxDecoration(
               color: Theme.of(context).brightness == Brightness.dark
                   ? Colors.grey[800]
@@ -568,7 +572,7 @@ class _HomeContentState extends State<HomeContent> {
                   return Icon(
                     Icons.image,
                     color: Theme.of(context).iconTheme.color,
-                    size: 24,
+                    size: 26,
                   );
                 },
               ),

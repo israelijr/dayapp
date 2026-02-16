@@ -696,16 +696,15 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Header: Date and Emoji
+                    // Header: Date (expandida) e botão de calendário
                     Row(
                       children: [
-                        Flexible(
+                        Expanded(
                           child: Text(
                             dateFormat.format(selectedDate),
                             style: theme.textTheme.labelLarge?.copyWith(
                               color: theme.colorScheme.onSurfaceVariant,
                             ),
-                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         IconButton(
@@ -715,29 +714,6 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                           padding: const EdgeInsets.all(4),
                           constraints: const BoxConstraints(),
                         ),
-                        const Spacer(),
-                        if (selectedEmoticon != null)
-                          Flexible(
-                            child: Chip(
-                              avatar: Text(
-                                _convertLegacyEmoticon(selectedEmoticon!),
-                                style: const TextStyle(fontSize: 20),
-                              ),
-                              label: Text(
-                                selectedEmojiTranslation ??
-                                    selectedEmoticon ??
-                                    '',
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              onDeleted: () {
-                                setState(() {
-                                  selectedEmoticon = null;
-                                  selectedEmojiTranslation = null;
-                                  _checkForChanges();
-                                });
-                              },
-                            ),
-                          ),
                       ],
                     ),
                     const SizedBox(height: 16),
@@ -801,7 +777,57 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                       },
                       contentPadding: EdgeInsets.zero,
                     ),
-                    const SizedBox(height: 24),
+
+                    // Emoticon (agora abaixo do Archive Switch) - ocupa largura disponível
+                    if (selectedEmoticon != null) ...[
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 4.0),
+                              child: Chip(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 6,
+                                ),
+                                avatar: SizedBox(
+                                  width: 48,
+                                  height: 48,
+                                  child: Center(
+                                    child: FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: Text(
+                                        _convertLegacyEmoticon(
+                                          selectedEmoticon!,
+                                        ),
+                                        style: const TextStyle(fontSize: 32),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                label: Text(
+                                  selectedEmojiTranslation ??
+                                      selectedEmoticon ??
+                                      '',
+                                  // Permite quebra de linha para mostrar o título completo
+                                  maxLines: 2,
+                                  softWrap: true,
+                                ),
+                                onDeleted: () {
+                                  setState(() {
+                                    selectedEmoticon = null;
+                                    selectedEmojiTranslation = null;
+                                    _checkForChanges();
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                    ],
 
                     // Media Previews
                     if (fotos.isNotEmpty) ...[
