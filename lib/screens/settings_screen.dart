@@ -952,54 +952,54 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             dense: true,
           ),
-        const Divider(),
-        ListTile(
-          leading: const Icon(Icons.auto_awesome),
-          title: const Text('Lembretes de Reflexão'),
-          subtitle: Text(
-            _engagementNotificationsEnabled
-                ? 'Reserve um momento para você'
-                : 'Desabilitado',
-          ),
-          trailing: Switch(
-            value: _engagementNotificationsEnabled,
-            onChanged: (value) async {
-              await _engagementService.setEnabled(value);
-              await _loadNotificationPreferences();
-            },
-          ),
-        ),
-        if (_engagementNotificationsEnabled)
-          const ListTile(
-            leading: Icon(Icons.info_outline),
-            title: Text('Sobre lembretes'),
-            subtitle: Text(
-              'Você receberá um lembrete carinhoso para registrar suas memórias e reflexões se ficar alguns dias sem abrir o app.',
-            ),
-            dense: true,
-          ),
-        if (_engagementNotificationsEnabled &&
-            _batteryOptimizationDisabled == false)
-          ListTile(
-            leading: const Icon(Icons.battery_alert, color: Colors.orange),
-            title: const Text('Otimização de Bateria'),
-            subtitle: const Text(
-              'Lembretes podem não funcionar. Toque para configurar.',
-            ),
-            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-            onTap: () async {
-              await _batteryService.requestDisableBatteryOptimization();
-              await _loadNotificationPreferences();
-            },
-          ),
-        if (_engagementNotificationsEnabled &&
-            _batteryOptimizationDisabled == true)
-          const ListTile(
-            leading: Icon(Icons.check_circle, color: Colors.green),
-            title: Text('Otimização de Bateria'),
-            subtitle: Text('Configurado corretamente'),
-            dense: true,
-          ),
+        // const Divider(),
+        // ListTile(
+        //   leading: const Icon(Icons.auto_awesome),
+        //   title: const Text('Lembretes de Reflexão'),
+        //   subtitle: Text(
+        //     _engagementNotificationsEnabled
+        //         ? 'Reserve um momento para você'
+        //         : 'Desabilitado',
+        //   ),
+        //   trailing: Switch(
+        //     value: _engagementNotificationsEnabled,
+        //     onChanged: (value) async {
+        //       await _engagementService.setEnabled(value);
+        //       await _loadNotificationPreferences();
+        //     },
+        //   ),
+        // ),
+        // if (_engagementNotificationsEnabled)
+        //   const ListTile(
+        //     leading: Icon(Icons.info_outline),
+        //     title: Text('Sobre lembretes'),
+        //     subtitle: Text(
+        //       'Você receberá um lembrete carinhoso para registrar suas memórias e reflexões se ficar alguns dias sem abrir o app.',
+        //     ),
+        //     dense: true,
+        //   ),
+        // if (_engagementNotificationsEnabled &&
+        //     _batteryOptimizationDisabled == false)
+        //   ListTile(
+        //     leading: const Icon(Icons.battery_alert, color: Colors.orange),
+        //     title: const Text('Otimização de Bateria'),
+        //     subtitle: const Text(
+        //       'Lembretes podem não funcionar. Toque para configurar.',
+        //     ),
+        //     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+        //     onTap: () async {
+        //       await _batteryService.requestDisableBatteryOptimization();
+        //       await _loadNotificationPreferences();
+        //     },
+        //   ),
+        // if (_engagementNotificationsEnabled &&
+        //     _batteryOptimizationDisabled == true)
+        //   const ListTile(
+        //     leading: Icon(Icons.check_circle, color: Colors.green),
+        //     title: Text('Otimização de Bateria'),
+        //     subtitle: Text('Configurado corretamente'),
+        //     dense: true,
+        //   ),
       ],
     );
   }

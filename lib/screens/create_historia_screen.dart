@@ -562,7 +562,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                           padding: const EdgeInsets.all(4),
                           constraints: const BoxConstraints(),
                         ),
-                        const Spacer(),
+                        const Spacer(flex: 1),
                         if (selectedEmoticon != null)
                           Chip(
                             avatar: Text(selectedEmoticon!),
@@ -578,7 +578,6 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                       ],
                     ),
                     const SizedBox(height: 16),
-
                     // Title
                     TextField(
                       controller: titleController,

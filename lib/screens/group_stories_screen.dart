@@ -365,7 +365,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
                           itemBuilder: (context) => [
                             const PopupMenuItem(
                               value: 'edit',
-                              child: Text('Editar'),
+                              child: Text('Editar - 2 toques'),
                             ),
                             const PopupMenuItem(
                               value: 'delete',

@@ -447,7 +447,7 @@ class _HomeContentState extends State<HomeContent> {
                           itemBuilder: (context) => [
                             const PopupMenuItem(
                               value: 'edit',
-                              child: Text('Editar'),
+                              child: Text('Editar - 2 toques '),
                             ),
                             const PopupMenuItem(
                               value: 'delete',

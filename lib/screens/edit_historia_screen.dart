@@ -699,12 +699,10 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                     // Header: Date (expandida) e botão de calendário
                     Row(
                       children: [
-                        Expanded(
-                          child: Text(
-                            dateFormat.format(selectedDate),
-                            style: theme.textTheme.labelLarge?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant,
-                            ),
+                        Text(
+                          dateFormat.format(selectedDate),
+                          style: theme.textTheme.labelLarge?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
                           ),
                         ),
                         IconButton(
@@ -714,6 +712,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                           padding: const EdgeInsets.all(4),
                           constraints: const BoxConstraints(),
                         ),
+                        const Spacer(flex: 1),
                       ],
                     ),
                     const SizedBox(height: 16),
