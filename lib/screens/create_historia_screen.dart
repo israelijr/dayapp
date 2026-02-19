@@ -15,6 +15,8 @@ import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../services/emoji_service.dart';
+import '../services/pdf_export_service.dart';
+import 'pdf_preview_screen.dart';
 import '../widgets/audio_recorder_widget.dart';
 import '../widgets/compact_audio_icon.dart';
 import '../widgets/compact_video_icon.dart';
@@ -273,12 +275,12 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
     );
   }
 
-  Future<void> _saveHistoria() async {
+  Future<int?> _saveHistoria({bool navigateAfterSave = true}) async {
     if (titleController.text.trim().isEmpty) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Título é obrigatório!')));
-      return;
+      return null;
     }
 
     setState(() {
@@ -347,16 +349,134 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
       }
 
       // Atualiza a tela inicial
-      if (!mounted) return;
+      if (!mounted) return historiaId;
       refreshProvider.refresh();
 
-      // Navega para a tela inicial
-      navigator.pushNamedAndRemoveUntil('/home', (route) => false);
+      // Navega para a tela inicial se solicitado
+      if (navigateAfterSave) {
+        navigator.pushNamedAndRemoveUntil('/home', (route) => false);
+      }
+
+      return historiaId;
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('Erro ao salvar história: $e')));
+      }
+      return null;
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _exportToPdf() async {
+    // Valida título e descrição
+    final plainText = richTextController.document.toPlainText().trim();
+    if (titleController.text.trim().isEmpty || plainText.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Título e descrição são obrigatórios para exportar.'),
+        ),
+      );
+      return;
+    }
+
+    // Pergunta ao usuário se quer salvar direto ou só preview
+    final choice = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Exportar História'),
+        content: const Text(
+          'Deseja salvar antes de exportar ou ver um preview?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, 'cancel'),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, 'preview'),
+            child: const Text('Preview'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, 'save'),
+            child: const Text('Salvar e exportar'),
+          ),
+        ],
+      ),
+    );
+    if (choice == null || choice == 'cancel') return;
+
+    setState(() {
+      _isLoading = true;
+    });
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final titleText = titleController.text.trim().isEmpty
+          ? 'Sem título'
+          : _capitalizeText(titleController.text.trim());
+
+      // Se escolheu salvar e exportar, salva primeiro sem navegar
+      if (choice == 'save') {
+        final savedId = await _saveHistoria(navigateAfterSave: false);
+        if (savedId == null) return; // erro ao salvar
+      }
+
+      final pdfBytes = await PdfExportService.generatePdfFromHistoria(
+        title: titleText,
+        content: plainText,
+        date: selectedDate,
+        images: fotos,
+        tags: tagsController.text.trim().isEmpty
+            ? null
+            : tagsController.text.trim(),
+        emoticon: selectedEmoticon,
+      );
+
+      final filename = 'historia_${DateTime.now().millisecondsSinceEpoch}.pdf';
+
+      // Mostrar preview antes de qualquer ação (cancelar/compartilhar/salvar)
+      if (!mounted) return;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => PdfPreviewScreen(
+            initialPdfBytes: pdfBytes,
+            onGenerate: (highQuality) =>
+                PdfExportService.generatePdfFromHistoria(
+                  title: titleText,
+                  content: plainText,
+                  date: selectedDate,
+                  images: fotos,
+                  tags: tagsController.text.trim().isEmpty
+                      ? null
+                      : tagsController.text.trim(),
+                  emoticon: selectedEmoticon,
+                  highQuality: highQuality,
+                ),
+            filename: filename,
+            title: 'Preview - $titleText',
+            onSave: () async {
+              // Salva sem navegar para a Home
+              final savedId = await _saveHistoria(navigateAfterSave: false);
+              return savedId != null;
+            },
+          ),
+        ),
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Erro ao exportar PDF: $e')));
       }
     } finally {
       if (mounted) {
@@ -519,6 +639,11 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
         appBar: AppBar(
           title: const Text('Nova História'),
           actions: [
+            IconButton(
+              icon: const Icon(Icons.picture_as_pdf),
+              tooltip: 'Exportar PDF',
+              onPressed: _isLoading ? null : _exportToPdf,
+            ),
             if (_isLoading)
               const Padding(
                 padding: EdgeInsets.all(16.0),

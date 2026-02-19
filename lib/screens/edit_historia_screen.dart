@@ -5,12 +5,13 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../services/pdf_export_service.dart';
+
 import '../db/database_helper.dart';
 import '../db/historia_audio_helper.dart';
 import '../db/historia_foto_helper.dart';
 import '../db/historia_video_helper.dart';
 import '../helpers/audio_file_helper.dart';
-import '../helpers/image_compression_helper.dart';
 import '../helpers/notification_helper.dart';
 import '../helpers/photo_file_helper.dart';
 import '../helpers/rich_text_helper.dart';
@@ -26,6 +27,7 @@ import '../widgets/image_picker_widget.dart';
 import '../widgets/rich_text_editor_widget.dart';
 import '../widgets/video_recorder_widget.dart';
 import 'rich_text_editor_screen.dart';
+import 'pdf_preview_screen.dart';
 
 class SentenceCapitalizationTextInputFormatter extends TextInputFormatter {
   @override
@@ -253,51 +255,6 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     });
   }
 
-  Future<void> _pickImage() async {
-    showDialog(
-      context: context,
-      builder: (context) => ImagePickerWidget(
-        allowMultiple: true,
-        onMultipleImagesPicked: (imagesList) async {
-          // Comprime cada imagem para evitar limite do SQLite CursorWindow (2MB)
-          final List<Uint8List> compressedImages = [];
-          final List<int> newIds = [];
-
-          for (final bytes in imagesList) {
-            final compressedBytes = await ImageCompressionHelper.compressImage(
-              bytes,
-            );
-            compressedImages.add(compressedBytes);
-            newIds.add(0); // 0 indica nova foto
-          }
-
-          if (!mounted) return;
-          setState(() {
-            fotos.addAll(compressedImages);
-            fotoIds.addAll(newIds);
-            _checkForChanges();
-          });
-        },
-      ),
-    );
-  }
-
-  void _removeFoto(int index) async {
-    if (fotoIds[index] != 0) {
-      final db = await DatabaseHelper().database;
-      await db.delete(
-        'historia_fotos',
-        where: 'id = ?',
-        whereArgs: [fotoIds[index]],
-      );
-    }
-    if (!mounted) return;
-    setState(() {
-      fotos.removeAt(index);
-      fotoIds.removeAt(index);
-    });
-  }
-
   Future<void> _loadAudios() async {
     final audiosDb = await HistoriaAudioHelper().getAudiosByHistoria(
       widget.historia.id ?? 0,
@@ -439,6 +396,28 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     }
   }
 
+  Future<void> _pickImage() async {
+    showDialog(
+      context: context,
+      builder: (context) => ImagePickerWidget(
+        allowMultiple: true,
+        onMultipleImagesPicked: (imagesList) {
+          setState(() {
+            fotos.addAll(imagesList);
+            _checkForChanges();
+          });
+        },
+      ),
+    );
+  }
+
+  void _removeFoto(int index) {
+    setState(() {
+      fotos.removeAt(index);
+      _checkForChanges();
+    });
+  }
+
   Future<void> _showNotificationDialog(int historiaId) async {
     await NotificationHelper().showNotificationDialog(
       context,
@@ -449,7 +428,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     );
   }
 
-  Future<void> _save() async {
+  Future<bool> _save({bool navigateAfterSave = true}) async {
     final db = await DatabaseHelper().database;
     await db.update(
       'historia',
@@ -517,8 +496,9 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
       }
     }
 
-    if (!mounted) return;
-    Navigator.pop(context, true);
+    if (!mounted) return false;
+    if (navigateAfterSave) Navigator.pop(context, true);
+    return true;
   }
 
   void _expandDescriptionEditor() async {
@@ -617,6 +597,60 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     }
   }
 
+  Future<void> _exportToPdf() async {
+    // Validação mínima
+    final plainText = richTextController.document.toPlainText().trim();
+    if (titleController.text.trim().isEmpty || plainText.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Título e descrição são obrigatórios para exportar.'),
+        ),
+      );
+      return;
+    }
+
+    // Gera o PDF e mostra o preview com opções Cancel/Compartilhar/Salvar
+    final pdfBytes = await PdfExportService.generatePdfFromHistoria(
+      title: _capitalizeText(titleController.text.trim()),
+      content: plainText,
+      date: selectedDate,
+      images: fotos,
+      tags: tagsController.text.trim().isEmpty
+          ? null
+          : tagsController.text.trim(),
+      emoticon: selectedEmoticon,
+    );
+
+    final filename =
+        'historia_${widget.historia.id ?? DateTime.now().millisecondsSinceEpoch}.pdf';
+    if (!mounted) return;
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => PdfPreviewScreen(
+          initialPdfBytes: pdfBytes,
+          onGenerate: (highQuality) => PdfExportService.generatePdfFromHistoria(
+            title: _capitalizeText(titleController.text.trim()),
+            content: plainText,
+            date: selectedDate,
+            images: fotos,
+            tags: tagsController.text.trim().isEmpty
+                ? null
+                : tagsController.text.trim(),
+            emoticon: selectedEmoticon,
+            highQuality: highQuality,
+          ),
+          filename: filename,
+          title: 'Preview - ${titleController.text.trim()}',
+          onSave: () async {
+            final ok = await _save(navigateAfterSave: false);
+            return ok;
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   void dispose() {
     titleController.removeListener(_checkForChanges);
@@ -679,8 +713,15 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
         appBar: AppBar(
           title: const Text('Editar História'),
           actions: [
+            IconButton(
+              icon: const Icon(Icons.picture_as_pdf),
+              tooltip: 'Exportar PDF',
+              onPressed: () async {
+                await _exportToPdf();
+              },
+            ),
             TextButton(
-              onPressed: _save,
+              onPressed: () async => await _save(),
               child: const Text(
                 'Salvar',
                 style: TextStyle(fontWeight: FontWeight.bold),

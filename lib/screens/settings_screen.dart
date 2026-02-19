@@ -44,7 +44,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _notificationEnabled = true;
   int _notificationAdvance =
       NotificationPreferencesService.defaultAdvanceMinutes;
+  // ignore: unused_field
   bool _engagementNotificationsEnabled = true;
+  // ignore: unused_field
   bool? _batteryOptimizationDisabled;
   String? _userEmail;
   late PinProvider _pinProvider;

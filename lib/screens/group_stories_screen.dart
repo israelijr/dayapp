@@ -3,6 +3,9 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../services/pdf_export_service.dart';
+import '../helpers/rich_text_helper.dart';
+
 import '../db/database_helper.dart';
 import '../db/historia_audio_helper.dart';
 import '../db/historia_foto_helper.dart';
@@ -18,6 +21,7 @@ import '../widgets/compact_video_icon.dart';
 import '../widgets/rich_text_viewer_widget.dart';
 import 'create_historia_screen.dart';
 import 'edit_historia_screen.dart';
+import 'pdf_preview_screen.dart';
 import 'edit_profile_screen.dart';
 import 'group_selection_screen.dart';
 
@@ -62,6 +66,53 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
         return '😭';
       default:
         return null; // Já é um emoji Unicode
+    }
+  }
+
+  Future<void> _exportHistoria(Historia historia) async {
+    try {
+      final fotosData = await HistoriaFotoHelper().getFotosComBytesByHistoria(
+        historia.id ?? 0,
+      );
+      final images = fotosData.map((f) => f.bytes).toList();
+      final content = RichTextHelper.jsonToPlainText(historia.descricao);
+      final pdfBytes = await PdfExportService.generatePdfFromHistoria(
+        title: historia.titulo,
+        content: content,
+        date: historia.data,
+        images: images,
+        tags: historia.tag,
+        emoticon: historia.emoticon,
+      );
+      final filename =
+          'historia_${historia.id ?? DateTime.now().millisecondsSinceEpoch}.pdf';
+      if (!mounted) return;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => PdfPreviewScreen(
+            initialPdfBytes: pdfBytes,
+            onGenerate: (highQuality) =>
+                PdfExportService.generatePdfFromHistoria(
+                  title: historia.titulo,
+                  content: content,
+                  date: historia.data,
+                  images: images,
+                  tags: historia.tag,
+                  emoticon: historia.emoticon,
+                  highQuality: highQuality,
+                ),
+            filename: filename,
+            title: 'Preview - ${historia.titulo}',
+            onSave: null,
+          ),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Erro ao exportar PDF: $e')));
     }
   }
 
@@ -535,6 +586,8 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
                 });
               } else if (value == 'delete') {
                 await _deleteHistoria(historia);
+              } else if (value == 'export') {
+                await _exportHistoria(historia);
               } else if (value == 'desagrupar') {
                 final refreshProvider = Provider.of<RefreshProvider>(
                   context,
@@ -553,6 +606,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
             },
             itemBuilder: (context) => [
               const PopupMenuItem(value: 'edit', child: Text('Editar')),
+              const PopupMenuItem(value: 'export', child: Text('Exportar PDF')),
               const PopupMenuItem(
                 value: 'desagrupar',
                 child: Text('Desagrupar'),
