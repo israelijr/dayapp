@@ -183,10 +183,10 @@ class _SplashScreenState extends State<SplashScreen>
                           child: ShaderMask(
                             shaderCallback: (bounds) {
                               return LinearGradient(
-                                colors: const [
-                                  Color(0xFF7B2CBF),
-                                  Color(0xFF9D4EDD),
-                                  Color(0xFF7B2CBF),
+                                colors: [
+                                  AppColors.purple700,
+                                  AppColors.purple600,
+                                  AppColors.purple700,
                                 ],
                                 stops: [
                                   0.0,

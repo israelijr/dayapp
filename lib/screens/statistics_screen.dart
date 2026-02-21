@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import '../db/database_helper.dart';
 import '../models/historia.dart';
 import '../providers/auth_provider.dart';
+import '../theme/m3_expressive_theme.dart';
 
 class StatisticsScreen extends StatefulWidget {
   const StatisticsScreen({super.key});
@@ -167,25 +168,25 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   Color _getEmoticonColor(String emoticon) {
     switch (emoticon.toLowerCase()) {
       case 'feliz':
-        return const Color(0xFF81D4FA); // Azul claro
+        return AppColors.emoticonBlue; // Azul claro
       case 'bem':
-        return const Color(0xFF80CBC4); // Verde água
+        return AppColors.emoticonTeal; // Verde água
       case 'ok':
-        return const Color(0xFFB39DDB); // Roxo claro
+        return AppColors.emoticonLightPurple; // Roxo claro
       case 'triste':
-        return const Color(0xFFFFCC80); // Laranja
+        return AppColors.emoticonOrange; // Laranja
       case 'infeliz':
-        return const Color(0xFFF48FB1); // Rosa
+        return AppColors.emoticonPink; // Rosa
       case 'preocupado':
-        return const Color(0xFFA5D6A7); // Verde
+        return AppColors.emoticonGreen; // Verde
       case 'bravo':
-        return const Color(0xFFFFAB91); // Vermelho claro
+        return AppColors.emoticonRed; // Vermelho claro
       case 'assustado':
-        return const Color(0xFFFFE082); // Amarelo
+        return AppColors.emoticonYellow; // Amarelo
       case 'pensativo':
-        return const Color(0xFFCE93D8); // Roxo
+        return AppColors.emoticonPurple; // Roxo
       case 'sono':
-        return const Color(0xFF90CAF9); // Azul
+        return AppColors.emoticonBlue2; // Azul
       default:
         return Colors.grey;
     }

@@ -99,7 +99,10 @@ class _ManageGroupsScreenState extends State<ManageGroupsScreen> {
               return ListTile(
                 title: Text(grupo.nome),
                 trailing: IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
+                  icon: Icon(
+                    Icons.delete,
+                    color: Theme.of(context).colorScheme.error,
+                  ),
                   onPressed: () => _deleteGrupo(grupo),
                 ),
               );

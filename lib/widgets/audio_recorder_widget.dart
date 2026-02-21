@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:record/record.dart';
 
 import '../providers/pin_provider.dart';
+import '../theme/m3_expressive_theme.dart';
 
 /// Widget de gravação/seleção de áudio.
 /// Suporta seleção múltipla de arquivos de áudio.
@@ -66,7 +67,7 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.audiotrack, size: 64, color: Colors.deepPurple),
+            Icon(Icons.audiotrack, size: 64, color: AppColors.primaryVariant),
             const SizedBox(height: 16),
             Text(
               widget.allowMultiple ? 'Adicionar Áudios' : 'Adicionar Áudio',
@@ -147,7 +148,9 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
             Icon(
               _isRecording ? Icons.mic : Icons.mic_none,
               size: 64,
-              color: _isRecording ? Colors.red : Colors.deepPurple,
+              color: _isRecording
+                  ? Theme.of(context).colorScheme.error
+                  : AppColors.primaryVariant,
             ),
             const SizedBox(height: 16),
             Text(
@@ -159,10 +162,10 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
             const SizedBox(height: 16),
             Text(
               _formatDuration(_recordDuration),
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 48,
                 fontWeight: FontWeight.bold,
-                color: Colors.deepPurple,
+                color: AppColors.primaryVariant,
               ),
             ),
             const SizedBox(height: 24),
@@ -172,7 +175,7 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
                 icon: const Icon(Icons.fiber_manual_record),
                 label: const Text('Iniciar Gravação'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
+                  backgroundColor: Theme.of(context).colorScheme.error,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 32,
@@ -200,7 +203,7 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
                   IconButton(
                     onPressed: _stopRecording,
                     icon: const Icon(Icons.stop_circle, size: 48),
-                    color: Colors.red,
+                    color: Theme.of(context).colorScheme.error,
                   ),
                 ],
               ),

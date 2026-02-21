@@ -46,6 +46,17 @@ class _AppColors {
   final Color purple600 = const Color(0xFF9D4EDD);
   final Color purple300 = const Color(0xFFC77DFF);
   final Color purple200 = const Color(0xFFE0AAFF);
+  // Paleta adicional usada por estatísticas e ícones
+  final Color emoticonBlue = const Color(0xFF81D4FA);
+  final Color emoticonTeal = const Color(0xFF80CBC4);
+  final Color emoticonLightPurple = const Color(0xFFB39DDB);
+  final Color emoticonOrange = const Color(0xFFFFCC80);
+  final Color emoticonPink = const Color(0xFFF48FB1);
+  final Color emoticonGreen = const Color(0xFFA5D6A7);
+  final Color emoticonRed = const Color(0xFFFFAB91);
+  final Color emoticonYellow = const Color(0xFFFFE082);
+  final Color emoticonPurple = const Color(0xFFCE93D8);
+  final Color emoticonBlue2 = const Color(0xFF90CAF9);
 }
 
 // Conveniência para importadores: `AppColors.primary`
@@ -59,4 +70,14 @@ class AppColors {
   static Color get purple600 => _app.purple600;
   static Color get purple300 => _app.purple300;
   static Color get purple200 => _app.purple200;
+  static Color get emoticonBlue => _app.emoticonBlue;
+  static Color get emoticonTeal => _app.emoticonTeal;
+  static Color get emoticonLightPurple => _app.emoticonLightPurple;
+  static Color get emoticonOrange => _app.emoticonOrange;
+  static Color get emoticonPink => _app.emoticonPink;
+  static Color get emoticonGreen => _app.emoticonGreen;
+  static Color get emoticonRed => _app.emoticonRed;
+  static Color get emoticonYellow => _app.emoticonYellow;
+  static Color get emoticonPurple => _app.emoticonPurple;
+  static Color get emoticonBlue2 => _app.emoticonBlue2;
 }

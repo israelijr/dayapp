@@ -689,7 +689,9 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
               ),
               TextButton(
                 onPressed: () => Navigator.of(context).pop('discard'),
-                style: TextButton.styleFrom(foregroundColor: Colors.red),
+                style: TextButton.styleFrom(
+                  foregroundColor: Theme.of(context).colorScheme.error,
+                ),
                 child: const Text('Descartar'),
               ),
               TextButton(
