@@ -7,26 +7,25 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'pdf_preview_screen.dart';
-
-import '../services/pdf_export_service.dart';
-import '../helpers/rich_text_helper.dart';
 
 import '../db/database_helper.dart';
 import '../db/historia_audio_helper.dart';
 import '../db/historia_foto_helper.dart';
 import '../db/historia_video_helper.dart';
+import '../helpers/rich_text_helper.dart';
 import '../models/historia.dart';
 import '../models/historia_video_v2.dart' as v2;
 import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
 import '../providers/refresh_provider.dart';
+import '../services/pdf_export_service.dart';
 import '../services/thumbnail_service.dart';
 import '../widgets/compact_audio_icon.dart';
 import '../widgets/compact_video_icon.dart';
 import '../widgets/rich_text_viewer_widget.dart';
 import 'edit_historia_screen.dart';
 import 'group_selection_screen.dart';
+import 'pdf_preview_screen.dart';
 
 class HomeContent extends StatefulWidget {
   final bool isCardView;

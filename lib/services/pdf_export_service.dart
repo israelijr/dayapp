@@ -32,10 +32,10 @@ class PdfExportService {
     final pw.Font boldFont = pw.Font.helveticaBold();
 
     // Limites de página (considera margens)
-    final pageFormat = pdf.PdfPageFormat.a4;
+    const pageFormat = pdf.PdfPageFormat.a4;
     const marginAll = 24.0;
-    final horizontalMargin = marginAll * 2; // left + right
-    final verticalMargin = marginAll * 2; // top + bottom
+    const horizontalMargin = marginAll * 2; // left + right
+    const verticalMargin = marginAll * 2; // top + bottom
     final maxImageWidth = pageFormat.width - horizontalMargin;
     final maxImageHeight =
         pageFormat.height -
@@ -44,7 +44,7 @@ class PdfExportService {
 
     // Pré-comprimir/redimensionar imagens assincronamente para evitar que
     // o layout do PDF estoure a altura da página ou consuma muita memória.
-    List<Uint8List> compressedImages = [];
+    final List<Uint8List> compressedImages = [];
     if (images != null && images.isNotEmpty) {
       final int cap = highQuality ? 2000 : 1200;
       final int maxWidthPx = math.min((maxImageWidth * 2).toInt(), cap);
@@ -123,7 +123,7 @@ class PdfExportService {
                   style: pw.TextStyle(
                     font: baseFont,
                     fontSize: 10,
-                    color: pdf.PdfColor.fromInt(0xFF666666),
+                    color: const pdf.PdfColor.fromInt(0xFF666666),
                   ),
                 ),
                 if (tags != null && tags.isNotEmpty)
@@ -132,7 +132,7 @@ class PdfExportService {
                     style: pw.TextStyle(
                       font: baseFont,
                       fontSize: 10,
-                      color: pdf.PdfColor.fromInt(0xFF666666),
+                      color: const pdf.PdfColor.fromInt(0xFF666666),
                     ),
                   ),
                 pw.Divider(),
@@ -210,7 +210,8 @@ Future<Uint8List> _renderEmojiToPng(String emoji, double size) async {
   final picture = recorder.endRecording();
   final img = await picture.toImage(tp.width.ceil(), tp.height.ceil());
   final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
-  if (byteData == null)
+  if (byteData == null) {
     throw StateError('Não foi possível gerar PNG do emoticon');
+  }
   return byteData.buffer.asUint8List();
 }

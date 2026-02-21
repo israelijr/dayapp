@@ -12,10 +12,10 @@ class PdfPreviewScreen extends StatefulWidget {
   final Future<bool> Function()? onSave; // Retorna true se salvo com sucesso
 
   const PdfPreviewScreen({
-    this.initialPdfBytes,
-    this.onGenerate,
     required this.filename,
     required this.title,
+    this.initialPdfBytes,
+    this.onGenerate,
     this.onSave,
     super.key,
   });

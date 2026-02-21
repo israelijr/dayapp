@@ -5,8 +5,6 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import '../services/pdf_export_service.dart';
-
 import '../db/database_helper.dart';
 import '../db/historia_audio_helper.dart';
 import '../db/historia_foto_helper.dart';
@@ -18,6 +16,7 @@ import '../helpers/rich_text_helper.dart';
 import '../models/historia.dart';
 import '../providers/pin_provider.dart';
 import '../services/emoji_service.dart';
+import '../services/pdf_export_service.dart';
 import '../widgets/audio_recorder_widget.dart';
 import '../widgets/compact_audio_icon.dart';
 import '../widgets/compact_video_icon.dart';
@@ -26,8 +25,8 @@ import '../widgets/entry_toolbar.dart';
 import '../widgets/image_picker_widget.dart';
 import '../widgets/rich_text_editor_widget.dart';
 import '../widgets/video_recorder_widget.dart';
-import 'rich_text_editor_screen.dart';
 import 'pdf_preview_screen.dart';
+import 'rich_text_editor_screen.dart';
 
 class SentenceCapitalizationTextInputFormatter extends TextInputFormatter {
   @override

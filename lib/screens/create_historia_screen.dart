@@ -16,7 +16,6 @@ import '../providers/pin_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../services/emoji_service.dart';
 import '../services/pdf_export_service.dart';
-import 'pdf_preview_screen.dart';
 import '../widgets/audio_recorder_widget.dart';
 import '../widgets/compact_audio_icon.dart';
 import '../widgets/compact_video_icon.dart';
@@ -25,6 +24,7 @@ import '../widgets/entry_toolbar.dart';
 import '../widgets/image_picker_widget.dart';
 import '../widgets/rich_text_editor_widget.dart';
 import '../widgets/video_recorder_widget.dart';
+import 'pdf_preview_screen.dart';
 import 'rich_text_editor_screen.dart';
 
 // Note: This file implements two UI features requested by the team:
