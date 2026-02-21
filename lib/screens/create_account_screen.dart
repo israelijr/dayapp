@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../db/database_helper.dart';
 import '../providers/auth_provider.dart';
 import '../widgets/custom_text_field.dart';
+import '../theme/m3_expressive_theme.dart';
 
 class CreateAccountScreen extends StatefulWidget {
   const CreateAccountScreen({super.key});
@@ -86,12 +87,17 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFB388FF),
+      backgroundColor: AppColors.primary,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text('Criar conta', style: TextStyle(color: Colors.white)),
+        iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.onPrimary,
+        ),
+        title: Text(
+          'Criar conta',
+          style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+        ),
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -99,12 +105,12 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
+              Text(
                 'DayApp',
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.onPrimary,
                 ),
               ),
               const SizedBox(height: 32),
@@ -163,8 +169,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 child: ElevatedButton(
                   onPressed: loading ? null : () => _register(context),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF5E35B1),
-                    foregroundColor: Colors.white,
+                    backgroundColor: AppColors.primaryVariant,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -180,9 +186,11 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: const Text(
+                child: Text(
                   'Já tem uma conta? Faça login',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
                 ),
               ),
               const SizedBox(height: 24),

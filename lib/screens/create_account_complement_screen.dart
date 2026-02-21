@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../db/database_helper.dart';
 import '../providers/auth_provider.dart';
+import '../theme/m3_expressive_theme.dart';
 
 class CreateAccountComplementScreen extends StatefulWidget {
   const CreateAccountComplementScreen({super.key});
@@ -82,14 +83,16 @@ class _CreateAccountComplementScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFB388FF),
+      backgroundColor: AppColors.primary,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text(
+        iconTheme: IconThemeData(
+          color: Theme.of(context).colorScheme.onPrimary,
+        ),
+        title: Text(
           'quase pronto...',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
         ),
       ),
       body: Center(
@@ -115,10 +118,10 @@ class _CreateAccountComplementScreenState
                           ? FileImage(File(profileImagePath!))
                           : null,
                       child: profileImagePath == null
-                          ? const Icon(
+                          ? Icon(
                               Icons.add_a_photo,
                               size: 40,
-                              color: Color(0xFFB388FF),
+                              color: AppColors.primary,
                             )
                           : null,
                     ),
@@ -144,8 +147,8 @@ class _CreateAccountComplementScreenState
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: Color(0xFF5E35B1),
+                      borderSide: BorderSide(
+                        color: AppColors.primaryVariant,
                         width: 2,
                       ),
                     ),
@@ -163,7 +166,7 @@ class _CreateAccountComplementScreenState
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF5E35B1),
+                      backgroundColor: AppColors.primaryVariant,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -171,17 +174,20 @@ class _CreateAccountComplementScreenState
                     ),
                     onPressed: loading ? null : () => _saveComplement(context),
                     child: loading
-                        ? const SizedBox(
+                        ? SizedBox(
                             height: 18,
                             width: 18,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: Colors.white,
+                              color: Theme.of(context).colorScheme.onPrimary,
                             ),
                           )
-                        : const Text(
+                        : Text(
                             'Criar',
-                            style: TextStyle(fontSize: 16, color: Colors.white),
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
                           ),
                   ),
                 ),

@@ -6,6 +6,7 @@ import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
 import '../services/biometric_service.dart';
 import '../widgets/custom_text_field.dart';
+import '../theme/m3_expressive_theme.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -144,7 +145,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFB388FF),
+      backgroundColor: AppColors.primary,
       body: Center(
         child: SingleChildScrollView(
           child: Padding(
@@ -204,8 +205,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             enableBiometric = value ?? false;
                           });
                         },
-                        fillColor: WidgetStateProperty.all(Colors.white),
-                        checkColor: const Color(0xFFB388FF),
+                        fillColor: MaterialStateProperty.all(
+                          Theme.of(context).colorScheme.onPrimary,
+                        ),
+                        checkColor: AppColors.primary,
                       ),
                       const Expanded(
                         child: Text(
@@ -220,8 +223,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 16),
                   OutlinedButton.icon(
                     style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Colors.white),
-                      foregroundColor: Colors.white,
+                      side: BorderSide(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 24,
                         vertical: 12,
@@ -245,17 +250,20 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     onPressed: loading ? null : () => _login(context),
                     child: loading
-                        ? const SizedBox(
+                        ? SizedBox(
                             height: 18,
                             width: 18,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: Colors.white,
+                              color: Theme.of(context).colorScheme.onPrimary,
                             ),
                           )
-                        : const Text(
+                        : Text(
                             'Acessar',
-                            style: TextStyle(fontSize: 16, color: Colors.white),
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
                           ),
                   ),
                 ),

@@ -1,12 +1,13 @@
-import 'dart:typed_data';
 import 'dart:math' as math;
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/widgets.dart' as fw;
-import 'package:pdf/widgets.dart' as pw;
-import 'package:pdf/pdf.dart' as pdf;
+import 'package:flutter/services.dart' show rootBundle;
 // printing not needed in this file
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:pdf/pdf.dart' as pdf;
+import 'package:pdf/widgets.dart' as pw;
 
 /// Serviço para gerar PDF a partir de dados de uma história.
 /// Comentários e nomes em português conforme convenção do projeto.
@@ -27,9 +28,29 @@ class PdfExportService {
     final dateStr =
         '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
 
-    // Usa fontes básicas do PDF. Para emojis temos um fallback bitmap.
-    final pw.Font baseFont = pw.Font.helvetica();
-    final pw.Font boldFont = pw.Font.helveticaBold();
+    // Tenta carregar fontes TTF (Noto) em assets para suporte Unicode.
+    // Se não existir, mantém o fallback para Helvetica (sem suporte Unicode).
+    pw.Font baseFont;
+    pw.Font boldFont;
+    try {
+      final bd = await rootBundle.load('assets/fonts/NotoSans-Regular.ttf');
+      final bytes = bd.buffer.asUint8List();
+      // Verifica se o arquivo carregado tem um cabeçalho compatível com
+      // TTF/OTF/TrueType Collection para evitar erro de parsing mais
+      // adiante quando o PDF tentar construir a fonte.
+      if (!_looksLikeTtf(bytes)) throw FormatException('Arquivo de fonte inválido');
+      baseFont = pw.Font.ttf(bd);
+    } catch (_) {
+      baseFont = pw.Font.helvetica();
+    }
+    try {
+      final bd = await rootBundle.load('assets/fonts/NotoSans-Bold.ttf');
+      final bytes = bd.buffer.asUint8List();
+      if (!_looksLikeTtf(bytes)) throw FormatException('Arquivo de fonte inválido');
+      boldFont = pw.Font.ttf(bd);
+    } catch (_) {
+      boldFont = pw.Font.helveticaBold();
+    }
 
     // Limites de página (considera margens)
     const pageFormat = pdf.PdfPageFormat.a4;
@@ -187,6 +208,21 @@ class PdfExportService {
 
     return doc.save();
   }
+}
+
+// Verifica de forma simples os primeiros bytes para identificar formatos
+// TTF/OTF/TTF Collection. Retorna `true` se o cabeçalho corresponder a
+// uma das assinaturas conhecidas: 0x00010000 (TTF), 'OTTO' (OpenType),
+// 'ttcf' (TrueType Collection).
+bool _looksLikeTtf(Uint8List bytes) {
+  if (bytes.length < 4) return false;
+  // 00 01 00 00
+  if (bytes[0] == 0x00 && bytes[1] == 0x01 && bytes[2] == 0x00 && bytes[3] == 0x00) return true;
+  // 'OTTO'
+  if (bytes[0] == 0x4F && bytes[1] == 0x54 && bytes[2] == 0x54 && bytes[3] == 0x4F) return true;
+  // 'ttcf'
+  if (bytes[0] == 0x74 && bytes[1] == 0x74 && bytes[2] == 0x63 && bytes[3] == 0x66) return true;
+  return false;
 }
 
 /// Renderiza um emoji/emoji-like `String` para PNG usando `TextPainter`.

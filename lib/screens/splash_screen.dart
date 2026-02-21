@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/m3_expressive_theme.dart';
 
 /// Splash Screen com animações de fade-in, desfoque e pulsação
 /// Pode ser usada como tela de carregamento (onComplete opcional)
@@ -94,13 +95,13 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFFE8D5F0), // Lilás claro
-              Color(0xFFF5E8FA), // Lilás muito claro
+              AppColors.lilacLight, // Lilás claro
+              AppColors.backgroundLight, // Lilás muito claro
               Colors.white,
             ],
           ),
@@ -144,9 +145,9 @@ class _SplashScreenState extends State<SplashScreen>
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
-                                  color: const Color(
-                                    0xFF7B2CBF,
-                                  ).withValues(alpha: 0.3),
+                                  color: AppColors.purple700.withValues(
+                                    alpha: 0.3,
+                                  ),
                                   blurRadius: 40,
                                   spreadRadius: 5,
                                 ),
@@ -229,10 +230,10 @@ class _SplashScreenState extends State<SplashScreen>
                           // Barra de progresso indeterminada (carregamento contínuo)
                           ClipRRect(
                             borderRadius: BorderRadius.circular(10),
-                            child: const LinearProgressIndicator(
-                              backgroundColor: Color(0x4DFFFFFF),
+                            child: LinearProgressIndicator(
+                              backgroundColor: Colors.white54,
                               valueColor: AlwaysStoppedAnimation<Color>(
-                                Color(0xFF7B2CBF),
+                                AppColors.purple700,
                               ),
                               minHeight: 6,
                             ),
@@ -243,9 +244,7 @@ class _SplashScreenState extends State<SplashScreen>
                             'Carregando...',
                             style: TextStyle(
                               fontSize: 14,
-                              color: const Color(
-                                0xFF7B2CBF,
-                              ).withValues(alpha: 0.7),
+                              color: AppColors.purple700.withValues(alpha: 0.7),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -275,25 +274,25 @@ class _CirclesPainter extends CustomPainter {
         'x': size.width * 0.2,
         'y': size.height * 0.15,
         'radius': 80.0,
-        'color': const Color(0xFF9D4EDD),
+        'color': AppColors.purple600,
       },
       {
         'x': size.width * 0.8,
         'y': size.height * 0.25,
         'radius': 60.0,
-        'color': const Color(0xFFC77DFF),
+        'color': AppColors.purple300,
       },
       {
         'x': size.width * 0.15,
         'y': size.height * 0.7,
         'radius': 70.0,
-        'color': const Color(0xFFE0AAFF),
+        'color': AppColors.purple200,
       },
       {
         'x': size.width * 0.85,
         'y': size.height * 0.8,
         'radius': 90.0,
-        'color': const Color(0xFF7B2CBF),
+        'color': AppColors.purple700,
       },
     ];
 

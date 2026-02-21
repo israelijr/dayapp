@@ -97,10 +97,8 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
                         }
                       }
                     },
-              child: const Text(
-                'Salvar',
-                style: TextStyle(color: Colors.white),
-              ),
+              // Remover cor fixa para respeitar o tema (claro/escuro).
+              child: const Text('Salvar'),
             ),
           IconButton(
             icon: const Icon(Icons.share),
