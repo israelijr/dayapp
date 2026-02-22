@@ -5,10 +5,10 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../db/database_helper.dart';
 import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
 import '../services/auto_backup_service.dart';
-import '../db/database_helper.dart';
 // import '../services/battery_optimization_service.dart';
 // import '../widgets/battery_optimization_dialog.dart';
 import 'edit_profile_screen.dart';
@@ -55,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       final db = await DatabaseHelper().database;
       final res = await db.rawQuery(
-        "SELECT COUNT(*) as cnt FROM historia WHERE (backed_up IS NULL OR backed_up = 0) AND excluido IS NULL",
+        'SELECT COUNT(*) as cnt FROM historia WHERE (backed_up IS NULL OR backed_up = 0) AND excluido IS NULL',
       );
       final cnt = (res.first['cnt'] ?? 0) as int;
       if (cnt > 0 && mounted) {

@@ -48,7 +48,7 @@ class BackupService {
         // Marca somente histórias não excluídas
         await db.update('historia', {
           'backed_up': 1,
-        }, where: "excluido IS NULL");
+        }, where: 'excluido IS NULL');
       } catch (e) {
         // Não quebrar o fluxo de backup se a marcação falhar
       }
