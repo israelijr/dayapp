@@ -224,6 +224,12 @@ class _HomeContentState extends State<HomeContent> {
 
     if (updates != null) updateData.addAll(updates);
 
+    // Se a atualização não explicitar o estado de backup, marcar como não salvo
+    // para que a história seja incluída no próximo backup.
+    if (!updateData.containsKey('backed_up')) {
+      updateData['backed_up'] = 0;
+    }
+
     await db.update(
       'historia',
       updateData,
@@ -269,6 +275,7 @@ class _HomeContentState extends State<HomeContent> {
           'excluido': 'sim',
           'data_exclusao': DateTime.now().toIso8601String(),
           'data_update': DateTime.now().toIso8601String(),
+          'backed_up': 0,
         },
         where: 'id = ?',
         whereArgs: [historia.id],

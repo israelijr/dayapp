@@ -28,13 +28,23 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   bool _isCardView = true;
+  // Flag estática para garantir que a sugestão de backup seja mostrada
+  // apenas uma vez por inicialização do app.
+  static bool _backupSuggestionShown = false;
   static const String _prefKeyIsCardView = 'home_isCardView';
 
   @override
   void initState() {
     super.initState();
     _loadLayoutPreference();
-    _checkUnsavedStories();
+    // Executar a checagem de histórias não salvas apenas na primeira
+    // construção após o carregamento do app.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_backupSuggestionShown) {
+        _checkUnsavedStories();
+        _backupSuggestionShown = true;
+      }
+    });
     // _checkBatteryOptimization();
   }
 

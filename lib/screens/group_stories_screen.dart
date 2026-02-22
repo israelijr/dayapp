@@ -161,6 +161,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
           'excluido': 'sim',
           'data_exclusao': DateTime.now().toIso8601String(),
           'data_update': DateTime.now().toIso8601String(),
+          'backed_up': 0,
         },
         where: 'id = ?',
         whereArgs: [historia.id],
@@ -189,6 +190,12 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
 
     if (updates != null) {
       updateData.addAll(updates);
+    }
+
+    // Se a atualização não explicitar o estado de backup, marcar como não salvo
+    // para que a história seja incluída no próximo backup.
+    if (!updateData.containsKey('backed_up')) {
+      updateData['backed_up'] = 0;
     }
 
     await db.update(

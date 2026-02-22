@@ -62,6 +62,7 @@ class GrupoHelper {
         'grupo': null,
         'arquivado': null,
         'data_update': DateTime.now().toIso8601String(),
+        'backed_up': 0,
       },
       where: 'user_id = ? AND grupo = ?',
       whereArgs: [userId, grupoNome],

@@ -442,6 +442,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
         'data': selectedDate.toIso8601String(),
         'data_update': DateTime.now().toIso8601String(),
         'arquivado': _isArchived ? 'sim' : null,
+        'backed_up': 0,
       },
       where: 'id = ?',
       whereArgs: [widget.historia.id],
