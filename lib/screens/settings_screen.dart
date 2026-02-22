@@ -17,8 +17,8 @@ import '../services/inactivity_service.dart';
 import '../services/notification_preferences_service.dart';
 import '../services/pin_recovery_service.dart';
 import '../services/secure_storage_service.dart';
-import 'setup_pin_screen.dart';
 import '../theme/m3_expressive_theme.dart';
+import 'setup_pin_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -374,9 +374,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                     if (email.isEmpty || password.isEmpty) {
                       messenger.showSnackBar(
-                        const SnackBar(
-                          content: Text('Preencha todos os campos'),
-                          backgroundColor: Colors.red,
+                        SnackBar(
+                          content: const Text('Preencha todos os campos'),
+                          backgroundColor: Theme.of(
+                            outerContext,
+                          ).colorScheme.error,
                         ),
                       );
                       return;
@@ -393,9 +395,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     if (result.isEmpty) {
                       if (!mounted) return;
                       messenger.showSnackBar(
-                        const SnackBar(
-                          content: Text('E-mail ou senha inválidos'),
-                          backgroundColor: Colors.red,
+                        SnackBar(
+                          content: const Text('E-mail ou senha inválidos'),
+                          backgroundColor: errorColor,
                         ),
                       );
                       return;
@@ -410,9 +412,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     )) {
                       if (!mounted) return;
                       messenger.showSnackBar(
-                        const SnackBar(
-                          content: Text('E-mail ou senha inválidos'),
-                          backgroundColor: Colors.red,
+                        SnackBar(
+                          content: const Text('E-mail ou senha inválidos'),
+                          backgroundColor: errorColor,
                         ),
                       );
                       return;
@@ -631,9 +633,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                 if (pin.isEmpty) {
                   messenger.showSnackBar(
-                    const SnackBar(
-                      content: Text('Digite o PIN'),
-                      backgroundColor: Colors.red,
+                    SnackBar(
+                      content: const Text('Digite o PIN'),
+                      backgroundColor: errorColor,
                     ),
                   );
                   return;
@@ -896,9 +898,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               final email = emailController.text.trim();
               if (email.isEmpty || !email.contains('@')) {
                 ScaffoldMessenger.of(dialogBuilderContext).showSnackBar(
-                  const SnackBar(
-                    content: Text('E-mail inválido'),
-                    backgroundColor: Colors.red,
+                  SnackBar(
+                    content: const Text('E-mail inválido'),
+                    backgroundColor: Theme.of(
+                      dialogBuilderContext,
+                    ).colorScheme.error,
                   ),
                 );
                 return;
@@ -910,9 +914,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
               if (!mounted) return;
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('E-mail salvo com sucesso!'),
-                  backgroundColor: Colors.green,
+                SnackBar(
+                  content: const Text('E-mail salvo com sucesso!'),
+                  backgroundColor: AppColors.emoticonGreen,
                 ),
               );
             },

@@ -102,9 +102,14 @@ class _CreateAccountComplementScreenState
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text(
+                Text(
                   'Os dados abaixo são opcionais',
-                  style: TextStyle(fontSize: 16, color: Colors.white70),
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.7),
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 24),
@@ -134,7 +139,11 @@ class _CreateAccountComplementScreenState
                   style: const TextStyle(color: Colors.black87),
                   decoration: InputDecoration(
                     labelText: 'Data de nascimento (DD/MM/AAAA)',
-                    labelStyle: const TextStyle(color: Colors.black54),
+                    labelStyle: TextStyle(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.54),
+                    ),
                     filled: true,
                     fillColor: Colors.white,
                     border: OutlineInputBorder(

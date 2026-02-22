@@ -1,8 +1,8 @@
 import 'dart:io';
 
+import 'package:dayapp/services/pdf_export_service.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:dayapp/services/pdf_export_service.dart';
 
 // Runner com UI mínima para testar a geração de PDF em ambiente Flutter.
 // Executar com: flutter run -t tool/pdf_test_main.dart

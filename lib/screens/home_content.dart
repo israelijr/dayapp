@@ -20,13 +20,13 @@ import '../providers/pin_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../services/pdf_export_service.dart';
 import '../services/thumbnail_service.dart';
+import '../theme/m3_expressive_theme.dart';
 import '../widgets/compact_audio_icon.dart';
 import '../widgets/compact_video_icon.dart';
 import '../widgets/rich_text_viewer_widget.dart';
 import 'edit_historia_screen.dart';
 import 'group_selection_screen.dart';
 import 'pdf_preview_screen.dart';
-import '../theme/m3_expressive_theme.dart';
 
 class HomeContent extends StatefulWidget {
   final bool isCardView;
@@ -522,19 +522,14 @@ class _HomeContentState extends State<HomeContent> {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.blue[700]
-                              : Colors.blue[100],
+                          color: AppColors.emoticonBlue,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
                           historia.tag!,
                           style: TextStyle(
                             fontSize: 12,
-                            color:
-                                Theme.of(context).brightness == Brightness.dark
-                                ? Colors.blue[100]
-                                : Colors.blue[800],
+                            color: AppColors.emoticonBlue,
                           ),
                         ),
                       ),
@@ -556,7 +551,7 @@ class _HomeContentState extends State<HomeContent> {
       background: Container(
         alignment: Alignment.centerLeft,
         padding: const EdgeInsets.only(left: 20),
-        color: Colors.blue,
+        color: Theme.of(context).colorScheme.primary,
         child: const Text(
           'Arquivar',
           style: TextStyle(
@@ -569,7 +564,7 @@ class _HomeContentState extends State<HomeContent> {
       secondaryBackground: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
-        color: Colors.green,
+        color: AppColors.emoticonGreen,
         child: const Text(
           'Grupo',
           style: TextStyle(
@@ -875,11 +870,17 @@ class HistoriaFotosGrid extends StatelessWidget {
           return Container(
             height: height,
             decoration: BoxDecoration(
-              color: Colors.grey[200],
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Center(
-              child: Icon(Icons.image, color: Colors.grey, size: 48),
+            child: Center(
+              child: Icon(
+                Icons.image,
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.6),
+                size: 48,
+              ),
             ),
           );
         }
@@ -987,7 +988,10 @@ class HistoriaFotosGrid extends StatelessWidget {
                                   opacity: currentIndex > 0 ? 1.0 : 0.0,
                                   duration: const Duration(milliseconds: 120),
                                   child: Material(
-                                    color: Colors.black54,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withValues(alpha: 0.54),
                                     shape: const CircleBorder(),
                                     elevation: 8,
                                     child: IconButton(
@@ -1020,7 +1024,10 @@ class HistoriaFotosGrid extends StatelessWidget {
                                       : 0.0,
                                   duration: const Duration(milliseconds: 120),
                                   child: Material(
-                                    color: Colors.black54,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withValues(alpha: 0.54),
                                     shape: const CircleBorder(),
                                     elevation: 8,
                                     child: IconButton(
@@ -1047,7 +1054,9 @@ class HistoriaFotosGrid extends StatelessWidget {
                             top: 8,
                             child: SafeArea(
                               child: Material(
-                                color: Colors.black45,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.45),
                                 shape: const CircleBorder(),
                                 child: IconButton(
                                   icon: const Icon(
@@ -1068,7 +1077,8 @@ class HistoriaFotosGrid extends StatelessWidget {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Material(
-                                  color: Colors.black54,
+                                  color: Theme.of(context).colorScheme.onSurface
+                                      .withValues(alpha: 0.54),
                                   shape: const CircleBorder(),
                                   elevation: 6,
                                   child: IconButton(
@@ -1123,7 +1133,10 @@ class HistoriaFotosGrid extends StatelessWidget {
                                 const SizedBox(height: 8),
                                 if (localIds.isNotEmpty)
                                   Material(
-                                    color: Colors.black54,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withValues(alpha: 0.54),
                                     shape: const CircleBorder(),
                                     elevation: 6,
                                     child: IconButton(
@@ -1241,7 +1254,10 @@ class HistoriaFotosGrid extends StatelessWidget {
                                   decoration: BoxDecoration(
                                     color: active
                                         ? Colors.white
-                                        : Colors.white54,
+                                        : Theme.of(context)
+                                              .colorScheme
+                                              .onSurface
+                                              .withValues(alpha: 0.54),
                                     shape: BoxShape.circle,
                                   ),
                                 );
@@ -1285,7 +1301,9 @@ class HistoriaFotosGrid extends StatelessWidget {
                     if (isOverlay)
                       Container(
                         decoration: BoxDecoration(
-                          color: Colors.black54,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.54),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Center(
@@ -1301,10 +1319,11 @@ class HistoriaFotosGrid extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(height: 2),
-                              const Text(
+                              Text(
                                 'mais',
                                 style: TextStyle(
-                                  color: Colors.white70,
+                                  color: Theme.of(context).colorScheme.onSurface
+                                      .withValues(alpha: 0.7),
                                   fontSize: 10,
                                 ),
                               ),

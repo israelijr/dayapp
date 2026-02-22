@@ -246,7 +246,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                 // Overlay de carregamento - cobre toda a tela
                 if (_isLoading)
                   ColoredBox(
-                    color: Colors.black54,
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54),
                     child: Center(
                       child: Card(
                         margin: const EdgeInsets.all(32),

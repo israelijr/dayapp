@@ -10,6 +10,7 @@ import '../models/historia.dart';
 import '../models/historia_video_v2.dart' as v2;
 import '../providers/auth_provider.dart';
 import '../providers/refresh_provider.dart';
+import '../theme/m3_expressive_theme.dart';
 import '../widgets/rich_text_viewer_widget.dart';
 
 class TrashScreen extends StatefulWidget {
@@ -281,7 +282,7 @@ class _TrashScreenState extends State<TrashScreen> {
     return Card(
       elevation: isSelected ? 8 : 2,
       color: isSelected
-          ? Theme.of(context).primaryColor.withValues(alpha: 0.1 * 255)
+          ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1 * 255)
           : null,
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: InkWell(
@@ -308,8 +309,10 @@ class _TrashScreenState extends State<TrashScreen> {
                       child: Icon(
                         isSelected ? Icons.check_circle : Icons.circle_outlined,
                         color: isSelected
-                            ? Theme.of(context).primaryColor
-                            : Colors.grey,
+                            ? Theme.of(context).colorScheme.primary
+                            : Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
                     ),
                   if (historia.emoticon != null)
@@ -336,7 +339,9 @@ class _TrashScreenState extends State<TrashScreen> {
                           '${dateFormatter.format(historia.data)} às ${timeFormatter.format(historia.data)}',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey[600],
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withValues(alpha: 0.6),
                           ),
                         ),
                       ],
@@ -350,7 +355,9 @@ class _TrashScreenState extends State<TrashScreen> {
                   historia.assunto!,
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.grey[700],
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.7),
                     fontStyle: FontStyle.italic,
                   ),
                 ),
@@ -369,7 +376,7 @@ class _TrashScreenState extends State<TrashScreen> {
                   'Excluído em ${dateFormatter.format(historia.dataExclusao!)}',
                   style: TextStyle(
                     fontSize: 11,
-                    color: Colors.red[400],
+                    color: AppColors.emoticonRed,
                     fontStyle: FontStyle.italic,
                   ),
                 ),
@@ -470,7 +477,7 @@ class _TrashScreenState extends State<TrashScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: const Icon(Icons.restore, color: Colors.green),
+              leading: Icon(Icons.restore, color: AppColors.emoticonGreen),
               title: const Text('Restaurar'),
               onTap: () {
                 Navigator.pop(context);
@@ -478,7 +485,7 @@ class _TrashScreenState extends State<TrashScreen> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.delete_forever, color: Colors.red),
+              leading: Icon(Icons.delete_forever, color: AppColors.emoticonRed),
               title: const Text('Excluir permanentemente'),
               onTap: () {
                 Navigator.pop(context);

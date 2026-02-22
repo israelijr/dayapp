@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../services/password_recovery_service.dart';
 import '../services/pin_recovery_service.dart';
-import '../widgets/custom_text_field.dart';
 import '../theme/m3_expressive_theme.dart';
+import '../widgets/custom_text_field.dart';
 
 /// Tela de recuperação de senha por token enviado por e-mail.
 /// Fluxo em etapas:
@@ -282,7 +282,12 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
                 const SizedBox(height: 8),
                 Text(
                   _getStepSubtitle(),
-                  style: const TextStyle(fontSize: 14, color: Colors.white70),
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.7),
+                  ),
                   textAlign: TextAlign.center,
                 ),
 
@@ -297,10 +302,10 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.green.withValues(alpha: 0.2),
+                      color: AppColors.emoticonGreen.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: Colors.green.withValues(alpha: 0.5),
+                        color: AppColors.emoticonGreen.withValues(alpha: 0.5),
                       ),
                     ),
                     child: Row(
@@ -329,10 +334,10 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.red.withValues(alpha: 0.2),
+                      color: AppColors.emoticonRed.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: Colors.red.withValues(alpha: 0.5),
+                        color: AppColors.emoticonRed.withValues(alpha: 0.5),
                       ),
                     ),
                     child: Row(
@@ -415,8 +420,10 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
                           padding: const EdgeInsets.only(top: 4),
                           child: Text(
                             'Código expira em ${snapshot.data} minutos',
-                            style: const TextStyle(
-                              color: Colors.white70,
+                            style: TextStyle(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withValues(alpha: 0.7),
                               fontSize: 12,
                             ),
                           ),
@@ -442,9 +449,14 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
                               confirmPasswordController.clear();
                             });
                           },
-                    child: const Text(
+                    child: Text(
                       'Voltar ao início',
-                      style: TextStyle(color: Colors.white70, fontSize: 13),
+                      style: TextStyle(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.7),
+                        fontSize: 13,
+                      ),
                     ),
                   ),
                 ],
@@ -483,9 +495,14 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
             shape: BoxShape.circle,
             color: isActive
                 ? const Color(0xFF5E35B1)
-                : Colors.white.withValues(alpha: 0.3),
+                : Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.3),
             border: isCurrent
-                ? Border.all(color: Colors.white, width: 2)
+                ? Border.all(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    width: 2,
+                  )
                 : null,
           ),
           child: Center(
@@ -494,7 +511,11 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
                 : Text(
                     '${step + 1}',
                     style: TextStyle(
-                      color: isActive ? Colors.white : Colors.white70,
+                      color: isActive
+                          ? Colors.white
+                          : Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withValues(alpha: 0.7),
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
                     ),
@@ -505,7 +526,11 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
         Text(
           label,
           style: TextStyle(
-            color: isActive ? Colors.white : Colors.white70,
+            color: isActive
+                ? Colors.white
+                : Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.7),
             fontSize: 11,
           ),
         ),
@@ -556,7 +581,12 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
       children: [
         Text(
           'E-mail: ${emailController.text.trim()}',
-          style: const TextStyle(color: Colors.white70, fontSize: 13),
+          style: TextStyle(
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.7),
+            fontSize: 13,
+          ),
         ),
         const SizedBox(height: 8),
         TextField(

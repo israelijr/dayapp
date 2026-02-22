@@ -15,6 +15,7 @@ import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../services/pdf_export_service.dart';
+import '../theme/m3_expressive_theme.dart';
 import '../widgets/compact_audio_icon.dart';
 import '../widgets/compact_video_icon.dart';
 import '../widgets/rich_text_viewer_widget.dart';
@@ -23,7 +24,6 @@ import 'edit_historia_screen.dart';
 import 'edit_profile_screen.dart';
 import 'group_selection_screen.dart';
 import 'pdf_preview_screen.dart';
-import '../theme/m3_expressive_theme.dart';
 
 class GroupStoriesScreen extends StatefulWidget {
   final Grupo grupo;

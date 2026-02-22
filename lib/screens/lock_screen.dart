@@ -544,15 +544,19 @@ class _LockScreenState extends State<LockScreen> {
 
               // Indicador de carregamento
               if (_isLoading)
-                const ColoredBox(
-                  color: Colors.black26,
-                  child: Center(child: CircularProgressIndicator()),
+                ColoredBox(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.26),
+                  child: const Center(child: CircularProgressIndicator()),
                 ),
 
               // Dialog de recuperação
               if (_showRecoveryDialog)
                 ColoredBox(
-                  color: Colors.black54,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.54),
                   child: Center(
                     child: Card(
                       margin: const EdgeInsets.all(24),

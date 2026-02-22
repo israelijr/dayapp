@@ -188,7 +188,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
       case 'sono':
         return AppColors.emoticonBlue2; // Azul
       default:
-        return Colors.grey;
+        return AppColors.emoticonBlue2;
     }
   }
 
@@ -240,17 +240,29 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   Icon(
                     Icons.insert_chart_outlined,
                     size: 80,
-                    color: Colors.grey[400],
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.4),
                   ),
                   const SizedBox(height: 16),
                   Text(
                     'Nenhuma história registrada ainda',
-                    style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Comece a registrar seus dias para ver as estatísticas',
-                    style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.5),
+                    ),
                   ),
                 ],
               ),
@@ -403,7 +415,11 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                           height: 40,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: hasEntry ? primaryColor : Colors.grey[300],
+                            color: hasEntry
+                                ? primaryColor
+                                : Theme.of(
+                                    context,
+                                  ).colorScheme.surfaceContainerHighest,
                             border: isToday && !hasEntry
                                 ? Border.all(color: primaryColor, width: 2)
                                 : null,
@@ -423,9 +439,12 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                                             fontWeight: FontWeight.bold,
                                           ),
                                         )
-                                      : const Icon(
+                                      : Icon(
                                           Icons.close,
-                                          color: Colors.grey,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface
+                                              .withValues(alpha: 0.6),
                                           size: 20,
                                         )),
                           ),
@@ -435,7 +454,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                           weekDayNames[dayIndex].substring(0, 3),
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey[600],
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withValues(alpha: 0.6),
                           ),
                         ),
                       ],
@@ -446,7 +467,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: isDark ? Colors.grey[800] : Colors.grey[100],
+                    color: isDark
+                        ? Theme.of(context).colorScheme.surfaceContainerHighest
+                        : Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -454,7 +477,12 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                     children: [
                       Text(
                         'Sequência mais longa: ',
-                        style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.7),
+                        ),
                       ),
                       Text(
                         '$_longestStreak',
@@ -811,7 +839,9 @@ class AreaChartPainter extends CustomPainter {
         final textSpan = TextSpan(
           text: DateFormat('dd.MMM', 'pt_BR').format(dates[i]),
           style: TextStyle(
-            color: isDark ? Colors.grey[400] : Colors.grey[600],
+            color: isDark
+                ? AppColors.neutralGrey.withValues(alpha: 0.4)
+                : AppColors.neutralGrey.withValues(alpha: 0.6),
             fontSize: 10,
           ),
         );

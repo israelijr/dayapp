@@ -57,6 +57,8 @@ class _AppColors {
   final Color emoticonYellow = const Color(0xFFFFE082);
   final Color emoticonPurple = const Color(0xFFCE93D8);
   final Color emoticonBlue2 = const Color(0xFF90CAF9);
+  // Neutral greys for UI elements
+  final Color neutralGrey = const Color(0xFF9E9E9E);
 }
 
 // Conveniência para importadores: `AppColors.primary`
@@ -80,4 +82,5 @@ class AppColors {
   static Color get emoticonYellow => _app.emoticonYellow;
   static Color get emoticonPurple => _app.emoticonPurple;
   static Color get emoticonBlue2 => _app.emoticonBlue2;
+  static Color get neutralGrey => _app.neutralGrey;
 }

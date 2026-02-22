@@ -231,7 +231,7 @@ class _SplashScreenState extends State<SplashScreen>
                           ClipRRect(
                             borderRadius: BorderRadius.circular(10),
                             child: LinearProgressIndicator(
-                              backgroundColor: Colors.white54,
+                              backgroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54),
                               valueColor: AlwaysStoppedAnimation<Color>(
                                 AppColors.purple700,
                               ),

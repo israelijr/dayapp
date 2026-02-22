@@ -2,8 +2,8 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:flutter/widgets.dart' as fw;
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/widgets.dart' as fw;
 // printing not needed in this file
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:pdf/pdf.dart' as pdf;
@@ -38,7 +38,9 @@ class PdfExportService {
       // Verifica se o arquivo carregado tem um cabeçalho compatível com
       // TTF/OTF/TrueType Collection para evitar erro de parsing mais
       // adiante quando o PDF tentar construir a fonte.
-      if (!_looksLikeTtf(bytes)) throw FormatException('Arquivo de fonte inválido');
+      if (!_looksLikeTtf(bytes)) {
+        throw const FormatException('Arquivo de fonte inválido');
+      }
       baseFont = pw.Font.ttf(bd);
     } catch (_) {
       baseFont = pw.Font.helvetica();
@@ -46,7 +48,9 @@ class PdfExportService {
     try {
       final bd = await rootBundle.load('assets/fonts/NotoSans-Bold.ttf');
       final bytes = bd.buffer.asUint8List();
-      if (!_looksLikeTtf(bytes)) throw FormatException('Arquivo de fonte inválido');
+      if (!_looksLikeTtf(bytes)) {
+        throw const FormatException('Arquivo de fonte inválido');
+      }
       boldFont = pw.Font.ttf(bd);
     } catch (_) {
       boldFont = pw.Font.helveticaBold();
@@ -217,11 +221,26 @@ class PdfExportService {
 bool _looksLikeTtf(Uint8List bytes) {
   if (bytes.length < 4) return false;
   // 00 01 00 00
-  if (bytes[0] == 0x00 && bytes[1] == 0x01 && bytes[2] == 0x00 && bytes[3] == 0x00) return true;
+  if (bytes[0] == 0x00 &&
+      bytes[1] == 0x01 &&
+      bytes[2] == 0x00 &&
+      bytes[3] == 0x00) {
+    return true;
+  }
   // 'OTTO'
-  if (bytes[0] == 0x4F && bytes[1] == 0x54 && bytes[2] == 0x54 && bytes[3] == 0x4F) return true;
+  if (bytes[0] == 0x4F &&
+      bytes[1] == 0x54 &&
+      bytes[2] == 0x54 &&
+      bytes[3] == 0x4F) {
+    return true;
+  }
   // 'ttcf'
-  if (bytes[0] == 0x74 && bytes[1] == 0x74 && bytes[2] == 0x63 && bytes[3] == 0x66) return true;
+  if (bytes[0] == 0x74 &&
+      bytes[1] == 0x74 &&
+      bytes[2] == 0x63 &&
+      bytes[3] == 0x66) {
+    return true;
+  }
   return false;
 }
 
