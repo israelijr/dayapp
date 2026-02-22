@@ -2,70 +2,66 @@ import 'package:dayapp/services/biometric_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'test_mocks.dart';
+
 void main() {
+  setUpAll(() {
+    // Inicializa binding e mocks comuns (path_provider, secure_storage)
+    initTestBindingsAndMocks();
+  });
+
   group('BiometricService Tests', () {
-    late BiometricService biometricService;
+    final biometricService = BiometricService();
 
     setUp(() {
-      biometricService = BiometricService();
-      // Inicializar SharedPreferences com valores vazios para testes
+      // Resetar mocks e estado compartilhado antes de cada teste
+      initTestBindingsAndMocks();
       SharedPreferences.setMockInitialValues({});
     });
 
-    test('isBiometricEnabled deve retornar false por padrão', () async {
-      final enabled = await biometricService.isBiometricEnabled();
-      expect(enabled, false);
-    });
-
-    test('enableBiometric deve salvar credenciais', () async {
-      const email = 'test@example.com';
-      const password = 'password123';
-
-      await biometricService.enableBiometric(email, password);
-
-      final enabled = await biometricService.isBiometricEnabled();
-      expect(enabled, true);
-
-      final credentials = await biometricService.getSavedCredentials();
-      expect(credentials, isNotNull);
-      expect(credentials!['email'], email);
-      expect(credentials['password'], password);
-    });
-
-    test('disableBiometric deve remover credenciais', () async {
-      const email = 'test@example.com';
-      const password = 'password123';
-
-      // Habilitar primeiro
-      await biometricService.enableBiometric(email, password);
-      expect(await biometricService.isBiometricEnabled(), true);
-
-      // Desabilitar
-      await biometricService.disableBiometric();
-      expect(await biometricService.isBiometricEnabled(), false);
-
-      final credentials = await biometricService.getSavedCredentials();
-      expect(credentials, isNull);
-    });
-
     test(
-      'getSavedCredentials deve retornar null quando não configurado',
+      'enableBiometric / isBiometricEnabled / getSavedCredentials',
       () async {
-        final credentials = await biometricService.getSavedCredentials();
-        expect(credentials, isNull);
+        const email = 'test@example.com';
+        const password = 'password123';
+
+        await biometricService.enableBiometric(email, password);
+        expect(await biometricService.isBiometricEnabled(), true);
+
+        final creds = await biometricService.getSavedCredentials();
+        expect(creds, isNotNull);
+        expect(creds!['email'], email);
+        expect(creds['password'], password);
       },
     );
 
-    test('getBiometricTypesText deve retornar texto correto', () {
-      // Teste será executado apenas em dispositivo real com biometria
-      // Este é um teste de unidade para a lógica de formatação
+    test('disableBiometric removes credentials', () async {
+      const email = 'test@example.com';
+      const password = 'password123';
+
+      await biometricService.enableBiometric(email, password);
+      expect(await biometricService.isBiometricEnabled(), true);
+
+      await biometricService.disableBiometric();
+      expect(await biometricService.isBiometricEnabled(), false);
+
+      final creds = await biometricService.getSavedCredentials();
+      expect(creds, isNull);
+    });
+
+    test('getSavedCredentials returns null when not configured', () async {
+      final creds = await biometricService.getSavedCredentials();
+      expect(creds, isNull);
+    });
+
+    test('getBiometricTypesText returns correct text', () {
       final text = biometricService.getBiometricTypesText([]);
       expect(text, 'Nenhuma');
     });
   });
 
   group('BiometricService Singleton Tests', () {
-    test('deve retornar sempre a mesma instância', () {
+    test('returns same instance', () {
       final instance1 = BiometricService();
       final instance2 = BiometricService();
 
