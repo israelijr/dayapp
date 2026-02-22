@@ -18,6 +18,8 @@ import '../services/notification_preferences_service.dart';
 import '../services/pin_recovery_service.dart';
 import '../services/secure_storage_service.dart';
 import 'setup_pin_screen.dart';
+import '../theme/m3_expressive_theme.dart';
+import '../theme/m3_expressive_theme.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -367,8 +369,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     final email = emailController.text.trim();
                     final password = passwordController.text;
 
+                    final messenger = ScaffoldMessenger.of(outerContext);
+                    final navigator = Navigator.of(outerContext);
+                    final errorColor = Theme.of(outerContext).colorScheme.error;
+
                     if (email.isEmpty || password.isEmpty) {
-                      ScaffoldMessenger.of(outerContext).showSnackBar(
+                      messenger.showSnackBar(
                         const SnackBar(
                           content: Text('Preencha todos os campos'),
                           backgroundColor: Colors.red,
@@ -387,8 +393,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                     if (result.isEmpty) {
                       if (!mounted) return;
-                      // ignore: use_build_context_synchronously
-                      ScaffoldMessenger.of(outerContext).showSnackBar(
+                      messenger.showSnackBar(
                         const SnackBar(
                           content: Text('E-mail ou senha inválidos'),
                           backgroundColor: Colors.red,
@@ -405,8 +410,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       storedPassword,
                     )) {
                       if (!mounted) return;
-                      // ignore: use_build_context_synchronously
-                      ScaffoldMessenger.of(outerContext).showSnackBar(
+                      messenger.showSnackBar(
                         const SnackBar(
                           content: Text('E-mail ou senha inválidos'),
                           backgroundColor: Colors.red,
@@ -425,24 +429,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       await _biometricService.enableBiometric(email, password);
                       await _checkBiometricStatus();
                       if (!mounted) return;
-                      // ignore: use_build_context_synchronously
-                      Navigator.of(context).pop();
-                      // ignore: use_build_context_synchronously
-                      ScaffoldMessenger.of(outerContext).showSnackBar(
-                        const SnackBar(
-                          content: Text('Biometria habilitada com sucesso!'),
-                          backgroundColor: Colors.green,
-                        ),
-                      );
+                      navigator.pop();
+                      if (mounted) {
+                        messenger.showSnackBar(
+                          SnackBar(
+                            content: const Text(
+                              'Biometria habilitada com sucesso!',
+                            ),
+                            backgroundColor: AppColors.emoticonGreen,
+                          ),
+                        );
+                      }
                     } else {
                       if (!mounted) return;
-                      // ignore: use_build_context_synchronously
-                      ScaffoldMessenger.of(outerContext).showSnackBar(
-                        const SnackBar(
-                          content: Text('Falha na autenticação biométrica'),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
+                      if (mounted) {
+                        messenger.showSnackBar(
+                          SnackBar(
+                            content: const Text(
+                              'Falha na autenticação biométrica',
+                            ),
+                            backgroundColor: errorColor,
+                          ),
+                        );
+                      }
                     }
                   },
                   child: const Text('Confirmar'),
@@ -617,8 +626,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onPressed: () async {
                 final pin = pinController.text.trim();
 
+                final messenger = ScaffoldMessenger.of(outerContext);
+                final navigator = Navigator.of(outerContext);
+                final errorColor = Theme.of(outerContext).colorScheme.error;
+
                 if (pin.isEmpty) {
-                  ScaffoldMessenger.of(outerContext).showSnackBar(
+                  messenger.showSnackBar(
                     const SnackBar(
                       content: Text('Digite o PIN'),
                       backgroundColor: Colors.red,
@@ -633,24 +646,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 if (success) {
                   await _checkPinStatus();
                   if (!mounted) return;
-                  // ignore: use_build_context_synchronously
-                  Navigator.of(context).pop();
-                  // ignore: use_build_context_synchronously
-                  ScaffoldMessenger.of(outerContext).showSnackBar(
-                    const SnackBar(
-                      content: Text('PIN desabilitado com sucesso!'),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
+                  navigator.pop();
+                  if (mounted) {
+                    messenger.showSnackBar(
+                      SnackBar(
+                        content: const Text('PIN desabilitado com sucesso!'),
+                        backgroundColor: AppColors.emoticonGreen,
+                      ),
+                    );
+                  }
                 } else {
                   if (!mounted) return;
-                  // ignore: use_build_context_synchronously
-                  ScaffoldMessenger.of(outerContext).showSnackBar(
-                    const SnackBar(
-                      content: Text('PIN incorreto'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
+                  if (mounted) {
+                    messenger.showSnackBar(
+                      SnackBar(
+                        content: const Text('PIN incorreto'),
+                        backgroundColor: errorColor,
+                      ),
+                    );
+                  }
                 }
               },
               child: const Text('Confirmar'),
@@ -767,9 +781,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 // Mostra o valor resultante
                 Text(
                   'Resultado: ${InactivityService.getBackgroundTimeoutLabel(currentSeconds)}',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
 
                 const SizedBox(height: 16),

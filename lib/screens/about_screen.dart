@@ -228,9 +228,12 @@ class _AboutScreenState extends State<AboutScreen> {
               ],
             ),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               'Para dúvidas, sugestões ou suporte técnico:',
-              style: TextStyle(fontSize: 14, color: Colors.grey),
+              style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: 12),
             InkWell(
@@ -324,7 +327,11 @@ class _AboutScreenState extends State<AboutScreen> {
                       ),
                     ),
                   ),
-                  const Icon(Icons.open_in_new, size: 16, color: Colors.grey),
+                  Icon(
+                    Icons.open_in_new,
+                    size: 16,
+                    color: Theme.of(context).iconTheme.color,
+                  ),
                 ],
               ),
             ),
@@ -443,7 +450,10 @@ class _AboutScreenState extends State<AboutScreen> {
                 const SizedBox(height: 2),
                 Text(
                   description,
-                  style: const TextStyle(fontSize: 14, color: Colors.grey),
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),
@@ -477,7 +487,10 @@ class _AboutScreenState extends State<AboutScreen> {
           Expanded(
             child: Text(
               description,
-              style: const TextStyle(fontSize: 14, color: Colors.grey),
+              style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ),
         ],

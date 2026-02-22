@@ -132,9 +132,9 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-        backgroundColor: Colors.black87,
+        backgroundColor: Theme.of(context).colorScheme.background,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.close),
@@ -184,7 +184,9 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
               alignment: Alignment.centerLeft,
               child: IconButton(
                 iconSize: 46,
-                color: Colors.white70,
+                color: Theme.of(
+                  context,
+                ).colorScheme.onBackground.withOpacity(0.7),
                 icon: const Icon(Icons.chevron_left),
                 onPressed: () {
                   final prev = (_currentIndex - 1).clamp(
@@ -206,7 +208,9 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
               alignment: Alignment.centerRight,
               child: IconButton(
                 iconSize: 46,
-                color: Colors.white70,
+                color: Theme.of(
+                  context,
+                ).colorScheme.onBackground.withOpacity(0.7),
                 icon: const Icon(Icons.chevron_right),
                 onPressed: () {
                   final next = (_currentIndex + 1).clamp(
@@ -236,7 +240,11 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
                   width: active ? 10 : 6,
                   height: active ? 10 : 6,
                   decoration: BoxDecoration(
-                    color: active ? Colors.white : Colors.white54,
+                    color: active
+                        ? Theme.of(context).colorScheme.onBackground
+                        : Theme.of(
+                            context,
+                          ).colorScheme.onBackground.withOpacity(0.54),
                     shape: BoxShape.circle,
                   ),
                 );

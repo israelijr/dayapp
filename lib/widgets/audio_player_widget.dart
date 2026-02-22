@@ -109,9 +109,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Theme.of(context).brightness == Brightness.dark
-            ? Colors.grey[800]
-            : Colors.grey[200],
+        color: Theme.of(context).colorScheme.surfaceVariant,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -119,7 +117,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
           IconButton(
             onPressed: _playPauseAudio,
             icon: Icon(_isPlaying ? Icons.pause : Icons.play_arrow, size: 32),
-            color: Colors.deepPurple,
+            color: Theme.of(context).colorScheme.primary,
           ),
           Expanded(
             child: Column(
@@ -129,9 +127,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
                 SliderTheme(
                   data: const SliderThemeData(
                     trackHeight: 2,
-                    thumbShape: RoundSliderThumbShape(
-                      enabledThumbRadius: 6,
-                    ),
+                    thumbShape: RoundSliderThumbShape(enabledThumbRadius: 6),
                   ),
                   child: Slider(
                     value: _currentPosition.inSeconds.toDouble(),

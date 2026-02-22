@@ -37,9 +37,9 @@ class _EmojiSelectionModalState extends State<EmojiSelectionModal> {
   Widget build(BuildContext context) {
     return Container(
       height: MediaQuery.of(context).size.height * 0.7,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
         children: [
@@ -72,7 +72,7 @@ class _EmojiSelectionModalState extends State<EmojiSelectionModal> {
               ],
             ),
           ),
-          
+
           if (_isLoading)
             const Expanded(child: Center(child: CircularProgressIndicator()))
           else ...[
@@ -92,8 +92,12 @@ class _EmojiSelectionModalState extends State<EmojiSelectionModal> {
                       label: Text(
                         group,
                         style: TextStyle(
-                          color: isSelected ? Colors.white : Colors.black87,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          color: isSelected
+                              ? Theme.of(context).colorScheme.onPrimary
+                              : Theme.of(context).colorScheme.onSurface,
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.normal,
                         ),
                       ),
                       selected: isSelected,
@@ -104,8 +108,10 @@ class _EmojiSelectionModalState extends State<EmojiSelectionModal> {
                           });
                         }
                       },
-                      selectedColor: Colors.blue,
-                      backgroundColor: Colors.grey[200],
+                      selectedColor: Theme.of(context).colorScheme.primary,
+                      backgroundColor: Theme.of(
+                        context,
+                      ).colorScheme.surfaceVariant,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                         side: BorderSide.none,
@@ -116,23 +122,27 @@ class _EmojiSelectionModalState extends State<EmojiSelectionModal> {
                 },
               ),
             ),
-            
+
             const SizedBox(height: 8),
-            
+
             // Emoji Grid
             Expanded(
               child: _selectedGroup.isEmpty
                   ? const SizedBox()
                   : GridView.builder(
                       padding: const EdgeInsets.all(16),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 5,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                      ),
-                      itemCount: _emojiService.groupedEmojis[_selectedGroup]?.length ?? 0,
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 5,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                          ),
+                      itemCount:
+                          _emojiService.groupedEmojis[_selectedGroup]?.length ??
+                          0,
                       itemBuilder: (context, index) {
-                        final emoji = _emojiService.groupedEmojis[_selectedGroup]![index];
+                        final emoji =
+                            _emojiService.groupedEmojis[_selectedGroup]![index];
                         return InkWell(
                           onTap: () {
                             Navigator.pop(context, emoji);
@@ -140,7 +150,9 @@ class _EmojiSelectionModalState extends State<EmojiSelectionModal> {
                           borderRadius: BorderRadius.circular(12),
                           child: Container(
                             decoration: BoxDecoration(
-                              color: Colors.grey[100],
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.surfaceVariant,
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Center(

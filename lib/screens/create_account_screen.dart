@@ -161,7 +161,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
               if (errorMessage != null)
                 Text(
                   errorMessage!,
-                  style: const TextStyle(color: Colors.white),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
                 ),
               const SizedBox(height: 16),
               SizedBox(
@@ -197,9 +199,14 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
               // Informações de contato e privacidade
               Column(
                 children: [
-                  const Text(
+                  Text(
                     'Precisa de ajuda?',
-                    style: TextStyle(color: Colors.white70, fontSize: 14),
+                    style: TextStyle(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onPrimary.withOpacity(0.7),
+                      fontSize: 14,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   GestureDetector(
@@ -217,10 +224,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         await launchUrl(emailUri);
                       }
                     },
-                    child: const Text(
+                    child: Text(
                       'israelijr.app@gmail.com',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.onPrimary,
                         decoration: TextDecoration.underline,
                         fontSize: 14,
                       ),
@@ -239,10 +246,12 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         );
                       }
                     },
-                    child: const Text(
+                    child: Text(
                       'Política de Privacidade',
                       style: TextStyle(
-                        color: Colors.white70,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onPrimary.withOpacity(0.7),
                         decoration: TextDecoration.underline,
                         fontSize: 12,
                       ),

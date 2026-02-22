@@ -26,6 +26,7 @@ import '../widgets/rich_text_viewer_widget.dart';
 import 'edit_historia_screen.dart';
 import 'group_selection_screen.dart';
 import 'pdf_preview_screen.dart';
+import '../theme/m3_expressive_theme.dart';
 
 class HomeContent extends StatefulWidget {
   final bool isCardView;
@@ -331,8 +332,8 @@ class _HomeContentState extends State<HomeContent> {
                 onPressed: (context) async {
                   await _archiveWithUndo(historia);
                 },
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
                 icon: Icons.archive,
                 label: 'Arquivar',
               ),
@@ -356,8 +357,8 @@ class _HomeContentState extends State<HomeContent> {
                     );
                   }
                 },
-                backgroundColor: Colors.green,
-                foregroundColor: Colors.white,
+                backgroundColor: AppColors.emoticonGreen,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
                 icon: Icons.group,
                 label: 'Grupo',
               ),

@@ -156,11 +156,13 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       return Container(
         height: 200,
         decoration: BoxDecoration(
-          color: Colors.black,
+          color: Theme.of(context).colorScheme.background,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: const Center(
-          child: CircularProgressIndicator(color: Colors.white),
+        child: Center(
+          child: CircularProgressIndicator(
+            color: Theme.of(context).colorScheme.onBackground,
+          ),
         ),
       );
     }
@@ -175,9 +177,15 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
             child: VideoPlayer(_controller!),
           ),
           if (!_isPlaying)
-            const ColoredBox(
-              color: Colors.black38,
-              child: Icon(Icons.play_arrow, size: 64, color: Colors.white),
+            ColoredBox(
+              color: Theme.of(
+                context,
+              ).colorScheme.onBackground.withOpacity(0.38),
+              child: Icon(
+                Icons.play_arrow,
+                size: 64,
+                color: Theme.of(context).colorScheme.onBackground,
+              ),
             ),
           Positioned.fill(
             child: GestureDetector(
@@ -196,7 +204,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
                   colors: [
-                    Colors.black.withValues(alpha: 0.7 * 255),
+                    Theme.of(context).colorScheme.onBackground.withOpacity(0.7),
                     Colors.transparent,
                   ],
                 ),
@@ -205,7 +213,10 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                 children: [
                   Text(
                     _formatDuration(_controller!.value.position),
-                    style: const TextStyle(color: Colors.white, fontSize: 12),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onBackground,
+                      fontSize: 12,
+                    ),
                   ),
                   Expanded(
                     child: SliderTheme(
@@ -222,14 +233,19 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                         onChanged: (value) {
                           _controller!.seekTo(Duration(seconds: value.toInt()));
                         },
-                        activeColor: Colors.white,
-                        inactiveColor: Colors.white38,
+                        activeColor: Theme.of(context).colorScheme.onBackground,
+                        inactiveColor: Theme.of(
+                          context,
+                        ).colorScheme.onBackground.withOpacity(0.38),
                       ),
                     ),
                   ),
                   Text(
                     _formatDuration(_controller!.value.duration),
-                    style: const TextStyle(color: Colors.white, fontSize: 12),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onBackground,
+                      fontSize: 12,
+                    ),
                   ),
                 ],
               ),
@@ -256,12 +272,16 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.videocam, size: 64, color: Colors.white),
+          Icon(
+            Icons.videocam,
+            size: 64,
+            color: Theme.of(context).colorScheme.onBackground,
+          ),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             'Vídeo salvo com sucesso',
             style: TextStyle(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.onBackground,
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
@@ -272,7 +292,12 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
             builder: (context, snapshot) {
               return Text(
                 'Tamanho: ${snapshot.data ?? "..."} MB',
-                style: const TextStyle(color: Colors.white70, fontSize: 14),
+                style: TextStyle(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onBackground.withOpacity(0.7),
+                  fontSize: 14,
+                ),
               );
             },
           ),
@@ -280,7 +305,12 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
             const SizedBox(height: 4),
             Text(
               'Duração: ${_formatDuration(Duration(seconds: widget.duration!))}',
-              style: const TextStyle(color: Colors.white70, fontSize: 14),
+              style: TextStyle(
+                color: Theme.of(
+                  context,
+                ).colorScheme.onBackground.withOpacity(0.7),
+                fontSize: 14,
+              ),
             ),
           ],
           const SizedBox(height: 16),
@@ -288,13 +318,18 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             margin: const EdgeInsets.symmetric(horizontal: 8),
             decoration: BoxDecoration(
-              color: Colors.white24,
+              color: Theme.of(
+                context,
+              ).colorScheme.onBackground.withOpacity(0.24),
               borderRadius: BorderRadius.circular(20),
             ),
-            child: const Text(
+            child: Text(
               'Reprodução de vídeo não disponível no Windows',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white, fontSize: 12),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onBackground,
+                fontSize: 12,
+              ),
             ),
           ),
         ],
@@ -306,19 +341,26 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     return Container(
       height: 200,
       decoration: BoxDecoration(
-        color: Colors.red.shade100,
+        color: Theme.of(context).colorScheme.error.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.red.shade300, width: 2),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.error.withOpacity(0.3),
+          width: 2,
+        ),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.error_outline, size: 48, color: Colors.red.shade700),
+          Icon(
+            Icons.error_outline,
+            size: 48,
+            color: Theme.of(context).colorScheme.error,
+          ),
           const SizedBox(height: 12),
           Text(
             'Erro ao carregar vídeo',
             style: TextStyle(
-              color: Colors.red.shade700,
+              color: Theme.of(context).colorScheme.error,
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
@@ -329,7 +371,10 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
             builder: (context, snapshot) {
               return Text(
                 'Tamanho: ${snapshot.data ?? "..."} MB',
-                style: TextStyle(color: Colors.red.shade600, fontSize: 14),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.error.withOpacity(0.9),
+                  fontSize: 14,
+                ),
               );
             },
           ),

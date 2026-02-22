@@ -22,6 +22,7 @@ import 'edit_historia_screen.dart';
 import 'edit_profile_screen.dart';
 import 'group_selection_screen.dart';
 import 'pdf_preview_screen.dart';
+import '../theme/m3_expressive_theme.dart';
 
 class ArchivedStoriesScreen extends StatefulWidget {
   const ArchivedStoriesScreen({super.key});
@@ -215,8 +216,8 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
                   // Desarquivar (remover flag de arquivado)
                   await _updateHistoria(historia, updates: {'arquivado': null});
                 },
-                backgroundColor: Colors.green,
-                foregroundColor: Colors.white,
+                backgroundColor: AppColors.emoticonGreen,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
                 icon: Icons.restore,
                 label: 'Desarquivar',
               ),
@@ -240,8 +241,8 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
                     );
                   }
                 },
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
                 icon: Icons.group,
                 label: 'Grupo',
               ),
@@ -404,8 +405,9 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
                         ),
                         decoration: BoxDecoration(
                           color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.blue[700]
-                              : Colors.blue[100],
+                              ? Theme.of(context).colorScheme.primaryContainer
+                              : Theme.of(context).colorScheme.primaryContainer
+                                    .withOpacity(0.12),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
@@ -414,8 +416,10 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
                             fontSize: 12,
                             color:
                                 Theme.of(context).brightness == Brightness.dark
-                                ? Colors.blue[100]
-                                : Colors.blue[800],
+                                ? Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimaryContainer
+                                : Theme.of(context).colorScheme.primary,
                           ),
                         ),
                       ),
@@ -437,11 +441,11 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
       background: Container(
         alignment: Alignment.centerLeft,
         padding: const EdgeInsets.only(left: 20),
-        color: Colors.green,
-        child: const Text(
+        color: AppColors.emoticonGreen,
+        child: Text(
           'Desarquivar',
           style: TextStyle(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.onPrimary,
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
@@ -450,11 +454,11 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
       secondaryBackground: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
-        color: Colors.blue,
-        child: const Text(
+        color: Theme.of(context).colorScheme.primary,
+        child: Text(
           'Grupo',
           style: TextStyle(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.onPrimary,
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
@@ -494,9 +498,7 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? Colors.grey[800]
-                  : Colors.grey[200],
+              color: Theme.of(context).colorScheme.surfaceVariant,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Center(
@@ -766,11 +768,15 @@ class HistoriaFotosGrid extends StatelessWidget {
           return Container(
             height: height,
             decoration: BoxDecoration(
-              color: Colors.grey[200],
+              color: Theme.of(context).colorScheme.surfaceVariant,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Center(
-              child: Icon(Icons.image, color: Colors.grey, size: 48),
+            child: Center(
+              child: Icon(
+                Icons.image,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                size: 48,
+              ),
             ),
           );
         }
@@ -815,7 +821,7 @@ class HistoriaFotosGrid extends StatelessWidget {
             builder: (_) {
               return Dialog(
                 insetPadding: const EdgeInsets.all(8),
-                backgroundColor: Colors.black,
+                backgroundColor: Theme.of(context).colorScheme.background,
                 child: SizedBox(
                   height: MediaQuery.of(context).size.height * 0.8,
                   width: MediaQuery.of(context).size.width * 0.9,
@@ -850,12 +856,14 @@ class HistoriaFotosGrid extends StatelessWidget {
                   Image.memory(foto.bytes, fit: BoxFit.cover),
                   if (isLast)
                     ColoredBox(
-                      color: Colors.black45,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onBackground.withOpacity(0.45),
                       child: Center(
                         child: Text(
                           '+${total - 3}',
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onBackground,
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
                           ),

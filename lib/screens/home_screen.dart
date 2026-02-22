@@ -267,10 +267,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text(
+                            Text(
                               'DayApp',
                               style: TextStyle(
-                                color: Colors.white,
+                                color: Theme.of(context).colorScheme.onPrimary,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,
                               ),
@@ -370,9 +370,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                       top: 10,
                                       right: 10,
                                       child: IconButton(
-                                        icon: const Icon(
+                                        icon: Icon(
                                           Icons.close,
-                                          color: Colors.white,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onBackground,
                                           size: 30,
                                         ),
                                         onPressed: () =>

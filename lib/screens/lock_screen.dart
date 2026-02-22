@@ -331,9 +331,11 @@ class _LockScreenState extends State<LockScreen> {
 
                   if (code.length != 6) {
                     ScaffoldMessenger.of(dialogContext).showSnackBar(
-                      const SnackBar(
-                        content: Text('Código deve ter 6 dígitos'),
-                        backgroundColor: Colors.red,
+                      SnackBar(
+                        content: const Text('Código deve ter 6 dígitos'),
+                        backgroundColor: Theme.of(
+                          dialogContext,
+                        ).colorScheme.error,
                       ),
                     );
                     return;
@@ -341,9 +343,11 @@ class _LockScreenState extends State<LockScreen> {
 
                   if (newPin.length < 4 || newPin.length > 8) {
                     ScaffoldMessenger.of(dialogContext).showSnackBar(
-                      const SnackBar(
-                        content: Text('PIN deve ter entre 4 e 8 dígitos'),
-                        backgroundColor: Colors.red,
+                      SnackBar(
+                        content: const Text('PIN deve ter entre 4 e 8 dígitos'),
+                        backgroundColor: Theme.of(
+                          dialogContext,
+                        ).colorScheme.error,
                       ),
                     );
                     return;
@@ -351,9 +355,11 @@ class _LockScreenState extends State<LockScreen> {
 
                   if (newPin != confirmPin) {
                     ScaffoldMessenger.of(dialogContext).showSnackBar(
-                      const SnackBar(
-                        content: Text('Os PINs não coincidem'),
-                        backgroundColor: Colors.red,
+                      SnackBar(
+                        content: const Text('Os PINs não coincidem'),
+                        backgroundColor: Theme.of(
+                          dialogContext,
+                        ).colorScheme.error,
                       ),
                     );
                     return;
@@ -435,7 +441,7 @@ class _LockScreenState extends State<LockScreen> {
                             ? 'Use sua biometria para continuar'
                             : 'Digite seu PIN para continuar',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey[600],
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                       const SizedBox(height: 40),
@@ -555,10 +561,10 @@ class _LockScreenState extends State<LockScreen> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.email_outlined,
                               size: 48,
-                              color: Colors.blue,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                             const SizedBox(height: 16),
                             const Text(

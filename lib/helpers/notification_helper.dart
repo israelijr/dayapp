@@ -95,7 +95,11 @@ class NotificationHelper {
                     Expanded(
                       child: Text(
                         NotificationPreferencesService.getAdvanceLabel(minutes),
-                        style: TextStyle(color: isEnabled ? null : Colors.grey),
+                        style: TextStyle(
+                          color: isEnabled
+                              ? null
+                              : Theme.of(context).disabledColor,
+                        ),
                       ),
                     ),
                     if (isDefault)

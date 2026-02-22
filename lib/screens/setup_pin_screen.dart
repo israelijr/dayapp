@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/pin_provider.dart';
+import '../theme/m3_expressive_theme.dart';
 
 class SetupPinScreen extends StatefulWidget {
   final bool isChanging;
@@ -219,7 +220,7 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
                   ? 'PIN alterado com sucesso!'
                   : 'PIN configurado com sucesso!',
             ),
-            backgroundColor: Colors.green,
+            backgroundColor: AppColors.emoticonGreen,
           ),
         );
         Navigator.of(context).pop(true);

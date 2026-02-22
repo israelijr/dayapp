@@ -245,7 +245,9 @@ class _RichTextEditorScreenState extends State<RichTextEditorScreen> {
                                             context,
                                           ).pop('discard'),
                                           style: TextButton.styleFrom(
-                                            foregroundColor: Colors.red,
+                                            foregroundColor: Theme.of(
+                                              context,
+                                            ).colorScheme.error,
                                           ),
                                           child: const Text('Descartar'),
                                         ),
@@ -303,9 +305,8 @@ class _RichTextEditorScreenState extends State<RichTextEditorScreen> {
                       child: IgnorePointer(
                         ignoring: true,
                         child: Container(
-                          color: Colors.black.withValues(
-                            alpha: overlayOpacity * 255,
-                          ),
+                          color: Theme.of(context).colorScheme.onBackground
+                              .withOpacity(overlayOpacity),
                         ),
                       ),
                     ),
@@ -319,10 +320,10 @@ class _RichTextEditorScreenState extends State<RichTextEditorScreen> {
                           child: AnimatedScale(
                             scale: _isAutoSaving ? 1.0 : 0.6,
                             duration: const Duration(milliseconds: 300),
-                            child: const Icon(
+                            child: Icon(
                               Icons.check_circle,
                               size: 96,
-                              color: Colors.white,
+                              color: Theme.of(context).colorScheme.onBackground,
                             ),
                           ),
                         ),

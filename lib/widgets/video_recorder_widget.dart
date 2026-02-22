@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/pin_provider.dart';
+import '../theme/m3_expressive_theme.dart';
 
 /// Widget de seleção de vídeo que oferece opção de gravar ou buscar arquivos.
 /// Suporta seleção múltipla de vídeos da galeria/arquivos.
@@ -47,7 +48,7 @@ class _VideoRecorderWidgetState extends State<VideoRecorderWidget> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.videocam, size: 64, color: Colors.deepPurple),
+            Icon(Icons.videocam, size: 64, color: AppColors.primaryVariant),
             const SizedBox(height: 16),
             Text(
               widget.allowMultiple ? 'Adicionar Vídeos' : 'Adicionar Vídeo',
@@ -79,8 +80,8 @@ class _VideoRecorderWidgetState extends State<VideoRecorderWidget> {
                       : 'Buscar arquivo de vídeo',
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple,
-                  foregroundColor: Colors.white,
+                  backgroundColor: AppColors.primaryVariant,
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24,
                     vertical: 12,
@@ -94,7 +95,7 @@ class _VideoRecorderWidgetState extends State<VideoRecorderWidget> {
                 icon: const Icon(Icons.videocam),
                 label: const Text('Gravar um vídeo'),
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.deepPurple,
+                  foregroundColor: AppColors.primaryVariant,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24,
                     vertical: 12,

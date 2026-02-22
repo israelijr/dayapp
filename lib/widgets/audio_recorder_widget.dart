@@ -99,8 +99,8 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
                       : 'Buscar arquivo de áudio',
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple,
-                  foregroundColor: Colors.white,
+                  backgroundColor: AppColors.primaryVariant,
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24,
                     vertical: 12,
@@ -118,7 +118,7 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
                 icon: const Icon(Icons.mic),
                 label: const Text('Gravar um áudio'),
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.deepPurple,
+                  foregroundColor: AppColors.primaryVariant,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24,
                     vertical: 12,
@@ -176,7 +176,7 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
                 label: const Text('Iniciar Gravação'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.error,
-                  foregroundColor: Colors.white,
+                  foregroundColor: Theme.of(context).colorScheme.onError,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 32,
                     vertical: 12,
@@ -191,13 +191,13 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
                     IconButton(
                       onPressed: _pauseRecording,
                       icon: const Icon(Icons.pause_circle, size: 48),
-                      color: Colors.orange,
+                      color: AppColors.emoticonOrange,
                     )
                   else
                     IconButton(
                       onPressed: _resumeRecording,
                       icon: const Icon(Icons.play_circle, size: 48),
-                      color: Colors.green,
+                      color: AppColors.emoticonGreen,
                     ),
                   const SizedBox(width: 24),
                   IconButton(

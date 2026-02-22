@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/pin_provider.dart';
+import '../theme/m3_expressive_theme.dart';
 
 /// Widget de seleção de imagem que oferece opção de tirar foto ou buscar na galeria.
 /// Suporta seleção múltipla de imagens da galeria.
@@ -52,7 +53,7 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.photo_camera, size: 64, color: Colors.deepPurple),
+            Icon(Icons.photo_camera, size: 64, color: AppColors.primaryVariant),
             const SizedBox(height: 16),
             Text(
               widget.allowMultiple ? 'Adicionar Fotos' : 'Adicionar Foto',
@@ -86,8 +87,8 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
                       : 'Buscar na galeria',
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple,
-                  foregroundColor: Colors.white,
+                  backgroundColor: AppColors.primaryVariant,
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24,
                     vertical: 12,
@@ -101,7 +102,7 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
                 icon: const Icon(Icons.camera_alt),
                 label: const Text('Tirar uma foto'),
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.deepPurple,
+                  foregroundColor: AppColors.primaryVariant,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 24,
                     vertical: 12,

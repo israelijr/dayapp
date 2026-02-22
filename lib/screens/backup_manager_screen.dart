@@ -7,6 +7,7 @@ import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../services/backup_service.dart';
+import '../theme/m3_expressive_theme.dart';
 
 class BackupManagerScreen extends StatefulWidget {
   const BackupManagerScreen({super.key});
@@ -113,7 +114,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                                 children: [
                                   Icon(
                                     Icons.folder_zip,
-                                    color: Colors.green[700],
+                                    color: AppColors.emoticonGreen,
                                     size: 28,
                                   ),
                                   const SizedBox(width: 12),
@@ -165,7 +166,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                                 ),
                                 style: ElevatedButton.styleFrom(
                                   minimumSize: const Size(double.infinity, 48),
-                                  backgroundColor: Colors.green,
+                                  backgroundColor: AppColors.emoticonGreen,
                                 ),
                               ),
                               const SizedBox(height: 20),
@@ -206,8 +207,8 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                           color:
                               (_statusMessage.contains('sucesso') ||
                                   _statusMessage.contains('criado'))
-                              ? Colors.green[50]
-                              : Colors.red[50],
+                              ? Theme.of(context).colorScheme.secondaryContainer
+                              : Theme.of(context).colorScheme.errorContainer,
                           child: Padding(
                             padding: const EdgeInsets.all(16),
                             child: Row(
@@ -220,8 +221,8 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                                   color:
                                       (_statusMessage.contains('sucesso') ||
                                           _statusMessage.contains('criado'))
-                                      ? Colors.green
-                                      : Colors.red,
+                                      ? AppColors.emoticonGreen
+                                      : Theme.of(context).colorScheme.error,
                                   size: 32,
                                 ),
                                 const SizedBox(width: 12),

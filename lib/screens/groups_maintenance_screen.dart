@@ -209,7 +209,10 @@ class _GroupsMaintenanceScreenState extends State<GroupsMaintenanceScreen> {
                       const Divider(height: 1, thickness: 1),
                       ListTile(
                         title: const Text('Arquivados'),
-                        leading: const Icon(Icons.archive, color: Colors.grey),
+                        leading: Icon(
+                          Icons.archive,
+                          color: Theme.of(context).iconTheme.color,
+                        ),
                         // Arquivados não é editável, apenas visualização/navegação
                         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                         onTap: () {

@@ -134,11 +134,11 @@ class _BatteryOptimizationDialogState extends State<BatteryOptimizationDialog> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    const Row(
+                    Row(
                       children: [
-                        Icon(Icons.close, size: 16, color: Colors.red),
-                        SizedBox(width: 8),
-                        Expanded(
+                        Icon(Icons.close, size: 16, color: colorScheme.error),
+                        const SizedBox(width: 8),
+                        const Expanded(
                           child: Text(
                             'Lembretes de reflexão não serão enviados',
                           ),
@@ -146,11 +146,11 @@ class _BatteryOptimizationDialogState extends State<BatteryOptimizationDialog> {
                       ],
                     ),
                     const SizedBox(height: 4),
-                    const Row(
+                    Row(
                       children: [
-                        Icon(Icons.close, size: 16, color: Colors.red),
-                        SizedBox(width: 8),
-                        Expanded(
+                        Icon(Icons.close, size: 16, color: colorScheme.error),
+                        const SizedBox(width: 8),
+                        const Expanded(
                           child: Text('Notificações de histórias podem falhar'),
                         ),
                       ],

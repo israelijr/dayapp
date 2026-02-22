@@ -5,6 +5,7 @@ import '../providers/auth_provider.dart';
 import '../services/password_recovery_service.dart';
 import '../services/pin_recovery_service.dart';
 import '../widgets/custom_text_field.dart';
+import '../theme/m3_expressive_theme.dart';
 
 /// Tela de recuperação de senha por token enviado por e-mail.
 /// Fluxo em etapas:
@@ -198,12 +199,12 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
 
       // Mostra mensagem de sucesso e volta para o login
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
+        SnackBar(
+          content: const Text(
             'Senha redefinida com sucesso! Faça login com a nova senha.',
           ),
-          backgroundColor: Colors.green,
-          duration: Duration(seconds: 3),
+          backgroundColor: AppColors.emoticonGreen,
+          duration: const Duration(seconds: 3),
         ),
       );
 

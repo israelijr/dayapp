@@ -128,9 +128,9 @@ class _LoginScreenState extends State<LoginScreen> {
         if (!mounted) return;
         // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Biometria habilitada com sucesso!'),
-            backgroundColor: Colors.green,
+          SnackBar(
+            content: const Text('Biometria habilitada com sucesso!'),
+            backgroundColor: AppColors.emoticonGreen,
           ),
         );
       }
@@ -156,18 +156,23 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 32),
                 Image.asset('assets/icon/icon.png', width: 80, height: 80),
                 const SizedBox(height: 24),
-                const Text(
+                Text(
                   'Bem vindo de volta!',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onPrimary,
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Text(
+                Text(
                   'Acesse sua conta',
-                  style: TextStyle(fontSize: 16, color: Colors.white70),
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onPrimary.withOpacity(0.7),
+                  ),
                 ),
                 const SizedBox(height: 32),
                 CustomTextField(
@@ -191,7 +196,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 8),
                   Text(
                     errorMessage!,
-                    style: const TextStyle(color: Colors.white),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
                   ),
                 ],
                 if (biometricAvailable && !biometricEnabled) ...[
@@ -210,10 +217,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         checkColor: AppColors.primary,
                       ),
-                      const Expanded(
+                      Expanded(
                         child: Text(
                           'Habilitar login com biometria',
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
                         ),
                       ),
                     ],
@@ -242,7 +251,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF5E35B1),
+                      backgroundColor: AppColors.primaryVariant,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -272,10 +281,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   onTap: () {
                     Navigator.pushNamed(context, '/password_recovery');
                   },
-                  child: const Text(
+                  child: Text(
                     'Esqueci minha senha',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onPrimary,
                       decoration: TextDecoration.underline,
                     ),
                   ),
@@ -285,10 +294,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   onTap: () {
                     Navigator.pushNamed(context, '/create_account');
                   },
-                  child: const Text(
+                  child: Text(
                     'Não tem conta, crie uma aqui.',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onPrimary,
                       decoration: TextDecoration.underline,
                     ),
                   ),
@@ -297,9 +306,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 // Informações de contato e privacidade
                 Column(
                   children: [
-                    const Text(
+                    Text(
                       'Precisa de ajuda?',
-                      style: TextStyle(color: Colors.white70, fontSize: 14),
+                      style: TextStyle(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onPrimary.withOpacity(0.7),
+                        fontSize: 14,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     GestureDetector(
@@ -317,10 +331,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           await launchUrl(emailUri);
                         }
                       },
-                      child: const Text(
+                      child: Text(
                         'israelijr.app@gmail.com',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.onPrimary,
                           decoration: TextDecoration.underline,
                           fontSize: 14,
                         ),
@@ -339,10 +353,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           );
                         }
                       },
-                      child: const Text(
+                      child: Text(
                         'Política de Privacidade',
                         style: TextStyle(
-                          color: Colors.white70,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onPrimary.withOpacity(0.7),
                           decoration: TextDecoration.underline,
                           fontSize: 12,
                         ),

@@ -15,6 +15,7 @@ import '../widgets/compact_audio_icon.dart';
 import '../widgets/compact_video_icon.dart';
 import '../widgets/rich_text_viewer_widget.dart';
 import 'edit_historia_screen.dart';
+import '../theme/m3_expressive_theme.dart';
 
 class CalendarViewScreen extends StatefulWidget {
   const CalendarViewScreen({super.key});
@@ -230,15 +231,15 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
                     calendarStyle: CalendarStyle(
                       outsideDaysVisible: false,
                       todayDecoration: BoxDecoration(
-                        color: Colors.deepPurple.withValues(alpha: 0.5),
+                        color: AppColors.purple700.withOpacity(0.5),
                         shape: BoxShape.circle,
                       ),
-                      selectedDecoration: const BoxDecoration(
-                        color: Colors.deepPurple,
+                      selectedDecoration: BoxDecoration(
+                        color: AppColors.purple700,
                         shape: BoxShape.circle,
                       ),
-                      markerDecoration: const BoxDecoration(
-                        color: Colors.deepPurpleAccent,
+                      markerDecoration: BoxDecoration(
+                        color: AppColors.purple300,
                         shape: BoxShape.circle,
                       ),
                       markersMaxCount: 3,
@@ -286,14 +287,18 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
                               Icon(
                                 Icons.event_busy,
                                 size: 64,
-                                color: Colors.grey[400],
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
                               ),
                               const SizedBox(height: 16),
                               Text(
                                 'Nenhum registro neste dia',
                                 style: TextStyle(
                                   fontSize: 16,
-                                  color: Colors.grey[600],
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
                                 ),
                               ),
                             ],
@@ -371,7 +376,9 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
                           DateFormat('HH:mm').format(historia.data),
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey[600],
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ],
@@ -477,7 +484,7 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Colors.grey[300],
+                    color: Theme.of(context).colorScheme.surfaceVariant,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -532,7 +539,10 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
                       'dd/MM/yyyy HH:mm',
                       'pt_BR',
                     ).format(historia.data),
-                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),
