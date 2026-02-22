@@ -42,6 +42,17 @@ class BackupService {
         throw Exception('Banco de dados nÃ£o encontrado.');
       }
 
+      // Marcar histórias como já salvas em backup antes de copiar o arquivo
+      try {
+        final db = await DatabaseHelper().database;
+        // Marca somente histórias não excluídas
+        await db.update('historia', {
+          'backed_up': 1,
+        }, where: "excluido IS NULL");
+      } catch (e) {
+        // Não quebrar o fluxo de backup se a marcação falhar
+      }
+
       final dbBackupFile = File(path.join(backupDir.path, 'dayapp.db'));
       await dbFile.copy(dbBackupFile.path);
 
@@ -331,6 +342,33 @@ Versão: 2.0.0
         // Copiar banco restaurado
         onProgress?.call('Copiando banco de dados restaurado...');
         await restoredDb.copy(currentDb.path);
+        // Após copiar o banco restaurado, garantir compatibilidade com a nova
+        // coluna `backed_up` e marcar todas as histórias do backup como já salvas.
+        try {
+          final restoredDbPath = path.join(dbPath, 'dayapp.db');
+          final tmpDb = await openDatabase(restoredDbPath);
+          try {
+            final tableInfo = await tmpDb.rawQuery(
+              'PRAGMA table_info(historia)',
+            );
+            final hasBackedUp = tableInfo.any((c) => c['name'] == 'backed_up');
+            if (!hasBackedUp) {
+              try {
+                await tmpDb.execute(
+                  'ALTER TABLE historia ADD COLUMN backed_up INTEGER DEFAULT 0;',
+                );
+              } catch (_) {
+                // ignore
+              }
+            }
+            // Marcar todas as histórias deste banco restaurado como já salvas
+            await tmpDb.update('historia', {'backed_up': 1});
+          } finally {
+            await tmpDb.close();
+          }
+        } catch (e) {
+          // Não falhar a restauração se a marcação não funcionar
+        }
       } else {
         throw Exception(
           'Banco de dados não encontrado no arquivo de backup. '

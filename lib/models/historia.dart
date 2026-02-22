@@ -15,9 +15,13 @@ class Historia {
   final String? arquivado;
   final String? excluido;
   final DateTime? dataExclusao;
+  final bool backedUp;
 
   Historia({
-    required this.userId, required this.titulo, required this.data, this.id,
+    required this.userId,
+    required this.titulo,
+    required this.data,
+    this.id,
     this.assunto,
     this.tag,
     this.descricao,
@@ -30,6 +34,7 @@ class Historia {
     this.arquivado,
     this.excluido,
     this.dataExclusao,
+    this.backedUp = false,
   });
 
   factory Historia.fromMap(Map<String, dynamic> map) {
@@ -56,6 +61,12 @@ class Historia {
       dataExclusao: map['data_exclusao'] != null
           ? DateTime.tryParse(map['data_exclusao'])
           : null,
+      // Compatibilidade: backups antigos podem não ter a coluna 'backed_up'
+      backedUp: map.containsKey('backed_up')
+          ? ((map['backed_up'] is int)
+                ? (map['backed_up'] as int) == 1
+                : (map['backed_up'] == true))
+          : false,
     );
   }
 
@@ -77,6 +88,7 @@ class Historia {
       'arquivado': arquivado,
       'excluido': excluido,
       'data_exclusao': dataExclusao?.toIso8601String(),
+      'backed_up': backedUp ? 1 : 0,
     };
   }
 }

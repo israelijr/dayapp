@@ -52,6 +52,8 @@ class CustomTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final effectiveMinLines = obscureText ? 1 : minLines;
+    final effectiveMaxLines = obscureText ? 1 : maxLines;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextField(
@@ -64,8 +66,11 @@ class CustomTextField extends StatelessWidget {
         textCapitalization: textCapitalization,
         style:
             style ?? TextStyle(color: isDark ? Colors.white : Colors.black87),
-        minLines: minLines,
-        maxLines: maxLines,
+        // Quando o campo é do tipo obscuro (senha), o TextField exige
+        // que seja single-line. Forçamos min/max para 1 nessa situação
+        // para evitar a asserção interna do Flutter.
+        minLines: effectiveMinLines,
+        maxLines: effectiveMaxLines,
         textAlign: textAlign,
         onChanged: onChanged,
         onSubmitted: onSubmitted,

@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
 import '../services/auto_backup_service.dart';
+import '../db/database_helper.dart';
 // import '../services/battery_optimization_service.dart';
 // import '../widgets/battery_optimization_dialog.dart';
 import 'edit_profile_screen.dart';
@@ -33,7 +34,70 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _loadLayoutPreference();
+    _checkUnsavedStories();
     // _checkBatteryOptimization();
+  }
+
+  Future<void> _checkUnsavedStories() async {
+    // Pequeno delay para não competir com o carregamento inicial
+    await Future.delayed(const Duration(milliseconds: 500));
+    if (!mounted) return;
+    try {
+      final db = await DatabaseHelper().database;
+      final res = await db.rawQuery(
+        "SELECT COUNT(*) as cnt FROM historia WHERE (backed_up IS NULL OR backed_up = 0) AND excluido IS NULL",
+      );
+      final cnt = (res.first['cnt'] ?? 0) as int;
+      if (cnt > 0 && mounted) {
+        // Mostrar diálogo amigável com imagem e opções
+        showDialog<void>(
+          context: context,
+          builder: (dialogContext) {
+            return AlertDialog(
+              contentPadding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Imagem amigável para sugerir backup
+                  Image.asset(
+                    'assets/image/Fazendo backup de maneira amigável.png',
+                    height: 140,
+                    fit: BoxFit.contain,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Você tem $cnt histórias não salvas em backup.',
+                    style: const TextStyle(fontSize: 16),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Recomendamos fazer backup para não perder seus dados.',
+                    style: TextStyle(fontSize: 13, color: Colors.black54),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                  child: const Text('Cancelar'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(dialogContext).pop();
+                    Navigator.pushNamed(context, '/backup-manager');
+                  },
+                  child: const Text('Fazer backup'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    } catch (e) {
+      // Silencia erros durante a checagem inicial
+    }
   }
 
   /// Verifica se a otimização de bateria está desabilitada

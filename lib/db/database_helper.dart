@@ -28,7 +28,7 @@ class DatabaseHelper {
       final path = p.join(dbPath, 'dayapp.db');
       return await openDatabase(
         path,
-        version: 12,
+        version: 13,
         onCreate: _onCreate,
         onUpgrade: _onUpgrade,
       );
@@ -67,6 +67,7 @@ class DatabaseHelper {
           data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           data_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           foto_historia TEXT,
+          backed_up INTEGER DEFAULT 0,
           FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         );
       ''');
@@ -313,6 +314,16 @@ class DatabaseHelper {
       // Migração: Fotos e Áudios de BLOB para sistema de arquivos
       await _migratePhotosToFileSystem(db);
       await _migrateAudiosToFileSystem(db);
+    }
+    if (oldVersion < 13) {
+      // Adicionar coluna para indicar que a história já foi incluída em backup
+      try {
+        await db.execute(
+          'ALTER TABLE historia ADD COLUMN backed_up INTEGER DEFAULT 0;',
+        );
+      } catch (e) {
+        // Column may already exist or operation not supported; ignore
+      }
     }
   }
 
