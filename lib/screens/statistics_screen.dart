@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import '../db/database_helper.dart';
 import '../models/historia.dart';
 import '../providers/auth_provider.dart';
+import '../providers/statistics_provider.dart';
 import '../theme/m3_expressive_theme.dart';
 
 class StatisticsScreen extends StatefulWidget {
@@ -26,6 +27,10 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   final Map<String, double> _emoticonPercentages = {};
   int _longestStreak = 0;
   List<bool> _weekDays = List.filled(7, false);
+  Map<String, dynamic> _overview = {};
+  List<Map<String, dynamic>> _timeSeries = [];
+  List<Map<String, dynamic>> _heatmapRows = [];
+  List<Map<String, dynamic>> _topTags = [];
 
   @override
   void initState() {
@@ -36,23 +41,72 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   Future<void> _loadStatistics() async {
     setState(() => _isLoading = true);
 
+    // Capturar providers/context antes de qualquer await para evitar uso
+    // de BuildContext após gaps assíncronos.
     final auth = Provider.of<AuthProvider>(context, listen: false);
-    final userId = auth.user?.id ?? '';
+    final statsProvider = Provider.of<StatisticsProvider>(
+      context,
+      listen: false,
+    );
+    final String? userId = auth.user?.id; // null se usuário não autenticado
+
     final db = await DatabaseHelper().database;
 
-    // Buscar todas as histórias não excluídas
+    // Buscar todas as histórias não excluídas (ainda usadas para charts locais)
     final result = await db.query(
       'historia',
-      where: 'user_id = ? AND excluido IS NULL',
-      whereArgs: [userId],
+      where: userId != null
+          ? 'user_id = ? AND excluido IS NULL'
+          : 'excluido IS NULL',
+      whereArgs: userId != null ? [userId] : null,
       orderBy: 'data DESC',
     );
 
     _historias = result.map((map) => Historia.fromMap(map)).toList();
 
-    // Calcular estatísticas
-    _calculateEmoticonStatistics();
-    _calculateStreaks();
+    // Usar StatisticsProvider para métricas já encapsuladas (capturado acima)
+
+    try {
+      final emotionRows = await statsProvider.fetchEmotionBreakdown(
+        userId: userId,
+      );
+      _emoticonCounts.clear();
+      for (final row in emotionRows) {
+        final key = (row['key'] ?? '') as String;
+        final cnt = (row['cnt'] ?? 0) as int;
+        if (key.isNotEmpty) {
+          _emoticonCounts[key] = cnt;
+        }
+      }
+
+      // calcular porcentagens locally
+      final total = _emoticonCounts.values.fold<int>(0, (s, v) => s + v);
+      _emoticonPercentages.clear();
+      if (total > 0) {
+        _emoticonCounts.forEach((k, v) {
+          _emoticonPercentages[k] = (v / total) * 100;
+        });
+      }
+
+      final streaks = await statsProvider.fetchStreaks(userId: userId);
+      _longestStreak = streaks['bestStreak'] ?? 0;
+
+      // Buscar overview, série temporal, heatmap e top tags
+      _overview = await statsProvider.fetchOverview(userId: userId);
+      _timeSeries = await statsProvider.fetchTimeSeries(
+        days: 30,
+        userId: userId,
+      );
+      _heatmapRows = await statsProvider.fetchHeatmap(userId: userId);
+      _topTags = await statsProvider.fetchTopTags(limit: 10, userId: userId);
+
+      // manter cálculo local de _weekDays (exibe últimos 7 dias)
+      _calculateStreaks();
+    } catch (e) {
+      // fallback: manter cálculos locais caso provider falhe
+      _calculateEmoticonStatistics();
+      _calculateStreaks();
+    }
 
     setState(() => _isLoading = false);
   }
@@ -275,6 +329,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    _buildOverviewCard(isDark),
+                    const SizedBox(height: 16),
                     _buildTendenciasCard(isDark),
                     const SizedBox(height: 16),
                     _buildDiasSeguidosCard(isDark),
@@ -282,6 +338,12 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                     _buildTabelaHumoresCard(isDark),
                     const SizedBox(height: 16),
                     _buildContagemHumorCard(isDark),
+                    const SizedBox(height: 16),
+                    _buildTimeSeriesCard(isDark),
+                    const SizedBox(height: 16),
+                    _buildHeatmapCard(isDark),
+                    const SizedBox(height: 16),
+                    _buildTopTagsCard(isDark),
                   ],
                 ),
               ),
@@ -361,6 +423,167 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   ),
                 ),
               ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOverviewCard(bool isDark) {
+    final totalStories = _overview['totalStories'] ?? 0;
+    final activeDays = _overview['activeDays'] ?? 0;
+    final avg = (_overview['avgPerActiveDay'] ?? 0.0) as double;
+    final totalMedia = _overview['totalMedia'] ?? 0;
+
+    Widget infoTile(String title, String value) => Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+      ],
+    );
+
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            infoTile('Histórias', '$totalStories'),
+            infoTile('Dias ativos', '$activeDays'),
+            infoTile('Média/dia', avg.toStringAsFixed(1)),
+            infoTile('Mídias', '$totalMedia'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTimeSeriesCard(bool isDark) {
+    if (_timeSeries.isEmpty) return const SizedBox.shrink();
+
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Últimos 30 dias',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 120,
+              child: CustomPaint(
+                painter: LineSparklinePainter(data: _timeSeries),
+                child: Container(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeatmapCard(bool isDark) {
+    if (_heatmapRows.isEmpty) return const SizedBox.shrink();
+
+    // Agregar por weekday
+    final weekdayCounts = List<int>.filled(7, 0);
+    for (final r in _heatmapRows) {
+      final w = r['weekday'] is int
+          ? r['weekday'] as int
+          : int.parse(r['weekday'] as String);
+      final cnt = r['count'] is int
+          ? r['count'] as int
+          : (r['count'] as num).toInt();
+      weekdayCounts[w] += cnt;
+    }
+
+    final maxCnt = weekdayCounts.reduce((a, b) => a > b ? a : b);
+
+    final weekdayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Atividade por dia da semana',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: List.generate(7, (i) {
+                final cnt = weekdayCounts[i];
+                final height = maxCnt > 0 ? (cnt / maxCnt) * 80 : 0.0;
+                return Column(
+                  children: [
+                    Container(
+                      width: 18,
+                      height: height,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(weekdayNames[i], style: const TextStyle(fontSize: 12)),
+                  ],
+                );
+              }),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTopTagsCard(bool isDark) {
+    if (_topTags.isEmpty) return const SizedBox.shrink();
+
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Top tags',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            Column(
+              children: _topTags.map((t) {
+                final tag = t['tag'] ?? t['key'] ?? '';
+                final cnt = t['cnt'] ?? t['count'] ?? 0;
+                return ListTile(
+                  dense: true,
+                  contentPadding: EdgeInsets.zero,
+                  leading: CircleAvatar(
+                    child: Text(tag.toString().substring(0, 1).toUpperCase()),
+                  ),
+                  title: Text(tag.toString()),
+                  trailing: Text(cnt.toString()),
+                );
+              }).toList(),
             ),
           ],
         ),
@@ -854,6 +1077,65 @@ class AreaChartPainter extends CustomPainter {
           Offset(x - textPainter.width / 2, size.height + 8),
         );
       }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
+}
+
+class LineSparklinePainter extends CustomPainter {
+  final List<Map<String, dynamic>> data; // {'day': 'YYYY-MM-DD', 'count': N}
+  final Color lineColor;
+
+  LineSparklinePainter({
+    required this.data,
+    this.lineColor = const Color(0xFF6C63FF),
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (data.isEmpty) return;
+
+    final counts = data.map((e) => (e['count'] as num).toDouble()).toList();
+    final maxV = counts.reduce((a, b) => a > b ? a : b);
+    final minV = counts.reduce((a, b) => a < b ? a : b);
+
+    final span = (maxV - minV) == 0 ? 1.0 : (maxV - minV);
+
+    final paint = Paint()
+      ..color = lineColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0
+      ..isAntiAlias = true;
+
+    final path = Path();
+    final bool singlePoint = counts.length == 1;
+    final stepX = singlePoint ? 0.0 : size.width / (counts.length - 1);
+
+    for (var i = 0; i < counts.length; i++) {
+      final x = singlePoint ? size.width / 2 : i * stepX;
+      final y = size.height - ((counts[i] - minV) / span) * size.height;
+      // Proteção contra valores não finitos
+      final safeX = x.isFinite ? x : 0.0;
+      final safeY = y.isFinite ? y : size.height / 2;
+
+      if (i == 0) {
+        path.moveTo(safeX, safeY);
+      } else {
+        path.lineTo(safeX, safeY);
+      }
+    }
+
+    canvas.drawPath(path, paint);
+
+    final dotPaint = Paint()..color = lineColor;
+    for (var i = 0; i < counts.length; i++) {
+      final x = singlePoint ? size.width / 2 : i * stepX;
+      final y = size.height - ((counts[i] - minV) / span) * size.height;
+      final safeX = x.isFinite ? x : 0.0;
+      final safeY = y.isFinite ? y : size.height / 2;
+      canvas.drawCircle(Offset(safeX, safeY), 2.5, dotPaint);
     }
   }
 

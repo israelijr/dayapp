@@ -14,6 +14,7 @@ import 'models/historia.dart';
 import 'providers/auth_provider.dart';
 import 'providers/pin_provider.dart';
 import 'providers/refresh_provider.dart';
+import 'providers/statistics_provider.dart';
 import 'providers/theme_provider.dart';
 import 'screens/about_screen.dart';
 import 'screens/backup_manager_screen.dart';
@@ -372,6 +373,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ChangeNotifierProvider.value(value: widget.authProvider),
         ChangeNotifierProvider.value(value: widget.themeProvider),
         ChangeNotifierProvider.value(value: widget.refreshProvider),
+        // Provider para estatísticas (acesso ao banco local)
+        ChangeNotifierProvider(create: (_) => StatisticsProvider()),
         ChangeNotifierProvider.value(value: widget.pinProvider),
       ],
       child: Consumer<ThemeProvider>(
