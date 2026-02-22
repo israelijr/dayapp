@@ -132,9 +132,9 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.close),
@@ -186,7 +186,7 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
                 iconSize: 46,
                 color: Theme.of(
                   context,
-                ).colorScheme.onBackground.withOpacity(0.7),
+                ).colorScheme.onSurface.withValues(alpha: 0.7),
                 icon: const Icon(Icons.chevron_left),
                 onPressed: () {
                   final prev = (_currentIndex - 1).clamp(
@@ -210,7 +210,7 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
                 iconSize: 46,
                 color: Theme.of(
                   context,
-                ).colorScheme.onBackground.withOpacity(0.7),
+                ).colorScheme.onSurface.withValues(alpha: 0.7),
                 icon: const Icon(Icons.chevron_right),
                 onPressed: () {
                   final next = (_currentIndex + 1).clamp(
@@ -241,10 +241,10 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
                   height: active ? 10 : 6,
                   decoration: BoxDecoration(
                     color: active
-                        ? Theme.of(context).colorScheme.onBackground
+                        ? Theme.of(context).colorScheme.onSurface
                         : Theme.of(
                             context,
-                          ).colorScheme.onBackground.withOpacity(0.54),
+                          ).colorScheme.onSurface.withValues(alpha: 0.54),
                     shape: BoxShape.circle,
                   ),
                 );

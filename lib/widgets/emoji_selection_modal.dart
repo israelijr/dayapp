@@ -111,7 +111,7 @@ class _EmojiSelectionModalState extends State<EmojiSelectionModal> {
                       selectedColor: Theme.of(context).colorScheme.primary,
                       backgroundColor: Theme.of(
                         context,
-                      ).colorScheme.surfaceVariant,
+                      ).colorScheme.surfaceContainerHighest,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                         side: BorderSide.none,
@@ -152,7 +152,7 @@ class _EmojiSelectionModalState extends State<EmojiSelectionModal> {
                             decoration: BoxDecoration(
                               color: Theme.of(
                                 context,
-                              ).colorScheme.surfaceVariant,
+                              ).colorScheme.surfaceContainerHighest,
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Center(

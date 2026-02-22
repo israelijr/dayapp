@@ -171,7 +171,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     fontSize: 16,
                     color: Theme.of(
                       context,
-                    ).colorScheme.onPrimary.withOpacity(0.7),
+                    ).colorScheme.onPrimary.withValues(alpha: 0.7),
                   ),
                 ),
                 const SizedBox(height: 32),
@@ -212,7 +212,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             enableBiometric = value ?? false;
                           });
                         },
-                        fillColor: MaterialStateProperty.all(
+                        fillColor: WidgetStateProperty.all(
                           Theme.of(context).colorScheme.onPrimary,
                         ),
                         checkColor: AppColors.primary,
@@ -311,7 +311,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       style: TextStyle(
                         color: Theme.of(
                           context,
-                        ).colorScheme.onPrimary.withOpacity(0.7),
+                        ).colorScheme.onPrimary.withValues(alpha: 0.7),
                         fontSize: 14,
                       ),
                     ),
@@ -358,7 +358,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: TextStyle(
                           color: Theme.of(
                             context,
-                          ).colorScheme.onPrimary.withOpacity(0.7),
+                          ).colorScheme.onPrimary.withValues(alpha: 0.7),
                           decoration: TextDecoration.underline,
                           fontSize: 12,
                         ),

@@ -374,7 +374,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           Icons.close,
                                           color: Theme.of(
                                             context,
-                                          ).colorScheme.onBackground,
+                                          ).colorScheme.onSurface,
                                           size: 30,
                                         ),
                                         onPressed: () =>

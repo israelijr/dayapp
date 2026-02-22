@@ -28,7 +28,7 @@ class PinProtectedWrapper extends StatelessWidget {
                 child: ColoredBox(
                   color: Theme.of(
                     context,
-                  ).colorScheme.onBackground.withOpacity(0.3),
+                  ).colorScheme.onSurface.withValues(alpha: 0.3),
                   child: this.child,
                 ),
               ),

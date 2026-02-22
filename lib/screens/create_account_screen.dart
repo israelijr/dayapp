@@ -204,7 +204,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     style: TextStyle(
                       color: Theme.of(
                         context,
-                      ).colorScheme.onPrimary.withOpacity(0.7),
+                      ).colorScheme.onPrimary.withValues(alpha: 0.7),
                       fontSize: 14,
                     ),
                   ),
@@ -251,7 +251,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       style: TextStyle(
                         color: Theme.of(
                           context,
-                        ).colorScheme.onPrimary.withOpacity(0.7),
+                        ).colorScheme.onPrimary.withValues(alpha: 0.7),
                         decoration: TextDecoration.underline,
                         fontSize: 12,
                       ),

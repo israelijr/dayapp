@@ -407,7 +407,7 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
                           color: Theme.of(context).brightness == Brightness.dark
                               ? Theme.of(context).colorScheme.primaryContainer
                               : Theme.of(context).colorScheme.primaryContainer
-                                    .withOpacity(0.12),
+                                    .withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
@@ -498,7 +498,7 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surfaceVariant,
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Center(
@@ -768,7 +768,7 @@ class HistoriaFotosGrid extends StatelessWidget {
           return Container(
             height: height,
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surfaceVariant,
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Center(
@@ -821,7 +821,7 @@ class HistoriaFotosGrid extends StatelessWidget {
             builder: (_) {
               return Dialog(
                 insetPadding: const EdgeInsets.all(8),
-                backgroundColor: Theme.of(context).colorScheme.background,
+                backgroundColor: Theme.of(context).colorScheme.surface,
                 child: SizedBox(
                   height: MediaQuery.of(context).size.height * 0.8,
                   width: MediaQuery.of(context).size.width * 0.9,
@@ -858,12 +858,12 @@ class HistoriaFotosGrid extends StatelessWidget {
                     ColoredBox(
                       color: Theme.of(
                         context,
-                      ).colorScheme.onBackground.withOpacity(0.45),
+                      ).colorScheme.onSurface.withValues(alpha: 0.45),
                       child: Center(
                         child: Text(
                           '+${total - 3}',
                           style: TextStyle(
-                            color: Theme.of(context).colorScheme.onBackground,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
                           ),

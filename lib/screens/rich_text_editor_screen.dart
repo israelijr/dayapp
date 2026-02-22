@@ -305,8 +305,8 @@ class _RichTextEditorScreenState extends State<RichTextEditorScreen> {
                       child: IgnorePointer(
                         ignoring: true,
                         child: Container(
-                          color: Theme.of(context).colorScheme.onBackground
-                              .withOpacity(overlayOpacity),
+                          color: Theme.of(context).colorScheme.onSurface
+                              .withValues(alpha: overlayOpacity),
                         ),
                       ),
                     ),
@@ -323,7 +323,7 @@ class _RichTextEditorScreenState extends State<RichTextEditorScreen> {
                             child: Icon(
                               Icons.check_circle,
                               size: 96,
-                              color: Theme.of(context).colorScheme.onBackground,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                         ),

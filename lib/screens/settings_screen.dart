@@ -19,7 +19,6 @@ import '../services/pin_recovery_service.dart';
 import '../services/secure_storage_service.dart';
 import 'setup_pin_screen.dart';
 import '../theme/m3_expressive_theme.dart';
-import '../theme/m3_expressive_theme.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});

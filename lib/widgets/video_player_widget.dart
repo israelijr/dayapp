@@ -156,12 +156,12 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       return Container(
         height: 200,
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.background,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Center(
           child: CircularProgressIndicator(
-            color: Theme.of(context).colorScheme.onBackground,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
       );
@@ -180,11 +180,11 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
             ColoredBox(
               color: Theme.of(
                 context,
-              ).colorScheme.onBackground.withOpacity(0.38),
+              ).colorScheme.onSurface.withValues(alpha: 0.38),
               child: Icon(
                 Icons.play_arrow,
                 size: 64,
-                color: Theme.of(context).colorScheme.onBackground,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
           Positioned.fill(
@@ -204,7 +204,9 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
                   colors: [
-                    Theme.of(context).colorScheme.onBackground.withOpacity(0.7),
+                    Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.7),
                     Colors.transparent,
                   ],
                 ),
@@ -214,7 +216,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                   Text(
                     _formatDuration(_controller!.value.position),
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.onBackground,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontSize: 12,
                     ),
                   ),
@@ -233,17 +235,17 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                         onChanged: (value) {
                           _controller!.seekTo(Duration(seconds: value.toInt()));
                         },
-                        activeColor: Theme.of(context).colorScheme.onBackground,
+                        activeColor: Theme.of(context).colorScheme.onSurface,
                         inactiveColor: Theme.of(
                           context,
-                        ).colorScheme.onBackground.withOpacity(0.38),
+                        ).colorScheme.onSurface.withValues(alpha: 0.38),
                       ),
                     ),
                   ),
                   Text(
                     _formatDuration(_controller!.value.duration),
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.onBackground,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontSize: 12,
                     ),
                   ),
@@ -275,13 +277,13 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
           Icon(
             Icons.videocam,
             size: 64,
-            color: Theme.of(context).colorScheme.onBackground,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
           const SizedBox(height: 16),
           Text(
             'Vídeo salvo com sucesso',
             style: TextStyle(
-              color: Theme.of(context).colorScheme.onBackground,
+              color: Theme.of(context).colorScheme.onSurface,
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
@@ -295,7 +297,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                 style: TextStyle(
                   color: Theme.of(
                     context,
-                  ).colorScheme.onBackground.withOpacity(0.7),
+                  ).colorScheme.onSurface.withValues(alpha: 0.7),
                   fontSize: 14,
                 ),
               );
@@ -308,7 +310,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
               style: TextStyle(
                 color: Theme.of(
                   context,
-                ).colorScheme.onBackground.withOpacity(0.7),
+                ).colorScheme.onSurface.withValues(alpha: 0.7),
                 fontSize: 14,
               ),
             ),
@@ -320,14 +322,14 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
             decoration: BoxDecoration(
               color: Theme.of(
                 context,
-              ).colorScheme.onBackground.withOpacity(0.24),
+              ).colorScheme.onSurface.withValues(alpha: 0.24),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
               'Reprodução de vídeo não disponível no Windows',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onBackground,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 12,
               ),
             ),
@@ -341,10 +343,10 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     return Container(
       height: 200,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.error.withOpacity(0.1),
+        color: Theme.of(context).colorScheme.error.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Theme.of(context).colorScheme.error.withOpacity(0.3),
+          color: Theme.of(context).colorScheme.error.withValues(alpha: 0.3),
           width: 2,
         ),
       ),
@@ -372,7 +374,9 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
               return Text(
                 'Tamanho: ${snapshot.data ?? "..."} MB',
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.error.withOpacity(0.9),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.error.withValues(alpha: 0.9),
                   fontSize: 14,
                 ),
               );

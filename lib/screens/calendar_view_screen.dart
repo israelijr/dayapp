@@ -231,7 +231,7 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
                     calendarStyle: CalendarStyle(
                       outsideDaysVisible: false,
                       todayDecoration: BoxDecoration(
-                        color: AppColors.purple700.withOpacity(0.5),
+                        color: AppColors.purple700.withValues(alpha: 0.5),
                         shape: BoxShape.circle,
                       ),
                       selectedDecoration: BoxDecoration(
@@ -484,7 +484,9 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceVariant,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
