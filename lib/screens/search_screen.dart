@@ -8,6 +8,7 @@ import '../models/historia.dart';
 import '../providers/auth_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../services/emoji_service.dart';
+import '../widgets/custom_text_field.dart';
 import '../widgets/emoji_selection_modal.dart';
 import '../widgets/rich_text_viewer_widget.dart';
 import 'edit_historia_screen.dart';
@@ -286,26 +287,21 @@ class _SearchScreenState extends State<SearchScreen> {
     return Row(
       children: [
         Expanded(
-          child: TextField(
+          child: CustomTextField(
             controller: _searchController,
-            decoration: InputDecoration(
-              hintText: _currentSearchType == SearchType.tag
-                  ? 'Digite a tag...'
-                  : 'Pesquisar no título ou descrição...',
-              prefixIcon: const Icon(Icons.search),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              suffixIcon: _searchController.text.isNotEmpty
-                  ? IconButton(
-                      icon: const Icon(Icons.clear),
-                      onPressed: () {
-                        _searchController.clear();
-                        setState(() {});
-                      },
-                    )
-                  : null,
-            ),
+            label: _currentSearchType == SearchType.tag
+                ? 'Digite a tag...'
+                : 'Pesquisar no título ou descrição...',
+            prefixIcon: const Icon(Icons.search),
+            suffixIcon: _searchController.text.isNotEmpty
+                ? IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: () {
+                      _searchController.clear();
+                      setState(() {});
+                    },
+                  )
+                : null,
             onChanged: (_) => setState(() {}),
             onSubmitted: (_) => _performSearch(),
             textInputAction: TextInputAction.search,

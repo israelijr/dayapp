@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import '../db/database_helper.dart';
 import '../providers/auth_provider.dart';
 import '../theme/m3_expressive_theme.dart';
+import '../widgets/custom_text_field.dart';
 
 class CreateAccountComplementScreen extends StatefulWidget {
   const CreateAccountComplementScreen({super.key});
@@ -133,35 +134,11 @@ class _CreateAccountComplementScreenState
                   ),
                 ),
                 const SizedBox(height: 24),
-                TextField(
+                CustomTextField(
                   controller: birthDateController,
+                  label: 'Data de nascimento (DD/MM/AAAA)',
                   keyboardType: TextInputType.datetime,
                   style: const TextStyle(color: Colors.black87),
-                  decoration: InputDecoration(
-                    labelText: 'Data de nascimento (DD/MM/AAAA)',
-                    labelStyle: TextStyle(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withValues(alpha: 0.54),
-                    ),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
-                        color: AppColors.primaryVariant,
-                        width: 2,
-                      ),
-                    ),
-                  ),
                 ),
                 if (errorMessage != null) ...[
                   const SizedBox(height: 8),

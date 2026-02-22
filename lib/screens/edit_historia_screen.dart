@@ -20,6 +20,7 @@ import '../services/pdf_export_service.dart';
 import '../widgets/audio_recorder_widget.dart';
 import '../widgets/compact_audio_icon.dart';
 import '../widgets/compact_video_icon.dart';
+import '../widgets/custom_text_field.dart';
 import '../widgets/emoji_selection_modal.dart';
 import '../widgets/entry_toolbar.dart';
 import '../widgets/image_picker_widget.dart';
@@ -760,21 +761,18 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                     const SizedBox(height: 16),
 
                     // Title
-                    TextField(
+                    CustomTextField(
                       controller: titleController,
+                      label: 'Título',
+                      hintText: 'Digite o título',
                       style: theme.textTheme.bodyLarge,
-                      decoration: const InputDecoration(
-                        labelText: 'Título',
-                        hintText: 'Digite o título',
-                        border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 12,
-                        ),
-                      ),
                       inputFormatters: [
                         SentenceCapitalizationTextInputFormatter(),
                       ],
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 12,
+                      ),
                     ),
                     const SizedBox(height: 16),
 
@@ -795,13 +793,10 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                     const SizedBox(height: 16),
 
                     // Tags
-                    TextField(
+                    CustomTextField(
                       controller: tagsController,
-                      decoration: const InputDecoration(
-                        labelText: 'Tags',
-                        prefixIcon: Icon(Icons.tag),
-                        border: OutlineInputBorder(),
-                      ),
+                      label: 'Tags',
+                      prefixIcon: const Icon(Icons.tag),
                     ),
                     const SizedBox(height: 16),
 

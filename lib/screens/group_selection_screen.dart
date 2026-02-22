@@ -5,6 +5,7 @@ import '../db/grupo_helper.dart';
 import '../models/grupo.dart';
 import '../providers/auth_provider.dart';
 import '../services/emoji_service.dart';
+import '../widgets/custom_text_field.dart';
 import '../widgets/emoji_selection_modal.dart';
 
 class GroupSelectionScreen extends StatefulWidget {
@@ -157,12 +158,9 @@ class _GroupSelectionScreenState extends State<GroupSelectionScreen> {
                     ),
                     const SizedBox(width: 16),
                     Expanded(
-                      child: TextField(
+                      child: CustomTextField(
                         controller: _newGroupController,
-                        decoration: const InputDecoration(
-                          labelText: 'Nome do Grupo',
-                          border: OutlineInputBorder(),
-                        ),
+                        label: 'Nome do Grupo',
                         textCapitalization: TextCapitalization.sentences,
                       ),
                     ),

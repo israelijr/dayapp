@@ -18,6 +18,7 @@ import '../services/notification_preferences_service.dart';
 import '../services/pin_recovery_service.dart';
 import '../services/secure_storage_service.dart';
 import '../theme/m3_expressive_theme.dart';
+import '../widgets/custom_text_field.dart';
 import 'setup_pin_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -327,34 +328,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     'Para habilitar a biometria, confirme suas credenciais:',
                   ),
                   const SizedBox(height: 16),
-                  TextField(
+                  CustomTextField(
                     controller: emailController,
-                    decoration: const InputDecoration(
-                      labelText: 'E-mail',
-                      border: OutlineInputBorder(),
-                    ),
+                    label: 'E-mail',
                     keyboardType: TextInputType.emailAddress,
                   ),
                   const SizedBox(height: 16),
-                  TextField(
+                  CustomTextField(
                     controller: passwordController,
-                    decoration: InputDecoration(
-                      labelText: 'Senha',
-                      border: const OutlineInputBorder(),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          obscurePassword
-                              ? Icons.visibility_off
-                              : Icons.visibility,
-                        ),
-                        onPressed: () {
-                          setDialogState(() {
-                            obscurePassword = !obscurePassword;
-                          });
-                        },
-                      ),
-                    ),
+                    label: 'Senha',
                     obscureText: obscurePassword,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        obscurePassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                      ),
+                      onPressed: () {
+                        setDialogState(() {
+                          obscurePassword = !obscurePassword;
+                        });
+                      },
+                    ),
                   ),
                 ],
               ),
@@ -606,12 +601,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             children: [
               const Text('Para desabilitar o PIN, digite seu PIN atual:'),
               const SizedBox(height: 16),
-              TextField(
+              CustomTextField(
                 controller: pinController,
-                decoration: const InputDecoration(
-                  labelText: 'PIN atual',
-                  border: OutlineInputBorder(),
-                ),
+                label: 'PIN atual',
                 keyboardType: TextInputType.number,
                 obscureText: true,
                 maxLength: 8,
@@ -744,15 +736,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   children: [
                     Expanded(
                       flex: 2,
-                      child: TextField(
+                      child: CustomTextField(
                         controller: controller,
-                        decoration: InputDecoration(
-                          labelText: 'Tempo',
-                          hintText: '0 = imediato',
-                          border: const OutlineInputBorder(),
-                          suffixText: selectedUnit,
-                        ),
+                        label: 'Tempo',
+                        hintText: '0 = imediato',
                         keyboardType: TextInputType.number,
+                        suffixText: selectedUnit,
                         onChanged: (_) => setDialogState(() {}),
                       ),
                     ),
@@ -877,14 +866,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               'Configure um e-mail para recuperar seu PIN caso esqueça.',
             ),
             const SizedBox(height: 16),
-            TextField(
+            CustomTextField(
               controller: emailController,
-              decoration: const InputDecoration(
-                labelText: 'E-mail',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.email),
-              ),
+              label: 'E-mail',
               keyboardType: TextInputType.emailAddress,
+              prefixIcon: const Icon(Icons.email),
             ),
           ],
         ),

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/pin_provider.dart';
 import '../theme/m3_expressive_theme.dart';
+import '../widgets/custom_text_field.dart';
 
 class SetupPinScreen extends StatefulWidget {
   final bool isChanging;
@@ -68,44 +69,35 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
               const SizedBox(height: 32),
 
               if (widget.isChanging) ...[
-                TextField(
+                CustomTextField(
                   controller: _currentPinController,
-                  decoration: const InputDecoration(
-                    labelText: 'PIN atual',
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.lock_outline),
-                  ),
+                  label: 'PIN atual',
                   keyboardType: TextInputType.number,
                   obscureText: true,
+                  prefixIcon: const Icon(Icons.lock_outline),
                   maxLength: 8,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 ),
                 const SizedBox(height: 16),
               ],
 
-              TextField(
+              CustomTextField(
                 controller: _newPinController,
-                decoration: InputDecoration(
-                  labelText: widget.isChanging ? 'Novo PIN' : 'PIN',
-                  border: const OutlineInputBorder(),
-                  prefixIcon: const Icon(Icons.lock),
-                ),
+                label: widget.isChanging ? 'Novo PIN' : 'PIN',
                 keyboardType: TextInputType.number,
                 obscureText: true,
+                prefixIcon: const Icon(Icons.lock),
                 maxLength: 8,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               ),
               const SizedBox(height: 16),
 
-              TextField(
+              CustomTextField(
                 controller: _confirmPinController,
-                decoration: const InputDecoration(
-                  labelText: 'Confirmar PIN',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.lock),
-                ),
+                label: 'Confirmar PIN',
                 keyboardType: TextInputType.number,
                 obscureText: true,
+                prefixIcon: const Icon(Icons.lock),
                 maxLength: 8,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               ),

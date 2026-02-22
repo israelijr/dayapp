@@ -5,6 +5,7 @@ import '../db/grupo_helper.dart';
 import '../models/grupo.dart';
 import '../providers/auth_provider.dart';
 import '../services/emoji_service.dart';
+import '../widgets/custom_text_field.dart';
 import '../widgets/emoji_selection_modal.dart';
 import 'archived_stories_screen.dart';
 
@@ -94,12 +95,9 @@ class _GroupsMaintenanceScreenState extends State<GroupsMaintenanceScreen> {
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
                 const SizedBox(height: 16),
-                TextField(
+                CustomTextField(
                   controller: nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Nome do Grupo',
-                    border: OutlineInputBorder(),
-                  ),
+                  label: 'Nome do Grupo',
                   textCapitalization: TextCapitalization.sentences,
                 ),
               ],

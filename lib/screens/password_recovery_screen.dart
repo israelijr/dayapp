@@ -589,19 +589,17 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        TextField(
+        CustomTextField(
           controller: codeController,
-          decoration: InputDecoration(
-            labelText: 'Código de recuperação (6 dígitos)',
-            prefixIcon: const Icon(Icons.lock_outline),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-          ),
+          label: 'Código de recuperação (6 dígitos)',
+          prefixIcon: const Icon(Icons.lock_outline),
           keyboardType: TextInputType.number,
           maxLength: 6,
           style: const TextStyle(
             fontSize: 24,
             letterSpacing: 8,
             fontWeight: FontWeight.bold,
+            color: Colors.black87,
           ),
           textAlign: TextAlign.center,
         ),

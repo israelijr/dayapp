@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import '../theme/m3_expressive_theme.dart';
 
 class CustomTextField extends StatelessWidget {
   final String label;
@@ -7,17 +10,48 @@ class CustomTextField extends StatelessWidget {
   final TextInputType keyboardType;
   final Widget? suffixIcon;
   final bool enabled;
+  final Widget? prefixIcon;
+  final int? maxLength;
+  final List<TextInputFormatter>? inputFormatters;
+  final TextCapitalization textCapitalization;
+  final EdgeInsetsGeometry? contentPadding;
+  final String? hintText;
+  final TextStyle? style;
+  final int? minLines;
+  final int? maxLines;
+  final TextAlign textAlign;
+  final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onSubmitted;
+  final TextInputAction? textInputAction;
+  final String? suffixText;
 
   const CustomTextField({
-    required this.label, required this.controller, super.key,
+    required this.label,
+    required this.controller,
+    super.key,
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
     this.suffixIcon,
     this.enabled = true,
+    this.prefixIcon,
+    this.maxLength,
+    this.inputFormatters,
+    this.textCapitalization = TextCapitalization.none,
+    this.contentPadding,
+    this.hintText,
+    this.style,
+    this.minLines,
+    this.maxLines,
+    this.textAlign = TextAlign.start,
+    this.onChanged,
+    this.onSubmitted,
+    this.textInputAction,
+    this.suffixText,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: TextField(
@@ -25,7 +59,39 @@ class CustomTextField extends StatelessWidget {
         obscureText: obscureText,
         keyboardType: keyboardType,
         enabled: enabled,
-        decoration: InputDecoration(labelText: label, suffixIcon: suffixIcon),
+        maxLength: maxLength,
+        inputFormatters: inputFormatters,
+        textCapitalization: textCapitalization,
+        style:
+            style ?? TextStyle(color: isDark ? Colors.white : Colors.black87),
+        minLines: minLines,
+        maxLines: maxLines,
+        textAlign: textAlign,
+        onChanged: onChanged,
+        onSubmitted: onSubmitted,
+        textInputAction: textInputAction,
+        decoration: InputDecoration(
+          labelText: label,
+          hintText: hintText,
+          prefixIcon: prefixIcon,
+          suffixText: suffixText,
+          suffixIcon: suffixIcon,
+          filled: true,
+          fillColor: isDark ? Colors.grey[800] : Colors.white,
+          contentPadding: contentPadding,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: AppColors.primaryVariant, width: 2),
+          ),
+        ),
       ),
     );
   }

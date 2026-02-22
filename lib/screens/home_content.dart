@@ -522,14 +522,22 @@ class _HomeContentState extends State<HomeContent> {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.emoticonBlue,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Theme.of(context).colorScheme.primaryContainer
+                              : Theme.of(context).colorScheme.primaryContainer
+                                    .withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
                           historia.tag!,
                           style: TextStyle(
                             fontSize: 12,
-                            color: AppColors.emoticonBlue,
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                ? Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimaryContainer
+                                : Theme.of(context).colorScheme.primary,
                           ),
                         ),
                       ),
