@@ -1,0 +1,21 @@
+name: Check Deprecated Color Usage
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  check-colors:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 'stable'
+      - name: Run deprecated color check script
+        run: |
+          chmod +x ./scripts/check_deprecated_colors.sh
+          ./scripts/check_deprecated_colors.sh
