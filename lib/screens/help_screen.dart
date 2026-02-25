@@ -1,3 +1,4 @@
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class HelpScreen extends StatelessWidget {
@@ -6,7 +7,10 @@ class HelpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Ajuda'), elevation: 0),
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.help),
+        elevation: 0,
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -130,7 +134,7 @@ class HelpScreen extends StatelessWidget {
                 'Configure um PIN de 4 a 8 dígitos para proteger o acesso ao app.',
               ),
               _buildHelpItem(
-                'Biometria',
+                AppLocalizations.of(context)!.biometrics,
                 'Use digital ou reconhecimento facial para desbloquear o app rapidamente, se disponível no dispositivo.',
               ),
               _buildHelpItem(
@@ -138,7 +142,7 @@ class HelpScreen extends StatelessWidget {
                 'Além de PIN e biometria, você pode desbloquear o app usando a senha da sua conta. Útil caso esqueça o PIN ou a biometria falhe.',
               ),
               _buildHelpItem(
-                'Bloqueio em Segundo Plano',
+                AppLocalizations.of(context)!.backgroundLock,
                 'Quando o app é minimizado ou você troca para outro app, ele é bloqueado automaticamente após o tempo configurado. Você pode definir o tempo livremente nas configurações (segundos, minutos ou horas).',
               ),
               _buildHelpItem(
@@ -157,12 +161,12 @@ class HelpScreen extends StatelessWidget {
           // Configurações
           _buildSection(
             context,
-            'Configurações',
+            AppLocalizations.of(context)!.settings,
             '',
             Icons.settings,
             children: [
               _buildHelpItem(
-                'Tema',
+                AppLocalizations.of(context)!.theme,
                 'Alterne entre tema claro, escuro ou automático.',
               ),
               _buildHelpItem(

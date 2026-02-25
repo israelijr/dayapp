@@ -1,3 +1,4 @@
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -95,7 +96,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
           color: Theme.of(context).colorScheme.onPrimary,
         ),
         title: Text(
-          'Criar conta',
+          AppLocalizations.of(context)!.createAccount,
           style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
         ),
       ),
@@ -106,7 +107,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'DayApp',
+                AppLocalizations.of(context)!.appTitle,
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
@@ -116,19 +117,19 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
               const SizedBox(height: 32),
               CustomTextField(
                 controller: nameController,
-                label: 'Nome',
+                label: AppLocalizations.of(context)!.name,
                 keyboardType: TextInputType.name,
               ),
               const SizedBox(height: 16),
               CustomTextField(
                 controller: emailController,
-                label: 'E-mail',
+                label: AppLocalizations.of(context)!.email,
                 keyboardType: TextInputType.emailAddress,
               ),
               const SizedBox(height: 16),
               CustomTextField(
                 controller: passwordController,
-                label: 'Senha',
+                label: AppLocalizations.of(context)!.password,
                 obscureText: obscurePassword,
                 suffixIcon: IconButton(
                   icon: Icon(
@@ -144,7 +145,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
               const SizedBox(height: 16),
               CustomTextField(
                 controller: confirmPasswordController,
-                label: 'Confirmar Senha',
+                label: AppLocalizations.of(context)!.confirmPassword,
                 obscureText: obscureConfirm,
                 suffixIcon: IconButton(
                   icon: Icon(
@@ -180,7 +181,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   ),
                   child: loading
                       ? const CircularProgressIndicator()
-                      : const Text('Criar Conta'),
+                      : Text(AppLocalizations.of(context)!.createAccountButton),
                 ),
               ),
               const SizedBox(height: 16),
@@ -189,7 +190,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   Navigator.pop(context);
                 },
                 child: Text(
-                  'Já tem uma conta? Faça login',
+                  AppLocalizations.of(context)!.alreadyHaveAccount,
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onPrimary,
                   ),
@@ -200,7 +201,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
               Column(
                 children: [
                   Text(
-                    'Precisa de ajuda?',
+                    AppLocalizations.of(context)!.needHelp,
                     style: TextStyle(
                       color: Theme.of(
                         context,

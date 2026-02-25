@@ -1,5 +1,7 @@
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
 import '../services/biometric_service.dart';
@@ -86,7 +88,7 @@ class _LockScreenState extends State<LockScreen> {
       pinProvider.isAuthenticatingWithBiometrics = true;
 
       final authenticated = await _biometricService.authenticate(
-        reason: 'Desbloqueie o app para continuar',
+        reason: AppLocalizations.of(context)!.unlockAppReason,
       );
 
       if (!mounted) return;
@@ -119,7 +121,7 @@ class _LockScreenState extends State<LockScreen> {
 
     if (email.isEmpty || password.isEmpty) {
       setState(() {
-        _passwordError = 'Preencha o e-mail e a senha';
+        _passwordError = AppLocalizations.of(context)!.fillEmailAndPassword;
       });
       return;
     }
@@ -142,7 +144,7 @@ class _LockScreenState extends State<LockScreen> {
       _passwordController.clear();
     } else {
       setState(() {
-        _passwordError = 'E-mail ou senha incorretos';
+        _passwordError = AppLocalizations.of(context)!.emailOrPasswordIncorrect;
         _isLoading = false;
       });
     }
@@ -195,11 +197,12 @@ class _LockScreenState extends State<LockScreen> {
   }
 
   Future<void> _sendRecoveryEmail() async {
+    final loc = AppLocalizations.of(context)!;
     final email = await _recoveryService.getUserEmail();
 
     if (email == null || email.isEmpty) {
       if (!mounted) return;
-      _showMessage('Nenhum e-mail cadastrado. Configure nas configurações.');
+      _showMessage(loc.noEmailRegistered);
       return;
     }
 
@@ -216,13 +219,13 @@ class _LockScreenState extends State<LockScreen> {
       final hasCode = await _recoveryService.hasActiveRecoveryCode();
 
       if (hasCode) {
-        _showMessage('Verifique seu e-mail em $email ou use o código exibido');
+        _showMessage(loc.checkEmailOrUseCode(email));
         _showRecoveryCodeDialog();
       } else {
-        _showMessage('Erro ao gerar código. Tente novamente.');
+        _showMessage(loc.errorGeneratingCode);
       }
     } else {
-      _showMessage('Erro ao enviar código. Tente novamente.');
+      _showMessage(loc.errorSendingCode);
     }
   }
 
@@ -247,22 +250,24 @@ class _LockScreenState extends State<LockScreen> {
       builder: (dialogContext) => StatefulBuilder(
         builder: (context, setDialogState) {
           return AlertDialog(
-            title: const Text('Recuperar PIN'),
+            title: Text(AppLocalizations.of(context)!.recoverPinTitle),
             content: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text(
-                    'Digite o código que foi enviado para seu e-mail:',
+                  Text(
+                    AppLocalizations.of(context)!.enterRecoveryCodePrompt,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
                   TextField(
                     controller: codeController,
-                    decoration: const InputDecoration(
-                      labelText: 'Código de recuperação (6 dígitos)',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.lock_outline),
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(
+                        context,
+                      )!.recoveryCodeLabel,
+                      border: const OutlineInputBorder(),
+                      prefixIcon: const Icon(Icons.lock_outline),
                     ),
                     keyboardType: TextInputType.number,
                     maxLength: 6,
@@ -332,7 +337,9 @@ class _LockScreenState extends State<LockScreen> {
                   if (code.length != 6) {
                     ScaffoldMessenger.of(dialogContext).showSnackBar(
                       SnackBar(
-                        content: const Text('Código deve ter 6 dígitos'),
+                        content: Text(
+                          AppLocalizations.of(context)!.codeMustBe6,
+                        ),
                         backgroundColor: Theme.of(
                           dialogContext,
                         ).colorScheme.error,
@@ -365,27 +372,38 @@ class _LockScreenState extends State<LockScreen> {
                     return;
                   }
 
+                  final navigator = Navigator.of(dialogContext);
+                  final messenger = ScaffoldMessenger.of(dialogContext);
+                  final invalidCodeMsg = AppLocalizations.of(
+                    dialogContext,
+                  )!.codeInvalid;
+                  final pinProvider = Provider.of<PinProvider>(
+                    dialogContext,
+                    listen: false,
+                  );
+
                   final isValid = await _recoveryService.verifyRecoveryCode(
                     code,
                   );
 
-                  if (!context.mounted) return;
+                  if (!mounted) return;
 
                   if (isValid) {
-                    final pinProvider = Provider.of<PinProvider>(
-                      dialogContext,
-                      listen: false,
-                    );
                     await pinProvider.enablePin(newPin);
                     await _recoveryService.clearRecoveryCode();
 
-                    if (!context.mounted) return;
-                    Navigator.of(dialogContext).pop();
-                    _showMessage('PIN redefinido com sucesso!');
-                  } else {
-                    ScaffoldMessenger.of(dialogContext).showSnackBar(
+                    if (!mounted) return;
+                    navigator.pop();
+                    messenger.showSnackBar(
                       const SnackBar(
-                        content: Text('Código inválido ou expirado'),
+                        content: Text('PIN redefinido com sucesso!'),
+                        duration: Duration(seconds: 3),
+                      ),
+                    );
+                  } else {
+                    messenger.showSnackBar(
+                      SnackBar(
+                        content: Text(invalidCodeMsg),
                         backgroundColor: Colors.red,
                       ),
                     );
@@ -624,10 +642,10 @@ class _LockScreenState extends State<LockScreen> {
         children: [
           TextField(
             controller: _emailController,
-            decoration: const InputDecoration(
-              labelText: 'E-mail',
-              border: OutlineInputBorder(),
-              prefixIcon: Icon(Icons.email_outlined),
+            decoration: InputDecoration(
+              labelText: AppLocalizations.of(context)!.email,
+              border: const OutlineInputBorder(),
+              prefixIcon: const Icon(Icons.email_outlined),
             ),
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next,
@@ -637,7 +655,7 @@ class _LockScreenState extends State<LockScreen> {
           TextField(
             controller: _passwordController,
             decoration: InputDecoration(
-              labelText: 'Senha',
+              labelText: AppLocalizations.of(context)!.password,
               border: const OutlineInputBorder(),
               prefixIcon: const Icon(Icons.lock_outline),
               suffixIcon: IconButton(
@@ -672,7 +690,7 @@ class _LockScreenState extends State<LockScreen> {
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
-              child: const Text('Desbloquear'),
+              child: Text(AppLocalizations.of(context)!.unlock),
             ),
           ),
         ],

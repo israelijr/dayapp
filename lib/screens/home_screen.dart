@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -485,7 +486,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.analytics_outlined),
-              title: const Text('Estatísticas'),
+              title: Text(AppLocalizations.of(context)!.statistics),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -496,7 +497,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.group),
-              title: const Text('Gerenciar Grupos'),
+              title: Text(AppLocalizations.of(context)!.manageGroups),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -509,7 +510,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.delete),
-              title: const Text('Lixeira'),
+              title: Text(AppLocalizations.of(context)!.trash),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, '/trash');
@@ -517,7 +518,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.help_outline),
-              title: const Text('Ajuda'),
+              title: Text(AppLocalizations.of(context)!.help),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, '/help');
@@ -525,7 +526,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.settings),
-              title: const Text('Configurações'),
+              title: Text(AppLocalizations.of(context)!.settings),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, '/settings');
@@ -533,7 +534,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.info_outline),
-              title: const Text('Sobre'),
+              title: Text(AppLocalizations.of(context)!.about),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, '/about');
@@ -542,7 +543,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
             ListTile(
               leading: const Icon(Icons.logout),
-              title: const Text('Sair'),
+              title: Text(AppLocalizations.of(context)!.logout),
               onTap: () async {
                 final navigator = Navigator.of(context);
                 final auth = Provider.of<AuthProvider>(context, listen: false);

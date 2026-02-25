@@ -1,3 +1,4 @@
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -51,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _biometricLogin() async {
     final authenticated = await _biometricService.authenticate(
-      reason: 'Autentique-se para acessar o DayApp',
+      reason: AppLocalizations.of(context)!.accessAccount,
     );
 
     if (authenticated) {
@@ -87,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
           navigator.pushReplacementNamed('/home');
         } else {
           setState(() {
-            errorMessage = 'Erro ao fazer login com biometria.';
+            errorMessage = AppLocalizations.of(context)!.biometricLoginError;
           });
           // Se falhar, desabilita a biometria
           await _biometricService.disableBiometric();
@@ -126,13 +127,16 @@ class _LoginScreenState extends State<LoginScreen> {
           passwordController.text,
         );
         if (!mounted) return;
-        // ignore: use_build_context_synchronously
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Biometria habilitada com sucesso!'),
-            backgroundColor: AppColors.emoticonGreen,
-          ),
-        );
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                AppLocalizations.of(context)!.biometricsEnabledSuccess,
+              ),
+              backgroundColor: AppColors.emoticonGreen,
+            ),
+          );
+        });
       }
       navigator.pushReplacementNamed('/home');
     } else {
@@ -157,7 +161,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Image.asset('assets/icon/icon.png', width: 80, height: 80),
                 const SizedBox(height: 24),
                 Text(
-                  'Bem vindo de volta!',
+                  AppLocalizations.of(context)!.welcomeBack,
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -166,7 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Acesse sua conta',
+                  AppLocalizations.of(context)!.accessAccount,
                   style: TextStyle(
                     fontSize: 16,
                     color: Theme.of(
@@ -176,12 +180,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 32),
                 CustomTextField(
-                  label: 'Informe seu e-mail',
+                  label: AppLocalizations.of(context)!.informYourEmail,
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
                 ),
                 CustomTextField(
-                  label: 'Digite sua senha',
+                  label: AppLocalizations.of(context)!.enterPassword,
                   controller: passwordController,
                   obscureText: obscurePassword,
                   suffixIcon: IconButton(
@@ -219,7 +223,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       Expanded(
                         child: Text(
-                          'Habilitar login com biometria',
+                          AppLocalizations.of(context)!.enableBiometrics,
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.onPrimary,
                           ),
@@ -243,7 +247,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     onPressed: loading ? null : _biometricLogin,
                     icon: const Icon(Icons.fingerprint),
-                    label: const Text('Login com Biometria'),
+                    label: Text(AppLocalizations.of(context)!.enableBiometrics),
                   ),
                 ],
                 const SizedBox(height: 8),
@@ -268,7 +272,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           )
                         : Text(
-                            'Acessar',
+                            AppLocalizations.of(context)!.signIn,
                             style: TextStyle(
                               fontSize: 16,
                               color: Theme.of(context).colorScheme.onPrimary,
@@ -282,7 +286,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Navigator.pushNamed(context, '/password_recovery');
                   },
                   child: Text(
-                    'Esqueci minha senha',
+                    AppLocalizations.of(context)!.forgotPassword,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onPrimary,
                       decoration: TextDecoration.underline,
@@ -295,7 +299,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Navigator.pushNamed(context, '/create_account');
                   },
                   child: Text(
-                    'Não tem conta, crie uma aqui.',
+                    AppLocalizations.of(context)!.noAccountCreateHere,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onPrimary,
                       decoration: TextDecoration.underline,
@@ -307,7 +311,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Column(
                   children: [
                     Text(
-                      'Precisa de ajuda?',
+                      AppLocalizations.of(context)!.needHelp,
                       style: TextStyle(
                         color: Theme.of(
                           context,
@@ -354,7 +358,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         }
                       },
                       child: Text(
-                        'Política de Privacidade',
+                        AppLocalizations.of(context)!.privacyPolicy,
                         style: TextStyle(
                           color: Theme.of(
                             context,

@@ -1,3 +1,4 @@
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -34,7 +35,11 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.isChanging ? 'Alterar PIN' : 'Configurar PIN'),
+        title: Text(
+          widget.isChanging
+              ? AppLocalizations.of(context)!.changePin
+              : AppLocalizations.of(context)!.configurePin,
+        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -51,8 +56,8 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
               const SizedBox(height: 24),
               Text(
                 widget.isChanging
-                    ? 'Altere seu PIN de segurança'
-                    : 'Crie um PIN de segurança',
+                    ? AppLocalizations.of(context)!.changePin
+                    : AppLocalizations.of(context)!.configurePin,
                 style: Theme.of(context).textTheme.headlineSmall,
                 textAlign: TextAlign.center,
               ),
@@ -71,7 +76,7 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
               if (widget.isChanging) ...[
                 CustomTextField(
                   controller: _currentPinController,
-                  label: 'PIN atual',
+                  label: AppLocalizations.of(context)!.currentPinLabel,
                   keyboardType: TextInputType.number,
                   obscureText: true,
                   prefixIcon: const Icon(Icons.lock_outline),
@@ -83,7 +88,9 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
 
               CustomTextField(
                 controller: _newPinController,
-                label: widget.isChanging ? 'Novo PIN' : 'PIN',
+                label: widget.isChanging
+                    ? AppLocalizations.of(context)!.newPinLabel
+                    : AppLocalizations.of(context)!.pinLabel,
                 keyboardType: TextInputType.number,
                 obscureText: true,
                 prefixIcon: const Icon(Icons.lock),
@@ -94,7 +101,7 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
 
               CustomTextField(
                 controller: _confirmPinController,
-                label: 'Confirmar PIN',
+                label: AppLocalizations.of(context)!.confirmPin,
                 keyboardType: TextInputType.number,
                 obscureText: true,
                 prefixIcon: const Icon(Icons.lock),
@@ -157,28 +164,28 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
     // Validações
     if (widget.isChanging && currentPin.isEmpty) {
       setState(() {
-        _errorMessage = 'Digite o PIN atual';
+        _errorMessage = AppLocalizations.of(context)!.enterCurrentPin;
       });
       return;
     }
 
     if (newPin.isEmpty) {
       setState(() {
-        _errorMessage = 'Digite o PIN';
+        _errorMessage = AppLocalizations.of(context)!.enterPin;
       });
       return;
     }
 
     if (newPin.length < 4 || newPin.length > 8) {
       setState(() {
-        _errorMessage = 'O PIN deve ter entre 4 e 8 dígitos';
+        _errorMessage = AppLocalizations.of(context)!.pinLengthError;
       });
       return;
     }
 
     if (newPin != confirmPin) {
       setState(() {
-        _errorMessage = 'Os PINs não coincidem';
+        _errorMessage = AppLocalizations.of(context)!.pinsDoNotMatch;
       });
       return;
     }
@@ -195,7 +202,7 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
         success = await pinProvider.changePin(currentPin, newPin);
         if (!success) {
           setState(() {
-            _errorMessage = 'PIN atual incorreto';
+            _errorMessage = AppLocalizations.of(context)!.pinIncorrect;
           });
           return;
         }
@@ -209,8 +216,8 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
           SnackBar(
             content: Text(
               widget.isChanging
-                  ? 'PIN alterado com sucesso!'
-                  : 'PIN configurado com sucesso!',
+                  ? AppLocalizations.of(context)!.pinChangedSuccess
+                  : AppLocalizations.of(context)!.pinConfiguredSuccess,
             ),
             backgroundColor: AppColors.emoticonGreen,
           ),

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -114,9 +115,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       // Mostrar mensagem de sucesso
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Perfil atualizado com sucesso!'),
-          duration: Duration(seconds: 2),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.profileUpdatedSuccess),
+          duration: const Duration(seconds: 2),
         ),
       );
 
@@ -135,7 +136,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       Navigator.of(context).pop();
     } else {
       setState(() {
-        _errorMessage = 'Erro ao atualizar perfil. Tente novamente.';
+        _errorMessage = AppLocalizations.of(context)!.profileUpdateError;
       });
     }
   }
@@ -284,13 +285,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               const SizedBox(height: 32),
               TextFormField(
                 controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Nome completo'),
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.fullName,
+                ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Nome é obrigatório';
+                    return AppLocalizations.of(context)!.nameRequired;
                   }
                   if (value.trim().length < 2) {
-                    return 'Nome deve ter pelo menos 2 caracteres';
+                    return AppLocalizations.of(context)!.nameMinLength;
                   }
                   return null;
                 },
@@ -299,16 +302,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               TextFormField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(labelText: 'E-mail'),
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.email,
+                ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'E-mail é obrigatório';
+                    return AppLocalizations.of(context)!.emailRequired;
                   }
                   final emailRegex = RegExp(
                     r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
                   );
                   if (!emailRegex.hasMatch(value.trim())) {
-                    return 'Digite um e-mail válido';
+                    return AppLocalizations.of(context)!.emailInvalid;
                   }
                   return null;
                 },

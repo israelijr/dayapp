@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -12,6 +13,7 @@ import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 import 'db/database_helper.dart';
 import 'models/historia.dart';
 import 'providers/auth_provider.dart';
+import 'providers/locale_provider.dart';
 import 'providers/pin_provider.dart';
 import 'providers/refresh_provider.dart';
 import 'providers/statistics_provider.dart';
@@ -36,8 +38,8 @@ import 'services/ad_service.dart';
 import 'services/engagement_service.dart';
 import 'services/inactivity_service.dart';
 import 'services/notification_service.dart';
-import 'theme/m3_expressive_theme.dart';
 import 'theme/custom_color_schemes.dart';
+import 'theme/m3_expressive_theme.dart';
 import 'widgets/global_lock_overlay.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -98,6 +100,10 @@ class _AppLoaderState extends State<AppLoader> {
     final pinProvider = PinProvider();
     await pinProvider.initialize(isUserLoggedIn: authProvider.isLoggedIn);
 
+    // Inicializar LocaleProvider (carrega preferência de idioma)
+    final localeProvider = LocaleProvider();
+    await localeProvider.load();
+
     // Inicializar Google Mobile Ads (em paralelo com notificações)
     final adsFuture = AdService().initialize();
 
@@ -143,6 +149,7 @@ class _AppLoaderState extends State<AppLoader> {
       themeProvider: themeProvider,
       refreshProvider: refreshProvider,
       pinProvider: pinProvider,
+      localeProvider: localeProvider,
     );
   }
 
@@ -179,9 +186,9 @@ class _AppLoaderState extends State<AppLoader> {
                       color: Theme.of(context).colorScheme.error,
                     ),
                     const SizedBox(height: 16),
-                    const Text(
-                      'Erro ao inicializar o app',
-                      style: TextStyle(fontSize: 20),
+                    Text(
+                      AppLocalizations.of(context)!.errorInitializingApp,
+                      style: const TextStyle(fontSize: 20),
                     ),
                     const SizedBox(height: 8),
                     Text('${snapshot.error}', textAlign: TextAlign.center),
@@ -192,7 +199,7 @@ class _AppLoaderState extends State<AppLoader> {
                           _initFuture = _initializeApp();
                         });
                       },
-                      child: const Text('Tentar novamente'),
+                      child: Text(AppLocalizations.of(context)!.tryAgain),
                     ),
                   ],
                 ),
@@ -208,6 +215,7 @@ class _AppLoaderState extends State<AppLoader> {
           themeProvider: data.themeProvider,
           refreshProvider: data.refreshProvider,
           pinProvider: data.pinProvider,
+          localeProvider: data.localeProvider,
         );
       },
     );
@@ -220,12 +228,14 @@ class AppInitData {
   final ThemeProvider themeProvider;
   final RefreshProvider refreshProvider;
   final PinProvider pinProvider;
+  final LocaleProvider localeProvider;
 
   AppInitData({
     required this.authProvider,
     required this.themeProvider,
     required this.refreshProvider,
     required this.pinProvider,
+    required this.localeProvider,
   });
 }
 
@@ -234,12 +244,14 @@ class MyApp extends StatefulWidget {
   final ThemeProvider themeProvider;
   final RefreshProvider refreshProvider;
   final PinProvider pinProvider;
+  final LocaleProvider localeProvider;
 
   const MyApp({
     required this.authProvider,
     required this.themeProvider,
     required this.refreshProvider,
     required this.pinProvider,
+    required this.localeProvider,
     super.key,
   });
 
@@ -374,6 +386,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ChangeNotifierProvider.value(value: widget.authProvider),
         ChangeNotifierProvider.value(value: widget.themeProvider),
         ChangeNotifierProvider.value(value: widget.refreshProvider),
+        ChangeNotifierProvider.value(value: widget.localeProvider),
         // Provider para estatísticas (acesso ao banco local)
         ChangeNotifierProvider(create: (_) => StatisticsProvider()),
         ChangeNotifierProvider.value(value: widget.pinProvider),
@@ -406,20 +419,27 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             }
           }
 
+          // Obtém o provider de localidade para aplicar `locale` (null = sistema)
+          final localeProvider = Provider.of<LocaleProvider>(context);
+
           return MaterialApp(
-            title: 'DayApp',
+            title: AppLocalizations.of(context)?.appTitle ?? 'DayApp',
             debugShowCheckedModeBanner: false,
             navigatorKey: navigatorKey,
             theme: lightTheme,
             darkTheme: darkTheme,
             themeMode: themeProvider.themeMode,
-            supportedLocales: const [Locale('pt', 'BR'), Locale('en', 'US')],
+            // Localizações geradas (ARB)
             localizationsDelegates: const [
+              AppLocalizations.delegate,
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
               FlutterQuillLocalizations.delegate,
             ],
+            supportedLocales: AppLocalizations.supportedLocales,
+            // Quando `locale` é null, o app usa o padrão do dispositivo
+            locale: localeProvider.locale,
             // Overlay global de bloqueio - preserva estado de todas as telas
             builder: (context, child) {
               return GlobalLockOverlay(child: child ?? const SizedBox.shrink());

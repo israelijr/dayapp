@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 
 class CustomColorSchemes {
   // Relva - Light
-  static final ColorScheme relvaLight = ColorScheme.light().copyWith(
+  static final ColorScheme relvaLight = const ColorScheme.light().copyWith(
     primary: const Color(0xFF326941), // Primary
     secondary: const Color(0xFF506352), // Secondary
     tertiary: const Color(0xFF3A656E), // Tertiary
@@ -17,14 +17,13 @@ class CustomColorSchemes {
     secondaryContainer: const Color(0xFFD3E8D2), // Secondary Container
     tertiaryContainer: const Color(0xFFBDEAF5), // Tertiary Container
     errorContainer: const Color(0xFFFFDAD6), // On Error Container (mapeado)
-    surfaceVariant: const Color(0xFFD7DBD4), // Surface Dim
+    surfaceContainerHighest: const Color(0xFFD7DBD4), // Surface Dim
     surface: const Color(0xFFF6FBF3), // Surface
-    background: const Color(0xFFF6FBF3), // Surface Bright / Background
     inverseSurface: const Color(0xFF2D322C), // Inverse Surface
   );
 
   // Relva - Dark
-  static final ColorScheme relvaDark = ColorScheme.dark().copyWith(
+  static final ColorScheme relvaDark = const ColorScheme.dark().copyWith(
     primary: const Color(0xFF99D4A3),
     secondary: const Color(0xFFB7CCB7),
     tertiary: const Color(0xFFA2CED8),
@@ -33,14 +32,13 @@ class CustomColorSchemes {
     secondaryContainer: const Color(0xFF394B3B),
     tertiaryContainer: const Color(0xFF204D55),
     errorContainer: const Color(0xFF24D055),
-    surfaceVariant: const Color(0xFF93000A),
+    surfaceContainerHighest: const Color(0xFF93000A),
     surface: const Color(0xFF101510),
-    background: const Color(0xFF101510),
     inverseSurface: const Color(0xFFDFE4DC),
   );
 
   // Outono - Light
-  static final ColorScheme outonoLight = ColorScheme.light().copyWith(
+  static final ColorScheme outonoLight = const ColorScheme.light().copyWith(
     primary: const Color(0xFF8F4C38),
     secondary: const Color(0xFF77574E),
     tertiary: const Color(0xFF6C5D2F),
@@ -49,14 +47,12 @@ class CustomColorSchemes {
     secondaryContainer: const Color(0xFFFFDBD1),
     tertiaryContainer: const Color(0xFFF5E1A7),
     errorContainer: const Color(0xFFFFDAD6),
-    surfaceVariant: const Color(0xFFE8D6D2),
     surface: const Color(0xFFFFF8F6),
-    background: const Color(0xFFFFF8F6),
     inverseSurface: const Color(0xFF392E2B),
   );
 
   // Outono - Dark
-  static final ColorScheme outonoDark = ColorScheme.dark().copyWith(
+  static final ColorScheme outonoDark = const ColorScheme.dark().copyWith(
     primary: const Color(0xFFFFB5A0),
     secondary: const Color(0xFFE7BDB2),
     tertiary: const Color(0xFFD8C58D),
@@ -65,9 +61,8 @@ class CustomColorSchemes {
     secondaryContainer: const Color(0xFF5D4037),
     tertiaryContainer: const Color(0xFF534619),
     errorContainer: const Color(0xFF93000A),
-    surfaceVariant: const Color(0xFF1A110F),
+    surfaceContainerHighest: const Color(0xFF1A110F),
     surface: const Color(0xFF1A110F),
-    background: const Color(0xFF423734),
     inverseSurface: const Color(0xFFF1DFDA),
   );
 

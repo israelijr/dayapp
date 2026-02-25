@@ -3,10 +3,12 @@
 // Os RadioListTile usam groupValue/onChanged que foram deprecados no Flutter 3.32+
 // A migração requer refatoração significativa dos dialogs para StatefulWidgets
 
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../db/database_helper.dart';
+import '../providers/locale_provider.dart';
 import '../providers/pin_provider.dart';
 import '../providers/theme_provider.dart';
 import '../services/auto_backup_service.dart';
@@ -17,8 +19,8 @@ import '../services/inactivity_service.dart';
 import '../services/notification_preferences_service.dart';
 import '../services/pin_recovery_service.dart';
 import '../services/secure_storage_service.dart';
-import '../theme/m3_expressive_theme.dart';
 import '../theme/custom_color_schemes.dart';
+import '../theme/m3_expressive_theme.dart';
 import '../widgets/custom_text_field.dart';
 import 'setup_pin_screen.dart';
 
@@ -68,6 +70,83 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _loadNotificationPreferences();
     _loadUserEmail();
     _loadAutoBackupSettings();
+  }
+
+  Widget _buildLanguageSection(BuildContext context) {
+    final localeProvider = Provider.of<LocaleProvider>(context);
+
+    final loc = AppLocalizations.of(context)!;
+    late final String subtitle;
+    switch (localeProvider.selection) {
+      case 'en':
+        subtitle = loc.english;
+        break;
+      case 'es':
+        subtitle = loc.spanish;
+        break;
+      case 'system':
+      default:
+        subtitle = loc.deviceDefault;
+    }
+
+    return ListTile(
+      leading: const Icon(Icons.language),
+      title: Text(loc.language),
+      subtitle: Text(subtitle),
+      onTap: () => _showLanguageDialog(context, localeProvider),
+    );
+  }
+
+  void _showLanguageDialog(
+    BuildContext context,
+    LocaleProvider localeProvider,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        final loc = AppLocalizations.of(context)!;
+        final current = localeProvider.selection;
+        return AlertDialog(
+          title: Text(loc.language),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              RadioListTile<String>(
+                value: 'system',
+                groupValue: current,
+                title: Text(loc.deviceDefault),
+                onChanged: (v) {
+                  if (v == null) return;
+                  // Persiste a escolha assincronamente e fecha o diálogo
+                  localeProvider.setSelection(v);
+                  Navigator.of(context).pop();
+                },
+              ),
+              RadioListTile<String>(
+                value: 'en',
+                groupValue: current,
+                title: Text(loc.english),
+                onChanged: (v) {
+                  if (v == null) return;
+                  localeProvider.setSelection(v);
+                  Navigator.of(context).pop();
+                },
+              ),
+              RadioListTile<String>(
+                value: 'es',
+                groupValue: current,
+                title: Text(loc.spanish),
+                onChanged: (v) {
+                  if (v == null) return;
+                  localeProvider.setSelection(v);
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _checkBiometricStatus() async {
@@ -133,6 +212,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         children: [
           const SizedBox(height: 16),
           _buildThemeSection(context),
+          const Divider(),
+          _buildLanguageSection(context),
           const Divider(),
           _buildBiometricSection(context),
           const Divider(),

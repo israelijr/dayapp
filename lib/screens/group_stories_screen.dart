@@ -1,3 +1,4 @@
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
@@ -737,14 +738,14 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.settings),
-              title: const Text('Configurações'),
+              title: Text(AppLocalizations.of(context)!.settings),
               onTap: () {
                 Navigator.pushNamed(context, '/settings');
               },
             ),
             ListTile(
               leading: const Icon(Icons.logout),
-              title: const Text('Sair'),
+              title: Text(AppLocalizations.of(context)!.logout),
               onTap: () async {
                 final auth = Provider.of<AuthProvider>(context, listen: false);
                 final pinProvider = Provider.of<PinProvider>(

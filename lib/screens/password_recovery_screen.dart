@@ -1,3 +1,4 @@
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -69,13 +70,15 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
     final email = emailController.text.trim();
 
     if (email.isEmpty) {
-      setState(() => errorMessage = 'Informe seu e-mail.');
+      setState(
+        () => errorMessage = AppLocalizations.of(context)!.informYourEmail,
+      );
       return;
     }
 
     // Validação básica de formato de e-mail
     if (!RegExp(r'^[^@]+@[^@]+\.[^@]+$').hasMatch(email)) {
-      setState(() => errorMessage = 'Informe um e-mail válido.');
+      setState(() => errorMessage = AppLocalizations.of(context)!.invalidEmail);
       return;
     }
 
@@ -94,7 +97,7 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
     if (!exists) {
       setState(() {
         loading = false;
-        errorMessage = 'E-mail não encontrado. Verifique e tente novamente.';
+        errorMessage = AppLocalizations.of(context)!.emailNotFound;
       });
       return;
     }
@@ -109,14 +112,12 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
     if (success) {
       setState(() {
         currentStep = 1;
-        successMessage =
-            'Código enviado para $email! Verifique sua caixa de entrada.';
+        successMessage = AppLocalizations.of(context)!.codeSent(email);
         errorMessage = null;
       });
     } else {
       setState(() {
-        errorMessage =
-            'Erro ao enviar o código. Verifique sua conexão e tente novamente.';
+        errorMessage = AppLocalizations.of(context)!.errorResetPassword;
       });
     }
   }
@@ -126,7 +127,7 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
     final code = codeController.text.trim();
 
     if (code.length != 6) {
-      setState(() => errorMessage = 'O código deve ter 6 dígitos.');
+      setState(() => errorMessage = AppLocalizations.of(context)!.codeMustBe6);
       return;
     }
 
@@ -145,12 +146,12 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
     if (isValid) {
       setState(() {
         currentStep = 2;
-        successMessage = 'Código verificado! Defina sua nova senha.';
+        successMessage = AppLocalizations.of(context)!.codeVerified;
         errorMessage = null;
       });
     } else {
       setState(() {
-        errorMessage = 'Código inválido ou expirado. Tente novamente.';
+        errorMessage = AppLocalizations.of(context)!.codeInvalid;
       });
     }
   }
@@ -161,19 +162,23 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
     final confirmPassword = confirmPasswordController.text;
 
     if (newPassword.isEmpty) {
-      setState(() => errorMessage = 'Informe a nova senha.');
+      setState(
+        () => errorMessage = AppLocalizations.of(context)!.enterNewPassword,
+      );
       return;
     }
 
     if (newPassword.length < 6) {
       setState(
-        () => errorMessage = 'A senha deve ter pelo menos 6 caracteres.',
+        () => errorMessage = AppLocalizations.of(context)!.passwordMinLength,
       );
       return;
     }
 
     if (newPassword != confirmPassword) {
-      setState(() => errorMessage = 'As senhas não coincidem.');
+      setState(
+        () => errorMessage = AppLocalizations.of(context)!.passwordsDoNotMatch,
+      );
       return;
     }
 
@@ -200,9 +205,7 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
       // Mostra mensagem de sucesso e volta para o login
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text(
-            'Senha redefinida com sucesso! Faça login com a nova senha.',
-          ),
+          content: Text(AppLocalizations.of(context)!.passwordResetSuccess),
           backgroundColor: AppColors.emoticonGreen,
           duration: const Duration(seconds: 3),
         ),
@@ -212,7 +215,7 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
     } else {
       setState(() {
         loading = false;
-        errorMessage = 'Erro ao redefinir a senha. Tente novamente.';
+        errorMessage = AppLocalizations.of(context)!.errorResetPassword;
       });
     }
   }
@@ -235,11 +238,11 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
 
     if (success) {
       setState(() {
-        successMessage = 'Novo código enviado! Verifique sua caixa de entrada.';
+        successMessage = AppLocalizations.of(context)!.resendCodeSuccess;
       });
     } else {
       setState(() {
-        errorMessage = 'Erro ao reenviar código. Tente novamente.';
+        errorMessage = AppLocalizations.of(context)!.resendCodeError;
       });
     }
   }
