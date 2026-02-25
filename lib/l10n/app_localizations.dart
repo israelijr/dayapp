@@ -529,6 +529,246 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Invalid email or password.'**
   String get invalidCredentials;
+
+  /// No description provided for @profileUpdatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated successfully!'**
+  String get profileUpdatedSuccess;
+
+  /// No description provided for @profileUpdateError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error updating profile. Try again.'**
+  String get profileUpdateError;
+
+  /// No description provided for @unlockAppReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock the app to continue'**
+  String get unlockAppReason;
+
+  /// No description provided for @fillEmailAndPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill in email and password'**
+  String get fillEmailAndPassword;
+
+  /// No description provided for @emailOrPasswordIncorrect.
+  ///
+  /// In en, this message translates to:
+  /// **'Email or password incorrect'**
+  String get emailOrPasswordIncorrect;
+
+  /// No description provided for @noEmailRegistered.
+  ///
+  /// In en, this message translates to:
+  /// **'No email registered. Configure it in settings.'**
+  String get noEmailRegistered;
+
+  /// No description provided for @checkEmailOrUseCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your email at {email} or use the displayed code'**
+  String checkEmailOrUseCode(Object email);
+
+  /// No description provided for @errorGeneratingCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Error generating code. Try again.'**
+  String get errorGeneratingCode;
+
+  /// No description provided for @errorSendingCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Error sending code. Try again.'**
+  String get errorSendingCode;
+
+  /// No description provided for @recoverPinTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recover PIN'**
+  String get recoverPinTitle;
+
+  /// No description provided for @enterRecoveryCodePrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the code sent to your email:'**
+  String get enterRecoveryCodePrompt;
+
+  /// No description provided for @recoveryCodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery code (6 digits)'**
+  String get recoveryCodeLabel;
+
+  /// No description provided for @enterPasswordToContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your password to continue'**
+  String get enterPasswordToContinue;
+
+  /// No description provided for @enterPinToContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your PIN to continue'**
+  String get enterPinToContinue;
+
+  /// No description provided for @useBiometricsToContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Use your biometrics to continue'**
+  String get useBiometricsToContinue;
+
+  /// No description provided for @unlockTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock the App'**
+  String get unlockTitle;
+
+  /// No description provided for @search.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get search;
+
+  /// No description provided for @unsavedBackups.
+  ///
+  /// In en, this message translates to:
+  /// **'You have {count} stories not backed up.'**
+  String unsavedBackups(Object count);
+
+  /// No description provided for @backupRecommendation.
+  ///
+  /// In en, this message translates to:
+  /// **'We recommend backing up to avoid losing your data.'**
+  String get backupRecommendation;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @performBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup now'**
+  String get performBackup;
+
+  /// No description provided for @deleteStoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete story'**
+  String get deleteStoryTitle;
+
+  /// No description provided for @deleteStoryConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you want to move this story to the trash?'**
+  String get deleteStoryConfirm;
+
+  /// No description provided for @deleteLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get deleteLabel;
+
+  /// No description provided for @movedToTrash.
+  ///
+  /// In en, this message translates to:
+  /// **'Story moved to trash'**
+  String get movedToTrash;
+
+  /// No description provided for @unarchive.
+  ///
+  /// In en, this message translates to:
+  /// **'Unarchive'**
+  String get unarchive;
+
+  /// No description provided for @group.
+  ///
+  /// In en, this message translates to:
+  /// **'Group'**
+  String get group;
+
+  /// No description provided for @archivedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived'**
+  String get archivedTitle;
+
+  /// No description provided for @toggleToIcons.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to icon view'**
+  String get toggleToIcons;
+
+  /// No description provided for @toggleToCards.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to card view'**
+  String get toggleToCards;
+
+  /// No description provided for @menu.
+  ///
+  /// In en, this message translates to:
+  /// **'Menu'**
+  String get menu;
+
+  /// No description provided for @editProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit profile'**
+  String get editProfile;
+
+  /// No description provided for @editTip.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit - double tap'**
+  String get editTip;
+
+  /// No description provided for @exportPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Export PDF'**
+  String get exportPdf;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @newStory.
+  ///
+  /// In en, this message translates to:
+  /// **'New Story'**
+  String get newStory;
+
+  /// No description provided for @noArchivedStories.
+  ///
+  /// In en, this message translates to:
+  /// **'No archived stories.'**
+  String get noArchivedStories;
+
+  /// No description provided for @edit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get edit;
+
+  /// No description provided for @previewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview - {title}'**
+  String previewTitle(Object title);
+
+  /// No description provided for @exportPdfError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error exporting PDF: {error}'**
+  String exportPdfError(Object error);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

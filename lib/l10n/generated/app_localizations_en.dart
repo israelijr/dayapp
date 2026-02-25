@@ -275,4 +275,44 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unlockTitle => 'Unlock the App';
+
+  @override
+  String get search => 'Search';
+
+  @override
+  String unsavedBackups(Object count) {
+    return 'You have $count stories not backed up.';
+  }
+
+  @override
+  String get backupRecommendation => 'We recommend backing up to avoid losing your data.';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get performBackup => 'Backup now';
+
+  @override
+  String get deleteStoryTitle => 'Delete story';
+
+  @override
+  String get deleteStoryConfirm => 'Do you want to move this story to the trash?';
+
+  @override
+  String get deleteLabel => 'Delete';
+
+  @override
+  String get movedToTrash => 'Story moved to trash';
+
+  @override
+  String get unarchive => 'Unarchive';
+
+  @override
+  String get group => 'Group';
+
+  @override
+  String exportPdfError(Object error) {
+    return 'Error exporting PDF: $error';
+  }
 }

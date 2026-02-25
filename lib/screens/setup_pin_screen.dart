@@ -63,7 +63,7 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                'O PIN deve ter entre 4 e 8 dígitos',
+                AppLocalizations.of(context)!.pinLengthError,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(
                     context,
@@ -140,7 +140,9 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
                     : Text(
-                        widget.isChanging ? 'Alterar PIN' : 'Configurar PIN',
+                        widget.isChanging
+                            ? AppLocalizations.of(context)!.changePin
+                            : AppLocalizations.of(context)!.configurePin,
                       ),
               ),
 
@@ -225,12 +227,12 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
         Navigator.of(context).pop(true);
       } else {
         setState(() {
-          _errorMessage = 'Erro ao configurar PIN. Tente novamente.';
+          _errorMessage = AppLocalizations.of(context)!.tryAgain;
         });
       }
     } catch (e) {
       setState(() {
-        _errorMessage = 'Erro inesperado. Tente novamente.';
+        _errorMessage = AppLocalizations.of(context)!.tryAgain;
       });
     } finally {
       setState(() {

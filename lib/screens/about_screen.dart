@@ -1,3 +1,4 @@
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
@@ -37,7 +38,10 @@ class _AboutScreenState extends State<AboutScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Sobre'), elevation: 0),
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.about),
+        elevation: 0,
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -219,10 +223,10 @@ class _AboutScreenState extends State<AboutScreen> {
                   size: 28,
                 ),
                 const SizedBox(width: 12),
-                const Expanded(
+                Expanded(
                   child: Text(
-                    'Contato e Suporte',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    AppLocalizations.of(context)!.help,
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
@@ -283,58 +287,54 @@ class _AboutScreenState extends State<AboutScreen> {
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Política de Privacidade:',
-              style: TextStyle(fontSize: 14, color: Colors.grey),
-            ),
-            const SizedBox(height: 8),
-            InkWell(
-              onTap: () async {
-                final pinProvider = Provider.of<PinProvider>(
-                  context,
-                  listen: false,
-                );
-                const url =
-                    'https://sites.google.com/view/politicadeprivacidade-dayapp/início';
-                final Uri uri = Uri.parse(url);
-                if (await canLaunchUrl(uri)) {
-                  pinProvider.isPickingExternalMedia = true;
-                  try {
-                    await launchUrl(uri, mode: LaunchMode.externalApplication);
-                  } finally {
-                    // Reseta após um breve delay para cobrir a transição
-                    Future.delayed(const Duration(seconds: 2), () {
-                      pinProvider.isPickingExternalMedia = false;
-                    });
+              const SizedBox(height: 8),
+              InkWell(
+                onTap: () async {
+                  final pinProvider = Provider.of<PinProvider>(
+                    context,
+                    listen: false,
+                  );
+                  const url =
+                      'https://sites.google.com/view/politicadeprivacidade-dayapp/início';
+                  final Uri uri = Uri.parse(url);
+                  if (await canLaunchUrl(uri)) {
+                    pinProvider.isPickingExternalMedia = true;
+                    try {
+                      await launchUrl(uri, mode: LaunchMode.externalApplication);
+                    } finally {
+                      // Reseta após um breve delay para cobrir a transição
+                      Future.delayed(const Duration(seconds: 2), () {
+                        pinProvider.isPickingExternalMedia = false;
+                      });
+                    }
                   }
-                }
-              },
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.policy,
-                    color: Theme.of(context).primaryColor,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 12),
-                  const Expanded(
-                    child: Text(
-                      'Política de Privacidade',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        decoration: TextDecoration.underline,
+                },
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.policy,
+                      color: Theme.of(context).primaryColor,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        AppLocalizations.of(context)!.privacyPolicy,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          decoration: TextDecoration.underline,
+                        ),
                       ),
                     ),
-                  ),
-                  Icon(
-                    Icons.open_in_new,
-                    size: 16,
-                    color: Theme.of(context).iconTheme.color,
-                  ),
-                ],
+                    Icon(
+                      Icons.open_in_new,
+                      size: 16,
+                      color: Theme.of(context).iconTheme.color,
+                    ),
+                  ],
+                ),
               ),
-            ),
           ],
         ),
       ),

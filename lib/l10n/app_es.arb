@@ -101,4 +101,26 @@
   ,
   "useBiometricsToContinue": "Use su biometría para continuar",
   "unlockTitle": "Desbloquee la aplicación"
+  ,
+  "search": "Buscar",
+  "unsavedBackups": "Tienes {count} historias sin copia de seguridad.",
+  "@unsavedBackups": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "backupRecommendation": "Recomendamos hacer una copia de seguridad para evitar perder tus datos.",
+  "cancel": "Cancelar",
+  "performBackup": "Hacer copia de seguridad"
+  ,
+  "deleteStoryTitle": "Eliminar historia",
+  "deleteStoryConfirm": "¿Desea mover esta historia a la papelera?",
+  "deleteLabel": "Eliminar",
+  "movedToTrash": "Historia movida a la papelera",
+  "unarchive": "Desarchivar",
+  "group": "Grupo",
+  "exportPdfError": "Error al exportar PDF: {error}",
+  "@exportPdfError": {
+    "placeholders": { "error": {} }
+  }
 }

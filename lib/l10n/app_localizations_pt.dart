@@ -225,6 +225,134 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get invalidCredentials => 'E-mail ou senha inválidos.';
+
+  @override
+  String get profileUpdatedSuccess => 'Perfil atualizado com sucesso!';
+
+  @override
+  String get profileUpdateError => 'Erro ao atualizar perfil. Tente novamente.';
+
+  @override
+  String get unlockAppReason => 'Desbloqueie o app para continuar';
+
+  @override
+  String get fillEmailAndPassword => 'Preencha o e-mail e a senha';
+
+  @override
+  String get emailOrPasswordIncorrect => 'E-mail ou senha incorretos';
+
+  @override
+  String get noEmailRegistered => 'Nenhum e-mail cadastrado. Configure nas configurações.';
+
+  @override
+  String checkEmailOrUseCode(Object email) {
+    return 'Verifique seu e-mail em $email ou use o código exibido';
+  }
+
+  @override
+  String get errorGeneratingCode => 'Erro ao gerar código. Tente novamente.';
+
+  @override
+  String get errorSendingCode => 'Erro ao enviar código. Tente novamente.';
+
+  @override
+  String get recoverPinTitle => 'Recuperar PIN';
+
+  @override
+  String get enterRecoveryCodePrompt => 'Digite o código que foi enviado para seu e-mail:';
+
+  @override
+  String get recoveryCodeLabel => 'Código de recuperação (6 dígitos)';
+
+  @override
+  String get enterPasswordToContinue => 'Digite sua senha para continuar';
+
+  @override
+  String get enterPinToContinue => 'Digite seu PIN para continuar';
+
+  @override
+  String get useBiometricsToContinue => 'Use sua biometria para continuar';
+
+  @override
+  String get unlockTitle => 'Desbloqueie o App';
+
+  @override
+  String get search => 'Pesquisar';
+
+  @override
+  String unsavedBackups(Object count) {
+    return 'Você tem $count histórias sem backup.';
+  }
+
+  @override
+  String get backupRecommendation => 'Recomendamos fazer backup para evitar perder seus dados.';
+
+  @override
+  String get cancel => 'Cancelar';
+
+  @override
+  String get performBackup => 'Fazer backup';
+
+  @override
+  String get deleteStoryTitle => 'Excluir história';
+
+  @override
+  String get deleteStoryConfirm => 'Deseja mover esta história para a lixeira?';
+
+  @override
+  String get deleteLabel => 'Excluir';
+
+  @override
+  String get movedToTrash => 'História movida para a lixeira';
+
+  @override
+  String get unarchive => 'Desarquivar';
+
+  @override
+  String get group => 'Grupo';
+
+  @override
+  String get archivedTitle => 'Archived';
+
+  @override
+  String get toggleToIcons => 'Switch to icon view';
+
+  @override
+  String get toggleToCards => 'Switch to card view';
+
+  @override
+  String get menu => 'Menu';
+
+  @override
+  String get editProfile => 'Edit profile';
+
+  @override
+  String get editTip => 'Edit - double tap';
+
+  @override
+  String get exportPdf => 'Export PDF';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get newStory => 'New Story';
+
+  @override
+  String get noArchivedStories => 'No archived stories.';
+
+  @override
+  String get edit => 'Edit';
+
+  @override
+  String previewTitle(Object title) {
+    return 'Preview - $title';
+  }
+
+  @override
+  String exportPdfError(Object error) {
+    return 'Erro ao exportar PDF: $error';
+  }
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -448,4 +576,94 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get invalidCredentials => 'E-mail ou senha inválidos.';
+
+  @override
+  String get profileUpdatedSuccess => 'Perfil atualizado com sucesso!';
+
+  @override
+  String get profileUpdateError => 'Erro ao atualizar perfil. Tente novamente.';
+
+  @override
+  String get unlockAppReason => 'Desbloqueie o app para continuar';
+
+  @override
+  String get fillEmailAndPassword => 'Preencha o e-mail e a senha';
+
+  @override
+  String get emailOrPasswordIncorrect => 'E-mail ou senha incorretos';
+
+  @override
+  String get noEmailRegistered => 'Nenhum e-mail cadastrado. Configure nas configurações.';
+
+  @override
+  String checkEmailOrUseCode(Object email) {
+    return 'Verifique seu e-mail em $email ou use o código exibido';
+  }
+
+  @override
+  String get errorGeneratingCode => 'Erro ao gerar código. Tente novamente.';
+
+  @override
+  String get errorSendingCode => 'Erro ao enviar código. Tente novamente.';
+
+  @override
+  String get recoverPinTitle => 'Recuperar PIN';
+
+  @override
+  String get enterRecoveryCodePrompt => 'Digite o código que foi enviado para seu e-mail:';
+
+  @override
+  String get recoveryCodeLabel => 'Código de recuperação (6 dígitos)';
+
+  @override
+  String get enterPasswordToContinue => 'Digite sua senha para continuar';
+
+  @override
+  String get enterPinToContinue => 'Digite seu PIN para continuar';
+
+  @override
+  String get useBiometricsToContinue => 'Use sua biometria para continuar';
+
+  @override
+  String get unlockTitle => 'Desbloqueie o App';
+
+  @override
+  String get search => 'Pesquisar';
+
+  @override
+  String unsavedBackups(Object count) {
+    return 'Você tem $count histórias sem backup.';
+  }
+
+  @override
+  String get backupRecommendation => 'Recomendamos fazer backup para evitar perder seus dados.';
+
+  @override
+  String get cancel => 'Cancelar';
+
+  @override
+  String get performBackup => 'Fazer backup';
+
+  @override
+  String get deleteStoryTitle => 'Excluir história';
+
+  @override
+  String get deleteStoryConfirm => 'Deseja mover esta história para a lixeira?';
+
+  @override
+  String get deleteLabel => 'Excluir';
+
+  @override
+  String get movedToTrash => 'História movida para a lixeira';
+
+  @override
+  String get unarchive => 'Desarquivar';
+
+  @override
+  String get group => 'Grupo';
+
+  @override
+  String exportPdfError(Object error) {
+    return 'Erro ao exportar PDF: $error';
+  }
 }

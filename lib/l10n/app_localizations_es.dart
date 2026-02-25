@@ -225,4 +225,132 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get invalidCredentials => 'Correo electrónico o contraseña inválidos.';
+
+  @override
+  String get profileUpdatedSuccess => '¡Perfil actualizado con éxito!';
+
+  @override
+  String get profileUpdateError => 'Error al actualizar el perfil. Intente nuevamente.';
+
+  @override
+  String get unlockAppReason => 'Desbloquee la aplicación para continuar';
+
+  @override
+  String get fillEmailAndPassword => 'Complete el correo electrónico y la contraseña';
+
+  @override
+  String get emailOrPasswordIncorrect => 'Correo o contraseña incorrectos';
+
+  @override
+  String get noEmailRegistered => 'Ningún correo registrado. Configurelo en las configuraciones.';
+
+  @override
+  String checkEmailOrUseCode(Object email) {
+    return 'Verifique su correo en $email o use el código mostrado';
+  }
+
+  @override
+  String get errorGeneratingCode => 'Error al generar código. Intente nuevamente.';
+
+  @override
+  String get errorSendingCode => 'Error al enviar código. Intente nuevamente.';
+
+  @override
+  String get recoverPinTitle => 'Recuperar PIN';
+
+  @override
+  String get enterRecoveryCodePrompt => 'Ingrese el código enviado a su correo:';
+
+  @override
+  String get recoveryCodeLabel => 'Código de recuperación (6 dígitos)';
+
+  @override
+  String get enterPasswordToContinue => 'Ingrese su contraseña para continuar';
+
+  @override
+  String get enterPinToContinue => 'Ingrese su PIN para continuar';
+
+  @override
+  String get useBiometricsToContinue => 'Use su biometría para continuar';
+
+  @override
+  String get unlockTitle => 'Desbloquee la aplicación';
+
+  @override
+  String get search => 'Buscar';
+
+  @override
+  String unsavedBackups(Object count) {
+    return 'Tienes $count historias sin copia de seguridad.';
+  }
+
+  @override
+  String get backupRecommendation => 'Recomendamos hacer una copia de seguridad para evitar perder tus datos.';
+
+  @override
+  String get cancel => 'Cancelar';
+
+  @override
+  String get performBackup => 'Hacer copia de seguridad';
+
+  @override
+  String get deleteStoryTitle => 'Eliminar historia';
+
+  @override
+  String get deleteStoryConfirm => '¿Desea mover esta historia a la papelera?';
+
+  @override
+  String get deleteLabel => 'Eliminar';
+
+  @override
+  String get movedToTrash => 'Historia movida a la papelera';
+
+  @override
+  String get unarchive => 'Desarchivar';
+
+  @override
+  String get group => 'Grupo';
+
+  @override
+  String get archivedTitle => 'Archived';
+
+  @override
+  String get toggleToIcons => 'Switch to icon view';
+
+  @override
+  String get toggleToCards => 'Switch to card view';
+
+  @override
+  String get menu => 'Menu';
+
+  @override
+  String get editProfile => 'Edit profile';
+
+  @override
+  String get editTip => 'Edit - double tap';
+
+  @override
+  String get exportPdf => 'Export PDF';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get newStory => 'New Story';
+
+  @override
+  String get noArchivedStories => 'No archived stories.';
+
+  @override
+  String get edit => 'Edit';
+
+  @override
+  String previewTitle(Object title) {
+    return 'Preview - $title';
+  }
+
+  @override
+  String exportPdfError(Object error) {
+    return 'Error al exportar PDF: $error';
+  }
 }

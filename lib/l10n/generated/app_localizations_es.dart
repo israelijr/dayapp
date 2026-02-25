@@ -275,4 +275,44 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get unlockTitle => 'Desbloquee la aplicación';
+
+  @override
+  String get search => 'Buscar';
+
+  @override
+  String unsavedBackups(Object count) {
+    return 'Tienes $count historias sin copia de seguridad.';
+  }
+
+  @override
+  String get backupRecommendation => 'Recomendamos hacer una copia de seguridad para evitar perder tus datos.';
+
+  @override
+  String get cancel => 'Cancelar';
+
+  @override
+  String get performBackup => 'Hacer copia de seguridad';
+
+  @override
+  String get deleteStoryTitle => 'Eliminar historia';
+
+  @override
+  String get deleteStoryConfirm => '¿Desea mover esta historia a la papelera?';
+
+  @override
+  String get deleteLabel => 'Eliminar';
+
+  @override
+  String get movedToTrash => 'Historia movida a la papelera';
+
+  @override
+  String get unarchive => 'Desarchivar';
+
+  @override
+  String get group => 'Grupo';
+
+  @override
+  String exportPdfError(Object error) {
+    return 'Error al exportar PDF: $error';
+  }
 }

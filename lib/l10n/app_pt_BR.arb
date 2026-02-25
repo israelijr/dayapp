@@ -100,4 +100,26 @@
   "enterPinToContinue": "Digite seu PIN para continuar",
   "useBiometricsToContinue": "Use sua biometria para continuar",
   "unlockTitle": "Desbloqueie o App"
+  ,
+  "search": "Pesquisar",
+  "unsavedBackups": "Você tem {count} histórias sem backup.",
+  "@unsavedBackups": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "backupRecommendation": "Recomendamos fazer backup para evitar perder seus dados.",
+  "cancel": "Cancelar",
+  "performBackup": "Fazer backup"
+  ,
+  "deleteStoryTitle": "Excluir história",
+  "deleteStoryConfirm": "Deseja mover esta história para a lixeira?",
+  "deleteLabel": "Excluir",
+  "movedToTrash": "História movida para a lixeira",
+  "unarchive": "Desarquivar",
+  "group": "Grupo",
+  "exportPdfError": "Erro ao exportar PDF: {error}",
+  "@exportPdfError": {
+    "placeholders": { "error": {} }
+  }
 }

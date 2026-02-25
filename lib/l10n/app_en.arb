@@ -101,4 +101,41 @@
   ,
   "useBiometricsToContinue": "Use your biometrics to continue",
   "unlockTitle": "Unlock the App"
+  ,
+  "search": "Search",
+  "unsavedBackups": "You have {count} stories not backed up.",
+  "@unsavedBackups": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "backupRecommendation": "We recommend backing up to avoid losing your data.",
+  "cancel": "Cancel",
+  "performBackup": "Backup now"
+  ,
+  "deleteStoryTitle": "Delete story",
+  "deleteStoryConfirm": "Do you want to move this story to the trash?",
+  "deleteLabel": "Delete",
+  "movedToTrash": "Story moved to trash",
+  "unarchive": "Unarchive",
+  "group": "Group",
+  "archivedTitle": "Archived",
+  "toggleToIcons": "Switch to icon view",
+  "toggleToCards": "Switch to card view",
+  "menu": "Menu",
+  "editProfile": "Edit profile",
+  "editTip": "Edit - double tap",
+  "exportPdf": "Export PDF",
+  "close": "Close",
+  "newStory": "New Story",
+  "noArchivedStories": "No archived stories.",
+  "edit": "Edit",
+  "previewTitle": "Preview - {title}",
+  "@previewTitle": {
+    "placeholders": { "title": {} }
+  },
+  "exportPdfError": "Error exporting PDF: {error}",
+  "@exportPdfError": {
+    "placeholders": { "error": {} }
+  }
 }

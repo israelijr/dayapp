@@ -78,14 +78,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'Você tem $cnt histórias não salvas em backup.',
+                    AppLocalizations.of(context)!.unsavedBackups(cnt),
                     style: const TextStyle(fontSize: 16),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'Recomendamos fazer backup para não perder seus dados.',
-                    style: TextStyle(fontSize: 13, color: Colors.black54),
+                  Text(
+                    AppLocalizations.of(context)!.backupRecommendation,
+                    style: const TextStyle(fontSize: 13, color: Colors.black54),
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -93,14 +93,14 @@ class _HomeScreenState extends State<HomeScreen> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(dialogContext).pop(),
-                  child: const Text('Cancelar'),
+                  child: Text(AppLocalizations.of(context)!.cancel),
                 ),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.of(dialogContext).pop();
                     Navigator.pushNamed(context, '/backup-manager');
                   },
-                  child: const Text('Fazer backup'),
+                  child: Text(AppLocalizations.of(context)!.performBackup),
                 ),
               ],
             );
@@ -169,10 +169,10 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(width: 12),
             Text(
               _selectedIndex == 0
-                  ? 'DayApp'
+                  ? AppLocalizations.of(context)!.appTitle
                   : _selectedIndex == 1
-                  ? 'Grupos'
-                  : 'Pesquisar',
+                  ? AppLocalizations.of(context)!.manageGroups
+                  : AppLocalizations.of(context)!.search,
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
@@ -606,21 +606,21 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
         onDestinationSelected: _onItemTapped,
-        destinations: const [
-          NavigationDestination(
+        destinations: [
+          const NavigationDestination(
             icon: Icon(Icons.home_outlined),
             selectedIcon: Icon(Icons.home),
             label: 'Home',
           ),
-          NavigationDestination(
+          const NavigationDestination(
             icon: Icon(Icons.group_outlined),
             selectedIcon: Icon(Icons.group),
             label: 'Grupos',
           ),
           NavigationDestination(
-            icon: Icon(Icons.search_outlined),
-            selectedIcon: Icon(Icons.search),
-            label: 'Pesquisar',
+            icon: const Icon(Icons.search_outlined),
+            selectedIcon: const Icon(Icons.search),
+            label: AppLocalizations.of(context)!.search,
           ),
         ],
       ),

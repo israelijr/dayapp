@@ -225,4 +225,132 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get invalidCredentials => 'Invalid email or password.';
+
+  @override
+  String get profileUpdatedSuccess => 'Profile updated successfully!';
+
+  @override
+  String get profileUpdateError => 'Error updating profile. Try again.';
+
+  @override
+  String get unlockAppReason => 'Unlock the app to continue';
+
+  @override
+  String get fillEmailAndPassword => 'Fill in email and password';
+
+  @override
+  String get emailOrPasswordIncorrect => 'Email or password incorrect';
+
+  @override
+  String get noEmailRegistered => 'No email registered. Configure it in settings.';
+
+  @override
+  String checkEmailOrUseCode(Object email) {
+    return 'Check your email at $email or use the displayed code';
+  }
+
+  @override
+  String get errorGeneratingCode => 'Error generating code. Try again.';
+
+  @override
+  String get errorSendingCode => 'Error sending code. Try again.';
+
+  @override
+  String get recoverPinTitle => 'Recover PIN';
+
+  @override
+  String get enterRecoveryCodePrompt => 'Enter the code sent to your email:';
+
+  @override
+  String get recoveryCodeLabel => 'Recovery code (6 digits)';
+
+  @override
+  String get enterPasswordToContinue => 'Enter your password to continue';
+
+  @override
+  String get enterPinToContinue => 'Enter your PIN to continue';
+
+  @override
+  String get useBiometricsToContinue => 'Use your biometrics to continue';
+
+  @override
+  String get unlockTitle => 'Unlock the App';
+
+  @override
+  String get search => 'Search';
+
+  @override
+  String unsavedBackups(Object count) {
+    return 'You have $count stories not backed up.';
+  }
+
+  @override
+  String get backupRecommendation => 'We recommend backing up to avoid losing your data.';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get performBackup => 'Backup now';
+
+  @override
+  String get deleteStoryTitle => 'Delete story';
+
+  @override
+  String get deleteStoryConfirm => 'Do you want to move this story to the trash?';
+
+  @override
+  String get deleteLabel => 'Delete';
+
+  @override
+  String get movedToTrash => 'Story moved to trash';
+
+  @override
+  String get unarchive => 'Unarchive';
+
+  @override
+  String get group => 'Group';
+
+  @override
+  String get archivedTitle => 'Archived';
+
+  @override
+  String get toggleToIcons => 'Switch to icon view';
+
+  @override
+  String get toggleToCards => 'Switch to card view';
+
+  @override
+  String get menu => 'Menu';
+
+  @override
+  String get editProfile => 'Edit profile';
+
+  @override
+  String get editTip => 'Edit - double tap';
+
+  @override
+  String get exportPdf => 'Export PDF';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get newStory => 'New Story';
+
+  @override
+  String get noArchivedStories => 'No archived stories.';
+
+  @override
+  String get edit => 'Edit';
+
+  @override
+  String previewTitle(Object title) {
+    return 'Preview - $title';
+  }
+
+  @override
+  String exportPdfError(Object error) {
+    return 'Error exporting PDF: $error';
+  }
 }

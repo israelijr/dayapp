@@ -625,6 +625,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unlock the App'**
   String get unlockTitle;
+
+  /// No description provided for @search.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get search;
+
+  /// No description provided for @unsavedBackups.
+  ///
+  /// In en, this message translates to:
+  /// **'You have {count} stories not backed up.'**
+  String unsavedBackups(Object count);
+
+  /// No description provided for @backupRecommendation.
+  ///
+  /// In en, this message translates to:
+  /// **'We recommend backing up to avoid losing your data.'**
+  String get backupRecommendation;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @performBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup now'**
+  String get performBackup;
+
+  /// No description provided for @deleteStoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete story'**
+  String get deleteStoryTitle;
+
+  /// No description provided for @deleteStoryConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you want to move this story to the trash?'**
+  String get deleteStoryConfirm;
+
+  /// No description provided for @deleteLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get deleteLabel;
+
+  /// No description provided for @movedToTrash.
+  ///
+  /// In en, this message translates to:
+  /// **'Story moved to trash'**
+  String get movedToTrash;
+
+  /// No description provided for @unarchive.
+  ///
+  /// In en, this message translates to:
+  /// **'Unarchive'**
+  String get unarchive;
+
+  /// No description provided for @group.
+  ///
+  /// In en, this message translates to:
+  /// **'Group'**
+  String get group;
+
+  /// No description provided for @exportPdfError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error exporting PDF: {error}'**
+  String exportPdfError(Object error);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

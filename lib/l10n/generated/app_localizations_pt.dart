@@ -275,6 +275,46 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get unlockTitle => 'Desbloqueie o App';
+
+  @override
+  String get search => 'Pesquisar';
+
+  @override
+  String unsavedBackups(Object count) {
+    return 'Você tem $count histórias sem backup.';
+  }
+
+  @override
+  String get backupRecommendation => 'Recomendamos fazer backup para evitar perder seus dados.';
+
+  @override
+  String get cancel => 'Cancelar';
+
+  @override
+  String get performBackup => 'Fazer backup';
+
+  @override
+  String get deleteStoryTitle => 'Excluir história';
+
+  @override
+  String get deleteStoryConfirm => 'Deseja mover esta história para a lixeira?';
+
+  @override
+  String get deleteLabel => 'Excluir';
+
+  @override
+  String get movedToTrash => 'História movida para a lixeira';
+
+  @override
+  String get unarchive => 'Desarquivar';
+
+  @override
+  String get group => 'Grupo';
+
+  @override
+  String exportPdfError(Object error) {
+    return 'Erro ao exportar PDF: $error';
+  }
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -548,4 +588,44 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get unlockTitle => 'Desbloqueie o App';
+
+  @override
+  String get search => 'Pesquisar';
+
+  @override
+  String unsavedBackups(Object count) {
+    return 'Você tem $count histórias sem backup.';
+  }
+
+  @override
+  String get backupRecommendation => 'Recomendamos fazer backup para evitar perder seus dados.';
+
+  @override
+  String get cancel => 'Cancelar';
+
+  @override
+  String get performBackup => 'Fazer backup';
+
+  @override
+  String get deleteStoryTitle => 'Excluir história';
+
+  @override
+  String get deleteStoryConfirm => 'Deseja mover esta história para a lixeira?';
+
+  @override
+  String get deleteLabel => 'Excluir';
+
+  @override
+  String get movedToTrash => 'História movida para a lixeira';
+
+  @override
+  String get unarchive => 'Desarquivar';
+
+  @override
+  String get group => 'Grupo';
+
+  @override
+  String exportPdfError(Object error) {
+    return 'Erro ao exportar PDF: $error';
+  }
 }

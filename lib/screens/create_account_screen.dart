@@ -248,7 +248,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       }
                     },
                     child: Text(
-                      'Política de Privacidade',
+                      AppLocalizations.of(context)!.privacyPolicy,
                       style: TextStyle(
                         color: Theme.of(
                           context,
