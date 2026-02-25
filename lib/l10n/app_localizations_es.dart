@@ -312,41 +312,41 @@ class AppLocalizationsEs extends AppLocalizations {
   String get group => 'Grupo';
 
   @override
-  String get archivedTitle => 'Archived';
+  String get archivedTitle => 'Archivados';
 
   @override
-  String get toggleToIcons => 'Switch to icon view';
+  String get toggleToIcons => 'Cambiar a vista de iconos';
 
   @override
-  String get toggleToCards => 'Switch to card view';
+  String get toggleToCards => 'Cambiar a vista de tarjetas';
 
   @override
-  String get menu => 'Menu';
+  String get menu => 'Menú';
 
   @override
-  String get editProfile => 'Edit profile';
+  String get editProfile => 'Editar perfil';
 
   @override
-  String get editTip => 'Edit - double tap';
+  String get editTip => 'Editar - doble toque';
 
   @override
-  String get exportPdf => 'Export PDF';
+  String get exportPdf => 'Exportar PDF';
 
   @override
-  String get close => 'Close';
+  String get close => 'Cerrar';
 
   @override
-  String get newStory => 'New Story';
+  String get newStory => 'Nueva historia';
 
   @override
-  String get noArchivedStories => 'No archived stories.';
+  String get noArchivedStories => 'No hay historias archivadas.';
 
   @override
-  String get edit => 'Edit';
+  String get edit => 'Editar';
 
   @override
   String previewTitle(Object title) {
-    return 'Preview - $title';
+    return 'Previsualización - $title';
   }
 
   @override

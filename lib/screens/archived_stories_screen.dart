@@ -1,4 +1,4 @@
-import 'package:dayapp/l10n/generated/app_localizations.dart';
+import 'package:dayapp/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
@@ -132,17 +132,22 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Excluir história'),
-        content: const Text('Deseja mover esta história para a lixeira?'),
+        title: Text(
+          AppLocalizations.of(context)?.deleteStoryTitle ?? 'Excluir história',
+        ),
+        content: Text(
+          AppLocalizations.of(context)?.deleteStoryConfirm ??
+              'Deseja mover esta história para a lixeira?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancelar'),
+            child: Text(AppLocalizations.of(context)?.cancel ?? 'Cancelar'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             child: Text(
-              'Excluir',
+              AppLocalizations.of(context)?.deleteLabel ?? 'Excluir',
               style: TextStyle(color: Theme.of(context).colorScheme.error),
             ),
           ),
@@ -172,7 +177,12 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
       refreshProvider.refresh();
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('História movida para a lixeira')),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)?.movedToTrash ??
+                'História movida para a lixeira',
+          ),
+        ),
       );
     }
   }
@@ -228,7 +238,7 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
                 backgroundColor: AppColors.emoticonGreen,
                 foregroundColor: Theme.of(context).colorScheme.onPrimary,
                 icon: Icons.restore,
-                label: 'Desarquivar',
+                label: AppLocalizations.of(context)?.unarchive ?? 'Desarquivar',
               ),
             ],
           ),
@@ -253,7 +263,7 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
                 backgroundColor: Theme.of(context).colorScheme.primary,
                 foregroundColor: Theme.of(context).colorScheme.onPrimary,
                 icon: Icons.group,
-                label: 'Grupo',
+                label: AppLocalizations.of(context)?.group ?? 'Grupo',
               ),
             ],
           ),
@@ -392,13 +402,19 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
                             }
                           },
                           itemBuilder: (context) => [
-                            const PopupMenuItem(
+                            PopupMenuItem(
                               value: 'edit',
-                              child: Text('Editar - 2 toques'),
+                              child: Text(
+                                AppLocalizations.of(context)?.editTip ??
+                                    'Editar - 2 toques',
+                              ),
                             ),
-                            const PopupMenuItem(
+                            PopupMenuItem(
                               value: 'delete',
-                              child: Text('Excluir'),
+                              child: Text(
+                                AppLocalizations.of(context)?.deleteLabel ??
+                                    'Excluir',
+                              ),
                             ),
                           ],
                         ),
@@ -452,7 +468,7 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
         padding: const EdgeInsets.only(left: 20),
         color: AppColors.emoticonGreen,
         child: Text(
-          'Desarquivar',
+          AppLocalizations.of(context)?.unarchive ?? 'Desarquivar',
           style: TextStyle(
             color: Theme.of(context).colorScheme.onPrimary,
             fontSize: 18,
@@ -465,7 +481,7 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
         padding: const EdgeInsets.only(right: 20),
         color: Theme.of(context).colorScheme.primary,
         child: Text(
-          'Grupo',
+          AppLocalizations.of(context)?.group ?? 'Grupo',
           style: TextStyle(
             color: Theme.of(context).colorScheme.onPrimary,
             fontSize: 18,
@@ -577,9 +593,22 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
               }
             },
             itemBuilder: (context) => [
-              const PopupMenuItem(value: 'edit', child: Text('Editar')),
-              const PopupMenuItem(value: 'export', child: Text('Exportar PDF')),
-              const PopupMenuItem(value: 'delete', child: Text('Excluir')),
+              PopupMenuItem(
+                value: 'edit',
+                child: Text(AppLocalizations.of(context)?.edit ?? 'Editar'),
+              ),
+              PopupMenuItem(
+                value: 'export',
+                child: Text(
+                  AppLocalizations.of(context)?.exportPdf ?? 'Exportar PDF',
+                ),
+              ),
+              PopupMenuItem(
+                value: 'delete',
+                child: Text(
+                  AppLocalizations.of(context)?.deleteLabel ?? 'Excluir',
+                ),
+              ),
             ],
           ),
           onTap: () {
@@ -596,7 +625,9 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Fechar'),
+                      child: Text(
+                        AppLocalizations.of(context)?.close ?? 'Fechar',
+                      ),
                     ),
                   ],
                 );
@@ -617,9 +648,9 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
           children: [
             Image.asset('assets/icon/icon.png', width: 32, height: 32),
             const SizedBox(width: 12),
-            const Text(
-              'Arquivados',
-              style: TextStyle(fontWeight: FontWeight.bold),
+            Text(
+              AppLocalizations.of(context)?.archivedTitle ?? 'Arquivados',
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -638,8 +669,10 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
               });
             },
             tooltip: _isCardView
-                ? 'Alternar para modo ícones'
-                : 'Alternar para modo blocos',
+                ? (AppLocalizations.of(context)?.toggleToIcons ??
+                      'Alternar para modo ícones')
+                : (AppLocalizations.of(context)?.toggleToCards ??
+                      'Alternar para modo blocos'),
           ),
           Builder(
             builder: (context) => IconButton(
@@ -656,7 +689,7 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
             DrawerHeader(
               decoration: BoxDecoration(color: Theme.of(context).primaryColor),
               child: Text(
-                'Menu',
+                AppLocalizations.of(context)?.menu ?? 'Menu',
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onPrimary,
                   fontSize: 24,
@@ -665,7 +698,9 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.person),
-              title: const Text('Editar Perfil'),
+              title: Text(
+                AppLocalizations.of(context)?.editProfile ?? 'Editar Perfil',
+              ),
               onTap: () {
                 Navigator.push(
                   context,
@@ -675,14 +710,16 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.settings),
-              title: Text(AppLocalizations.of(context)!.settings),
+              title: Text(
+                AppLocalizations.of(context)?.settings ?? 'Configurações',
+              ),
               onTap: () {
                 Navigator.pushNamed(context, '/settings');
               },
             ),
             ListTile(
               leading: const Icon(Icons.logout),
-              title: Text(AppLocalizations.of(context)!.logout),
+              title: Text(AppLocalizations.of(context)?.logout ?? 'Sair'),
               onTap: () async {
                 final auth = Provider.of<AuthProvider>(context, listen: false);
                 final pinProvider = Provider.of<PinProvider>(
@@ -711,7 +748,12 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
               }
               final historias = snapshot.data ?? [];
               if (historias.isEmpty) {
-                return const Center(child: Text('Nenhuma história arquivada.'));
+                return Center(
+                  child: Text(
+                    AppLocalizations.of(context)?.noArchivedStories ??
+                        'Nenhuma história arquivada.',
+                  ),
+                );
               }
               return AnimatedSwitcher(
                 duration: AppDurations.listSwitch,
@@ -752,7 +794,9 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
             });
           },
           icon: const Icon(Icons.add),
-          label: const Text('Nova História'),
+          label: Text(
+            AppLocalizations.of(context)?.newStory ?? 'Nova História',
+          ),
         ),
       ),
     );

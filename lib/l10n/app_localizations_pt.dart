@@ -312,41 +312,41 @@ class AppLocalizationsPt extends AppLocalizations {
   String get group => 'Grupo';
 
   @override
-  String get archivedTitle => 'Archived';
+  String get archivedTitle => 'Arquivados';
 
   @override
-  String get toggleToIcons => 'Switch to icon view';
+  String get toggleToIcons => 'Alternar para visualização de ícones';
 
   @override
-  String get toggleToCards => 'Switch to card view';
+  String get toggleToCards => 'Alternar para visualização em blocos';
 
   @override
   String get menu => 'Menu';
 
   @override
-  String get editProfile => 'Edit profile';
+  String get editProfile => 'Editar perfil';
 
   @override
-  String get editTip => 'Edit - double tap';
+  String get editTip => 'Editar - toque duplo';
 
   @override
-  String get exportPdf => 'Export PDF';
+  String get exportPdf => 'Exportar PDF';
 
   @override
-  String get close => 'Close';
+  String get close => 'Fechar';
 
   @override
-  String get newStory => 'New Story';
+  String get newStory => 'Nova História';
 
   @override
-  String get noArchivedStories => 'No archived stories.';
+  String get noArchivedStories => 'Nenhuma história arquivada.';
 
   @override
-  String get edit => 'Edit';
+  String get edit => 'Editar';
 
   @override
   String previewTitle(Object title) {
-    return 'Preview - $title';
+    return 'Visualização - $title';
   }
 
   @override
@@ -661,6 +661,44 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get group => 'Grupo';
+
+  @override
+  String get archivedTitle => 'Arquivados';
+
+  @override
+  String get toggleToIcons => 'Alternar para visualização de ícones';
+
+  @override
+  String get toggleToCards => 'Alternar para visualização em blocos';
+
+  @override
+  String get menu => 'Menu';
+
+  @override
+  String get editProfile => 'Editar perfil';
+
+  @override
+  String get editTip => 'Editar - toque duplo';
+
+  @override
+  String get exportPdf => 'Exportar PDF';
+
+  @override
+  String get close => 'Fechar';
+
+  @override
+  String get newStory => 'Nova História';
+
+  @override
+  String get noArchivedStories => 'Nenhuma história arquivada.';
+
+  @override
+  String get edit => 'Editar';
+
+  @override
+  String previewTitle(Object title) {
+    return 'Visualização - $title';
+  }
 
   @override
   String exportPdfError(Object error) {
