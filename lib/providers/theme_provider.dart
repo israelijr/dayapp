@@ -3,10 +3,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeProvider with ChangeNotifier {
   static const String _themeKey = 'theme_mode';
+  static const String _schemeKey = 'custom_scheme_key';
   ThemeMode _themeMode = ThemeMode.light;
+  String? _selectedSchemeKey;
   bool _isLoaded = false;
 
   ThemeMode get themeMode => _themeMode;
+  String? get selectedSchemeKey => _selectedSchemeKey;
   bool get isLoaded => _isLoaded;
 
   ThemeProvider() {
@@ -23,6 +26,8 @@ class ThemeProvider with ChangeNotifier {
       _themeMode = ThemeMode.light;
       await prefs.setInt(_themeKey, _themeMode.index);
     }
+    // Carrega o esquema customizado, se houver
+    _selectedSchemeKey = prefs.getString(_schemeKey);
     _isLoaded = true;
     notifyListeners();
   }
@@ -33,6 +38,19 @@ class ThemeProvider with ChangeNotifier {
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_themeKey, mode.index);
+  }
+
+  /// Define o esquema customizado pelo nome (chave do map em CustomColorSchemes)
+  Future<void> setSelectedSchemeKey(String? key) async {
+    _selectedSchemeKey = key;
+    notifyListeners();
+
+    final prefs = await SharedPreferences.getInstance();
+    if (key == null) {
+      await prefs.remove(_schemeKey);
+    } else {
+      await prefs.setString(_schemeKey, key);
+    }
   }
 
   Future<void> waitForLoad() async {

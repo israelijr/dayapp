@@ -18,6 +18,7 @@ import '../services/notification_preferences_service.dart';
 import '../services/pin_recovery_service.dart';
 import '../services/secure_storage_service.dart';
 import '../theme/m3_expressive_theme.dart';
+import '../theme/custom_color_schemes.dart';
 import '../widgets/custom_text_field.dart';
 import 'setup_pin_screen.dart';
 
@@ -151,18 +152,70 @@ class _SettingsScreenState extends State<SettingsScreen> {
         return ListTile(
           leading: const Icon(Icons.brightness_6),
           title: const Text('Tema'),
-          subtitle: Text(_getThemeModeText(themeProvider.themeMode)),
-          trailing: Switch(
-            value: themeProvider.themeMode == ThemeMode.dark,
-            onChanged: (value) {
-              themeProvider.setThemeMode(
-                value ? ThemeMode.dark : ThemeMode.light,
-              );
-            },
+          subtitle: Text(
+            // Mostra o modo e, se houver, o esquema personalizado selecionado
+            themeProvider.selectedSchemeKey == null
+                ? _getThemeModeText(themeProvider.themeMode)
+                : '${_getThemeModeText(themeProvider.themeMode)} • ${_formatSchemeLabel(themeProvider.selectedSchemeKey!)}',
+          ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Preview do esquema atual (pequeno gradiente com primary/secondary)
+              _buildSchemePreview(context, themeProvider),
+              const SizedBox(width: 8),
+              Switch(
+                value: themeProvider.themeMode == ThemeMode.dark,
+                onChanged: (value) {
+                  themeProvider.setThemeMode(
+                    value ? ThemeMode.dark : ThemeMode.light,
+                  );
+                },
+              ),
+            ],
           ),
           onTap: () => _showThemeDialog(context, themeProvider),
         );
       },
+    );
+  }
+
+  // Retorna um rótulo legível para a chave do esquema
+  String _formatSchemeLabel(String key) {
+    switch (key) {
+      case 'relvaLight':
+        return 'Relva (Claro)';
+      case 'relvaDark':
+        return 'Relva (Escuro)';
+      case 'outonoLight':
+        return 'Outono (Claro)';
+      case 'outonoDark':
+        return 'Outono (Escuro)';
+      default:
+        return key;
+    }
+  }
+
+  // Widget que desenha uma pré-visualização pequena do esquema ativo
+  Widget _buildSchemePreview(
+    BuildContext context,
+    ThemeProvider themeProvider,
+  ) {
+    final schemeKey = themeProvider.selectedSchemeKey;
+    final ColorScheme scheme =
+        (schemeKey != null &&
+            CustomColorSchemes.customSchemes.containsKey(schemeKey))
+        ? CustomColorSchemes.customSchemes[schemeKey]!
+        : Theme.of(context).colorScheme;
+
+    return Container(
+      width: 44,
+      height: 28,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(6),
+        gradient: LinearGradient(colors: [scheme.primary, scheme.secondary]),
+        border: Border.all(color: scheme.onSurface.withOpacity(0.12)),
+      ),
     );
   }
 
@@ -465,28 +518,167 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context: context,
       builder: (BuildContext context) {
         return SimpleDialog(
-          title: const Text('Escolher Tema'),
+          title: const Text('Tema e Esquema'),
           children: [
             SimpleDialogOption(
               onPressed: () {
                 themeProvider.setThemeMode(ThemeMode.light);
+                themeProvider.setSelectedSchemeKey(null);
                 Navigator.of(context).pop();
               },
-              child: const Text('Claro'),
+              child: ListTile(
+                leading: const Icon(Icons.wb_sunny),
+                title: const Text('Claro'),
+                subtitle: const Text('Tema claro padrão'),
+                trailing:
+                    themeProvider.themeMode == ThemeMode.light &&
+                        themeProvider.selectedSchemeKey == null
+                    ? Icon(
+                        Icons.check,
+                        color: Theme.of(context).colorScheme.primary,
+                      )
+                    : null,
+              ),
             ),
             SimpleDialogOption(
               onPressed: () {
                 themeProvider.setThemeMode(ThemeMode.dark);
+                themeProvider.setSelectedSchemeKey(null);
                 Navigator.of(context).pop();
               },
-              child: const Text('Escuro'),
+              child: ListTile(
+                leading: const Icon(Icons.nights_stay),
+                title: const Text('Escuro'),
+                subtitle: const Text('Tema escuro padrão'),
+                trailing:
+                    themeProvider.themeMode == ThemeMode.dark &&
+                        themeProvider.selectedSchemeKey == null
+                    ? Icon(
+                        Icons.check,
+                        color: Theme.of(context).colorScheme.primary,
+                      )
+                    : null,
+              ),
             ),
             SimpleDialogOption(
               onPressed: () {
                 themeProvider.setThemeMode(ThemeMode.system);
+                themeProvider.setSelectedSchemeKey(null);
                 Navigator.of(context).pop();
               },
-              child: const Text('Sistema'),
+              child: ListTile(
+                leading: const Icon(Icons.phone_iphone),
+                title: const Text('Sistema'),
+                subtitle: const Text('Seguir tema do sistema'),
+                trailing:
+                    themeProvider.themeMode == ThemeMode.system &&
+                        themeProvider.selectedSchemeKey == null
+                    ? Icon(
+                        Icons.check,
+                        color: Theme.of(context).colorScheme.primary,
+                      )
+                    : null,
+              ),
+            ),
+            const Divider(),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 8.0,
+              ),
+              child: Text(
+                'Esquemas Personalizados',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+            SimpleDialogOption(
+              onPressed: () {
+                themeProvider.setSelectedSchemeKey('relvaLight');
+                Navigator.of(context).pop();
+              },
+              child: ListTile(
+                leading: const Icon(Icons.eco),
+                title: const Text('Relva (Claro)'),
+                subtitle: const Text('Tons verdes e naturais'),
+                trailing: themeProvider.selectedSchemeKey == 'relvaLight'
+                    ? Icon(
+                        Icons.check,
+                        color: Theme.of(context).colorScheme.primary,
+                      )
+                    : null,
+              ),
+            ),
+            SimpleDialogOption(
+              onPressed: () {
+                themeProvider.setSelectedSchemeKey('relvaDark');
+                Navigator.of(context).pop();
+              },
+              child: ListTile(
+                leading: const Icon(Icons.eco),
+                title: const Text('Relva (Escuro)'),
+                subtitle: const Text('Versão escura do esquema Relva'),
+                trailing: themeProvider.selectedSchemeKey == 'relvaDark'
+                    ? Icon(
+                        Icons.check,
+                        color: Theme.of(context).colorScheme.primary,
+                      )
+                    : null,
+              ),
+            ),
+            SimpleDialogOption(
+              onPressed: () {
+                themeProvider.setSelectedSchemeKey('outonoLight');
+                Navigator.of(context).pop();
+              },
+              child: ListTile(
+                leading: const Icon(Icons.park),
+                title: const Text('Outono (Claro)'),
+                subtitle: const Text('Tons quentes e terrosos'),
+                trailing: themeProvider.selectedSchemeKey == 'outonoLight'
+                    ? Icon(
+                        Icons.check,
+                        color: Theme.of(context).colorScheme.primary,
+                      )
+                    : null,
+              ),
+            ),
+            SimpleDialogOption(
+              onPressed: () {
+                themeProvider.setSelectedSchemeKey('outonoDark');
+                Navigator.of(context).pop();
+              },
+              child: ListTile(
+                leading: const Icon(Icons.park),
+                title: const Text('Outono (Escuro)'),
+                subtitle: const Text('Versão escura do esquema Outono'),
+                trailing: themeProvider.selectedSchemeKey == 'outonoDark'
+                    ? Icon(
+                        Icons.check,
+                        color: Theme.of(context).colorScheme.primary,
+                      )
+                    : null,
+              ),
+            ),
+            SimpleDialogOption(
+              onPressed: () {
+                themeProvider.setSelectedSchemeKey(null);
+                Navigator.of(context).pop();
+              },
+              child: ListTile(
+                leading: const Icon(Icons.clear),
+                title: const Text('Remover Esquema'),
+                subtitle: const Text('Voltar ao esquema padrão do tema'),
+                trailing: themeProvider.selectedSchemeKey == null
+                    ? Icon(
+                        Icons.check,
+                        color: Theme.of(context).colorScheme.primary,
+                      )
+                    : null,
+              ),
             ),
           ],
         );

@@ -37,6 +37,7 @@ import 'services/engagement_service.dart';
 import 'services/inactivity_service.dart';
 import 'services/notification_service.dart';
 import 'theme/m3_expressive_theme.dart';
+import 'theme/custom_color_schemes.dart';
 import 'widgets/global_lock_overlay.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -379,12 +380,38 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
+          // Determina os ThemeData a partir do esquema selecionado (se houver)
+          ThemeData lightTheme = M3ExpressiveTheme.getLightTheme();
+          ThemeData darkTheme = M3ExpressiveTheme.getDarkTheme();
+
+          final schemeKey = themeProvider.selectedSchemeKey;
+          if (schemeKey != null &&
+              CustomColorSchemes.customSchemes.containsKey(schemeKey)) {
+            // Usa o esquema selecionado para o tema claro
+            final ColorScheme? lightScheme =
+                CustomColorSchemes.customSchemes[schemeKey];
+            if (lightScheme != null) {
+              lightTheme = ThemeData.from(colorScheme: lightScheme);
+            }
+
+            // Tenta mapear para a variante dark (ex.: 'relvaLight' -> 'relvaDark')
+            String darkKey = schemeKey;
+            if (darkKey.endsWith('Light')) {
+              darkKey = darkKey.replaceAll('Light', 'Dark');
+            }
+            final ColorScheme? darkScheme =
+                CustomColorSchemes.customSchemes[darkKey];
+            if (darkScheme != null) {
+              darkTheme = ThemeData.from(colorScheme: darkScheme);
+            }
+          }
+
           return MaterialApp(
             title: 'DayApp',
             debugShowCheckedModeBanner: false,
             navigatorKey: navigatorKey,
-            theme: M3ExpressiveTheme.getLightTheme(),
-            darkTheme: M3ExpressiveTheme.getDarkTheme(),
+            theme: lightTheme,
+            darkTheme: darkTheme,
             themeMode: themeProvider.themeMode,
             supportedLocales: const [Locale('pt', 'BR'), Locale('en', 'US')],
             localizationsDelegates: const [
