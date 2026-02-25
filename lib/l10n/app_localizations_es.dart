@@ -350,6 +350,23 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get archiveLabel => 'Archiv ar';
+
+  @override
+  String get storyArchived => 'Historia archivada';
+
+  @override
+  String get undo => 'Deshacer';
+
+  @override
+  String get ungroup => 'Desagrupar';
+
+  @override
+  String noStoriesInGroup(Object group) {
+    return 'No hay historias en el grupo $group';
+  }
+
+  @override
   String exportPdfError(Object error) {
     return 'Error al exportar PDF: $error';
   }

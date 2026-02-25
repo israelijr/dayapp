@@ -1,4 +1,4 @@
-import 'package:dayapp/l10n/generated/app_localizations.dart';
+import 'package:dayapp/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
@@ -136,17 +136,22 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Excluir história'),
-        content: const Text('Deseja mover esta história para a lixeira?'),
+        title: Text(
+          AppLocalizations.of(context)?.deleteStoryTitle ?? 'Excluir história',
+        ),
+        content: Text(
+          AppLocalizations.of(context)?.deleteStoryConfirm ??
+              'Deseja mover esta história para a lixeira?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancelar'),
+            child: Text(AppLocalizations.of(context)?.cancel ?? 'Cancelar'),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             child: Text(
-              'Excluir',
+              AppLocalizations.of(context)?.deleteLabel ?? 'Excluir',
               style: TextStyle(color: Theme.of(context).colorScheme.error),
             ),
           ),
@@ -176,7 +181,12 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
       refreshProvider.refresh();
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('História movida para a lixeira')),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)?.movedToTrash ??
+                'História movida para a lixeira',
+          ),
+        ),
       );
     }
   }
@@ -229,9 +239,11 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
       SnackBar(
         duration: const Duration(seconds: 4),
         behavior: SnackBarBehavior.floating,
-        content: const Text('História arquivada'),
+        content: Text(
+          AppLocalizations.of(context)?.storyArchived ?? 'História arquivada',
+        ),
         action: SnackBarAction(
-          label: 'Desfazer',
+          label: AppLocalizations.of(context)?.undo ?? 'Desfazer',
           onPressed: () async {
             await _updateHistoria(
               historia,
@@ -264,7 +276,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
                 backgroundColor: Theme.of(context).colorScheme.primary,
                 foregroundColor: Theme.of(context).colorScheme.onPrimary,
                 icon: Icons.archive,
-                label: 'Arquivar',
+                label: AppLocalizations.of(context)?.archiveLabel ?? 'Arquivar',
               ),
             ],
           ),
@@ -428,13 +440,19 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
                             }
                           },
                           itemBuilder: (context) => [
-                            const PopupMenuItem(
+                            PopupMenuItem(
                               value: 'edit',
-                              child: Text('Editar - 2 toques'),
+                              child: Text(
+                                AppLocalizations.of(context)?.editTip ??
+                                    'Editar - 2 toques',
+                              ),
                             ),
-                            const PopupMenuItem(
+                            PopupMenuItem(
                               value: 'delete',
-                              child: Text('Excluir'),
+                              child: Text(
+                                AppLocalizations.of(context)?.deleteLabel ??
+                                    'Excluir',
+                              ),
                             ),
                           ],
                         ),
@@ -488,7 +506,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
         padding: const EdgeInsets.only(left: 20),
         color: Theme.of(context).colorScheme.primary,
         child: Text(
-          'Arquivar',
+          AppLocalizations.of(context)?.archiveLabel ?? 'Arquivar',
           style: TextStyle(
             color: Theme.of(context).colorScheme.onPrimary,
             fontSize: 18,
@@ -501,7 +519,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
         padding: const EdgeInsets.only(right: 20),
         color: AppColors.emoticonGreen,
         child: Text(
-          'Grupo',
+          AppLocalizations.of(context)?.group ?? 'Grupo',
           style: TextStyle(
             color: Theme.of(context).colorScheme.onPrimary,
             fontSize: 18,
@@ -620,13 +638,28 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
               }
             },
             itemBuilder: (context) => [
-              const PopupMenuItem(value: 'edit', child: Text('Editar')),
-              const PopupMenuItem(value: 'export', child: Text('Exportar PDF')),
-              const PopupMenuItem(
-                value: 'desagrupar',
-                child: Text('Desagrupar'),
+              PopupMenuItem(
+                value: 'edit',
+                child: Text(AppLocalizations.of(context)?.edit ?? 'Editar'),
               ),
-              const PopupMenuItem(value: 'delete', child: Text('Excluir')),
+              PopupMenuItem(
+                value: 'export',
+                child: Text(
+                  AppLocalizations.of(context)?.exportPdf ?? 'Exportar PDF',
+                ),
+              ),
+              PopupMenuItem(
+                value: 'desagrupar',
+                child: Text(
+                  AppLocalizations.of(context)?.ungroup ?? 'Desagrupar',
+                ),
+              ),
+              PopupMenuItem(
+                value: 'delete',
+                child: Text(
+                  AppLocalizations.of(context)?.deleteLabel ?? 'Excluir',
+                ),
+              ),
             ],
           ),
           onTap: () {
@@ -643,7 +676,9 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Fechar'),
+                      child: Text(
+                        AppLocalizations.of(context)?.close ?? 'Fechar',
+                      ),
                     ),
                   ],
                 );
@@ -695,8 +730,10 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
               });
             },
             tooltip: _isCardView
-                ? 'Alternar para modo ícones'
-                : 'Alternar para modo blocos',
+                ? (AppLocalizations.of(context)?.toggleToIcons ??
+                      'Alternar para modo ícones')
+                : (AppLocalizations.of(context)?.toggleToCards ??
+                      'Alternar para modo blocos'),
           ),
           // delete group
           IconButton(
@@ -728,7 +765,9 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.person),
-              title: const Text('Editar Perfil'),
+              title: Text(
+                AppLocalizations.of(context)?.editProfile ?? 'Editar Perfil',
+              ),
               onTap: () {
                 Navigator.push(
                   context,
@@ -738,14 +777,16 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.settings),
-              title: Text(AppLocalizations.of(context)!.settings),
+              title: Text(
+                AppLocalizations.of(context)?.settings ?? 'Configurações',
+              ),
               onTap: () {
                 Navigator.pushNamed(context, '/settings');
               },
             ),
             ListTile(
               leading: const Icon(Icons.logout),
-              title: Text(AppLocalizations.of(context)!.logout),
+              title: Text(AppLocalizations.of(context)?.logout ?? 'Sair'),
               onTap: () async {
                 final auth = Provider.of<AuthProvider>(context, listen: false);
                 final pinProvider = Provider.of<PinProvider>(
@@ -776,7 +817,10 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
               if (historias.isEmpty) {
                 return Center(
                   child: Text(
-                    'Nenhuma história no grupo "${widget.grupo.nome}".',
+                    AppLocalizations.of(
+                          context,
+                        )?.noStoriesInGroup(widget.grupo.nome) ??
+                        'Nenhuma história no grupo "${widget.grupo.nome}".',
                   ),
                 );
               }

@@ -350,6 +350,23 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
+  String get archiveLabel => 'Arquivar';
+
+  @override
+  String get storyArchived => 'História arquivada';
+
+  @override
+  String get undo => 'Desfazer';
+
+  @override
+  String get ungroup => 'Desagrupar';
+
+  @override
+  String noStoriesInGroup(Object group) {
+    return 'Nenhuma história no grupo $group';
+  }
+
+  @override
   String exportPdfError(Object error) {
     return 'Erro ao exportar PDF: $error';
   }
@@ -698,6 +715,23 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String previewTitle(Object title) {
     return 'Visualização - $title';
+  }
+
+  @override
+  String get archiveLabel => 'Arquivar';
+
+  @override
+  String get storyArchived => 'História arquivada';
+
+  @override
+  String get undo => 'Desfazer';
+
+  @override
+  String get ungroup => 'Desagrupar';
+
+  @override
+  String noStoriesInGroup(Object group) {
+    return 'Nenhuma história no grupo $group';
   }
 
   @override

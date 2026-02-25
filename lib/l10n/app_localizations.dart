@@ -98,535 +98,535 @@ abstract class AppLocalizations {
     Locale('pt', 'BR')
   ];
 
-  /// No description provided for @appTitle.
+  /// Label for appTitle
   ///
   /// In en, this message translates to:
   /// **'DayApp'**
   String get appTitle;
 
-  /// No description provided for @settings.
+  /// Label for settings
   ///
   /// In en, this message translates to:
   /// **'Settings'**
   String get settings;
 
-  /// No description provided for @language.
+  /// Label for language
   ///
   /// In en, this message translates to:
   /// **'Language'**
   String get language;
 
-  /// No description provided for @deviceDefault.
+  /// Label shown in language selection to use the device's default language
   ///
   /// In en, this message translates to:
   /// **'Device default'**
   String get deviceDefault;
 
-  /// No description provided for @english.
+  /// Label for english
   ///
   /// In en, this message translates to:
   /// **'English'**
   String get english;
 
-  /// No description provided for @spanish.
+  /// Label for spanish
   ///
   /// In en, this message translates to:
   /// **'Spanish'**
   String get spanish;
 
-  /// No description provided for @tryAgain.
+  /// Label for tryAgain
   ///
   /// In en, this message translates to:
   /// **'Try again'**
   String get tryAgain;
 
-  /// No description provided for @errorInitializingApp.
+  /// Message shown when the app fails to initialize
   ///
   /// In en, this message translates to:
   /// **'Error initializing app'**
   String get errorInitializingApp;
 
-  /// No description provided for @theme.
+  /// Label for theme
   ///
   /// In en, this message translates to:
   /// **'Theme'**
   String get theme;
 
-  /// No description provided for @pinUnlock.
+  /// Label for pinUnlock
   ///
   /// In en, this message translates to:
   /// **'Unlock PIN'**
   String get pinUnlock;
 
-  /// No description provided for @changePin.
+  /// Label for changePin
   ///
   /// In en, this message translates to:
   /// **'Change PIN'**
   String get changePin;
 
-  /// No description provided for @enableBiometrics.
+  /// Label for enableBiometrics
   ///
   /// In en, this message translates to:
   /// **'Biometric login'**
   String get enableBiometrics;
 
-  /// No description provided for @information.
+  /// Label for information
   ///
   /// In en, this message translates to:
   /// **'Information'**
   String get information;
 
-  /// No description provided for @email.
+  /// Label for email
   ///
   /// In en, this message translates to:
   /// **'E-mail'**
   String get email;
 
-  /// No description provided for @password.
+  /// Label for password
   ///
   /// In en, this message translates to:
   /// **'Password'**
   String get password;
 
-  /// No description provided for @configurePin.
+  /// Label for configurePin
   ///
   /// In en, this message translates to:
   /// **'Configure PIN'**
   String get configurePin;
 
-  /// No description provided for @biometrics.
+  /// Label for biometrics
   ///
   /// In en, this message translates to:
   /// **'Biometrics'**
   String get biometrics;
 
-  /// No description provided for @backgroundLock.
+  /// Label for backgroundLock
   ///
   /// In en, this message translates to:
   /// **'Background lock'**
   String get backgroundLock;
 
-  /// No description provided for @statistics.
+  /// Label for statistics
   ///
   /// In en, this message translates to:
   /// **'Statistics'**
   String get statistics;
 
-  /// No description provided for @manageGroups.
+  /// Label for manageGroups
   ///
   /// In en, this message translates to:
   /// **'Manage groups'**
   String get manageGroups;
 
-  /// No description provided for @trash.
+  /// Label for trash
   ///
   /// In en, this message translates to:
   /// **'Trash'**
   String get trash;
 
-  /// No description provided for @help.
+  /// Label for help
   ///
   /// In en, this message translates to:
   /// **'Help'**
   String get help;
 
-  /// No description provided for @about.
+  /// Label for about
   ///
   /// In en, this message translates to:
   /// **'About'**
   String get about;
 
-  /// No description provided for @logout.
+  /// Label for logout
   ///
   /// In en, this message translates to:
   /// **'Logout'**
   String get logout;
 
-  /// No description provided for @createAccount.
+  /// Label for createAccount
   ///
   /// In en, this message translates to:
   /// **'Create account'**
   String get createAccount;
 
-  /// No description provided for @name.
+  /// Label for name
   ///
   /// In en, this message translates to:
   /// **'Name'**
   String get name;
 
-  /// No description provided for @confirmPassword.
+  /// Label for confirmPassword
   ///
   /// In en, this message translates to:
   /// **'Confirm Password'**
   String get confirmPassword;
 
-  /// No description provided for @createAccountButton.
+  /// Label for createAccountButton
   ///
   /// In en, this message translates to:
   /// **'Create Account'**
   String get createAccountButton;
 
-  /// No description provided for @alreadyHaveAccount.
+  /// Label for alreadyHaveAccount
   ///
   /// In en, this message translates to:
   /// **'Already have an account? Log in'**
   String get alreadyHaveAccount;
 
-  /// No description provided for @needHelp.
+  /// Label for needHelp
   ///
   /// In en, this message translates to:
   /// **'Need help?'**
   String get needHelp;
 
-  /// No description provided for @currentPinLabel.
+  /// Label for currentPinLabel
   ///
   /// In en, this message translates to:
   /// **'Current PIN'**
   String get currentPinLabel;
 
-  /// No description provided for @newPinLabel.
+  /// Label for newPinLabel
   ///
   /// In en, this message translates to:
   /// **'New PIN'**
   String get newPinLabel;
 
-  /// No description provided for @pinLabel.
+  /// Label for pinLabel
   ///
   /// In en, this message translates to:
   /// **'PIN'**
   String get pinLabel;
 
-  /// No description provided for @confirmPin.
+  /// Label for confirmPin
   ///
   /// In en, this message translates to:
   /// **'Confirm PIN'**
   String get confirmPin;
 
-  /// No description provided for @enterCurrentPin.
+  /// Label for enterCurrentPin
   ///
   /// In en, this message translates to:
   /// **'Enter current PIN'**
   String get enterCurrentPin;
 
-  /// No description provided for @enterPin.
+  /// Label for enterPin
   ///
   /// In en, this message translates to:
   /// **'Enter PIN'**
   String get enterPin;
 
-  /// No description provided for @pinLengthError.
+  /// Message for pinLengthError
   ///
   /// In en, this message translates to:
   /// **'PIN must be between 4 and 8 digits'**
   String get pinLengthError;
 
-  /// No description provided for @pinsDoNotMatch.
+  /// Message for pinsDoNotMatch
   ///
   /// In en, this message translates to:
   /// **'PINs do not match'**
   String get pinsDoNotMatch;
 
-  /// No description provided for @pinIncorrect.
+  /// Message for pinIncorrect
   ///
   /// In en, this message translates to:
   /// **'Current PIN incorrect'**
   String get pinIncorrect;
 
-  /// No description provided for @pinChangedSuccess.
+  /// Message for pinChangedSuccess
   ///
   /// In en, this message translates to:
   /// **'PIN changed successfully!'**
   String get pinChangedSuccess;
 
-  /// No description provided for @pinConfiguredSuccess.
+  /// Message for pinConfiguredSuccess
   ///
   /// In en, this message translates to:
   /// **'PIN configured successfully!'**
   String get pinConfiguredSuccess;
 
-  /// No description provided for @informYourEmail.
+  /// Message for informYourEmail
   ///
   /// In en, this message translates to:
   /// **'Enter your email.'**
   String get informYourEmail;
 
-  /// No description provided for @invalidEmail.
+  /// Message for invalidEmail
   ///
   /// In en, this message translates to:
   /// **'Enter a valid email.'**
   String get invalidEmail;
 
-  /// No description provided for @emailNotFound.
+  /// Message for emailNotFound
   ///
   /// In en, this message translates to:
   /// **'Email not found. Check and try again.'**
   String get emailNotFound;
 
-  /// No description provided for @codeSent.
+  /// Message for codeSent
   ///
   /// In en, this message translates to:
   /// **'Code sent to {email}! Check your inbox.'**
   String codeSent(Object email);
 
-  /// No description provided for @codeMustBe6.
+  /// Message for codeMustBe6
   ///
   /// In en, this message translates to:
   /// **'The code must be 6 digits.'**
   String get codeMustBe6;
 
-  /// No description provided for @codeVerified.
+  /// Message for codeVerified
   ///
   /// In en, this message translates to:
   /// **'Code verified! Set your new password.'**
   String get codeVerified;
 
-  /// No description provided for @codeInvalid.
+  /// Message for codeInvalid
   ///
   /// In en, this message translates to:
   /// **'Invalid or expired code. Try again.'**
   String get codeInvalid;
 
-  /// No description provided for @enterNewPassword.
+  /// Message for enterNewPassword
   ///
   /// In en, this message translates to:
   /// **'Enter the new password.'**
   String get enterNewPassword;
 
-  /// No description provided for @passwordResetSuccess.
+  /// Message for passwordResetSuccess
   ///
   /// In en, this message translates to:
   /// **'Password reset successfully! Log in with the new password.'**
   String get passwordResetSuccess;
 
-  /// No description provided for @errorResetPassword.
+  /// Message for errorResetPassword
   ///
   /// In en, this message translates to:
   /// **'Error resetting password. Try again.'**
   String get errorResetPassword;
 
-  /// No description provided for @passwordsDoNotMatch.
+  /// Message for passwordsDoNotMatch
   ///
   /// In en, this message translates to:
   /// **'Passwords do not match.'**
   String get passwordsDoNotMatch;
 
-  /// No description provided for @resendCodeSuccess.
+  /// Message for resendCodeSuccess
   ///
   /// In en, this message translates to:
   /// **'New code sent! Check your inbox.'**
   String get resendCodeSuccess;
 
-  /// No description provided for @resendCodeError.
+  /// Message for resendCodeError
   ///
   /// In en, this message translates to:
   /// **'Error resending code. Try again.'**
   String get resendCodeError;
 
-  /// No description provided for @passwordMinLength.
+  /// Message for passwordMinLength
   ///
   /// In en, this message translates to:
   /// **'Password must be at least 6 characters.'**
   String get passwordMinLength;
 
-  /// No description provided for @sendCode.
+  /// Label for sendCode
   ///
   /// In en, this message translates to:
   /// **'Send code'**
   String get sendCode;
 
-  /// No description provided for @unlock.
+  /// Label for unlock
   ///
   /// In en, this message translates to:
   /// **'Unlock'**
   String get unlock;
 
-  /// No description provided for @fullName.
+  /// Label for fullName
   ///
   /// In en, this message translates to:
   /// **'Full name'**
   String get fullName;
 
-  /// No description provided for @nameRequired.
+  /// Message for nameRequired
   ///
   /// In en, this message translates to:
   /// **'Name is required'**
   String get nameRequired;
 
-  /// No description provided for @nameMinLength.
+  /// Message for nameMinLength
   ///
   /// In en, this message translates to:
   /// **'Name must be at least 2 characters'**
   String get nameMinLength;
 
-  /// No description provided for @emailRequired.
+  /// Message for emailRequired
   ///
   /// In en, this message translates to:
   /// **'Email is required'**
   String get emailRequired;
 
-  /// No description provided for @emailInvalid.
+  /// Message for emailInvalid
   ///
   /// In en, this message translates to:
   /// **'Enter a valid email'**
   String get emailInvalid;
 
-  /// No description provided for @welcomeBack.
+  /// Label for welcomeBack
   ///
   /// In en, this message translates to:
   /// **'Welcome back!'**
   String get welcomeBack;
 
-  /// No description provided for @accessAccount.
+  /// Label for accessAccount
   ///
   /// In en, this message translates to:
   /// **'Access your account'**
   String get accessAccount;
 
-  /// No description provided for @enterPassword.
+  /// Label for enterPassword
   ///
   /// In en, this message translates to:
   /// **'Enter your password'**
   String get enterPassword;
 
-  /// No description provided for @signIn.
+  /// Label for signIn
   ///
   /// In en, this message translates to:
   /// **'Sign in'**
   String get signIn;
 
-  /// No description provided for @forgotPassword.
+  /// Label for forgotPassword
   ///
   /// In en, this message translates to:
   /// **'Forgot my password'**
   String get forgotPassword;
 
-  /// No description provided for @noAccountCreateHere.
+  /// Label for noAccountCreateHere
   ///
   /// In en, this message translates to:
   /// **'No account? Create one here.'**
   String get noAccountCreateHere;
 
-  /// No description provided for @privacyPolicy.
+  /// Label for privacyPolicy
   ///
   /// In en, this message translates to:
   /// **'Privacy Policy'**
   String get privacyPolicy;
 
-  /// No description provided for @biometricsEnabledSuccess.
+  /// Message for biometricsEnabledSuccess
   ///
   /// In en, this message translates to:
   /// **'Biometrics enabled successfully!'**
   String get biometricsEnabledSuccess;
 
-  /// No description provided for @biometricLoginError.
+  /// Message for biometricLoginError
   ///
   /// In en, this message translates to:
   /// **'Error logging in with biometrics.'**
   String get biometricLoginError;
 
-  /// No description provided for @invalidCredentials.
+  /// Message for invalidCredentials
   ///
   /// In en, this message translates to:
   /// **'Invalid email or password.'**
   String get invalidCredentials;
 
-  /// No description provided for @profileUpdatedSuccess.
+  /// Message for profileUpdatedSuccess
   ///
   /// In en, this message translates to:
   /// **'Profile updated successfully!'**
   String get profileUpdatedSuccess;
 
-  /// No description provided for @profileUpdateError.
+  /// Message for profileUpdateError
   ///
   /// In en, this message translates to:
   /// **'Error updating profile. Try again.'**
   String get profileUpdateError;
 
-  /// No description provided for @unlockAppReason.
+  /// Message for unlockAppReason
   ///
   /// In en, this message translates to:
   /// **'Unlock the app to continue'**
   String get unlockAppReason;
 
-  /// No description provided for @fillEmailAndPassword.
+  /// Message for fillEmailAndPassword
   ///
   /// In en, this message translates to:
   /// **'Fill in email and password'**
   String get fillEmailAndPassword;
 
-  /// No description provided for @emailOrPasswordIncorrect.
+  /// Message for emailOrPasswordIncorrect
   ///
   /// In en, this message translates to:
   /// **'Email or password incorrect'**
   String get emailOrPasswordIncorrect;
 
-  /// No description provided for @noEmailRegistered.
+  /// Message for noEmailRegistered
   ///
   /// In en, this message translates to:
   /// **'No email registered. Configure it in settings.'**
   String get noEmailRegistered;
 
-  /// No description provided for @checkEmailOrUseCode.
+  /// Message for checkEmailOrUseCode
   ///
   /// In en, this message translates to:
   /// **'Check your email at {email} or use the displayed code'**
   String checkEmailOrUseCode(Object email);
 
-  /// No description provided for @errorGeneratingCode.
+  /// Message for errorGeneratingCode
   ///
   /// In en, this message translates to:
   /// **'Error generating code. Try again.'**
   String get errorGeneratingCode;
 
-  /// No description provided for @errorSendingCode.
+  /// Message for errorSendingCode
   ///
   /// In en, this message translates to:
   /// **'Error sending code. Try again.'**
   String get errorSendingCode;
 
-  /// No description provided for @recoverPinTitle.
+  /// Label for recoverPinTitle
   ///
   /// In en, this message translates to:
   /// **'Recover PIN'**
   String get recoverPinTitle;
 
-  /// No description provided for @enterRecoveryCodePrompt.
+  /// Label for enterRecoveryCodePrompt
   ///
   /// In en, this message translates to:
   /// **'Enter the code sent to your email:'**
   String get enterRecoveryCodePrompt;
 
-  /// No description provided for @recoveryCodeLabel.
+  /// Label for recoveryCodeLabel
   ///
   /// In en, this message translates to:
   /// **'Recovery code (6 digits)'**
   String get recoveryCodeLabel;
 
-  /// No description provided for @enterPasswordToContinue.
+  /// Label for enterPasswordToContinue
   ///
   /// In en, this message translates to:
   /// **'Enter your password to continue'**
   String get enterPasswordToContinue;
 
-  /// No description provided for @enterPinToContinue.
+  /// Label for enterPinToContinue
   ///
   /// In en, this message translates to:
   /// **'Enter your PIN to continue'**
   String get enterPinToContinue;
 
-  /// No description provided for @useBiometricsToContinue.
+  /// Label for useBiometricsToContinue
   ///
   /// In en, this message translates to:
   /// **'Use your biometrics to continue'**
   String get useBiometricsToContinue;
 
-  /// No description provided for @unlockTitle.
+  /// Label for unlockTitle
   ///
   /// In en, this message translates to:
   /// **'Unlock the App'**
   String get unlockTitle;
 
-  /// No description provided for @search.
+  /// Label for search
   ///
   /// In en, this message translates to:
   /// **'Search'**
@@ -638,121 +638,121 @@ abstract class AppLocalizations {
   /// **'You have {count} stories not backed up.'**
   String unsavedBackups(Object count);
 
-  /// No description provided for @backupRecommendation.
+  /// Label for backupRecommendation
   ///
   /// In en, this message translates to:
   /// **'We recommend backing up to avoid losing your data.'**
   String get backupRecommendation;
 
-  /// No description provided for @cancel.
+  /// Label for cancel
   ///
   /// In en, this message translates to:
   /// **'Cancel'**
   String get cancel;
 
-  /// No description provided for @performBackup.
+  /// Label for performBackup
   ///
   /// In en, this message translates to:
   /// **'Backup now'**
   String get performBackup;
 
-  /// No description provided for @deleteStoryTitle.
+  /// Label for deleteStoryTitle
   ///
   /// In en, this message translates to:
   /// **'Delete story'**
   String get deleteStoryTitle;
 
-  /// No description provided for @deleteStoryConfirm.
+  /// Message for deleteStoryConfirm
   ///
   /// In en, this message translates to:
   /// **'Do you want to move this story to the trash?'**
   String get deleteStoryConfirm;
 
-  /// No description provided for @deleteLabel.
+  /// Label for deleteLabel
   ///
   /// In en, this message translates to:
   /// **'Delete'**
   String get deleteLabel;
 
-  /// No description provided for @movedToTrash.
+  /// Message for movedToTrash
   ///
   /// In en, this message translates to:
   /// **'Story moved to trash'**
   String get movedToTrash;
 
-  /// No description provided for @unarchive.
+  /// Label for unarchive
   ///
   /// In en, this message translates to:
   /// **'Unarchive'**
   String get unarchive;
 
-  /// No description provided for @group.
+  /// Label for group
   ///
   /// In en, this message translates to:
   /// **'Group'**
   String get group;
 
-  /// No description provided for @archivedTitle.
+  /// Label for archivedTitle
   ///
   /// In en, this message translates to:
   /// **'Archived'**
   String get archivedTitle;
 
-  /// No description provided for @toggleToIcons.
+  /// Label for toggleToIcons
   ///
   /// In en, this message translates to:
   /// **'Switch to icon view'**
   String get toggleToIcons;
 
-  /// No description provided for @toggleToCards.
+  /// Label for toggleToCards
   ///
   /// In en, this message translates to:
   /// **'Switch to card view'**
   String get toggleToCards;
 
-  /// No description provided for @menu.
+  /// Label for menu
   ///
   /// In en, this message translates to:
   /// **'Menu'**
   String get menu;
 
-  /// No description provided for @editProfile.
+  /// Label for editProfile
   ///
   /// In en, this message translates to:
   /// **'Edit profile'**
   String get editProfile;
 
-  /// No description provided for @editTip.
+  /// Label for editTip
   ///
   /// In en, this message translates to:
   /// **'Edit - double tap'**
   String get editTip;
 
-  /// No description provided for @exportPdf.
+  /// Label for exportPdf
   ///
   /// In en, this message translates to:
   /// **'Export PDF'**
   String get exportPdf;
 
-  /// No description provided for @close.
+  /// Label for close
   ///
   /// In en, this message translates to:
   /// **'Close'**
   String get close;
 
-  /// No description provided for @newStory.
+  /// Label for newStory
   ///
   /// In en, this message translates to:
   /// **'New Story'**
   String get newStory;
 
-  /// No description provided for @noArchivedStories.
+  /// Label for noArchivedStories
   ///
   /// In en, this message translates to:
   /// **'No archived stories.'**
   String get noArchivedStories;
 
-  /// No description provided for @edit.
+  /// Label for edit
   ///
   /// In en, this message translates to:
   /// **'Edit'**
@@ -763,6 +763,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Preview - {title}'**
   String previewTitle(Object title);
+
+  /// Label for archiveLabel
+  ///
+  /// In en, this message translates to:
+  /// **'Archive'**
+  String get archiveLabel;
+
+  /// Message for storyArchived
+  ///
+  /// In en, this message translates to:
+  /// **'Story archived'**
+  String get storyArchived;
+
+  /// Label for undo
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get undo;
+
+  /// Label for ungroup
+  ///
+  /// In en, this message translates to:
+  /// **'Ungroup'**
+  String get ungroup;
+
+  /// No description provided for @noStoriesInGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'No stories in group {group}'**
+  String noStoriesInGroup(Object group);
 
   /// No description provided for @exportPdfError.
   ///

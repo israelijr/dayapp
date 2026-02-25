@@ -350,6 +350,23 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get archiveLabel => 'Archive';
+
+  @override
+  String get storyArchived => 'Story archived';
+
+  @override
+  String get undo => 'Undo';
+
+  @override
+  String get ungroup => 'Ungroup';
+
+  @override
+  String noStoriesInGroup(Object group) {
+    return 'No stories in group $group';
+  }
+
+  @override
   String exportPdfError(Object error) {
     return 'Error exporting PDF: $error';
   }
