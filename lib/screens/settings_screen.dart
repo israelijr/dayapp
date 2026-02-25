@@ -722,101 +722,112 @@ class _SettingsScreenState extends State<SettingsScreen> {
               'Bloqueio em Segundo Plano',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Após quanto tempo em segundo plano o app deve ser bloqueado?',
-                ),
-                const SizedBox(height: 20),
-
-                // Campo de entrada com seletor de unidade
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: CustomTextField(
-                        controller: controller,
-                        label: 'Tempo',
-                        hintText: '0 = imediato',
-                        keyboardType: TextInputType.number,
-                        suffixText: selectedUnit,
-                        onChanged: (_) => setDialogState(() {}),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    // Seletor de unidade
-                    SegmentedButton<String>(
-                      segments: const [
-                        ButtonSegment(value: 'seg', label: Text('seg')),
-                        ButtonSegment(value: 'min', label: Text('min')),
-                        ButtonSegment(value: 'h', label: Text('h')),
-                      ],
-                      selected: {selectedUnit},
-                      onSelectionChanged: (value) {
-                        setDialogState(() {
-                          selectedUnit = value.first;
-                        });
-                      },
-                      style: const ButtonStyle(
-                        visualDensity: VisualDensity.compact,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 8),
-                // Mostra o valor resultante
-                Text(
-                  'Resultado: ${InactivityService.getBackgroundTimeoutLabel(currentSeconds)}',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Após quanto tempo em segundo plano o app deve ser bloqueado?',
                   ),
-                ),
+                  const SizedBox(height: 12),
 
-                const SizedBox(height: 16),
-                // Atalhos rápidos
-                const Text(
-                  'Sugestões:',
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
-                ),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 4,
-                  children: [
-                    for (final seconds
-                        in InactivityService.backgroundTimeoutOptions)
-                      ActionChip(
-                        label: Text(
-                          InactivityService.getBackgroundTimeoutLabel(seconds),
-                          style: const TextStyle(fontSize: 12),
+                  // Campo de entrada com seletor de unidade
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: CustomTextField(
+                          controller: controller,
+                          label: 'Tempo',
+                          hintText: '0 = imediato',
+                          keyboardType: TextInputType.number,
+                          // não mostrar suffixText para evitar renderização vertical indesejada
+                          // Força single-line com padding reduzido para evitar altura excessiva
+                          minLines: 1,
+                          maxLines: 1,
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 12,
+                          ),
+                          onChanged: (_) => setDialogState(() {}),
                         ),
-                        backgroundColor: currentSeconds == seconds
-                            ? Theme.of(context).colorScheme.primaryContainer
-                            : null,
-                        onPressed: () {
-                          // Determina unidade e valor para o atalho
-                          if (seconds == 0) {
-                            controller.text = '';
-                            setDialogState(() => selectedUnit = 'min');
-                          } else if (seconds >= 3600 && seconds % 3600 == 0) {
-                            controller.text = (seconds ~/ 3600).toString();
-                            setDialogState(() => selectedUnit = 'h');
-                          } else if (seconds >= 60 && seconds % 60 == 0) {
-                            controller.text = (seconds ~/ 60).toString();
-                            setDialogState(() => selectedUnit = 'min');
-                          } else {
-                            controller.text = seconds.toString();
-                            setDialogState(() => selectedUnit = 'seg');
-                          }
-                        },
                       ),
-                  ],
-                ),
-              ],
+                      const SizedBox(width: 12),
+                      // Seletor de unidade
+                      SegmentedButton<String>(
+                        segments: const [
+                          ButtonSegment(value: 'seg', label: Text('seg')),
+                          ButtonSegment(value: 'min', label: Text('min')),
+                          ButtonSegment(value: 'h', label: Text('h')),
+                        ],
+                        selected: {selectedUnit},
+                        onSelectionChanged: (value) {
+                          setDialogState(() {
+                            selectedUnit = value.first;
+                          });
+                        },
+                        style: const ButtonStyle(
+                          visualDensity: VisualDensity.compact,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 6),
+                  // Mostra o valor resultante
+                  Text(
+                    'Resultado: ${InactivityService.getBackgroundTimeoutLabel(currentSeconds)}',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+                  // Atalhos rápidos
+                  const Text(
+                    'Sugestões:',
+                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+                  ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 4,
+                    children: [
+                      for (final seconds
+                          in InactivityService.backgroundTimeoutOptions)
+                        ActionChip(
+                          label: Text(
+                            InactivityService.getBackgroundTimeoutLabel(
+                              seconds,
+                            ),
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                          backgroundColor: currentSeconds == seconds
+                              ? Theme.of(context).colorScheme.primaryContainer
+                              : null,
+                          onPressed: () {
+                            // Determina unidade e valor para o atalho
+                            if (seconds == 0) {
+                              controller.text = '';
+                              setDialogState(() => selectedUnit = 'min');
+                            } else if (seconds >= 3600 && seconds % 3600 == 0) {
+                              controller.text = (seconds ~/ 3600).toString();
+                              setDialogState(() => selectedUnit = 'h');
+                            } else if (seconds >= 60 && seconds % 60 == 0) {
+                              controller.text = (seconds ~/ 60).toString();
+                              setDialogState(() => selectedUnit = 'min');
+                            } else {
+                              controller.text = seconds.toString();
+                              setDialogState(() => selectedUnit = 'seg');
+                            }
+                          },
+                        ),
+                    ],
+                  ),
+                ],
+              ),
             ),
             actions: [
               TextButton(

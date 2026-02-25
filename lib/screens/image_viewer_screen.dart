@@ -7,6 +7,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../db/historia_foto_helper.dart';
 import '../providers/pin_provider.dart';
+import '../theme/animation_durations.dart';
 
 class ImageViewerScreen extends StatefulWidget {
   final List<Uint8List> images;
@@ -195,7 +196,7 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
                   );
                   _controller.animateToPage(
                     prev,
-                    duration: const Duration(milliseconds: 300),
+                    duration: AppDurations.pageView,
                     curve: Curves.easeInOut,
                   );
                 },
@@ -219,7 +220,7 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
                   );
                   _controller.animateToPage(
                     next,
-                    duration: const Duration(milliseconds: 300),
+                    duration: AppDurations.pageView,
                     curve: Curves.easeInOut,
                   );
                 },

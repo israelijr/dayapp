@@ -20,6 +20,7 @@ import '../providers/pin_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../services/pdf_export_service.dart';
 import '../services/thumbnail_service.dart';
+import '../theme/animation_durations.dart';
 import '../theme/m3_expressive_theme.dart';
 import '../widgets/compact_audio_icon.dart';
 import '../widgets/compact_video_icon.dart';
@@ -821,7 +822,7 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
 
     // Lista com paginação
     return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 450),
+      duration: AppDurations.listSwitch,
       switchInCurve: Curves.easeOutCubic,
       switchOutCurve: Curves.easeInCubic,
       transitionBuilder: (child, animation) {

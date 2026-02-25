@@ -15,6 +15,7 @@ import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../services/pdf_export_service.dart';
+import '../theme/animation_durations.dart';
 import '../theme/m3_expressive_theme.dart';
 import '../widgets/compact_audio_icon.dart';
 import '../widgets/compact_video_icon.dart';
@@ -779,7 +780,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
                 );
               }
               return AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
+                duration: AppDurations.listSwitch,
                 child: ListView.builder(
                   key: ValueKey<bool>(_isCardView),
                   padding: const EdgeInsets.symmetric(

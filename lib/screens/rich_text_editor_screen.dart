@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+
 import '../helpers/rich_text_helper.dart';
+import '../theme/animation_durations.dart';
 import '../widgets/rich_text_editor_widget.dart';
 
 class SentenceCapitalizationTextInputFormatter extends TextInputFormatter {
@@ -53,7 +55,7 @@ class _RichTextEditorScreenState extends State<RichTextEditorScreen> {
   double _dragOffset = 0.0;
   // Configurable threshold and return animation duration
   final double _threshold = 120.0;
-  final Duration _returnDuration = const Duration(milliseconds: 250);
+  final Duration _returnDuration = AppDurations.modalReturn;
   bool _isAutoSaving = false;
   bool _showAutoSaveCheck = false;
   late String _initialText;
@@ -84,7 +86,7 @@ class _RichTextEditorScreenState extends State<RichTextEditorScreen> {
     });
     HapticFeedback.mediumImpact();
     final navigator = Navigator.of(context);
-    await Future.delayed(const Duration(milliseconds: 350));
+    await Future.delayed(AppDurations.modalReturn);
     if (!mounted) return;
     navigator.pop(_controller.text);
   }
@@ -168,7 +170,7 @@ class _RichTextEditorScreenState extends State<RichTextEditorScreen> {
 
             final navigator = Navigator.of(context);
             // show check animation briefly before popping
-            await Future.delayed(const Duration(milliseconds: 450));
+            await Future.delayed(AppDurations.modalReturn);
             if (!mounted) return;
             navigator.pop(_controller.text);
             return;
@@ -316,10 +318,10 @@ class _RichTextEditorScreenState extends State<RichTextEditorScreen> {
                       child: Center(
                         child: AnimatedOpacity(
                           opacity: _isAutoSaving ? 1.0 : 0.0,
-                          duration: const Duration(milliseconds: 300),
+                          duration: AppDurations.short,
                           child: AnimatedScale(
                             scale: _isAutoSaving ? 1.0 : 0.6,
-                            duration: const Duration(milliseconds: 300),
+                            duration: AppDurations.short,
                             child: Icon(
                               Icons.check_circle,
                               size: 96,

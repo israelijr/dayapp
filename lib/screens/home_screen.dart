@@ -9,6 +9,7 @@ import '../db/database_helper.dart';
 import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
 import '../services/auto_backup_service.dart';
+import '../theme/animation_durations.dart';
 // import '../services/battery_optimization_service.dart';
 // import '../widgets/battery_optimization_dialog.dart';
 import 'edit_profile_screen.dart';
@@ -180,7 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
           if (_selectedIndex == 0)
             Builder(
               builder: (context) {
-                const duration = Duration(milliseconds: 300);
+                const duration = AppDurations.listSwitch;
                 Widget buildToggle(
                   String asset,
                   bool active,

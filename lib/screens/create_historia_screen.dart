@@ -16,6 +16,7 @@ import '../providers/pin_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../services/emoji_service.dart';
 import '../services/pdf_export_service.dart';
+import '../theme/animation_durations.dart';
 import '../widgets/audio_recorder_widget.dart';
 import '../widgets/compact_audio_icon.dart';
 import '../widgets/compact_video_icon.dart';
@@ -516,7 +517,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
             ),
           );
         },
-        transitionDuration: const Duration(milliseconds: 450),
+        transitionDuration: AppDurations.routeTransition,
       ),
     );
     if (result != null) {
