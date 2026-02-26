@@ -33,7 +33,7 @@
   "password": "Senha",
   "configurePin": "Configurar PIN",
   "biometrics": "Biometria",
-  "backgroundLock": "Bloqueio em Segundo Plano"
+  "backgroundLock": "Bloqueio em Segundo Plano",
   "statistics": "Estatísticas",
   "noStoriesYetTitle": "Nenhuma história registrada ainda",
   "noStoriesYetSubtitle": "Comece a registrar seus dias para ver as estatísticas",
@@ -53,13 +53,13 @@
   "trash": "Lixeira",
   "help": "Ajuda",
   "about": "Sobre",
-  "logout": "Sair"
+  "logout": "Sair",
   "createAccount": "Criar conta",
   "name": "Nome",
   "confirmPassword": "Confirmar Senha",
   "createAccountButton": "Criar Conta",
   "alreadyHaveAccount": "Já tem uma conta? Faça login",
-  "needHelp": "Precisa de ajuda?"
+  "needHelp": "Precisa de ajuda?",
   "changePin": "Alterar PIN",
   "currentPinLabel": "PIN atual",
   "newPinLabel": "Novo PIN",
@@ -71,7 +71,7 @@
   "pinsDoNotMatch": "Os PINs não coincidem",
   "pinIncorrect": "PIN atual incorreto",
   "pinChangedSuccess": "PIN alterado com sucesso!",
-  "pinConfiguredSuccess": "PIN configurado com sucesso!"
+  "pinConfiguredSuccess": "PIN configurado com sucesso!",
   "informYourEmail": "Informe seu e-mail.",
   "invalidEmail": "Informe um e-mail válido.",
   "emailNotFound": "E-mail não encontrado. Verifique e tente novamente.",
@@ -82,11 +82,11 @@
   "codeInvalid": "Código inválido ou expirado. Tente novamente.",
   "enterNewPassword": "Informe a nova senha.",
   "passwordResetSuccess": "Senha redefinida com sucesso! Faça login com a nova senha.",
-  "errorResetPassword": "Erro ao redefinir a senha. Tente novamente."
+  "errorResetPassword": "Erro ao redefinir a senha. Tente novamente.",
     "passwordsDoNotMatch": "As senhas não coincidem.",
     "resendCodeSuccess": "Novo código enviado! Verifique sua caixa de entrada.",
-    "resendCodeError": "Erro ao reenviar código. Tente novamente."
-  "passwordMinLength": "A senha deve ter pelo menos 6 caracteres."
+    "resendCodeError": "Erro ao reenviar código. Tente novamente.",
+  "passwordMinLength": "A senha deve ter pelo menos 6 caracteres.",
     "sendCode": "Enviar Código",
     "unlock": "Desbloquear",
     "fullName": "Nome completo",
@@ -102,7 +102,7 @@
     "emailRequired": "E-mail é obrigatório",
     "emailInvalid": "Digite um e-mail válido",
     "profileUpdatedSuccess": "Perfil atualizado com sucesso!",
-    "profileUpdateError": "Erro ao atualizar perfil. Tente novamente."
+    "profileUpdateError": "Erro ao atualizar perfil. Tente novamente.",
     "unlockAppReason": "Desbloqueie o app para continuar",
     "fillEmailAndPassword": "Preencha o e-mail e a senha",
     "emailOrPasswordIncorrect": "E-mail ou senha incorretos",
@@ -116,7 +116,7 @@
     "enterRecoveryCodePrompt": "Digite o código que foi enviado para seu e-mail:",
     "recoveryCodeLabel": "Código de recuperação (6 dígitos)",
     "enterPasswordToContinue": "Digite sua senha para continuar",
-    "enterPinToContinue": "Digite seu PIN para continuar"
+    "enterPinToContinue": "Digite seu PIN para continuar",
   "welcomeBack": "Bem vindo de volta!",
   "accessAccount": "Acesse sua conta",
   "enterPassword": "Digite sua senha",
@@ -128,7 +128,7 @@
   "biometricLoginError": "Erro ao fazer login com biometria.",
   "invalidCredentials": "E-mail ou senha inválidos.",
   "useBiometricsToContinue": "Use sua biometria para continuar",
-  "unlockTitle": "Desbloqueie o App"
+  "unlockTitle": "Desbloqueie o App",
   "search": "Pesquisar",
   "unsavedBackups": "Você tem {count} histórias sem backup.",
   "@unsavedBackups": {
@@ -138,7 +138,7 @@
   },
   "backupRecommendation": "Recomendamos fazer backup para evitar perder seus dados.",
   "cancel": "Cancelar",
-  "performBackup": "Fazer backup"
+  "performBackup": "Fazer backup",
   "deleteStoryTitle": "Excluir história",
   "deleteStoryConfirm": "Deseja mover esta história para a lixeira?",
   "deleteLabel": "Excluir",
@@ -219,7 +219,7 @@
   "exportPdfError": "Erro ao exportar PDF: {error}",
   "@exportPdfError": {
     "placeholders": { "error": {} }
-  }
+  },
   "@appTitle": { "description": "Label for appTitle", "type": "text" },
   "@settings": { "description": "Label for settings", "type": "text" },
   "@language": { "description": "Label for language", "type": "text" },
