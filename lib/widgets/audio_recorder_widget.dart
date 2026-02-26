@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
@@ -130,7 +131,7 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
             const SizedBox(height: 16),
             TextButton(
               onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
-              child: const Text('Cancelar'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
           ],
         ),
@@ -217,7 +218,7 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
                 if (!mounted) return;
                 Navigator.of(context).pop();
               },
-              child: const Text('Cancelar'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
           ],
         ),
@@ -252,15 +253,20 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
         _startTimer();
       } else {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Permissão de microfone não concedida')),
-        );
+        final loc = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(loc.permissionMicrophoneDenied)));
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Erro ao iniciar gravação: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.errorStartRecording(e.toString()),
+          ),
+        ),
+      );
     }
   }
 
@@ -272,9 +278,13 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
       });
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Erro ao pausar gravação: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.errorPauseRecording(e.toString()),
+          ),
+        ),
+      );
     }
   }
 
@@ -286,9 +296,13 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
       });
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Erro ao retomar gravação: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.errorResumeRecording(e.toString()),
+          ),
+        ),
+      );
     }
   }
 
@@ -333,9 +347,13 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Erro ao parar gravação: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.errorStopRecording(e.toString()),
+          ),
+        ),
+      );
     }
   }
 
@@ -413,9 +431,13 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
 
       if (!mounted) return;
       setState(() => _isLoading = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Erro ao selecionar áudios: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.errorSelectAudios(e.toString()),
+          ),
+        ),
+      );
     }
   }
 
@@ -466,9 +488,13 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
       pinProvider.isPickingExternalMedia = false;
 
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Erro ao selecionar arquivo: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.errorSelectFile(e.toString()),
+          ),
+        ),
+      );
     }
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -114,7 +115,7 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
             const SizedBox(height: 16),
             TextButton(
               onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
-              child: const Text('Cancelar'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
           ],
         ),
@@ -169,12 +170,13 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
       Navigator.of(context).pop();
 
       // Mensagem de sucesso
+      final loc = AppLocalizations.of(context)!;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
             imageBytes.length == 1
-                ? 'Imagem adicionada com sucesso!'
-                : '${imageBytes.length} imagens adicionadas com sucesso!',
+                ? loc.successImageAdded
+                : loc.successImagesAdded(imageBytes.length),
           ),
         ),
       );
@@ -184,9 +186,10 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
 
       if (!mounted) return;
       setState(() => _isLoading = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Erro ao selecionar imagens: $e')));
+      final loc = AppLocalizations.of(context)!;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(loc.errorSelectImages(e.toString()))),
+      );
     }
   }
 
@@ -228,9 +231,10 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
       pinProvider.isPickingExternalMedia = false;
 
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Erro ao selecionar imagem: $e')));
+      final loc = AppLocalizations.of(context)!;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(loc.errorSelectImages(e.toString()))),
+      );
     }
   }
 
@@ -269,17 +273,19 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
       Navigator.of(context).pop();
 
       // Mensagem de sucesso
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Foto capturada com sucesso!')),
-      );
+      final loc = AppLocalizations.of(context)!;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(loc.successPhotoCaptured)));
     } catch (e) {
       // Garante reset da flag em caso de erro
       pinProvider.isPickingExternalMedia = false;
 
       if (!mounted) return;
+      final loc = AppLocalizations.of(context)!;
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Erro ao tirar foto: $e')));
+      ).showSnackBar(SnackBar(content: Text(loc.errorTakePhoto(e.toString()))));
     }
   }
 }

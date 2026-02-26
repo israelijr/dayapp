@@ -178,8 +178,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       // Garante reset da flag em caso de erro
       pinProvider.isPickingExternalMedia = false;
 
-      // Mostrar erro
-      _showSnackBar('Erro ao selecionar imagem');
+      // Mostrar erro apenas se o widget ainda está montado
+      if (!mounted) return;
+      _showSnackBar(AppLocalizations.of(context)!.errorSelectImage);
     }
   }
 

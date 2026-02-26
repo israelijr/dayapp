@@ -6,6 +6,8 @@ class HelpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.help),
@@ -17,8 +19,8 @@ class HelpScreen extends StatelessWidget {
           // Introdução
           _buildSection(
             context,
-            'Sobre o DayApp',
-            'O DayApp é um aplicativo de diário pessoal que permite registrar suas histórias, memórias e pensamentos de forma organizada e segura.',
+            loc.helpAboutTitle,
+            loc.helpAboutDescription,
             Icons.info_outline,
           ),
 
@@ -27,22 +29,13 @@ class HelpScreen extends StatelessWidget {
           // Navegação Principal
           _buildSection(
             context,
-            'Navegação Principal',
+            loc.helpNavigationTitle,
             '',
             Icons.navigation,
             children: [
-              _buildHelpItem(
-                'Home',
-                'Visualize suas histórias em cards ou lista. Toque em uma história para visualizar, manter pressionado para opções.',
-              ),
-              _buildHelpItem(
-                'Grupos',
-                'Organize suas histórias em grupos temáticos. Crie grupos personalizados para categorizar suas memórias.',
-              ),
-              _buildHelpItem(
-                'Pesquisar',
-                'Encontre histórias rapidamente por título, conteúdo ou data.',
-              ),
+              _buildHelpItem(loc.home, loc.helpHomeItemDesc),
+              _buildHelpItem(loc.groups, loc.helpGroupsNavDesc),
+              _buildHelpItem(loc.search, loc.helpSearchItemDesc),
             ],
           ),
 
@@ -51,26 +44,14 @@ class HelpScreen extends StatelessWidget {
           // Criando Histórias
           _buildSection(
             context,
-            'Criando Histórias',
+            loc.helpCreatingTitle,
             '',
             Icons.create,
             children: [
-              _buildHelpItem(
-                'Nova História',
-                'Toque no botão flutuante (+) para criar uma nova história. Adicione título, texto rico, imagens, vídeos e áudios.',
-              ),
-              _buildHelpItem(
-                'Editor de Texto',
-                'Use formatação rica: negrito, itálico, listas, links e muito mais.',
-              ),
-              _buildHelpItem(
-                'Mídias',
-                'Adicione fotos da galeria ou câmera, grave vídeos e áudios diretamente no app.',
-              ),
-              _buildHelpItem(
-                'Grupos',
-                'Associe cada história a um ou mais grupos para melhor organização.',
-              ),
+              _buildHelpItem(loc.newStory, loc.helpNewStoryDesc),
+              _buildHelpItem(loc.helpTextEditorTitle, loc.helpTextEditorDesc),
+              _buildHelpItem(loc.mediaLabel, loc.helpMediaDesc),
+              _buildHelpItem(loc.groups, loc.helpGroupsAssocDesc),
             ],
           ),
 
@@ -79,8 +60,8 @@ class HelpScreen extends StatelessWidget {
           // Calendário
           _buildSection(
             context,
-            'Calendário',
-            'Visualize suas histórias organizadas por data. Toque em uma data para ver todas as histórias daquele dia.',
+            loc.calendarTitle,
+            loc.helpCalendarDesc,
             Icons.calendar_today,
           ),
 
@@ -89,22 +70,13 @@ class HelpScreen extends StatelessWidget {
           // Grupos
           _buildSection(
             context,
-            'Gerenciando Grupos',
+            loc.manageGroups,
             '',
             Icons.group,
             children: [
-              _buildHelpItem(
-                'Criar Grupo',
-                'Acesse "Gerenciar Grupos" no menu lateral para criar novos grupos com cores personalizadas.',
-              ),
-              _buildHelpItem(
-                'Editar Grupo',
-                'Mantenha pressionado em um grupo para editar nome, cor ou excluir.',
-              ),
-              _buildHelpItem(
-                'Associar Histórias',
-                'Ao criar ou editar uma história, selecione os grupos relacionados.',
-              ),
+              _buildHelpItem(loc.helpCreateGroupTitle, loc.helpCreateGroupDesc),
+              _buildHelpItem(loc.helpEditGroupTitle, loc.helpEditGroupDesc),
+              _buildHelpItem(loc.helpGroupsAssocDesc, loc.helpGroupsAssocDesc),
             ],
           ),
 
@@ -113,46 +85,31 @@ class HelpScreen extends StatelessWidget {
           // Backup e Segurança
           _buildSection(
             context,
-            'Backup e Segurança',
+            loc.helpBackupSecurityTitle,
             '',
             Icons.security,
             children: [
               _buildHelpItem(
-                'Backup Automático',
-                'Configure backup automático no logout nas Configurações. O backup será criado e você poderá escolher onde salvar.',
+                loc.helpAutomaticBackupTitle,
+                loc.helpAutomaticBackupDesc,
               ),
               _buildHelpItem(
-                'Backup Manual',
-                'Acesse "Gerenciar Backup" nas Configurações para criar backup completo com todas as mídias.',
+                loc.helpManualBackupTitle,
+                loc.helpManualBackupDesc,
               ),
+              _buildHelpItem(loc.helpRestoreTitle, loc.helpRestoreDesc),
+              _buildHelpItem(loc.helpPinSecurityTitle, loc.helpPinSecurityDesc),
+              _buildHelpItem(loc.biometrics, loc.helpBiometricsDesc),
               _buildHelpItem(
-                'Restauração',
-                'Use "Restaurar de Arquivo" para recuperar dados de um backup anterior.',
+                loc.helpPasswordUnlockTitle,
+                loc.helpPasswordUnlockDesc,
               ),
+              _buildHelpItem(loc.backgroundLock, loc.helpBackgroundLockDesc),
               _buildHelpItem(
-                'PIN de Segurança',
-                'Configure um PIN de 4 a 8 dígitos para proteger o acesso ao app.',
+                loc.helpLockExceptionsTitle,
+                loc.helpLockExceptionsDesc,
               ),
-              _buildHelpItem(
-                AppLocalizations.of(context)!.biometrics,
-                'Use digital ou reconhecimento facial para desbloquear o app rapidamente, se disponível no dispositivo.',
-              ),
-              _buildHelpItem(
-                'Desbloqueio por Senha',
-                'Além de PIN e biometria, você pode desbloquear o app usando a senha da sua conta. Útil caso esqueça o PIN ou a biometria falhe.',
-              ),
-              _buildHelpItem(
-                AppLocalizations.of(context)!.backgroundLock,
-                'Quando o app é minimizado ou você troca para outro app, ele é bloqueado automaticamente após o tempo configurado. Você pode definir o tempo livremente nas configurações (segundos, minutos ou horas).',
-              ),
-              _buildHelpItem(
-                'Exceções de Bloqueio',
-                'O app não bloqueia quando você usa recursos internos que abrem outros apps — como selecionar fotos da galeria, gravar vídeos, escolher local de backup ou compartilhar histórias.',
-              ),
-              _buildHelpItem(
-                'Recuperação de PIN',
-                'Esqueceu o PIN? Use a opção "Esqueci meu PIN" na tela de bloqueio. Um código de recuperação será enviado para o e-mail cadastrado.',
-              ),
+              _buildHelpItem(loc.helpPinRecoveryTitle, loc.helpPinRecoveryDesc),
             ],
           ),
 
@@ -161,25 +118,22 @@ class HelpScreen extends StatelessWidget {
           // Configurações
           _buildSection(
             context,
-            AppLocalizations.of(context)!.settings,
+            loc.settings,
             '',
             Icons.settings,
             children: [
+              _buildHelpItem(loc.theme, loc.helpThemeDesc),
               _buildHelpItem(
-                AppLocalizations.of(context)!.theme,
-                'Alterne entre tema claro, escuro ou automático.',
+                loc.notifications,
+                loc.helpNotificationsSettingsDesc,
               ),
               _buildHelpItem(
-                'Notificações',
-                'Configure lembretes para escrever no diário.',
+                loc.backgroundLock,
+                loc.helpBackgroundLockSettingsDesc,
               ),
               _buildHelpItem(
-                'Bloqueio em Segundo Plano',
-                'Defina por quanto tempo o app pode ficar em segundo plano antes de ser bloqueado. Você pode usar valores em segundos, minutos ou horas, com total liberdade.',
-              ),
-              _buildHelpItem(
-                'Backup',
-                'Gerencie configurações de backup e restauração.',
+                loc.helpBackupSettingTitle,
+                loc.helpBackupSettingDesc,
               ),
             ],
           ),
@@ -189,8 +143,8 @@ class HelpScreen extends StatelessWidget {
           // Lixeira
           _buildSection(
             context,
-            'Lixeira',
-            'Histórias excluídas ficam na lixeira por 30 dias. Acesse "Lixeira" no menu lateral para recuperar ou excluir permanentemente.',
+            loc.trash,
+            loc.helpTrashDesc,
             Icons.delete_outline,
           ),
 
@@ -199,8 +153,8 @@ class HelpScreen extends StatelessWidget {
           // Estatísticas
           _buildSection(
             context,
-            'Estatísticas',
-            'Visualize estatísticas sobre seu uso do diário: número de histórias, palavras escritas, grupos mais usados, etc.',
+            loc.statistics,
+            loc.helpStatisticsDesc,
             Icons.analytics,
           ),
 
@@ -209,26 +163,17 @@ class HelpScreen extends StatelessWidget {
           // Dicas de Uso
           _buildSection(
             context,
-            'Dicas de Uso',
+            loc.helpTipsTitle,
             '',
             Icons.lightbulb,
             children: [
               _buildHelpItem(
-                'Organização',
-                'Use grupos para categorizar suas histórias por temas, sentimentos ou períodos da vida.',
+                loc.helpOrganizationTipTitle,
+                loc.helpOrganizationTipDesc,
               ),
-              _buildHelpItem(
-                'Pesquisa',
-                'Use a função de pesquisa para encontrar histórias antigas rapidamente.',
-              ),
-              _buildHelpItem(
-                'Backup Regular',
-                'Faça backup regularmente, especialmente antes de atualizações ou mudanças no dispositivo.',
-              ),
-              _buildHelpItem(
-                'Privacidade',
-                'Suas histórias são armazenadas localmente e criptografadas. Configure PIN para proteção adicional.',
-              ),
+              _buildHelpItem(loc.helpSearchTipTitle, loc.helpSearchTipDesc),
+              _buildHelpItem(loc.helpBackupTipTitle, loc.helpBackupTipDesc),
+              _buildHelpItem(loc.helpPrivacyTipTitle, loc.helpPrivacyTipDesc),
             ],
           ),
 
@@ -237,8 +182,8 @@ class HelpScreen extends StatelessWidget {
           // Suporte
           _buildSection(
             context,
-            'Suporte',
-            'Para dúvidas ou problemas, entre em contato conosco através do email de suporte ou verifique as atualizações do app.',
+            loc.helpSupportTitle,
+            loc.helpSupportDesc,
             Icons.support,
           ),
 

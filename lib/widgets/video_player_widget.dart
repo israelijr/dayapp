@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
@@ -360,7 +361,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
           ),
           const SizedBox(height: 12),
           Text(
-            'Erro ao carregar vídeo',
+            AppLocalizations.of(context)!.errorLoadVideo,
             style: TextStyle(
               color: Theme.of(context).colorScheme.error,
               fontSize: 16,

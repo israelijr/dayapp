@@ -125,6 +125,9 @@ abstract class AppLocalizations {
   /// **'Device default'**
   String get deviceDefault;
 
+  /// No description provided for @defaultLabel.
+  String get defaultLabel;
+
   /// Label for english
   ///
   /// In en, this message translates to:
@@ -1103,6 +1106,126 @@ abstract class AppLocalizations {
   /// **'Error creating backup: {message}'**
   String backupError(String message);
 
+  /// No description provided for @errorCreateAccount.
+  String get errorCreateAccount;
+
+  /// No description provided for @errorShare.
+  String get errorShare;
+
+  /// No description provided for @errorPlayAudio.
+  String errorPlayAudio(String message);
+
+  /// No description provided for @errorSelectVideos.
+  String errorSelectVideos(String message);
+
+  /// No description provided for @errorSelectFile.
+  String errorSelectFile(String message);
+
+  /// No description provided for @errorRecordVideo.
+  String errorRecordVideo(String message);
+
+  /// No description provided for @errorStartRecording.
+  String errorStartRecording(String message);
+
+  /// No description provided for @errorPauseRecording.
+  String errorPauseRecording(String message);
+
+  /// No description provided for @errorResumeRecording.
+  String errorResumeRecording(String message);
+
+  /// No description provided for @errorStopRecording.
+  String errorStopRecording(String message);
+
+  /// No description provided for @errorSelectAudios.
+  String errorSelectAudios(String message);
+
+  /// No description provided for @errorLoadVideo.
+  String get errorLoadVideo;
+
+  /// No description provided for @errorSelectImage.
+  String get errorSelectImage;
+
+  /// No description provided for @emailAlreadyRegistered.
+  String get emailAlreadyRegistered;
+
+  /// No description provided for @successNotificationScheduled.
+  String get successNotificationScheduled;
+
+  /// No description provided for @notificationDialogTitle.
+  String get notificationDialogTitle;
+
+  /// No description provided for @notificationDialogPrompt.
+  String get notificationDialogPrompt;
+
+  /// No description provided for @notificationReminderTitle.
+  String notificationReminderTitle(Object title);
+
+  /// No description provided for @errorSearch.
+  String errorSearch(String message);
+
+  /// No description provided for @successStoryRestored.
+  String get successStoryRestored;
+
+  /// No description provided for @successStoryDeletedPermanently.
+  String get successStoryDeletedPermanently;
+
+  /// No description provided for @trashAlreadyEmpty.
+  String get trashAlreadyEmpty;
+
+  /// No description provided for @successImageAdded.
+  String get successImageAdded;
+
+  /// No description provided for @successImagesAdded.
+  String successImagesAdded(Object count);
+
+  /// No description provided for @successVideoRecorded.
+  String get successVideoRecorded;
+
+  /// No description provided for @permissionMicrophoneDenied.
+  String get permissionMicrophoneDenied;
+
+  /// No description provided for @errorSelectImages.
+  String errorSelectImages(String message);
+
+  /// No description provided for @successPhotoCaptured.
+  String get successPhotoCaptured;
+
+  /// No description provided for @errorTakePhoto.
+  String errorTakePhoto(String message);
+
+  /// No description provided for @restoreStoriesTitle.
+  String get restoreStoriesTitle;
+
+  /// No description provided for @restoreStoriesConfirm.
+  String restoreStoriesConfirm(Object count);
+
+  /// No description provided for @restoreLabel.
+  String get restoreLabel;
+
+  /// No description provided for @permanentlyDeleteTitle.
+  String get permanentlyDeleteTitle;
+
+  /// No description provided for @permanentlyDeleteConfirm.
+  String get permanentlyDeleteConfirm;
+
+  /// No description provided for @permanentlyDeleteLabel.
+  String get permanentlyDeleteLabel;
+
+  /// No description provided for @deleteGroupConfirm.
+  String deleteGroupConfirm(Object name);
+
+  /// No description provided for @emptyTrashTitle.
+  String get emptyTrashTitle;
+
+  /// No description provided for @emptyTrashConfirm.
+  String emptyTrashConfirm(Object count);
+
+  /// No description provided for @emptyTrashLabel.
+  String get emptyTrashLabel;
+
+  /// No description provided for @recoverPinDescription.
+  String get recoverPinDescription;
+
   /// No description provided for @restoreStarting.
   ///
   /// In en, this message translates to:
@@ -1144,6 +1267,171 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The backup was restored successfully! ...'**
   String get restoreSuccessContent;
+
+  /// Title of the 'About DayApp' section in Help
+  ///
+  /// In en, this message translates to:
+  /// **'About DayApp'**
+  String get helpAboutTitle;
+
+  /// Description shown under "About DayApp" in Help
+  ///
+  /// In en, this message translates to:
+  /// **'DayApp is a personal diary app that lets you record your stories, memories and thoughts in an organized and secure way.'**
+  String get helpAboutDescription;
+
+  /// Label for the main help section on navigation
+  ///
+  /// In en, this message translates to:
+  /// **'Main Navigation'**
+  String get helpNavigationTitle;
+
+  /// Description for the Home item in help navigation
+  String get helpHomeItemDesc;
+
+  /// Description for the Groups item in help navigation
+  String get helpGroupsNavDesc;
+
+  /// Description for the Search item in help navigation
+  String get helpSearchItemDesc;
+
+  /// Title of help subsection for creating stories
+  String get helpCreatingTitle;
+
+  /// Description for new story help item
+  String get helpNewStoryDesc;
+
+  /// Title for text editor help item
+  String get helpTextEditorTitle;
+
+  /// Description for text editor help item
+  String get helpTextEditorDesc;
+
+  /// Description for media help item
+  String get helpMediaDesc;
+
+  /// Description for associating groups help item
+  String get helpGroupsAssocDesc;
+
+  /// Help description for calendar section
+  String get helpCalendarDesc;
+
+  /// Help title for create group item
+  String get helpCreateGroupTitle;
+
+  /// Help description for create group
+  String get helpCreateGroupDesc;
+
+  /// Help title for edit group item
+  String get helpEditGroupTitle;
+
+  /// Help description for edit group
+  String get helpEditGroupDesc;
+
+  /// Title for backup & security section
+  String get helpBackupSecurityTitle;
+
+  /// Help title for automatic backup item
+  String get helpAutomaticBackupTitle;
+
+  /// Help description for automatic backup
+  String get helpAutomaticBackupDesc;
+
+  /// Help title for manual backup item
+  String get helpManualBackupTitle;
+
+  /// Help description for manual backup
+  String get helpManualBackupDesc;
+
+  /// Help title for restore item
+  String get helpRestoreTitle;
+
+  /// Help description for restore
+  String get helpRestoreDesc;
+
+  /// Help title for PIN security item
+  String get helpPinSecurityTitle;
+
+  /// Help description for PIN security
+  String get helpPinSecurityDesc;
+
+  /// Help description for biometrics in help
+  String get helpBiometricsDesc;
+
+  /// Help title for password unlock item
+  String get helpPasswordUnlockTitle;
+
+  /// Help description for password unlock
+  String get helpPasswordUnlockDesc;
+
+  /// Help description for background lock
+  String get helpBackgroundLockDesc;
+
+  /// Help title for lock exceptions
+  String get helpLockExceptionsTitle;
+
+  /// Help description for lock exceptions
+  String get helpLockExceptionsDesc;
+
+  /// Help title for PIN recovery
+  String get helpPinRecoveryTitle;
+
+  /// Help description for PIN recovery
+  String get helpPinRecoveryDesc;
+
+  /// Help description for theme settings
+  String get helpThemeDesc;
+
+  /// Help description for notifications settings
+  String get helpNotificationsSettingsDesc;
+
+  /// Help description for background lock settings
+  String get helpBackgroundLockSettingsDesc;
+
+  /// Help title for backup setting item
+  String get helpBackupSettingTitle;
+
+  /// Help description for backup setting
+  String get helpBackupSettingDesc;
+
+  /// Help description for trash section
+  String get helpTrashDesc;
+
+  /// Help description for statistics section
+  String get helpStatisticsDesc;
+
+  /// Title for usage tips section in help
+  String get helpTipsTitle;
+
+  /// Help title for organization tip
+  String get helpOrganizationTipTitle;
+
+  /// Help description for organization tip
+  String get helpOrganizationTipDesc;
+
+  /// Help title for search tip
+  String get helpSearchTipTitle;
+
+  /// Help description for search tip
+  String get helpSearchTipDesc;
+
+  /// Help title for backup tip
+  String get helpBackupTipTitle;
+
+  /// Help description for backup tip
+  String get helpBackupTipDesc;
+
+  /// Help title for privacy tip
+  String get helpPrivacyTipTitle;
+
+  /// Help description for privacy tip
+  String get helpPrivacyTipDesc;
+
+  /// Help title for support section
+  String get helpSupportTitle;
+
+  /// Help description for support section
+  String get helpSupportDesc;
 
   /// No description provided for @notifications.
   ///

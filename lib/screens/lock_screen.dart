@@ -326,7 +326,7 @@ class _LockScreenState extends State<LockScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(dialogContext).pop(),
-                child: const Text('Cancelar'),
+                child: Text(AppLocalizations.of(dialogContext)!.cancel),
               ),
               ElevatedButton(
                 onPressed: () async {
@@ -351,7 +351,9 @@ class _LockScreenState extends State<LockScreen> {
                   if (newPin.length < 4 || newPin.length > 8) {
                     ScaffoldMessenger.of(dialogContext).showSnackBar(
                       SnackBar(
-                        content: const Text('PIN deve ter entre 4 e 8 dígitos'),
+                        content: Text(
+                          AppLocalizations.of(dialogContext)!.pinLengthError,
+                        ),
                         backgroundColor: Theme.of(
                           dialogContext,
                         ).colorScheme.error,
@@ -589,16 +591,18 @@ class _LockScreenState extends State<LockScreen> {
                               color: Theme.of(context).colorScheme.primary,
                             ),
                             const SizedBox(height: 16),
-                            const Text(
-                              'Recuperar PIN',
-                              style: TextStyle(
+                            Text(
+                              AppLocalizations.of(context)!.recoverPinTitle,
+                              style: const TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             const SizedBox(height: 16),
-                            const Text(
-                              'Enviaremos um código de recuperação para o seu e-mail cadastrado.',
+                            Text(
+                              AppLocalizations.of(
+                                context,
+                              )!.recoverPinDescription,
                               textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 24),
@@ -609,14 +613,18 @@ class _LockScreenState extends State<LockScreen> {
                                   onPressed: () {
                                     setState(() => _showRecoveryDialog = false);
                                   },
-                                  child: const Text('Cancelar'),
+                                  child: Text(
+                                    AppLocalizations.of(context)!.cancel,
+                                  ),
                                 ),
                                 ElevatedButton(
                                   onPressed: () {
                                     setState(() => _showRecoveryDialog = false);
                                     _sendRecoveryEmail();
                                   },
-                                  child: const Text('Enviar Código'),
+                                  child: Text(
+                                    AppLocalizations.of(context)!.sendCode,
+                                  ),
                                 ),
                               ],
                             ),

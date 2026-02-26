@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart' as intl;
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 
 import '../db/database_helper.dart';
 import '../services/notification_preferences_service.dart';
@@ -60,18 +62,18 @@ class NotificationHelper {
 
     if (!context.mounted) return;
 
+    final loc = AppLocalizations.of(context)!;
+
     int? selectedAdvanceMinutes;
     await showDialog(
       context: context,
       builder: (BuildContext context) {
         return SimpleDialog(
-          title: const Text('Agendar Notificação'),
+          title: Text(loc.notificationDialogTitle),
           children: [
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                'Quando você gostaria de ser notificado sobre esta entrada?',
-              ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(loc.notificationDialogPrompt),
             ),
             ...NotificationPreferencesService.advanceOptions.map((minutes) {
               final notificationTime = calculateNotificationTime(
@@ -103,10 +105,13 @@ class NotificationHelper {
                       ),
                     ),
                     if (isDefault)
-                      const Padding(
-                        padding: EdgeInsets.only(left: 8.0),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
                         child: Chip(
-                          label: Text('Padrão', style: TextStyle(fontSize: 10)),
+                          label: Text(
+                            loc.defaultLabel,
+                            style: const TextStyle(fontSize: 10),
+                          ),
                           visualDensity: VisualDensity.compact,
                         ),
                       ),
@@ -129,9 +134,9 @@ class NotificationHelper {
       );
 
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Notificação agendada com sucesso')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(loc.successNotificationScheduled)));
     }
   }
 
@@ -143,6 +148,12 @@ class NotificationHelper {
     String? description,
     int advanceMinutes,
   ) async {
+    // translation helper without BuildContext: construct locale object from current Intl locale
+    final localeParts = intl.Intl.getCurrentLocale().split('_');
+    final locale = localeParts.length == 2
+        ? Locale(localeParts[0], localeParts[1])
+        : Locale(localeParts[0]);
+    final loc = lookupAppLocalizations(locale);
     // Calcula o horário da notificação
     final notificationTime = calculateNotificationTime(
       entryDate,
@@ -162,7 +173,7 @@ class NotificationHelper {
     if (!kIsWeb && !Platform.isWindows) {
       await _notificationService.scheduleNotification(
         id: notificationId,
-        title: 'Lembrete: $title',
+        title: loc.notificationReminderTitle(title),
         body: description ?? 'Você tem uma entrada agendada',
         scheduledDate: notificationTime,
         payload: historiaId.toString(),

@@ -79,8 +79,8 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       if (!mounted) return;
       setState(() {
         errorMessage = existing.isNotEmpty
-            ? 'E-mail já cadastrado.'
-            : 'Erro ao criar conta. Tente novamente.';
+            ? AppLocalizations.of(context)!.emailAlreadyRegistered
+            : AppLocalizations.of(context)!.errorCreateAccount;
       });
     }
   }

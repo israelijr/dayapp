@@ -1,3 +1,4 @@
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -62,6 +63,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   /// Executa a pesquisa com base no tipo selecionado
   Future<void> _performSearch() async {
+    final loc = AppLocalizations.of(context)!;
     final auth = Provider.of<AuthProvider>(context, listen: false);
     final userId = auth.user?.id ?? '';
 
@@ -144,7 +146,7 @@ class _SearchScreenState extends State<SearchScreen> {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Erro na pesquisa: $e')));
+        ).showSnackBar(SnackBar(content: Text(loc.errorSearch(e.toString()))));
       }
     }
   }

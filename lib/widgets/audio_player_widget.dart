@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 
 class AudioPlayerWidget extends StatefulWidget {
   final List<int> audioData;
@@ -91,9 +92,13 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Erro ao reproduzir áudio: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.errorPlayAudio(e.toString()),
+          ),
+        ),
+      );
     }
   }
 

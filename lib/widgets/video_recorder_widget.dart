@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
@@ -107,7 +108,7 @@ class _VideoRecorderWidgetState extends State<VideoRecorderWidget> {
             const SizedBox(height: 16),
             TextButton(
               onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
-              child: const Text('Cancelar'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
           ],
         ),
@@ -184,9 +185,13 @@ class _VideoRecorderWidgetState extends State<VideoRecorderWidget> {
 
       if (!mounted) return;
       setState(() => _isLoading = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Erro ao selecionar vídeos: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.errorSelectVideos(e.toString()),
+          ),
+        ),
+      );
     }
   }
 
@@ -232,9 +237,13 @@ class _VideoRecorderWidgetState extends State<VideoRecorderWidget> {
       pinProvider.isPickingExternalMedia = false;
 
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Erro ao selecionar arquivo: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.errorSelectFile(e.toString()),
+          ),
+        ),
+      );
     }
   }
 
@@ -277,9 +286,10 @@ class _VideoRecorderWidgetState extends State<VideoRecorderWidget> {
       Navigator.of(context).pop();
 
       // Mensagem de sucesso
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Vídeo gravado com sucesso!')),
-      );
+      final loc = AppLocalizations.of(context)!;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(loc.successVideoRecorded)));
 
       // Limpa o arquivo temporário se necessário
       try {
@@ -292,9 +302,13 @@ class _VideoRecorderWidgetState extends State<VideoRecorderWidget> {
       pinProvider.isPickingExternalMedia = false;
 
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Erro ao gravar vídeo: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.errorRecordVideo(e.toString()),
+          ),
+        ),
+      );
     }
   }
 }

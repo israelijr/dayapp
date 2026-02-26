@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -61,29 +62,29 @@ class _TrashScreenState extends State<TrashScreen> {
       _isSelectionMode = false;
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('História restaurada com sucesso')),
-    );
+    final loc = AppLocalizations.of(context)!;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(loc.successStoryRestored)));
   }
 
   Future<void> _restoreSelected() async {
     if (_selectedItems.isEmpty) return;
 
+    final loc = AppLocalizations.of(context)!;
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Restaurar histórias'),
-        content: Text(
-          'Deseja restaurar ${_selectedItems.length} história(s) selecionada(s)?',
-        ),
+        title: Text(loc.restoreStoriesTitle),
+        content: Text(loc.restoreStoriesConfirm(_selectedItems.length)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancelar'),
+            child: Text(loc.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Restaurar'),
+            child: Text(loc.restoreLabel),
           ),
         ],
       ),
@@ -126,25 +127,26 @@ class _TrashScreenState extends State<TrashScreen> {
   Future<void> _permanentlyDeleteHistoria(Historia historia) async {
     final confirm = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Excluir permanentemente'),
-        content: const Text(
-          'Esta ação não pode ser desfeita. Deseja realmente excluir esta história permanentemente?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancelar'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text(
-              'Excluir permanentemente',
-              style: TextStyle(color: Colors.red),
+      builder: (ctx) {
+        final loc = AppLocalizations.of(ctx)!;
+        return AlertDialog(
+          title: Text(loc.permanentlyDeleteTitle),
+          content: Text(loc.permanentlyDeleteConfirm),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text(loc.cancel),
             ),
-          ),
-        ],
-      ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text(
+                loc.permanentlyDeleteLabel,
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
     );
 
     if (confirm == true) {
@@ -161,8 +163,9 @@ class _TrashScreenState extends State<TrashScreen> {
         _isSelectionMode = false;
       });
 
+      final loc = AppLocalizations.of(context)!;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('História excluída permanentemente')),
+        SnackBar(content: Text(loc.successStoryDeletedPermanently)),
       );
     }
   }
@@ -171,35 +174,37 @@ class _TrashScreenState extends State<TrashScreen> {
     final historias = await _fetchDeletedHistorias();
     if (historias.isEmpty) {
       // ignore: use_build_context_synchronously
+      final loc = AppLocalizations.of(context)!;
       ScaffoldMessenger.of(
         // ignore: use_build_context_synchronously
         context,
-      ).showSnackBar(const SnackBar(content: Text('A lixeira já está vazia')));
+      ).showSnackBar(SnackBar(content: Text(loc.trashAlreadyEmpty)));
       return;
     }
 
     final confirm = await showDialog<bool>(
       // ignore: use_build_context_synchronously
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Esvaziar lixeira'),
-        content: Text(
-          'Deseja excluir permanentemente todas as ${historias.length} história(s) da lixeira? Esta ação não pode ser desfeita.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancelar'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text(
-              'Esvaziar lixeira',
-              style: TextStyle(color: Colors.red),
+      builder: (ctx) {
+        final loc = AppLocalizations.of(ctx)!;
+        return AlertDialog(
+          title: Text(loc.emptyTrashTitle),
+          content: Text(loc.emptyTrashConfirm(historias.length)),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text(loc.cancel),
             ),
-          ),
-        ],
-      ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text(
+                loc.emptyTrashLabel,
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
     );
 
     if (confirm == true) {

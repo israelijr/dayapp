@@ -916,25 +916,26 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
     final navigator = Navigator.of(context);
     final confirm = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.deleteGroupTitle),
-        content: Text(
-          'Deseja remover o grupo "${widget.grupo.nome}" das suas histórias?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancelar'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: Text(
-              'Excluir',
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
+      builder: (ctx) {
+        final loc = AppLocalizations.of(ctx)!;
+        return AlertDialog(
+          title: Text(loc.deleteGroupTitle),
+          content: Text(loc.deleteGroupConfirm(widget.grupo.nome)),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text(loc.cancel),
             ),
-          ),
-        ],
-      ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text(
+                loc.deleteLabel,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
+            ),
+          ],
+        );
+      },
     );
 
     if (confirm == true) {

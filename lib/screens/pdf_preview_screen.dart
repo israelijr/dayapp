@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:printing/printing.dart';
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 
 /// Tela que mostra um preview do PDF gerado e fornece ações: Compartilhar, Salvar, Fechar.
 class PdfPreviewScreen extends StatefulWidget {
@@ -64,7 +65,11 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
                 Text(
                   'Alta qualidade',
                   style: TextStyle(
-                    color: isDark ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7) : Colors.black87,
+                    color: isDark
+                        ? Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.7)
+                        : Colors.black87,
                   ),
                 ),
                 Switch.adaptive(
@@ -74,7 +79,11 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
                     await _generate(_highQuality);
                   },
                   activeThumbColor: isDark ? Colors.white : Colors.black,
-                  activeTrackColor: isDark ? Colors.white24 : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.26),
+                  activeTrackColor: isDark
+                      ? Colors.white24
+                      : Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.26),
                   inactiveThumbColor: Colors.grey,
                   inactiveTrackColor: Colors.grey.shade300,
                 ),
@@ -136,14 +145,14 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
                   Expanded(
                     child: OutlinedButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Cancelar'),
+                      child: Text(AppLocalizations.of(context)!.cancel),
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: ElevatedButton.icon(
                       icon: const Icon(Icons.share),
-                      label: const Text('Compartilhar'),
+                      label: Text(AppLocalizations.of(context)!.share),
                       onPressed: _pdfBytes == null
                           ? null
                           : () async {

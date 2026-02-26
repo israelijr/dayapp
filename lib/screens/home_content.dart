@@ -61,6 +61,10 @@ class _HomeContentState extends State<HomeContent> {
 
   Future<void> _exportHistoria(Historia historia) async {
     try {
+      // Salva referências do contexto antes das operações assíncronas
+      final navigator = Navigator.of(context);
+      final localizations = AppLocalizations.of(context)!;
+
       final fotosData = await HistoriaFotoHelper().getFotosComBytesByHistoria(
         historia.id ?? 0,
       );
@@ -77,8 +81,7 @@ class _HomeContentState extends State<HomeContent> {
       final filename =
           'historia_${historia.id ?? DateTime.now().millisecondsSinceEpoch}.pdf';
       if (!mounted) return;
-      Navigator.push(
-        context,
+      navigator.push(
         MaterialPageRoute(
           builder: (_) => PdfPreviewScreen(
             initialPdfBytes: pdfBytes,
@@ -93,19 +96,17 @@ class _HomeContentState extends State<HomeContent> {
                   highQuality: highQuality,
                 ),
             filename: filename,
-            title: AppLocalizations.of(context)!.previewTitle(historia.titulo),
+            title: localizations.previewTitle(historia.titulo),
             onSave: null,
           ),
         ),
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.exportPdfError(e.toString()),
-          ),
-        ),
+      final messenger = ScaffoldMessenger.of(context);
+      final localizations = AppLocalizations.of(context)!;
+      messenger.showSnackBar(
+        SnackBar(content: Text(localizations.exportPdfError(e.toString()))),
       );
     }
   }
@@ -1146,6 +1147,10 @@ class HistoriaFotosGrid extends StatelessWidget {
                                             parentContext,
                                             listen: false,
                                           );
+                                      // Salva referência da localização antes de operações assíncronas
+                                      final localizations = AppLocalizations.of(
+                                        parentContext,
+                                      )!;
                                       pinProvider.isPickingExternalMedia = true;
 
                                       try {
@@ -1170,9 +1175,9 @@ class HistoriaFotosGrid extends StatelessWidget {
                                             false;
 
                                         messenger.showSnackBar(
-                                          const SnackBar(
+                                          SnackBar(
                                             content: Text(
-                                              'Erro ao compartilhar',
+                                              localizations.errorShare,
                                             ),
                                           ),
                                         );
@@ -1196,37 +1201,35 @@ class HistoriaFotosGrid extends StatelessWidget {
                                       ),
                                       onPressed: () async {
                                         final id = localIds[currentIndex];
+                                        // Salva referências antes de operações assíncronas
                                         final refreshProviderForDialog =
                                             Provider.of<RefreshProvider>(
                                               parentContext,
                                               listen: false,
                                             );
-                                        final messenger = ScaffoldMessenger.of(
-                                          parentContext,
-                                        );
-                                        final navigator = Navigator.of(ctx2);
+                                        final messengerRef =
+                                            ScaffoldMessenger.of(parentContext);
+                                        final navigatorRef = Navigator.of(ctx2);
+
+                                        final loc = AppLocalizations.of(ctx2)!;
                                         final confirm = await showDialog<bool>(
-                                          context: parentContext,
+                                          context: ctx2,
                                           builder: (_) => AlertDialog(
-                                            title: const Text('Excluir foto'),
-                                            content: const Text(
-                                              'Deseja realmente excluir esta foto?',
+                                            title: Text(loc.deletePhotoTitle),
+                                            content: Text(
+                                              loc.deletePhotoConfirm,
                                             ),
                                             actions: [
                                               TextButton(
-                                                onPressed: () => Navigator.pop(
-                                                  parentContext,
-                                                  false,
-                                                ),
-                                                child: const Text('Cancelar'),
+                                                onPressed: () =>
+                                                    Navigator.pop(ctx2, false),
+                                                child: Text(loc.cancel),
                                               ),
                                               TextButton(
-                                                onPressed: () => Navigator.pop(
-                                                  parentContext,
-                                                  true,
-                                                ),
-                                                child: const Text(
-                                                  'Excluir',
+                                                onPressed: () =>
+                                                    Navigator.pop(ctx2, true),
+                                                child: Text(
+                                                  loc.deleteLabel,
                                                   style: TextStyle(
                                                     color: Colors.red,
                                                   ),
@@ -1238,6 +1241,12 @@ class HistoriaFotosGrid extends StatelessWidget {
                                         if (confirm == true) {
                                           final deletedBytes =
                                               localImages[currentIndex];
+
+                                          // Salva referências antes de operações assíncronas
+                                          final historiaIdRef = historiaId;
+                                          final refreshProviderRef =
+                                              refreshProviderForDialog;
+
                                           await HistoriaFotoHelper().deleteFoto(
                                             id,
                                           );
@@ -1255,8 +1264,8 @@ class HistoriaFotosGrid extends StatelessWidget {
                                             }
                                           });
 
-                                          messenger.hideCurrentSnackBar();
-                                          messenger.showSnackBar(
+                                          messengerRef.hideCurrentSnackBar();
+                                          messengerRef.showSnackBar(
                                             SnackBar(
                                               content: const Text(
                                                 'Foto excluída',
@@ -1266,18 +1275,18 @@ class HistoriaFotosGrid extends StatelessWidget {
                                                 onPressed: () async {
                                                   await HistoriaFotoHelper()
                                                       .insertFotoFromBytes(
-                                                        historiaId: historiaId,
+                                                        historiaId:
+                                                            historiaIdRef,
                                                         fotoBytes: deletedBytes,
                                                       );
-                                                  refreshProviderForDialog
-                                                      .refresh();
+                                                  refreshProviderRef.refresh();
                                                 },
                                               ),
                                             ),
                                           );
 
                                           if (localImages.isEmpty) {
-                                            navigator.pop(true);
+                                            navigatorRef.pop(true);
                                           }
                                         }
                                       },
