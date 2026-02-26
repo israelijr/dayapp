@@ -607,7 +607,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
-    final dateFormat = DateFormat('dd/MM/yyyy HH:mm', 'pt_BR');
+    final dateFormat = DateFormat.yMd(loc.localeName).add_Hm();
     final theme = Theme.of(context);
 
     return PopScope(

@@ -19,20 +19,33 @@ class LocaleProvider extends ChangeNotifier {
   Future<void> load() async {
     final prefs = await SharedPreferences.getInstance();
     _selection = prefs.getString(_prefsKey) ?? 'system';
+    // Em algumas versões antigas gravávamos o locale completo (ex: en_US).
+    // Normalizamos já aqui para evitar que um valor inesperado seja salvo
+    // novamente caso o usuário abra o diálogo de idioma posteriormente.
+    if (_selection.contains('_')) {
+      _selection = _selection.split('_').first;
+    }
     _applySelection(notify: false);
+    // registro simples para debug durante desenvolvimento
+    debugPrint('LocaleProvider.load -> selection=$_selection locale=$_locale');
   }
 
   void _applySelection({bool notify = true}) {
-    switch (_selection) {
-      case 'en':
-        _locale = const Locale('en', 'US');
-        break;
-      case 'es':
-        _locale = const Locale('es', 'ES');
-        break;
-      case 'system':
-      default:
-        _locale = null;
+    // Trata casos em que _selection pode ter sido gravado em formato
+    // estendido (ex: 'en_US' ou 'pt_BR') ou apenas o idioma.
+    final sel = _selection.toLowerCase();
+    if (sel.startsWith('en')) {
+      _locale = const Locale('en', 'US');
+    } else if (sel.startsWith('es')) {
+      _locale = const Locale('es', 'ES');
+    } else if (sel.startsWith('pt')) {
+      // Português -> forçar Brasil para consistência com ARB
+      _locale = const Locale('pt', 'BR');
+    } else if (sel == 'system') {
+      _locale = null;
+    } else {
+      // Qualquer outro valor não reconhecido, usamos o idioma do sistema
+      _locale = null;
     }
 
     if (notify) notifyListeners();
@@ -45,10 +58,17 @@ class LocaleProvider extends ChangeNotifier {
   /// presa no idioma anterior durante o tempo que o armazenamento leva para
   /// completar.
   Future<void> setSelection(String sel) async {
+    // garante apenas o código de idioma curto
+    if (sel.contains('_')) {
+      sel = sel.split('_').first;
+    }
     _selection = sel;
     // aplica antes de gravar, o notify faz com que a árvore (MaterialApp)
     // reconstrua com o novo locale imediatamente.
     _applySelection();
+    debugPrint(
+      'LocaleProvider.setSelection -> selection=$_selection locale=$_locale',
+    );
 
     try {
       final prefs = await SharedPreferences.getInstance();

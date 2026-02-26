@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 
@@ -93,6 +94,7 @@ class _RichTextEditorScreenState extends State<RichTextEditorScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     // Wrap the whole scaffold so we can translate it while dragging down
     return PopScope(
       canPop: false,
@@ -115,23 +117,21 @@ class _RichTextEditorScreenState extends State<RichTextEditorScreen> {
           context: context,
           barrierDismissible: false,
           builder: (context) => AlertDialog(
-            title: const Text('Descartar alterações?'),
-            content: const Text(
-              'Você tem alterações não salvas. Deseja sair sem salvar?',
-            ),
+            title: Text(loc.discardChangesTitle),
+            content: Text(loc.discardChangesPrompt),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop('cancel'),
-                child: const Text('Cancelar'),
+                child: Text(loc.cancel),
               ),
               TextButton(
                 onPressed: () => Navigator.of(context).pop('discard'),
                 style: TextButton.styleFrom(foregroundColor: Colors.red),
-                child: const Text('Descartar'),
+                child: Text(loc.discard),
               ),
               TextButton(
                 onPressed: () => Navigator.of(context).pop('save'),
-                child: const Text('Salvar'),
+                child: Text(loc.save),
               ),
             ],
           ),
@@ -210,7 +210,7 @@ class _RichTextEditorScreenState extends State<RichTextEditorScreen> {
                           child: Transform.translate(
                             offset: Offset(0, -dragFraction * 20),
                             child: AppBar(
-                              title: const Text('Editar Descrição'),
+                              title: Text(loc.editDescription),
                               elevation: dragFraction > 0.02 ? 2 : 4,
                               leading: IconButton(
                                 icon: const Icon(Icons.arrow_back),
@@ -229,18 +229,14 @@ class _RichTextEditorScreenState extends State<RichTextEditorScreen> {
                                     context: context,
                                     barrierDismissible: false,
                                     builder: (context) => AlertDialog(
-                                      title: const Text(
-                                        'Descartar alterações?',
-                                      ),
-                                      content: const Text(
-                                        'Você tem alterações não salvas. Deseja sair sem salvar?',
-                                      ),
+                                      title: Text(loc.discardChangesTitle),
+                                      content: Text(loc.discardChangesPrompt),
                                       actions: [
                                         TextButton(
                                           onPressed: () => Navigator.of(
                                             context,
                                           ).pop('cancel'),
-                                          child: const Text('Cancelar'),
+                                          child: Text(loc.cancel),
                                         ),
                                         TextButton(
                                           onPressed: () => Navigator.of(
@@ -251,12 +247,12 @@ class _RichTextEditorScreenState extends State<RichTextEditorScreen> {
                                               context,
                                             ).colorScheme.error,
                                           ),
-                                          child: const Text('Descartar'),
+                                          child: Text(loc.discard),
                                         ),
                                         TextButton(
                                           onPressed: () =>
                                               Navigator.of(context).pop('save'),
-                                          child: const Text('Salvar'),
+                                          child: Text(loc.save),
                                         ),
                                       ],
                                     ),

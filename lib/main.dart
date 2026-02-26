@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -7,6 +8,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 
@@ -60,15 +62,46 @@ void main() async {
   // Inicialização de data/hora (rápida e necessária para formatação)
   await initializeDateFormatting('pt_BR', null);
 
-  // Inicia o app IMEDIATAMENTE com a tela de carregamento
-  // As inicializações pesadas serão feitas em background
-  runApp(const AppLoader());
+  // Antes de rodar o app, tenta ler a preferência de idioma para poder usar
+  // essa escolha já na splash. Isso evita que o app mostre português na
+  // primeira tela quando o sistema está em pt, mesmo que o usuário tenha
+  // configurado inglês.
+  Locale? initialLocale;
+  const _localePrefKey = 'app_locale_selection';
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    final sel = prefs.getString(_localePrefKey);
+    if (sel != null && sel != 'system') {
+      final normalized = sel.contains('_') ? sel.split('_').first : sel;
+      switch (normalized) {
+        case 'en':
+          initialLocale = const Locale('en', 'US');
+          break;
+        case 'es':
+          initialLocale = const Locale('es', 'ES');
+          break;
+        case 'pt':
+          initialLocale = const Locale('pt', 'BR');
+          break;
+      }
+    }
+  } catch (_) {
+    // falhar lendo prefs não é crítico
+  }
+
+  runApp(AppLoader(initialLocale: initialLocale));
 }
 
 /// Widget que carrega o app de forma assíncrona
 /// Mostra a splash screen enquanto inicializa os providers
 class AppLoader extends StatefulWidget {
-  const AppLoader({super.key});
+  /// [initialLocale] é usado apenas na primeira MaterialApp que mostra
+  /// a splash. Ele é pré-carregado de SharedPreferences antes de chamar
+  /// runApp para evitar que o app comece em pt quando o sistema estiver em
+  /// português.
+  final Locale? initialLocale;
+
+  const AppLoader({this.initialLocale, super.key});
 
   @override
   State<AppLoader> createState() => _AppLoaderState();
@@ -160,11 +193,27 @@ class _AppLoaderState extends State<AppLoader> {
       builder: (context, snapshot) {
         // Enquanto carrega, mostra a splash screen bonita com animações
         // A native splash (cor sólida) já foi removida, agora mostramos a splash do Flutter
+        // Aqui não temos acesso ainda ao LocaleProvider carregado, portanto
+        // aplicamos o idioma do sistema (caso esteja diferenciado) para que o
+        // texto inicial não apareça sempre em português. Se um locale inicial
+        // foi fornecido pelo widget (lido antes do runApp), usamos ele em vez
+        // do padrão do sistema.
         if (snapshot.connectionState != ConnectionState.done) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             theme: M3ExpressiveTheme.getLightTheme(),
             darkTheme: M3ExpressiveTheme.getDarkTheme(),
+            // Configurações de localidade semelhantes às do app principal,
+            // porém usando o locale fornecido ou o sistema.
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+              FlutterQuillLocalizations.delegate,
+            ],
+            supportedLocales: AppLocalizations.supportedLocales,
+            locale: widget.initialLocale ?? PlatformDispatcher.instance.locale,
             home: const SplashScreen(),
           );
         }
@@ -175,6 +224,15 @@ class _AppLoaderState extends State<AppLoader> {
             debugShowCheckedModeBanner: false,
             theme: M3ExpressiveTheme.getLightTheme(),
             darkTheme: M3ExpressiveTheme.getDarkTheme(),
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+              FlutterQuillLocalizations.delegate,
+            ],
+            supportedLocales: AppLocalizations.supportedLocales,
+            locale: PlatformDispatcher.instance.locale,
             home: Scaffold(
               body: Center(
                 child: Column(
@@ -419,6 +477,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             }
           }
 
+          // DEBUG: verificar qual locale está sendo usado pelo MaterialApp
+          debugPrint(
+            'MaterialApp localeProvider.locale=' +
+                (localeProvider.locale?.toString() ?? 'null') +
+                ' system=' +
+                PlatformDispatcher.instance.locale.toString(),
+          );
+
           return MaterialApp(
             title: AppLocalizations.of(context)?.appTitle ?? 'DayApp',
             debugShowCheckedModeBanner: false,
@@ -436,7 +502,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             ],
             supportedLocales: AppLocalizations.supportedLocales,
             // Quando `locale` é null, o app usa o padrão do dispositivo
-            locale: localeProvider.locale,
+            // Mas no momento da construção o sistema já está disponível, então
+            // deixamos explícito para evitar confusão em cenários estranhos.
+            locale: localeProvider.locale ?? PlatformDispatcher.instance.locale,
             // Overlay global de bloqueio - preserva estado de todas as telas
             builder: (context, child) {
               return GlobalLockOverlay(child: child ?? const SizedBox.shrink());

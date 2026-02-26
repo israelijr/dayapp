@@ -688,6 +688,21 @@ class AppLocalizationsPt extends AppLocalizations {
   String get changeDateTooltip => 'Alterar Data';
 
   @override
+  String get photoTooltip => 'Foto';
+
+  @override
+  String get videoTooltip => 'Vídeo';
+
+  @override
+  String get audioTooltip => 'Áudio';
+
+  @override
+  String get emojiTooltip => 'Emoji';
+
+  @override
+  String get editDescription => 'Editar Descrição';
+
+  @override
   String get editStory => 'Editar História';
 
   @override

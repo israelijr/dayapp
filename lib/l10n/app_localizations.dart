@@ -1403,6 +1403,36 @@ abstract class AppLocalizations {
   /// **'Expand'**
   String get expandTooltip;
 
+  /// Tooltip para botão de foto
+  ///
+  /// In en, this message translates to:
+  /// **'Photo'**
+  String get photoTooltip;
+
+  /// Tooltip para botão de vídeo
+  ///
+  /// In en, this message translates to:
+  /// **'Video'**
+  String get videoTooltip;
+
+  /// Tooltip para botão de áudio
+  ///
+  /// In en, this message translates to:
+  /// **'Audio'**
+  String get audioTooltip;
+
+  /// Tooltip para botão de emoji
+  ///
+  /// In en, this message translates to:
+  /// **'Emoji'**
+  String get emojiTooltip;
+
+  /// Título da tela de edição de descrição
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Description'**
+  String get editDescription;
+
   /// Título da tela de edição de história
   ///
   /// In en, this message translates to:

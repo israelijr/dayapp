@@ -694,6 +694,21 @@ class AppLocalizationsEs extends AppLocalizations {
   String get expandTooltip => 'Expandir';
 
   @override
+  String get photoTooltip => 'Foto';
+
+  @override
+  String get videoTooltip => 'Vídeo';
+
+  @override
+  String get audioTooltip => 'Audio';
+
+  @override
+  String get emojiTooltip => 'Emoji';
+
+  @override
+  String get editDescription => 'Editar Descripción';
+
+  @override
   String get editStory => 'Editar historia';
 
   @override

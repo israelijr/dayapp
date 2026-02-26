@@ -258,6 +258,13 @@
   "importTxtTooltip": "Importar .txt",
   "expandTooltip": "Expandir",
 
+  "photoTooltip": "Foto",
+  "videoTooltip": "Vídeo",
+  "audioTooltip": "Áudio",
+  "emojiTooltip": "Emoji",
+
+  "editDescription": "Editar Descrição",
+
   "editStory": "Editar História",
   "discardChangesTitle": "Descartar alterações?",
   "discardChangesPrompt": "Você tem alterações não salvas. Deseja sair sem salvar?",
