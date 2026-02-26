@@ -105,7 +105,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get noStoriesYetTitle => 'Ninguna historia registrada aún';
 
   @override
-  String get noStoriesYetSubtitle => 'Comienza a registrar tus días para ver las estadísticas';
+  String get noStoriesYetSubtitle =>
+      'Comienza a registrar tus días para ver las estadísticas';
 
   @override
   String get trends => 'Tendencias';
@@ -216,7 +217,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get invalidEmail => 'Ingrese un correo electrónico válido.';
 
   @override
-  String get emailNotFound => 'Correo no encontrado. Verifique e inténtelo de nuevo.';
+  String get emailNotFound =>
+      'Correo no encontrado. Verifique e inténtelo de nuevo.';
 
   @override
   String codeSent(Object email) {
@@ -236,22 +238,26 @@ class AppLocalizationsEs extends AppLocalizations {
   String get enterNewPassword => 'Ingrese la nueva contraseña.';
 
   @override
-  String get passwordResetSuccess => '¡Contraseña restablecida con éxito! Inicie sesión con la nueva contraseña.';
+  String get passwordResetSuccess =>
+      '¡Contraseña restablecida con éxito! Inicie sesión con la nueva contraseña.';
 
   @override
-  String get errorResetPassword => 'Error al restablecer la contraseña. Intente nuevamente.';
+  String get errorResetPassword =>
+      'Error al restablecer la contraseña. Intente nuevamente.';
 
   @override
   String get passwordsDoNotMatch => 'Las contraseñas no coinciden.';
 
   @override
-  String get resendCodeSuccess => '¡Nuevo código enviado! Verifique su bandeja de entrada.';
+  String get resendCodeSuccess =>
+      '¡Nuevo código enviado! Verifique su bandeja de entrada.';
 
   @override
   String get resendCodeError => 'Error al reenviar código. Intente nuevamente.';
 
   @override
-  String get passwordMinLength => 'La contraseña debe tener al menos 6 caracteres.';
+  String get passwordMinLength =>
+      'La contraseña debe tener al menos 6 caracteres.';
 
   @override
   String get sendCode => 'Enviar código';
@@ -308,19 +314,22 @@ class AppLocalizationsEs extends AppLocalizations {
   String get profileUpdatedSuccess => '¡Perfil actualizado con éxito!';
 
   @override
-  String get profileUpdateError => 'Error al actualizar el perfil. Intente nuevamente.';
+  String get profileUpdateError =>
+      'Error al actualizar el perfil. Intente nuevamente.';
 
   @override
   String get unlockAppReason => 'Desbloquee la aplicación para continuar';
 
   @override
-  String get fillEmailAndPassword => 'Complete el correo electrónico y la contraseña';
+  String get fillEmailAndPassword =>
+      'Complete el correo electrónico y la contraseña';
 
   @override
   String get emailOrPasswordIncorrect => 'Correo o contraseña incorrectos';
 
   @override
-  String get noEmailRegistered => 'Ningún correo registrado. Configurelo en las configuraciones.';
+  String get noEmailRegistered =>
+      'Ningún correo registrado. Configurelo en las configuraciones.';
 
   @override
   String checkEmailOrUseCode(Object email) {
@@ -328,7 +337,8 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get errorGeneratingCode => 'Error al generar código. Intente nuevamente.';
+  String get errorGeneratingCode =>
+      'Error al generar código. Intente nuevamente.';
 
   @override
   String get errorSendingCode => 'Error al enviar código. Intente nuevamente.';
@@ -337,7 +347,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get recoverPinTitle => 'Recuperar PIN';
 
   @override
-  String get enterRecoveryCodePrompt => 'Ingrese el código enviado a su correo:';
+  String get enterRecoveryCodePrompt =>
+      'Ingrese el código enviado a su correo:';
 
   @override
   String get recoveryCodeLabel => 'Código de recuperación (6 dígitos)';
@@ -363,7 +374,8 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get backupRecommendation => 'Recomendamos hacer una copia de seguridad para evitar perder tus datos.';
+  String get backupRecommendation =>
+      'Recomendamos hacer una copia de seguridad para evitar perder tus datos.';
 
   @override
   String get cancel => 'Cancelar';
@@ -478,7 +490,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get restoreFromFile => 'Restaurar desde archivo';
 
   @override
-  String get backupNotAvailableWeb => 'Copia de seguridad no disponible en la web';
+  String get backupNotAvailableWeb =>
+      'Copia de seguridad no disponible en la web';
 
   @override
   String get backupComplete => 'Copia de seguridad completa';
@@ -490,7 +503,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get entryNotifications => 'Notificaciones de entradas';
 
   @override
-  String get entryNotificationsInfo => 'Las entradas con fecha al menos 2 horas por delante pueden tener notificaciones programadas.';
+  String get entryNotificationsInfo =>
+      'Las entradas con fecha al menos 2 horas por delante pueden tener notificaciones programadas.';
 
   @override
   String get defaultAdvanceTitle => 'Antelación predeterminada';
@@ -499,7 +513,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get notificationAdvanceTitle => 'Antelación de la notificación';
 
   @override
-  String get notificationAdvancePrompt => '¿Con cuánto tiempo de antelación desea ser notificado?';
+  String get notificationAdvancePrompt =>
+      '¿Con cuánto tiempo de antelación desea ser notificado?';
 
   @override
   String get notificationAdvanceDefault => 'Antelación predeterminada';
@@ -508,13 +523,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String get manageCompleteBackup => 'Administrar copia de seguridad completa';
 
   @override
-  String get backupWithVideosZip => 'Copia de seguridad con videos en archivo ZIP';
+  String get backupWithVideosZip =>
+      'Copia de seguridad con videos en archivo ZIP';
 
   @override
-  String get backupOnLogoutDescription => 'La copia de seguridad se creará al cerrar sesión';
+  String get backupOnLogoutDescription =>
+      'La copia de seguridad se creará al cerrar sesión';
 
   @override
-  String get automaticBackupInfo => 'Cuando cierre sesión, se creará una copia de seguridad y podrá elegir dónde guardarla (carpeta local, Google Drive, etc).';
+  String get automaticBackupInfo =>
+      'Cuando cierre sesión, se creará una copia de seguridad y podrá elegir dónde guardarla (carpeta local, Google Drive, etc).';
 
   @override
   String get biometricsNotAvailable => 'No disponible en este dispositivo';
@@ -523,13 +541,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String get biometricsDisabled => 'Biometría deshabilitada';
 
   @override
-  String get biometricConfiguredInfo => 'La biometría está configurada. Puede iniciar sesión usando su huella dactilar o reconocimiento facial.';
+  String get biometricConfiguredInfo =>
+      'La biometría está configurada. Puede iniciar sesión usando su huella dactilar o reconocimiento facial.';
 
   @override
   String get biometricAuthFailed => 'Error en la autenticación biométrica';
 
   @override
-  String get confirmIdentityToEnableBiometrics => 'Confirme su identidad para habilitar la biometría';
+  String get confirmIdentityToEnableBiometrics =>
+      'Confirme su identidad para habilitar la biometría';
 
   @override
   String get calendarTitle => 'Calendario';
@@ -599,4 +619,93 @@ class AppLocalizationsEs extends AppLocalizations {
   String exportPdfError(Object error) {
     return 'Error al exportar PDF: $error';
   }
+
+  @override
+  String get titleRequired => '¡El título es obligatorio!';
+
+  @override
+  String errorSavingStory(Object error) =>
+      'Error al guardar la historia: $error';
+
+  @override
+  String get exportPdfFieldsRequired =>
+      'El título y la descripción son obligatorios para exportar.';
+
+  @override
+  String get exportHistory => 'Exportar historia';
+
+  @override
+  String get exportHistoryPrompt =>
+      '¿Desea guardar antes de exportar o solo ver una vista previa?';
+
+  @override
+  String get preview => 'Vista previa';
+
+  @override
+  String get saveAndExport => 'Guardar y exportar';
+
+  @override
+  String get untitled => 'Sin título';
+
+  @override
+  String errorLoadingFile(Object error) => 'Error al cargar el archivo: $error';
+
+  @override
+  String get discard => 'Descartar';
+
+  @override
+  String get discardStoryTitle => '¿Descartar historia?';
+
+  @override
+  String get unsavedStoryPrompt =>
+      'Tiene una historia nueva sin guardar. ¿Salir sin guardar?';
+
+  @override
+  String get changeDateTooltip => 'Cambiar fecha';
+
+  @override
+  String get storyTitleLabel => 'Título';
+
+  @override
+  String get storyTitleHint => 'Ingrese el título';
+
+  @override
+  String get descriptionLabel => 'Descripción';
+
+  @override
+  String get descriptionHint => 'Escribe tu historia...';
+
+  @override
+  String get tagsLabel => 'Etiquetas';
+
+  @override
+  String get photosSection => 'Fotos';
+
+  @override
+  String get audiosSection => 'Audios';
+
+  @override
+  String get videosSection => 'Videos';
+
+  @override
+  String get importTxtTooltip => 'Importar .txt';
+
+  @override
+  String get expandTooltip => 'Expandir';
+
+  @override
+  String get editStory => 'Editar historia';
+
+  @override
+  String get discardChangesTitle => '¿Descartar cambios?';
+
+  @override
+  String get discardChangesPrompt =>
+      'Tiene cambios sin guardar. ¿Salir sin guardar?';
+
+  @override
+  String get archivedStateLabel => 'Archivado';
+
+  @override
+  String get archiveSubtitle => 'Ocultar de la pantalla principal';
 }

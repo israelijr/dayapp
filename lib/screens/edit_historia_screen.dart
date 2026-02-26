@@ -578,9 +578,13 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
       pinProvider.isPickingExternalMedia = false;
 
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Erro ao carregar arquivo: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.errorLoadingFile(e.toString()),
+          ),
+        ),
+      );
     }
   }
 
@@ -601,20 +605,23 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
   }
 
   Future<void> _exportToPdf() async {
+    // ignore: use_build_context_synchronously
+    final loc = AppLocalizations.of(context)!;
     // Validação mínima
     final plainText = richTextController.document.toPlainText().trim();
     if (titleController.text.trim().isEmpty || plainText.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Título e descrição são obrigatórios para exportar.'),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(loc.exportPdfFieldsRequired)));
       return;
     }
 
     // Gera o PDF e mostra o preview com opções Cancel/Compartilhar/Salvar
+    final titleText = titleController.text.trim().isEmpty
+        ? loc.untitled
+        : _capitalizeText(titleController.text.trim());
     final pdfBytes = await PdfExportService.generatePdfFromHistoria(
-      title: _capitalizeText(titleController.text.trim()),
+      title: titleText,
       content: plainText,
       date: selectedDate,
       images: fotos,
@@ -633,7 +640,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
         builder: (_) => PdfPreviewScreen(
           initialPdfBytes: pdfBytes,
           onGenerate: (highQuality) => PdfExportService.generatePdfFromHistoria(
-            title: _capitalizeText(titleController.text.trim()),
+            title: titleText,
             content: plainText,
             date: selectedDate,
             images: fotos,
@@ -669,6 +676,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     final dateFormat = DateFormat('dd/MM/yyyy HH:mm', 'pt_BR');
     final theme = Theme.of(context);
 
@@ -684,25 +692,23 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
           context: context,
           barrierDismissible: false,
           builder: (context) => AlertDialog(
-            title: const Text('Descartar alterações?'),
-            content: const Text(
-              'Você tem alterações não salvas. Deseja sair sem salvar?',
-            ),
+            title: Text(loc.discardChangesTitle),
+            content: Text(loc.discardChangesPrompt),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop('cancel'),
-                child: const Text('Cancelar'),
+                child: Text(loc.cancel),
               ),
               TextButton(
                 onPressed: () => Navigator.of(context).pop('discard'),
                 style: TextButton.styleFrom(
                   foregroundColor: Theme.of(context).colorScheme.error,
                 ),
-                child: const Text('Descartar'),
+                child: Text(loc.discard),
               ),
               TextButton(
                 onPressed: () => Navigator.of(context).pop('save'),
-                child: const Text('Salvar'),
+                child: Text(loc.save),
               ),
             ],
           ),
@@ -718,20 +724,20 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Editar História'),
+          title: Text(loc.editStory),
           actions: [
             IconButton(
               icon: const Icon(Icons.picture_as_pdf),
-              tooltip: 'Exportar PDF',
+              tooltip: loc.exportPdf,
               onPressed: () async {
                 await _exportToPdf();
               },
             ),
             TextButton(
               onPressed: () async => await _save(),
-              child: const Text(
-                'Salvar',
-                style: TextStyle(fontWeight: FontWeight.bold),
+              child: Text(
+                loc.save,
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
             ),
           ],
@@ -756,7 +762,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                         IconButton(
                           icon: const Icon(Icons.calendar_today, size: 20),
                           onPressed: _pickDateTime,
-                          tooltip: 'Alterar Data',
+                          tooltip: loc.changeDateTooltip,
                           padding: const EdgeInsets.all(4),
                           constraints: const BoxConstraints(),
                         ),
@@ -768,8 +774,8 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                     // Title
                     CustomTextField(
                       controller: titleController,
-                      label: 'Título',
-                      hintText: 'Digite o título',
+                      label: loc.storyTitleLabel,
+                      hintText: loc.storyTitleHint,
                       style: theme.textTheme.bodyLarge,
                       inputFormatters: [
                         SentenceCapitalizationTextInputFormatter(),
@@ -785,7 +791,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                     RichTextEditorWidget(
                       key: const Key('description_field'),
                       controller: richTextController,
-                      hintText: 'Escreva sua história...',
+                      hintText: loc.descriptionHint,
                       minLines: 8,
                       maxLines: 15,
                       showToolbar: true,
@@ -800,15 +806,15 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                     // Tags
                     CustomTextField(
                       controller: tagsController,
-                      label: 'Tags',
+                      label: loc.tagsLabel,
                       prefixIcon: const Icon(Icons.tag),
                     ),
                     const SizedBox(height: 16),
 
                     // Archive Switch
                     SwitchListTile(
-                      title: const Text('Arquivado'),
-                      subtitle: const Text('Ocultar da tela inicial'),
+                      title: Text(loc.archivedStateLabel),
+                      subtitle: Text(loc.archiveSubtitle),
                       value: _isArchived,
                       onChanged: (value) {
                         setState(() {
@@ -969,14 +975,14 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                     child: IconButton(
                       icon: const Icon(Icons.upload_file),
                       onPressed: _pickTxtFileForDescription,
-                      tooltip: 'Importar .txt',
+                      tooltip: loc.importTxtTooltip,
                     ),
                   ),
                   Expanded(
                     child: IconButton(
                       icon: const Icon(Icons.open_in_full),
                       onPressed: _expandDescriptionEditor,
-                      tooltip: 'Expandir',
+                      tooltip: loc.expandTooltip,
                     ),
                   ),
                 ],

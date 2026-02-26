@@ -222,6 +222,46 @@
     "placeholders": { "error": {} }
   }
   ,
+
+  "titleRequired": "¡El título es obligatorio!",
+  "errorSavingStory": "Error al guardar la historia: {error}",
+  "@errorSavingStory": { "placeholders": { "error": {} } },
+
+  "exportPdfFieldsRequired": "El título y la descripción son obligatorios para exportar.",
+
+  "exportHistory": "Exportar historia",
+  "exportHistoryPrompt": "¿Desea guardar antes de exportar o solo ver una vista previa?",
+
+  "preview": "Vista previa",
+  "saveAndExport": "Guardar y exportar",
+
+  "untitled": "Sin título",
+
+  "errorLoadingFile": "Error al cargar el archivo: {error}",
+  "@errorLoadingFile": { "placeholders": { "error": {} } },
+
+  "discard": "Descartar",
+  "discardStoryTitle": "¿Descartar historia?",
+  "unsavedStoryPrompt": "Tiene una historia nueva sin guardar. ¿Salir sin guardar?",
+
+  "changeDateTooltip": "Cambiar fecha",
+  "storyTitleLabel": "Título",
+  "storyTitleHint": "Ingrese el título",
+  "descriptionLabel": "Descripción",
+  "descriptionHint": "Escribe tu historia...",
+  "tagsLabel": "Etiquetas",
+  "photosSection": "Fotos",
+  "audiosSection": "Audios",
+  "videosSection": "Videos",
+  "importTxtTooltip": "Importar .txt",
+  "expandTooltip": "Expandir",
+
+  "editStory": "Editar historia",
+  "discardChangesTitle": "¿Descartar cambios?",
+  "discardChangesPrompt": "Tiene cambios sin guardar. ¿Salir sin guardar?",
+
+  "archivedStateLabel": "Archivado",
+  "archiveSubtitle": "Ocultar de la pantalla principal",
   "@appTitle": { "description": "Label for appTitle", "type": "text" },
   "@settings": { "description": "Label for settings", "type": "text" },
   "@language": { "description": "Label for language", "type": "text" },

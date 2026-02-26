@@ -250,6 +250,46 @@
     "placeholders": { "error": {} }
   }
   ,
+
+  "titleRequired": "Title is required!",
+  "errorSavingStory": "Error saving story: {error}",
+  "@errorSavingStory": { "placeholders": { "error": {} } },
+
+  "exportPdfFieldsRequired": "Title and description are required to export.",
+
+  "exportHistory": "Export Story",
+  "exportHistoryPrompt": "Do you want to save before exporting or just preview?",
+
+  "preview": "Preview",
+  "saveAndExport": "Save and export",
+
+  "untitled": "Untitled",
+
+  "errorLoadingFile": "Error loading file: {error}",
+  "@errorLoadingFile": { "placeholders": { "error": {} } },
+
+  "discard": "Discard",
+  "discardStoryTitle": "Discard story?",
+  "unsavedStoryPrompt": "You have a new unsaved story. Leave without saving?",
+
+  "changeDateTooltip": "Change date",
+  "storyTitleLabel": "Title",
+  "storyTitleHint": "Enter the title",
+  "descriptionLabel": "Description",
+  "descriptionHint": "Write your story...",
+  "tagsLabel": "Tags",
+  "photosSection": "Photos",
+  "audiosSection": "Audios",
+  "videosSection": "Videos",
+  "importTxtTooltip": "Import .txt",
+  "expandTooltip": "Expand",
+
+  "editStory": "Edit Story",
+  "discardChangesTitle": "Discard changes?",
+  "discardChangesPrompt": "You have unsaved changes. Leave without saving?",
+
+  "archivedStateLabel": "Archived",
+  "archiveSubtitle": "Hide from home screen",
   "@appTitle": { "description": "Label for appTitle", "type": "text" },
   "@settings": { "description": "Label for settings", "type": "text" },
   "@language": { "description": "Label for language", "type": "text" },

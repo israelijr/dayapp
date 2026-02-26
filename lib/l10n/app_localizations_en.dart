@@ -105,7 +105,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noStoriesYetTitle => 'No stories yet';
 
   @override
-  String get noStoriesYetSubtitle => 'Start recording your days to see statistics';
+  String get noStoriesYetSubtitle =>
+      'Start recording your days to see statistics';
 
   @override
   String get trends => 'Trends';
@@ -236,7 +237,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enterNewPassword => 'Enter the new password.';
 
   @override
-  String get passwordResetSuccess => 'Password reset successfully! Log in with the new password.';
+  String get passwordResetSuccess =>
+      'Password reset successfully! Log in with the new password.';
 
   @override
   String get errorResetPassword => 'Error resetting password. Try again.';
@@ -320,7 +322,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get emailOrPasswordIncorrect => 'Email or password incorrect';
 
   @override
-  String get noEmailRegistered => 'No email registered. Configure it in settings.';
+  String get noEmailRegistered =>
+      'No email registered. Configure it in settings.';
 
   @override
   String checkEmailOrUseCode(Object email) {
@@ -363,7 +366,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get backupRecommendation => 'We recommend backing up to avoid losing your data.';
+  String get backupRecommendation =>
+      'We recommend backing up to avoid losing your data.';
 
   @override
   String get cancel => 'Cancel';
@@ -375,7 +379,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteStoryTitle => 'Delete story';
 
   @override
-  String get deleteStoryConfirm => 'Do you want to move this story to the trash?';
+  String get deleteStoryConfirm =>
+      'Do you want to move this story to the trash?';
 
   @override
   String get deleteLabel => 'Delete';
@@ -490,7 +495,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get entryNotifications => 'Entry notifications';
 
   @override
-  String get entryNotificationsInfo => 'Entries with a date at least 2 hours ahead may have scheduled notifications.';
+  String get entryNotificationsInfo =>
+      'Entries with a date at least 2 hours ahead may have scheduled notifications.';
 
   @override
   String get defaultAdvanceTitle => 'Default advance';
@@ -499,7 +505,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationAdvanceTitle => 'Notification advance';
 
   @override
-  String get notificationAdvancePrompt => 'How much notice would you like before being notified?';
+  String get notificationAdvancePrompt =>
+      'How much notice would you like before being notified?';
 
   @override
   String get notificationAdvanceDefault => 'Default advance';
@@ -511,10 +518,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backupWithVideosZip => 'Backup with videos in ZIP file';
 
   @override
-  String get backupOnLogoutDescription => 'Backup will be created when you log out';
+  String get backupOnLogoutDescription =>
+      'Backup will be created when you log out';
 
   @override
-  String get automaticBackupInfo => 'When you log out, a backup will be created and you can choose where to save it (local folder, Google Drive, etc).';
+  String get automaticBackupInfo =>
+      'When you log out, a backup will be created and you can choose where to save it (local folder, Google Drive, etc).';
 
   @override
   String get biometricsNotAvailable => 'Not available on this device';
@@ -523,13 +532,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get biometricsDisabled => 'Biometrics disabled';
 
   @override
-  String get biometricConfiguredInfo => 'Biometrics is configured. You can log in using your fingerprint or face recognition.';
+  String get biometricConfiguredInfo =>
+      'Biometrics is configured. You can log in using your fingerprint or face recognition.';
 
   @override
   String get biometricAuthFailed => 'Biometric authentication failed';
 
   @override
-  String get confirmIdentityToEnableBiometrics => 'Confirm your identity to enable biometrics';
+  String get confirmIdentityToEnableBiometrics =>
+      'Confirm your identity to enable biometrics';
 
   @override
   String get calendarTitle => 'Calendar';
@@ -599,4 +610,92 @@ class AppLocalizationsEn extends AppLocalizations {
   String exportPdfError(Object error) {
     return 'Error exporting PDF: $error';
   }
+
+  @override
+  String get titleRequired => 'Title is required!';
+
+  @override
+  String errorSavingStory(Object error) => 'Error saving story: $error';
+
+  @override
+  String get exportPdfFieldsRequired =>
+      'Title and description are required to export.';
+
+  @override
+  String get exportHistory => 'Export Story';
+
+  @override
+  String get exportHistoryPrompt =>
+      'Do you want to save before exporting or just preview?';
+
+  @override
+  String get preview => 'Preview';
+
+  @override
+  String get saveAndExport => 'Save and export';
+
+  @override
+  String get untitled => 'Untitled';
+
+  @override
+  String errorLoadingFile(Object error) => 'Error loading file: $error';
+
+  @override
+  String get discard => 'Discard';
+
+  @override
+  String get discardStoryTitle => 'Discard story?';
+
+  @override
+  String get unsavedStoryPrompt =>
+      'You have a new unsaved story. Leave without saving?';
+
+  @override
+  String get changeDateTooltip => 'Change date';
+
+  @override
+  String get storyTitleLabel => 'Title';
+
+  @override
+  String get storyTitleHint => 'Enter the title';
+
+  @override
+  String get descriptionLabel => 'Description';
+
+  @override
+  String get descriptionHint => 'Write your story...';
+
+  @override
+  String get tagsLabel => 'Tags';
+
+  @override
+  String get photosSection => 'Photos';
+
+  @override
+  String get audiosSection => 'Audios';
+
+  @override
+  String get videosSection => 'Videos';
+
+  @override
+  String get importTxtTooltip => 'Import .txt';
+
+  @override
+  String get expandTooltip => 'Expand';
+
+  @override
+  String get editStory => 'Edit Story';
+
+  @override
+  String get discardChangesTitle => 'Discard changes?';
+
+  @override
+  String get discardChangesPrompt =>
+      'You have unsaved changes. Leave without saving?';
+
+  @override
+  String get archivedStateLabel => 'Archived';
+
+  @override
+  String get archiveSubtitle => 'Hide from home screen';
 }

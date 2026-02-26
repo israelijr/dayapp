@@ -8,6 +8,37 @@ import 'app_localizations.dart';
 class AppLocalizationsPt extends AppLocalizations {
   AppLocalizationsPt([String locale = 'pt']) : super(locale);
 
+  // ----- UI elements used in create/edit story screens -----
+  @override
+  String get storyTitleLabel => 'Título';
+
+  @override
+  String get storyTitleHint => 'Digite o título';
+
+  @override
+  String get descriptionLabel => 'Descrição';
+
+  @override
+  String get descriptionHint => 'Escreva sua história...';
+
+  @override
+  String get tagsLabel => 'Tags';
+
+  @override
+  String get photosSection => 'Fotos';
+
+  @override
+  String get audiosSection => 'Áudios';
+
+  @override
+  String get videosSection => 'Vídeos';
+
+  @override
+  String get importTxtTooltip => 'Importar .txt';
+
+  @override
+  String get expandTooltip => 'Expandir';
+
   @override
   String get appTitle => 'DayApp';
 
@@ -105,7 +136,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get noStoriesYetTitle => 'Nenhuma história registrada ainda';
 
   @override
-  String get noStoriesYetSubtitle => 'Comece a registrar seus dias para ver as estatísticas';
+  String get noStoriesYetSubtitle =>
+      'Comece a registrar seus dias para ver as estatísticas';
 
   @override
   String get trends => 'Tendências';
@@ -216,7 +248,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get invalidEmail => 'Informe um e-mail válido.';
 
   @override
-  String get emailNotFound => 'E-mail não encontrado. Verifique e tente novamente.';
+  String get emailNotFound =>
+      'E-mail não encontrado. Verifique e tente novamente.';
 
   @override
   String codeSent(Object email) {
@@ -236,16 +269,19 @@ class AppLocalizationsPt extends AppLocalizations {
   String get enterNewPassword => 'Informe a nova senha.';
 
   @override
-  String get passwordResetSuccess => 'Senha redefinida com sucesso! Faça login com a nova senha.';
+  String get passwordResetSuccess =>
+      'Senha redefinida com sucesso! Faça login com a nova senha.';
 
   @override
-  String get errorResetPassword => 'Erro ao redefinir a senha. Tente novamente.';
+  String get errorResetPassword =>
+      'Erro ao redefinir a senha. Tente novamente.';
 
   @override
   String get passwordsDoNotMatch => 'As senhas não coincidem.';
 
   @override
-  String get resendCodeSuccess => 'Novo código enviado! Verifique sua caixa de entrada.';
+  String get resendCodeSuccess =>
+      'Novo código enviado! Verifique sua caixa de entrada.';
 
   @override
   String get resendCodeError => 'Erro ao reenviar código. Tente novamente.';
@@ -320,7 +356,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get emailOrPasswordIncorrect => 'E-mail ou senha incorretos';
 
   @override
-  String get noEmailRegistered => 'Nenhum e-mail cadastrado. Configure nas configurações.';
+  String get noEmailRegistered =>
+      'Nenhum e-mail cadastrado. Configure nas configurações.';
 
   @override
   String checkEmailOrUseCode(Object email) {
@@ -337,7 +374,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get recoverPinTitle => 'Recuperar PIN';
 
   @override
-  String get enterRecoveryCodePrompt => 'Digite o código que foi enviado para seu e-mail:';
+  String get enterRecoveryCodePrompt =>
+      'Digite o código que foi enviado para seu e-mail:';
 
   @override
   String get recoveryCodeLabel => 'Código de recuperação (6 dígitos)';
@@ -363,7 +401,8 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
-  String get backupRecommendation => 'Recomendamos fazer backup para evitar perder seus dados.';
+  String get backupRecommendation =>
+      'Recomendamos fazer backup para evitar perder seus dados.';
 
   @override
   String get cancel => 'Cancelar';
@@ -431,7 +470,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get groups => 'Grupos';
 
   @override
-  String get imageCopiedBase64 => 'Imagem copiada para a área de transferência (base64)';
+  String get imageCopiedBase64 =>
+      'Imagem copiada para a área de transferência (base64)';
 
   @override
   String get newGroup => 'Novo Grupo';
@@ -490,7 +530,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get entryNotifications => 'Notificações de Entradas';
 
   @override
-  String get entryNotificationsInfo => 'Entradas com data pelo menos 2 horas à frente podem ter notificações agendadas.';
+  String get entryNotificationsInfo =>
+      'Entradas com data pelo menos 2 horas à frente podem ter notificações agendadas.';
 
   @override
   String get defaultAdvanceTitle => 'Antecedência Padrão';
@@ -499,7 +540,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get notificationAdvanceTitle => 'Antecedência da Notificação';
 
   @override
-  String get notificationAdvancePrompt => 'Com quanto tempo de antecedência você quer ser notificado?';
+  String get notificationAdvancePrompt =>
+      'Com quanto tempo de antecedência você quer ser notificado?';
 
   @override
   String get notificationAdvanceDefault => 'Antecedência padrão';
@@ -514,7 +556,8 @@ class AppLocalizationsPt extends AppLocalizations {
   String get backupOnLogoutDescription => 'Backup será criado ao fazer logout';
 
   @override
-  String get automaticBackupInfo => 'Ao fazer logout, um backup será criado e você poderá escolher onde salvar (pasta local, Google Drive, etc).';
+  String get automaticBackupInfo =>
+      'Ao fazer logout, um backup será criado e você poderá escolher onde salvar (pasta local, Google Drive, etc).';
 
   @override
   String get biometricsNotAvailable => 'Não disponível neste dispositivo';
@@ -523,13 +566,15 @@ class AppLocalizationsPt extends AppLocalizations {
   String get biometricsDisabled => 'Biometria desabilitada';
 
   @override
-  String get biometricConfiguredInfo => 'A biometria está configurada. Você pode fazer login usando sua digital ou reconhecimento facial.';
+  String get biometricConfiguredInfo =>
+      'A biometria está configurada. Você pode fazer login usando sua digital ou reconhecimento facial.';
 
   @override
   String get biometricAuthFailed => 'Falha na autenticação biométrica';
 
   @override
-  String get confirmIdentityToEnableBiometrics => 'Confirme sua identidade para habilitar a biometria';
+  String get confirmIdentityToEnableBiometrics =>
+      'Confirme sua identidade para habilitar a biometria';
 
   @override
   String get calendarTitle => 'Calendário';
@@ -599,11 +644,68 @@ class AppLocalizationsPt extends AppLocalizations {
   String exportPdfError(Object error) {
     return 'Erro ao exportar PDF: $error';
   }
+
+  @override
+  String get titleRequired => 'Título é obrigatório!';
+
+  @override
+  String errorSavingStory(Object error) => 'Erro ao salvar história: $error';
+
+  @override
+  String get exportPdfFieldsRequired =>
+      'Título e descrição são obrigatórios para exportar.';
+
+  @override
+  String get exportHistory => 'Exportar História';
+
+  @override
+  String get exportHistoryPrompt =>
+      'Deseja salvar antes de exportar ou ver um preview?';
+
+  @override
+  String get preview => 'Preview';
+
+  @override
+  String get saveAndExport => 'Salvar e exportar';
+
+  @override
+  String get untitled => 'Sem título';
+
+  @override
+  String errorLoadingFile(Object error) => 'Erro ao carregar arquivo: $error';
+
+  @override
+  String get discard => 'Descartar';
+
+  @override
+  String get discardStoryTitle => 'Descartar história?';
+
+  @override
+  String get unsavedStoryPrompt =>
+      'Você tem uma nova história não salva. Deseja sair sem salvar?';
+
+  @override
+  String get changeDateTooltip => 'Alterar Data';
+
+  @override
+  String get editStory => 'Editar História';
+
+  @override
+  String get discardChangesTitle => 'Descartar alterações?';
+
+  @override
+  String get discardChangesPrompt =>
+      'Você tem alterações não salvas. Deseja sair sem salvar?';
+
+  @override
+  String get archivedStateLabel => 'Arquivado';
+
+  @override
+  String get archiveSubtitle => 'Ocultar da tela inicial';
 }
 
-/// The translations for Portuguese, as used in Brazil (`pt_BR`).
 class AppLocalizationsPtBr extends AppLocalizationsPt {
-  AppLocalizationsPtBr(): super('pt_BR');
+  AppLocalizationsPtBr() : super('pt_BR');
 
   @override
   String get appTitle => 'DayApp';
@@ -702,7 +804,8 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get noStoriesYetTitle => 'Nenhuma história registrada ainda';
 
   @override
-  String get noStoriesYetSubtitle => 'Comece a registrar seus dias para ver as estatísticas';
+  String get noStoriesYetSubtitle =>
+      'Comece a registrar seus dias para ver as estatísticas';
 
   @override
   String get trends => 'Tendências';
@@ -813,7 +916,8 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get invalidEmail => 'Informe um e-mail válido.';
 
   @override
-  String get emailNotFound => 'E-mail não encontrado. Verifique e tente novamente.';
+  String get emailNotFound =>
+      'E-mail não encontrado. Verifique e tente novamente.';
 
   @override
   String codeSent(Object email) {
@@ -833,16 +937,19 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get enterNewPassword => 'Informe a nova senha.';
 
   @override
-  String get passwordResetSuccess => 'Senha redefinida com sucesso! Faça login com a nova senha.';
+  String get passwordResetSuccess =>
+      'Senha redefinida com sucesso! Faça login com a nova senha.';
 
   @override
-  String get errorResetPassword => 'Erro ao redefinir a senha. Tente novamente.';
+  String get errorResetPassword =>
+      'Erro ao redefinir a senha. Tente novamente.';
 
   @override
   String get passwordsDoNotMatch => 'As senhas não coincidem.';
 
   @override
-  String get resendCodeSuccess => 'Novo código enviado! Verifique sua caixa de entrada.';
+  String get resendCodeSuccess =>
+      'Novo código enviado! Verifique sua caixa de entrada.';
 
   @override
   String get resendCodeError => 'Erro ao reenviar código. Tente novamente.';
@@ -917,7 +1024,8 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get emailOrPasswordIncorrect => 'E-mail ou senha incorretos';
 
   @override
-  String get noEmailRegistered => 'Nenhum e-mail cadastrado. Configure nas configurações.';
+  String get noEmailRegistered =>
+      'Nenhum e-mail cadastrado. Configure nas configurações.';
 
   @override
   String checkEmailOrUseCode(Object email) {
@@ -934,7 +1042,8 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get recoverPinTitle => 'Recuperar PIN';
 
   @override
-  String get enterRecoveryCodePrompt => 'Digite o código que foi enviado para seu e-mail:';
+  String get enterRecoveryCodePrompt =>
+      'Digite o código que foi enviado para seu e-mail:';
 
   @override
   String get recoveryCodeLabel => 'Código de recuperação (6 dígitos)';
@@ -960,7 +1069,8 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   }
 
   @override
-  String get backupRecommendation => 'Recomendamos fazer backup para evitar perder seus dados.';
+  String get backupRecommendation =>
+      'Recomendamos fazer backup para evitar perder seus dados.';
 
   @override
   String get cancel => 'Cancelar';
@@ -1028,7 +1138,8 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get groups => 'Grupos';
 
   @override
-  String get imageCopiedBase64 => 'Imagem copiada para a área de transferência (base64)';
+  String get imageCopiedBase64 =>
+      'Imagem copiada para a área de transferência (base64)';
 
   @override
   String get newGroup => 'Novo Grupo';
@@ -1087,7 +1198,8 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get entryNotifications => 'Notificações de Entradas';
 
   @override
-  String get entryNotificationsInfo => 'Entradas com data pelo menos 2 horas à frente podem ter notificações agendadas.';
+  String get entryNotificationsInfo =>
+      'Entradas com data pelo menos 2 horas à frente podem ter notificações agendadas.';
 
   @override
   String get defaultAdvanceTitle => 'Antecedência Padrão';
@@ -1096,7 +1208,8 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get notificationAdvanceTitle => 'Antecedência da Notificação';
 
   @override
-  String get notificationAdvancePrompt => 'Com quanto tempo de antecedência você quer ser notificado?';
+  String get notificationAdvancePrompt =>
+      'Com quanto tempo de antecedência você quer ser notificado?';
 
   @override
   String get notificationAdvanceDefault => 'Antecedência padrão';
@@ -1111,7 +1224,8 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get backupOnLogoutDescription => 'Backup será criado ao fazer logout';
 
   @override
-  String get automaticBackupInfo => 'Ao fazer logout, um backup será criado e você poderá escolher onde salvar (pasta local, Google Drive, etc).';
+  String get automaticBackupInfo =>
+      'Ao fazer logout, um backup será criado e você poderá escolher onde salvar (pasta local, Google Drive, etc).';
 
   @override
   String get biometricsNotAvailable => 'Não disponível neste dispositivo';
@@ -1120,13 +1234,15 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get biometricsDisabled => 'Biometria desabilitada';
 
   @override
-  String get biometricConfiguredInfo => 'A biometria está configurada. Você pode fazer login usando sua digital ou reconhecimento facial.';
+  String get biometricConfiguredInfo =>
+      'A biometria está configurada. Você pode fazer login usando sua digital ou reconhecimento facial.';
 
   @override
   String get biometricAuthFailed => 'Falha na autenticação biométrica';
 
   @override
-  String get confirmIdentityToEnableBiometrics => 'Confirme sua identidade para habilitar a biometria';
+  String get confirmIdentityToEnableBiometrics =>
+      'Confirme sua identidade para habilitar a biometria';
 
   @override
   String get calendarTitle => 'Calendário';
@@ -1196,4 +1312,76 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String exportPdfError(Object error) {
     return 'Erro ao exportar PDF: $error';
   }
+
+  @override
+  String get titleRequired => 'Título é obrigatório!';
+
+  @override
+  String errorSavingStory(Object error) => 'Erro ao salvar história: $error';
+
+  @override
+  String get exportPdfFieldsRequired =>
+      'Título e descrição são obrigatórios para exportar.';
+
+  @override
+  String get exportHistory => 'Exportar História';
+
+  @override
+  String get exportHistoryPrompt =>
+      'Deseja salvar antes de exportar ou ver um preview?';
+
+  @override
+  String get preview => 'Preview';
+
+  @override
+  String get saveAndExport => 'Salvar e exportar';
+
+  @override
+  String get untitled => 'Sem título';
+
+  @override
+  String errorLoadingFile(Object error) => 'Erro ao carregar arquivo: $error';
+
+  @override
+  String get discard => 'Descartar';
+
+  @override
+  String get discardStoryTitle => 'Descartar história?';
+
+  @override
+  String get unsavedStoryPrompt =>
+      'Você tem uma nova história não salva. Deseja sair sem salvar?';
+
+  @override
+  String get changeDateTooltip => 'Alterar Data';
+
+  @override
+  String get storyTitleLabel => 'Título';
+
+  @override
+  String get storyTitleHint => 'Digite o título';
+
+  @override
+  String get descriptionLabel => 'Descrição';
+
+  @override
+  String get descriptionHint => 'Escreva sua história...';
+
+  @override
+  String get tagsLabel => 'Tags';
+
+  @override
+  String get photosSection => 'Fotos';
+
+  @override
+  String get audiosSection => 'Áudios';
+
+  @override
+  String get videosSection => 'Vídeos';
+
+  @override
+  String get importTxtTooltip => 'Importar .txt';
+
+  @override
+  String get expandTooltip => 'Expandir';
 }

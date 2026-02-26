@@ -280,9 +280,9 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
 
   Future<int?> _saveHistoria({bool navigateAfterSave = true}) async {
     if (titleController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Título é obrigatório!')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.titleRequired)),
+      );
       return null;
     }
 
@@ -363,9 +363,13 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
       return historiaId;
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Erro ao salvar história: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.errorSavingStory(e.toString()),
+            ),
+          ),
+        );
       }
       return null;
     } finally {
@@ -382,8 +386,8 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
     final plainText = richTextController.document.toPlainText().trim();
     if (titleController.text.trim().isEmpty || plainText.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Título e descrição são obrigatórios para exportar.'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.exportPdfFieldsRequired),
         ),
       );
       return;
@@ -392,26 +396,27 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
     // Pergunta ao usuário se quer salvar direto ou só preview
     final choice = await showDialog<String>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Exportar História'),
-        content: const Text(
-          'Deseja salvar antes de exportar ou ver um preview?',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, 'cancel'),
-            child: const Text('Cancelar'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, 'preview'),
-            child: const Text('Preview'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, 'save'),
-            child: const Text('Salvar e exportar'),
-          ),
-        ],
-      ),
+      builder: (ctx) {
+        final loc = AppLocalizations.of(ctx)!;
+        return AlertDialog(
+          title: Text(loc.exportHistory),
+          content: Text(loc.exportHistoryPrompt),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, 'cancel'),
+              child: Text(loc.cancel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, 'preview'),
+              child: Text(loc.preview),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, 'save'),
+              child: Text(loc.saveAndExport),
+            ),
+          ],
+        );
+      },
     );
     if (choice == null || choice == 'cancel') return;
 
@@ -423,8 +428,10 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
     });
 
     try {
+      if (!mounted) return; // garantimos contexto
+      final loc = AppLocalizations.of(context)!;
       final titleText = titleController.text.trim().isEmpty
-          ? 'Sem título'
+          ? loc.untitled
           : _capitalizeText(titleController.text.trim());
 
       // Se escolheu salvar e exportar, salva primeiro sem navegar
@@ -477,9 +484,13 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
       );
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Erro ao exportar PDF: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.exportPdfError(e.toString()),
+            ),
+          ),
+        );
       }
     } finally {
       if (mounted) {
@@ -567,9 +578,13 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
       pinProvider.isPickingExternalMedia = false;
 
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Erro ao carregar arquivo: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.errorLoadingFile(e.toString()),
+          ),
+        ),
+      );
     }
   }
 
@@ -591,6 +606,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     final dateFormat = DateFormat('dd/MM/yyyy HH:mm', 'pt_BR');
     final theme = Theme.of(context);
 
@@ -608,23 +624,21 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
           context: context,
           barrierDismissible: false,
           builder: (context) => AlertDialog(
-            title: const Text('Descartar história?'),
-            content: const Text(
-              'Você tem uma nova história não salva. Deseja sair sem salvar?',
-            ),
+            title: Text(loc.discardStoryTitle),
+            content: Text(loc.unsavedStoryPrompt),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop('cancel'),
-                child: const Text('Cancelar'),
+                child: Text(loc.cancel),
               ),
               TextButton(
                 onPressed: () => Navigator.of(context).pop('discard'),
                 style: TextButton.styleFrom(foregroundColor: Colors.red),
-                child: const Text('Descartar'),
+                child: Text(loc.discard),
               ),
               TextButton(
                 onPressed: () => Navigator.of(context).pop('save'),
-                child: const Text('Salvar'),
+                child: Text(loc.save),
               ),
             ],
           ),
@@ -640,11 +654,11 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Nova História'),
+          title: Text(loc.newStory),
           actions: [
             IconButton(
               icon: const Icon(Icons.picture_as_pdf),
-              tooltip: 'Exportar PDF',
+              tooltip: loc.exportPdf,
               onPressed: _isLoading ? null : _exportToPdf,
             ),
             if (_isLoading)
@@ -659,9 +673,9 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
             else
               TextButton(
                 onPressed: _saveHistoria,
-                child: const Text(
-                  'Salvar',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                child: Text(
+                  loc.save,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
           ],
@@ -686,7 +700,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                         IconButton(
                           icon: const Icon(Icons.calendar_today, size: 20),
                           onPressed: _pickDateTime,
-                          tooltip: 'Alterar Data',
+                          tooltip: loc.changeDateTooltip,
                           padding: const EdgeInsets.all(4),
                           constraints: const BoxConstraints(),
                         ),
@@ -709,8 +723,8 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                     // Title
                     CustomTextField(
                       controller: titleController,
-                      label: 'Título',
-                      hintText: 'Digite o título',
+                      label: loc.storyTitleLabel,
+                      hintText: loc.storyTitleHint,
                       style: theme.textTheme.headlineSmall,
                       inputFormatters: [
                         SentenceCapitalizationTextInputFormatter(),
@@ -723,9 +737,9 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                     const SizedBox(height: 16),
 
                     // Rich Text Description
-                    const Text(
-                      'Descrição',
-                      style: TextStyle(
+                    Text(
+                      loc.descriptionLabel,
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                       ),
@@ -734,7 +748,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                     RichTextEditorWidget(
                       key: const Key('description_field'),
                       controller: richTextController,
-                      hintText: 'Escreva sua história...',
+                      hintText: loc.descriptionHint,
                       minLines: 8,
                       maxLines: 15,
                       showToolbar: true,
@@ -749,14 +763,17 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                     // Tags
                     CustomTextField(
                       controller: tagsController,
-                      label: 'Tags',
+                      label: loc.tagsLabel,
                       prefixIcon: const Icon(Icons.tag),
                     ),
                     const SizedBox(height: 24),
 
                     // Media Previews
                     if (fotos.isNotEmpty) ...[
-                      Text('Fotos', style: theme.textTheme.titleSmall),
+                      Text(
+                        loc.photosSection,
+                        style: theme.textTheme.titleSmall,
+                      ),
                       const SizedBox(height: 8),
                       SizedBox(
                         height: 100,
@@ -797,7 +814,10 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                     ],
 
                     if (audios.isNotEmpty) ...[
-                      Text('Áudios', style: theme.textTheme.titleSmall),
+                      Text(
+                        loc.audiosSection,
+                        style: theme.textTheme.titleSmall,
+                      ),
                       const SizedBox(height: 8),
                       Wrap(
                         spacing: 8,
@@ -814,7 +834,10 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                     ],
 
                     if (videos.isNotEmpty) ...[
-                      Text('Vídeos', style: theme.textTheme.titleSmall),
+                      Text(
+                        loc.videosSection,
+                        style: theme.textTheme.titleSmall,
+                      ),
                       const SizedBox(height: 8),
                       Wrap(
                         spacing: 8,
@@ -851,14 +874,14 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                     child: IconButton(
                       icon: const Icon(Icons.upload_file),
                       onPressed: _pickTxtFileForDescription,
-                      tooltip: 'Importar .txt',
+                      tooltip: loc.importTxtTooltip,
                     ),
                   ),
                   Expanded(
                     child: IconButton(
                       icon: const Icon(Icons.open_in_full),
                       onPressed: _expandDescriptionEditor,
-                      tooltip: 'Expandir',
+                      tooltip: loc.expandTooltip,
                     ),
                   ),
                 ],
