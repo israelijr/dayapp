@@ -436,6 +436,54 @@ class AppLocalizationsEs extends AppLocalizations {
   String get backupComplete => 'Copia de seguridad completa';
 
   @override
+  String get notifications => 'Notificaciones';
+
+  @override
+  String get entryNotifications => 'Notificaciones de entradas';
+
+  @override
+  String get entryNotificationsInfo => 'Las entradas con fecha al menos 2 horas por delante pueden tener notificaciones programadas.';
+
+  @override
+  String get defaultAdvanceTitle => 'Antelación predeterminada';
+
+  @override
+  String get notificationAdvanceTitle => 'Antelación de la notificación';
+
+  @override
+  String get notificationAdvancePrompt => '¿Con cuánto tiempo de antelación desea ser notificado?';
+
+  @override
+  String get notificationAdvanceDefault => 'Antelación predeterminada';
+
+  @override
+  String get manageCompleteBackup => 'Administrar copia de seguridad completa';
+
+  @override
+  String get backupWithVideosZip => 'Copia de seguridad con videos en archivo ZIP';
+
+  @override
+  String get backupOnLogoutDescription => 'La copia de seguridad se creará al cerrar sesión';
+
+  @override
+  String get automaticBackupInfo => 'Cuando cierre sesión, se creará una copia de seguridad y podrá elegir dónde guardarla (carpeta local, Google Drive, etc).';
+
+  @override
+  String get biometricsNotAvailable => 'No disponible en este dispositivo';
+
+  @override
+  String get biometricsDisabled => 'Biometría deshabilitada';
+
+  @override
+  String get biometricConfiguredInfo => 'La biometría está configurada. Puede iniciar sesión usando su huella dactilar o reconocimiento facial.';
+
+  @override
+  String get biometricAuthFailed => 'Error en la autenticación biométrica';
+
+  @override
+  String get confirmIdentityToEnableBiometrics => 'Confirme su identidad para habilitar la biometría';
+
+  @override
   String get calendarTitle => 'Calendario';
 
   @override

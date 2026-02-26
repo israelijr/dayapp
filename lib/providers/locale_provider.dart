@@ -38,11 +38,23 @@ class LocaleProvider extends ChangeNotifier {
     if (notify) notifyListeners();
   }
 
-  /// Define e persiste a seleção
+  /// Define e persiste a seleção.
+  ///
+  /// Atualiza o estado local **imediatamente** (notificando listeners) e
+  /// só depois grava nos _SharedPreferences_. Isso evita que a UI fique
+  /// presa no idioma anterior durante o tempo que o armazenamento leva para
+  /// completar.
   Future<void> setSelection(String sel) async {
     _selection = sel;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_prefsKey, sel);
+    // aplica antes de gravar, o notify faz com que a árvore (MaterialApp)
+    // reconstrua com o novo locale imediatamente.
     _applySelection();
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_prefsKey, sel);
+    } catch (e) {
+      // Silencia erros de escrita - não é crítico para o uso imediato.
+    }
   }
 }

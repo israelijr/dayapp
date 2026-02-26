@@ -436,6 +436,54 @@ class AppLocalizationsPt extends AppLocalizations {
   String get backupComplete => 'Backup Completo';
 
   @override
+  String get notifications => 'Notificações';
+
+  @override
+  String get entryNotifications => 'Notificações de Entradas';
+
+  @override
+  String get entryNotificationsInfo => 'Entradas com data pelo menos 2 horas à frente podem ter notificações agendadas.';
+
+  @override
+  String get defaultAdvanceTitle => 'Antecedência Padrão';
+
+  @override
+  String get notificationAdvanceTitle => 'Antecedência da Notificação';
+
+  @override
+  String get notificationAdvancePrompt => 'Com quanto tempo de antecedência você quer ser notificado?';
+
+  @override
+  String get notificationAdvanceDefault => 'Antecedência padrão';
+
+  @override
+  String get manageCompleteBackup => 'Gerenciar Backup Completo';
+
+  @override
+  String get backupWithVideosZip => 'Backup com vídeos em arquivo ZIP';
+
+  @override
+  String get backupOnLogoutDescription => 'Backup será criado ao fazer logout';
+
+  @override
+  String get automaticBackupInfo => 'Ao fazer logout, um backup será criado e você poderá escolher onde salvar (pasta local, Google Drive, etc).';
+
+  @override
+  String get biometricsNotAvailable => 'Não disponível neste dispositivo';
+
+  @override
+  String get biometricsDisabled => 'Biometria desabilitada';
+
+  @override
+  String get biometricConfiguredInfo => 'A biometria está configurada. Você pode fazer login usando sua digital ou reconhecimento facial.';
+
+  @override
+  String get biometricAuthFailed => 'Falha na autenticação biométrica';
+
+  @override
+  String get confirmIdentityToEnableBiometrics => 'Confirme sua identidade para habilitar a biometria';
+
+  @override
   String get calendarTitle => 'Calendário';
 
   @override
@@ -935,6 +983,54 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get backupComplete => 'Backup Completo';
+
+  @override
+  String get notifications => 'Notificações';
+
+  @override
+  String get entryNotifications => 'Notificações de Entradas';
+
+  @override
+  String get entryNotificationsInfo => 'Entradas com data pelo menos 2 horas à frente podem ter notificações agendadas.';
+
+  @override
+  String get defaultAdvanceTitle => 'Antecedência Padrão';
+
+  @override
+  String get notificationAdvanceTitle => 'Antecedência da Notificação';
+
+  @override
+  String get notificationAdvancePrompt => 'Com quanto tempo de antecedência você quer ser notificado?';
+
+  @override
+  String get notificationAdvanceDefault => 'Antecedência padrão';
+
+  @override
+  String get manageCompleteBackup => 'Gerenciar Backup Completo';
+
+  @override
+  String get backupWithVideosZip => 'Backup com vídeos em arquivo ZIP';
+
+  @override
+  String get backupOnLogoutDescription => 'Backup será criado ao fazer logout';
+
+  @override
+  String get automaticBackupInfo => 'Ao fazer logout, um backup será criado e você poderá escolher onde salvar (pasta local, Google Drive, etc).';
+
+  @override
+  String get biometricsNotAvailable => 'Não disponível neste dispositivo';
+
+  @override
+  String get biometricsDisabled => 'Biometria desabilitada';
+
+  @override
+  String get biometricConfiguredInfo => 'A biometria está configurada. Você pode fazer login usando sua digital ou reconhecimento facial.';
+
+  @override
+  String get biometricAuthFailed => 'Falha na autenticação biométrica';
+
+  @override
+  String get confirmIdentityToEnableBiometrics => 'Confirme sua identidade para habilitar a biometria';
 
   @override
   String get calendarTitle => 'Calendário';

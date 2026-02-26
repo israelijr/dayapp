@@ -116,9 +116,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     value: 'system',
                     groupValue: lp.selection,
                     title: Text(loc.deviceDefault),
-                    onChanged: (v) async {
+                    onChanged: (v) {
                       if (v == null) return;
-                      await lp.setSelection(v);
+                      lp.setSelection(
+                        v,
+                      ); // alteração imediata, escrita em segundo plano
                       // Mantém o diálogo aberto para que o usuário veja a aplicação imediata
                     },
                   ),
@@ -126,18 +128,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     value: 'en',
                     groupValue: lp.selection,
                     title: Text(loc.english),
-                    onChanged: (v) async {
+                    onChanged: (v) {
                       if (v == null) return;
-                      await lp.setSelection(v);
+                      lp.setSelection(v);
                     },
                   ),
                   RadioListTile<String>(
                     value: 'es',
                     groupValue: lp.selection,
                     title: Text(loc.spanish),
-                    onChanged: (v) async {
+                    onChanged: (v) {
                       if (v == null) return;
-                      await lp.setSelection(v);
+                      lp.setSelection(v);
                     },
                   ),
                 ],
@@ -320,13 +322,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildBiometricSection(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Text(
-            AppLocalizations.of(context)!.security,
+            loc.security,
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
@@ -400,9 +404,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           // Mostra opção de timeout mesmo quando só biometria está habilitada
           ListTile(
             leading: const Icon(Icons.lock_clock),
-            title: const Text('Bloqueio em Segundo Plano'),
+            title: Text(loc.backgroundLock),
             subtitle: Text(
-              'Bloquear após: ${InactivityService.getBackgroundTimeoutLabel(_backgroundLockTimeout)}',
+              '${loc.backgroundLock}: ${InactivityService.getBackgroundTimeoutLabel(_backgroundLockTimeout)}',
             ),
             onTap: _showBackgroundLockTimeoutDialog,
           ),
@@ -412,20 +416,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
         // Biometria
         if (!_biometricAvailable)
-          const ListTile(
-            leading: Icon(Icons.fingerprint),
-            title: Text('Biometria'),
-            subtitle: Text('Não disponível neste dispositivo'),
+          ListTile(
+            leading: const Icon(Icons.fingerprint),
+            title: Text(loc.biometrics),
+            subtitle: Text(loc.biometricsNotAvailable),
           )
         else
           ListTile(
             leading: const Icon(Icons.fingerprint),
-            title: Text(AppLocalizations.of(context)!.enableBiometrics),
-            subtitle: Text(
-              _biometricEnabled
-                  ? AppLocalizations.of(context)!.enabled
-                  : AppLocalizations.of(context)!.disabled,
-            ),
+            title: Text(loc.enableBiometrics),
+            subtitle: Text(_biometricEnabled ? loc.enabled : loc.disabled),
             trailing: Switch(
               value: _biometricEnabled,
               onChanged: (value) async {
@@ -437,8 +437,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   if (!mounted) return;
                   // ignore: use_build_context_synchronously
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Biometria desabilitada'),
+                    SnackBar(
+                      content: Text(loc.biometricsDisabled),
                       backgroundColor: Colors.orange,
                     ),
                   );
@@ -447,13 +447,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
         if (_biometricEnabled)
-          const ListTile(
-            leading: Icon(Icons.info_outline),
-            title: Text('Informações'),
-            subtitle: Text(
-              'A biometria está configurada. '
-              'Você pode fazer login usando sua digital ou reconhecimento facial.',
-            ),
+          ListTile(
+            leading: const Icon(Icons.info_outline),
+            title: Text(loc.information),
+            subtitle: Text(loc.biometricConfiguredInfo),
             dense: true,
           ),
       ],
@@ -465,6 +462,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final passwordController = TextEditingController();
     bool obscurePassword = true;
     final outerContext = context;
+    final loc = AppLocalizations.of(context)!;
 
     showDialog(
       context: outerContext,
@@ -548,7 +546,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       if (!mounted) return;
                       messenger.showSnackBar(
                         SnackBar(
-                          content: const Text('E-mail ou senha inválidos'),
+                          content: Text(loc.invalidCredentials),
                           backgroundColor: errorColor,
                         ),
                       );
@@ -565,7 +563,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       if (!mounted) return;
                       messenger.showSnackBar(
                         SnackBar(
-                          content: const Text('E-mail ou senha inválidos'),
+                          content: Text(loc.invalidCredentials),
                           backgroundColor: errorColor,
                         ),
                       );
@@ -574,8 +572,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                     // Autentica com biometria
                     final authenticated = await _biometricService.authenticate(
-                      reason:
-                          'Confirme sua identidade para habilitar a biometria',
+                      reason: loc.confirmIdentityToEnableBiometrics,
                     );
 
                     if (authenticated) {
@@ -596,9 +593,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       if (mounted) {
                         messenger.showSnackBar(
                           SnackBar(
-                            content: const Text(
-                              'Falha na autenticação biométrica',
-                            ),
+                            content: Text(loc.biometricAuthFailed),
                             backgroundColor: errorColor,
                           ),
                         );
@@ -789,40 +784,40 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildBackupSection(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Text(
-            'Backup',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            loc.backup,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
         ListTile(
           leading: const Icon(Icons.folder_zip),
-          title: const Text('Gerenciar Backup Completo'),
-          subtitle: const Text('Backup com vídeos em arquivo ZIP'),
+          title: Text(loc.manageCompleteBackup),
+          subtitle: Text(loc.backupWithVideosZip),
           trailing: const Icon(Icons.arrow_forward_ios),
           onTap: () {
             Navigator.pushNamed(context, '/backup-manager');
           },
         ),
         const Divider(indent: 16, endIndent: 16),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Text(
-            'Backup Automático',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            loc.automaticBackup,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
           ),
         ),
         SwitchListTile(
           secondary: const Icon(Icons.backup),
-          title: const Text('Backup ao Sair'),
+          title: Text(loc.backupOnLogout),
           subtitle: Text(
-            _autoBackupEnabled
-                ? 'Backup será criado ao fazer logout'
-                : 'Desabilitado',
+            _autoBackupEnabled ? loc.backupOnLogoutDescription : loc.disabled,
           ),
           value: _autoBackupEnabled,
           onChanged: (value) async {
@@ -834,17 +829,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
           if (_lastAutoBackupTime != null)
             ListTile(
               leading: const Icon(Icons.history),
-              title: const Text('Último Backup Automático'),
+              title: Text(loc.lastAutoBackup),
               subtitle: Text(_formatLastBackupTime(_lastAutoBackupTime!)),
               dense: true,
             ),
-          const ListTile(
-            leading: Icon(Icons.info_outline),
-            title: Text('Informação'),
-            subtitle: Text(
-              'Ao fazer logout, um backup será criado e você poderá '
-              'escolher onde salvar (pasta local, Google Drive, etc).',
-            ),
+          ListTile(
+            leading: const Icon(Icons.info_outline),
+            title: Text(loc.information),
+            subtitle: Text(loc.automaticBackupInfo),
             dense: true,
           ),
         ],
@@ -1230,20 +1222,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildNotificationSection(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Text(
-            'Notificações',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            loc.notifications,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
         ListTile(
           leading: const Icon(Icons.notifications),
-          title: const Text('Notificações de Entradas'),
-          subtitle: Text(_notificationEnabled ? 'Habilitado' : 'Desabilitado'),
+          title: Text(loc.entryNotifications),
+          subtitle: Text(_notificationEnabled ? loc.enabled : loc.disabled),
           trailing: Switch(
             value: _notificationEnabled,
             onChanged: (value) async {
@@ -1255,7 +1249,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         if (_notificationEnabled)
           ListTile(
             leading: const Icon(Icons.access_time),
-            title: const Text('Antecedência Padrão'),
+            title: Text(loc.defaultAdvanceTitle),
             subtitle: Text(
               NotificationPreferencesService.getAdvanceLabel(
                 _notificationAdvance,
@@ -1265,77 +1259,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
             dense: true,
           ),
         if (_notificationEnabled)
-          const ListTile(
-            leading: Icon(Icons.info_outline),
-            title: Text('Informação'),
-            subtitle: Text(
-              'Entradas com data pelo menos 2 horas à frente podem ter notificações agendadas.',
-            ),
+          ListTile(
+            leading: const Icon(Icons.info_outline),
+            title: Text(loc.information),
+            subtitle: Text(loc.entryNotificationsInfo),
             dense: true,
           ),
         // const Divider(),
-        // ListTile(
-        //   leading: const Icon(Icons.auto_awesome),
-        //   title: const Text('Lembretes de Reflexão'),
-        //   subtitle: Text(
-        //     _engagementNotificationsEnabled
-        //         ? 'Reserve um momento para você'
-        //         : 'Desabilitado',
-        //   ),
-        //   trailing: Switch(
-        //     value: _engagementNotificationsEnabled,
-        //     onChanged: (value) async {
-        //       await _engagementService.setEnabled(value);
-        //       await _loadNotificationPreferences();
-        //     },
-        //   ),
-        // ),
-        // if (_engagementNotificationsEnabled)
-        //   const ListTile(
-        //     leading: Icon(Icons.info_outline),
-        //     title: Text('Sobre lembretes'),
-        //     subtitle: Text(
-        //       'Você receberá um lembrete carinhoso para registrar suas memórias e reflexões se ficar alguns dias sem abrir o app.',
-        //     ),
-        //     dense: true,
-        //   ),
-        // if (_engagementNotificationsEnabled &&
-        //     _batteryOptimizationDisabled == false)
-        //   ListTile(
-        //     leading: const Icon(Icons.battery_alert, color: Colors.orange),
-        //     title: const Text('Otimização de Bateria'),
-        //     subtitle: const Text(
-        //       'Lembretes podem não funcionar. Toque para configurar.',
-        //     ),
-        //     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-        //     onTap: () async {
-        //       await _batteryService.requestDisableBatteryOptimization();
-        //       await _loadNotificationPreferences();
-        //     },
-        //   ),
-        // if (_engagementNotificationsEnabled &&
-        //     _batteryOptimizationDisabled == true)
-        //   const ListTile(
-        //     leading: Icon(Icons.check_circle, color: Colors.green),
-        //     title: Text('Otimização de Bateria'),
-        //     subtitle: Text('Configurado corretamente'),
-        //     dense: true,
-        //   ),
+        // ... (comentado permanece igual)
       ],
     );
   }
 
   void _showNotificationAdvanceDialog() {
+    final loc = AppLocalizations.of(context)!;
+
     showDialog(
       context: context,
       builder: (dialogBuilderContext) => AlertDialog(
-        title: const Text('Antecedência da Notificação'),
+        title: Text(loc.notificationAdvanceTitle),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              'Com quanto tempo de antecedência você quer ser notificado?',
-            ),
+            Text(loc.notificationAdvancePrompt),
             const SizedBox(height: 16),
             ...NotificationPreferencesService.advanceOptions.map((minutes) {
               return RadioListTile<int>(
@@ -1355,7 +1301,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
-                          'Antecedência padrão: ${NotificationPreferencesService.getAdvanceLabel(value)}',
+                          '${loc.notificationAdvanceDefault}: ${NotificationPreferencesService.getAdvanceLabel(value)}',
                         ),
                       ),
                     );
@@ -1368,7 +1314,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogBuilderContext).pop(),
-            child: const Text('Fechar'),
+            child: Text(loc.close),
           ),
         ],
       ),

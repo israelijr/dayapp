@@ -436,6 +436,54 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backupComplete => 'Complete Backup';
 
   @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get entryNotifications => 'Entry notifications';
+
+  @override
+  String get entryNotificationsInfo => 'Entries with a date at least 2 hours ahead may have scheduled notifications.';
+
+  @override
+  String get defaultAdvanceTitle => 'Default advance';
+
+  @override
+  String get notificationAdvanceTitle => 'Notification advance';
+
+  @override
+  String get notificationAdvancePrompt => 'How much notice would you like before being notified?';
+
+  @override
+  String get notificationAdvanceDefault => 'Default advance';
+
+  @override
+  String get manageCompleteBackup => 'Manage full backup';
+
+  @override
+  String get backupWithVideosZip => 'Backup with videos in ZIP file';
+
+  @override
+  String get backupOnLogoutDescription => 'Backup will be created when you log out';
+
+  @override
+  String get automaticBackupInfo => 'When you log out, a backup will be created and you can choose where to save it (local folder, Google Drive, etc).';
+
+  @override
+  String get biometricsNotAvailable => 'Not available on this device';
+
+  @override
+  String get biometricsDisabled => 'Biometrics disabled';
+
+  @override
+  String get biometricConfiguredInfo => 'Biometrics is configured. You can log in using your fingerprint or face recognition.';
+
+  @override
+  String get biometricAuthFailed => 'Biometric authentication failed';
+
+  @override
+  String get confirmIdentityToEnableBiometrics => 'Confirm your identity to enable biometrics';
+
+  @override
   String get calendarTitle => 'Calendar';
 
   @override

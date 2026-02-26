@@ -932,6 +932,102 @@ abstract class AppLocalizations {
   /// **'Complete Backup'**
   String get backupComplete;
 
+  /// No description provided for @notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifications;
+
+  /// No description provided for @entryNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Entry notifications'**
+  String get entryNotifications;
+
+  /// No description provided for @entryNotificationsInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Entries with a date at least 2 hours ahead may have scheduled notifications.'**
+  String get entryNotificationsInfo;
+
+  /// No description provided for @defaultAdvanceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Default advance'**
+  String get defaultAdvanceTitle;
+
+  /// No description provided for @notificationAdvanceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification advance'**
+  String get notificationAdvanceTitle;
+
+  /// No description provided for @notificationAdvancePrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'How much notice would you like before being notified?'**
+  String get notificationAdvancePrompt;
+
+  /// No description provided for @notificationAdvanceDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Default advance'**
+  String get notificationAdvanceDefault;
+
+  /// No description provided for @manageCompleteBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage full backup'**
+  String get manageCompleteBackup;
+
+  /// No description provided for @backupWithVideosZip.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup with videos in ZIP file'**
+  String get backupWithVideosZip;
+
+  /// No description provided for @backupOnLogoutDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup will be created when you log out'**
+  String get backupOnLogoutDescription;
+
+  /// No description provided for @automaticBackupInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'When you log out, a backup will be created and you can choose where to save it (local folder, Google Drive, etc).'**
+  String get automaticBackupInfo;
+
+  /// No description provided for @biometricsNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Not available on this device'**
+  String get biometricsNotAvailable;
+
+  /// No description provided for @biometricsDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometrics disabled'**
+  String get biometricsDisabled;
+
+  /// No description provided for @biometricConfiguredInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometrics is configured. You can log in using your fingerprint or face recognition.'**
+  String get biometricConfiguredInfo;
+
+  /// No description provided for @biometricAuthFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric authentication failed'**
+  String get biometricAuthFailed;
+
+  /// No description provided for @confirmIdentityToEnableBiometrics.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm your identity to enable biometrics'**
+  String get confirmIdentityToEnableBiometrics;
+
   /// No description provided for @calendarTitle.
   ///
   /// In en, this message translates to:
