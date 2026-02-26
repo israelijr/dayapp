@@ -52,7 +52,9 @@ class _VideoRecorderWidgetState extends State<VideoRecorderWidget> {
             Icon(Icons.videocam, size: 64, color: AppColors.primaryVariant),
             const SizedBox(height: 16),
             Text(
-              widget.allowMultiple ? 'Adicionar Vídeos' : 'Adicionar Vídeo',
+              widget.allowMultiple
+                  ? AppLocalizations.of(context)!.videoPickerTitleMultiple
+                  : AppLocalizations.of(context)!.videoPickerTitleSingle,
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 24),
@@ -64,8 +66,12 @@ class _VideoRecorderWidgetState extends State<VideoRecorderWidget> {
             else ...[
               Text(
                 widget.allowMultiple
-                    ? 'Escolha uma opção (arquivos permite múltiplos vídeos):'
-                    : 'Escolha uma opção:',
+                    ? AppLocalizations.of(
+                        context,
+                      )!.videoPickerChooseOptionMultiple
+                    : AppLocalizations.of(
+                        context,
+                      )!.videoPickerChooseOptionSingle,
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: 14),
               ),
@@ -77,8 +83,12 @@ class _VideoRecorderWidgetState extends State<VideoRecorderWidget> {
                 icon: const Icon(Icons.folder_open),
                 label: Text(
                   widget.allowMultiple
-                      ? 'Selecionar arquivos de vídeo'
-                      : 'Buscar arquivo de vídeo',
+                      ? AppLocalizations.of(
+                          context,
+                        )!.videoPickerSelectFilesMultiple
+                      : AppLocalizations.of(
+                          context,
+                        )!.videoPickerSelectFilesSingle,
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryVariant,
@@ -94,7 +104,7 @@ class _VideoRecorderWidgetState extends State<VideoRecorderWidget> {
               OutlinedButton.icon(
                 onPressed: _recordVideo,
                 icon: const Icon(Icons.videocam),
-                label: const Text('Gravar um vídeo'),
+                label: Text(AppLocalizations.of(context)!.videoPickerRecord),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.primaryVariant,
                   padding: const EdgeInsets.symmetric(
@@ -174,8 +184,10 @@ class _VideoRecorderWidgetState extends State<VideoRecorderWidget> {
         SnackBar(
           content: Text(
             videoDataList.length == 1
-                ? 'Vídeo adicionado com sucesso!'
-                : '${videoDataList.length} vídeos adicionados com sucesso!',
+                ? AppLocalizations.of(context)!.successVideoAdded
+                : AppLocalizations.of(
+                    context,
+                  )!.successVideosAdded(videoDataList.length),
           ),
         ),
       );

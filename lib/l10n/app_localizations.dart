@@ -63,8 +63,7 @@ import 'app_localizations_pt.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale)
-    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -72,8 +71,7 @@ abstract class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate =
-      _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -85,20 +83,19 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
-      <LocalizationsDelegate<dynamic>>[
-        delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ];
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
+    delegate,
+    GlobalMaterialLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+  ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
     Locale('es'),
     Locale('pt'),
-    Locale('pt', 'BR'),
+    Locale('pt', 'BR')
   ];
 
   /// Label for appTitle
@@ -125,7 +122,10 @@ abstract class AppLocalizations {
   /// **'Device default'**
   String get deviceDefault;
 
-  /// No description provided for @defaultLabel.
+  /// Label used to indicate the default option, e.g. in chips
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
   String get defaultLabel;
 
   /// Label for english
@@ -593,7 +593,7 @@ abstract class AppLocalizations {
   /// Label for sendCode
   ///
   /// In en, this message translates to:
-  /// **'Send code'**
+  /// **'Send Code'**
   String get sendCode;
 
   /// Label for unlock
@@ -932,6 +932,108 @@ abstract class AppLocalizations {
   /// **'Groups'**
   String get groups;
 
+  /// No description provided for @record.
+  ///
+  /// In en, this message translates to:
+  /// **'record'**
+  String get record;
+
+  /// No description provided for @records.
+  ///
+  /// In en, this message translates to:
+  /// **'records'**
+  String get records;
+
+  /// No description provided for @filterText.
+  ///
+  /// In en, this message translates to:
+  /// **'Text'**
+  String get filterText;
+
+  /// No description provided for @filterTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag'**
+  String get filterTag;
+
+  /// No description provided for @filterEmoticon.
+  ///
+  /// In en, this message translates to:
+  /// **'Emoticon'**
+  String get filterEmoticon;
+
+  /// No description provided for @searchHintTag.
+  ///
+  /// In en, this message translates to:
+  /// **'Type a tag...'**
+  String get searchHintTag;
+
+  /// No description provided for @searchHintText.
+  ///
+  /// In en, this message translates to:
+  /// **'Search in title or description...'**
+  String get searchHintText;
+
+  /// No description provided for @clearSearchTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear search'**
+  String get clearSearchTooltip;
+
+  /// No description provided for @clear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clear;
+
+  /// No description provided for @tapToSelectEmoji.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to select an emoji:'**
+  String get tapToSelectEmoji;
+
+  /// No description provided for @takePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a photo'**
+  String get takePhoto;
+
+  /// No description provided for @recordVideoLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Record a video'**
+  String get recordVideoLabel;
+
+  /// No description provided for @recordAudioLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Record audio'**
+  String get recordAudioLabel;
+
+  /// No description provided for @continueLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continueLabel;
+
+  /// No description provided for @dontShowAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t show again'**
+  String get dontShowAgain;
+
+  /// No description provided for @laterLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Later'**
+  String get laterLabel;
+
+  /// No description provided for @configureLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure'**
+  String get configureLabel;
+
   /// Snackbar when image copied
   ///
   /// In en, this message translates to:
@@ -1028,12 +1130,6 @@ abstract class AppLocalizations {
   /// **'Backup not available on web'**
   String get backupNotAvailableWeb;
 
-  /// No description provided for @backupComplete.
-  ///
-  /// In en, this message translates to:
-  /// **'Complete Backup'**
-  String get backupComplete;
-
   /// No description provided for @backupNotAvailableDetail.
   ///
   /// In en, this message translates to:
@@ -1049,8 +1145,14 @@ abstract class AppLocalizations {
   /// No description provided for @backupInfoDetails.
   ///
   /// In en, this message translates to:
-  /// **'The complete backup includes: ...'**
+  /// **'The complete backup includes:\n• Database (stories, texts, photos, audios)\n• Video files\n\nA ZIP file will be created and you can save it wherever you want:\n• OneDrive\n• Google Drive\n• Email\n• Any other location'**
   String get backupInfoDetails;
+
+  /// No description provided for @backupComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Backup'**
+  String get backupComplete;
 
   /// No description provided for @backupZipSubtitle.
   ///
@@ -1104,127 +1206,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Error creating backup: {message}'**
-  String backupError(String message);
-
-  /// No description provided for @errorCreateAccount.
-  String get errorCreateAccount;
-
-  /// No description provided for @errorShare.
-  String get errorShare;
-
-  /// No description provided for @errorPlayAudio.
-  String errorPlayAudio(String message);
-
-  /// No description provided for @errorSelectVideos.
-  String errorSelectVideos(String message);
-
-  /// No description provided for @errorSelectFile.
-  String errorSelectFile(String message);
-
-  /// No description provided for @errorRecordVideo.
-  String errorRecordVideo(String message);
-
-  /// No description provided for @errorStartRecording.
-  String errorStartRecording(String message);
-
-  /// No description provided for @errorPauseRecording.
-  String errorPauseRecording(String message);
-
-  /// No description provided for @errorResumeRecording.
-  String errorResumeRecording(String message);
-
-  /// No description provided for @errorStopRecording.
-  String errorStopRecording(String message);
-
-  /// No description provided for @errorSelectAudios.
-  String errorSelectAudios(String message);
-
-  /// No description provided for @errorLoadVideo.
-  String get errorLoadVideo;
-
-  /// No description provided for @errorSelectImage.
-  String get errorSelectImage;
-
-  /// No description provided for @emailAlreadyRegistered.
-  String get emailAlreadyRegistered;
-
-  /// No description provided for @successNotificationScheduled.
-  String get successNotificationScheduled;
-
-  /// No description provided for @notificationDialogTitle.
-  String get notificationDialogTitle;
-
-  /// No description provided for @notificationDialogPrompt.
-  String get notificationDialogPrompt;
-
-  /// No description provided for @notificationReminderTitle.
-  String notificationReminderTitle(Object title);
-
-  /// No description provided for @errorSearch.
-  String errorSearch(String message);
-
-  /// No description provided for @successStoryRestored.
-  String get successStoryRestored;
-
-  /// No description provided for @successStoryDeletedPermanently.
-  String get successStoryDeletedPermanently;
-
-  /// No description provided for @trashAlreadyEmpty.
-  String get trashAlreadyEmpty;
-
-  /// No description provided for @successImageAdded.
-  String get successImageAdded;
-
-  /// No description provided for @successImagesAdded.
-  String successImagesAdded(Object count);
-
-  /// No description provided for @successVideoRecorded.
-  String get successVideoRecorded;
-
-  /// No description provided for @permissionMicrophoneDenied.
-  String get permissionMicrophoneDenied;
-
-  /// No description provided for @errorSelectImages.
-  String errorSelectImages(String message);
-
-  /// No description provided for @successPhotoCaptured.
-  String get successPhotoCaptured;
-
-  /// No description provided for @errorTakePhoto.
-  String errorTakePhoto(String message);
-
-  /// No description provided for @restoreStoriesTitle.
-  String get restoreStoriesTitle;
-
-  /// No description provided for @restoreStoriesConfirm.
-  String restoreStoriesConfirm(Object count);
-
-  /// No description provided for @restoreLabel.
-  String get restoreLabel;
-
-  /// No description provided for @permanentlyDeleteTitle.
-  String get permanentlyDeleteTitle;
-
-  /// No description provided for @permanentlyDeleteConfirm.
-  String get permanentlyDeleteConfirm;
-
-  /// No description provided for @permanentlyDeleteLabel.
-  String get permanentlyDeleteLabel;
-
-  /// No description provided for @deleteGroupConfirm.
-  String deleteGroupConfirm(Object name);
-
-  /// No description provided for @emptyTrashTitle.
-  String get emptyTrashTitle;
-
-  /// No description provided for @emptyTrashConfirm.
-  String emptyTrashConfirm(Object count);
-
-  /// No description provided for @emptyTrashLabel.
-  String get emptyTrashLabel;
-
-  /// No description provided for @recoverPinDescription.
-  String get recoverPinDescription;
+  String backupError(Object message);
 
   /// No description provided for @restoreStarting.
   ///
@@ -1242,7 +1224,7 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Error restoring: {message}'**
-  String restoreError(String message);
+  String restoreError(Object message);
 
   /// No description provided for @restoreConfirmTitle.
   ///
@@ -1265,173 +1247,722 @@ abstract class AppLocalizations {
   /// No description provided for @restoreSuccessContent.
   ///
   /// In en, this message translates to:
-  /// **'The backup was restored successfully! ...'**
+  /// **'The backup was restored successfully!\n\nAll your stories have been restored to the backup state.\n\nYou need to log in again to complete the process.'**
   String get restoreSuccessContent;
 
-  /// Title of the 'About DayApp' section in Help
+  /// No description provided for @helpAboutTitle.
   ///
   /// In en, this message translates to:
   /// **'About DayApp'**
   String get helpAboutTitle;
 
-  /// Description shown under "About DayApp" in Help
+  /// No description provided for @helpAboutDescription.
   ///
   /// In en, this message translates to:
   /// **'DayApp is a personal diary app that lets you record your stories, memories and thoughts in an organized and secure way.'**
   String get helpAboutDescription;
 
-  /// Label for the main help section on navigation
+  /// No description provided for @helpNavigationTitle.
   ///
   /// In en, this message translates to:
   /// **'Main Navigation'**
   String get helpNavigationTitle;
 
-  /// Description for the Home item in help navigation
+  /// No description provided for @helpHomeItemDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'View your stories as cards or list. Tap a story to view, long press for options.'**
   String get helpHomeItemDesc;
 
-  /// Description for the Groups item in help navigation
+  /// No description provided for @helpGroupsNavDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Organize your stories into thematic groups. Create custom groups to categorize your memories.'**
   String get helpGroupsNavDesc;
 
-  /// Description for the Search item in help navigation
+  /// No description provided for @helpSearchItemDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Quickly find stories by title, content or date.'**
   String get helpSearchItemDesc;
 
-  /// Title of help subsection for creating stories
+  /// No description provided for @helpCreatingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Creating Stories'**
   String get helpCreatingTitle;
 
-  /// Description for new story help item
+  /// No description provided for @helpNewStoryDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the floating (+) button to create a new story. Add title, rich text, images, videos and audios.'**
   String get helpNewStoryDesc;
 
-  /// Title for text editor help item
+  /// No description provided for @helpTextEditorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Text Editor'**
   String get helpTextEditorTitle;
 
-  /// Description for text editor help item
+  /// No description provided for @helpTextEditorDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Use rich formatting: bold, italic, lists, links and more.'**
   String get helpTextEditorDesc;
 
-  /// Description for media help item
+  /// No description provided for @helpMediaDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Add photos from the gallery or camera, record videos and audios directly in the app.'**
   String get helpMediaDesc;
 
-  /// Description for associating groups help item
+  /// No description provided for @helpGroupsAssocDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Associate each story with one or more groups for better organization.'**
   String get helpGroupsAssocDesc;
 
-  /// Help description for calendar section
+  /// No description provided for @helpCalendarDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'View your stories organized by date. Tap a date to see all stories for that day.'**
   String get helpCalendarDesc;
 
-  /// Help title for create group item
+  /// No description provided for @helpCreateGroupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Group'**
   String get helpCreateGroupTitle;
 
-  /// Help description for create group
+  /// No description provided for @helpCreateGroupDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to \"Manage Groups\" in the side menu to create new groups with custom colors.'**
   String get helpCreateGroupDesc;
 
-  /// Help title for edit group item
+  /// No description provided for @helpEditGroupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Group'**
   String get helpEditGroupTitle;
 
-  /// Help description for edit group
+  /// No description provided for @helpEditGroupDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Long press a group to edit its name, color or delete it.'**
   String get helpEditGroupDesc;
 
-  /// Title for backup & security section
+  /// No description provided for @helpBackupSecurityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup & Security'**
   String get helpBackupSecurityTitle;
 
-  /// Help title for automatic backup item
+  /// No description provided for @helpAutomaticBackupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic Backup'**
   String get helpAutomaticBackupTitle;
 
-  /// Help description for automatic backup
+  /// No description provided for @helpAutomaticBackupDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure automatic backup on logout in Settings. A backup will be created and you can choose where to save it.'**
   String get helpAutomaticBackupDesc;
 
-  /// Help title for manual backup item
+  /// No description provided for @helpManualBackupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual Backup'**
   String get helpManualBackupTitle;
 
-  /// Help description for manual backup
+  /// No description provided for @helpManualBackupDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to \"Manage Backup\" in Settings to create a full backup with all media.'**
   String get helpManualBackupDesc;
 
-  /// Help title for restore item
+  /// No description provided for @helpRestoreTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
   String get helpRestoreTitle;
 
-  /// Help description for restore
+  /// No description provided for @helpRestoreDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Use \"Restore from File\" to recover data from a previous backup.'**
   String get helpRestoreDesc;
 
-  /// Help title for PIN security item
+  /// No description provided for @helpPinSecurityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Security PIN'**
   String get helpPinSecurityTitle;
 
-  /// Help description for PIN security
+  /// No description provided for @helpPinSecurityDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a 4- to 8-digit PIN to protect app access.'**
   String get helpPinSecurityDesc;
 
-  /// Help description for biometrics in help
+  /// No description provided for @helpBiometricsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Use fingerprint or facial recognition to unlock the app quickly, if available on your device.'**
   String get helpBiometricsDesc;
 
-  /// Help title for password unlock item
+  /// No description provided for @helpPasswordUnlockTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Password Unlock'**
   String get helpPasswordUnlockTitle;
 
-  /// Help description for password unlock
+  /// No description provided for @helpPasswordUnlockDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'In addition to PIN and biometrics, you can unlock the app using your account password. Useful if you forget the PIN or biometrics fail.'**
   String get helpPasswordUnlockDesc;
 
-  /// Help description for background lock
+  /// No description provided for @helpBackgroundLockDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'When the app is minimized or you switch to another app, it locks automatically after the configured time. You can set the time freely in settings (seconds, minutes or hours).'**
   String get helpBackgroundLockDesc;
 
-  /// Help title for lock exceptions
+  /// No description provided for @helpLockExceptionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock Exceptions'**
   String get helpLockExceptionsTitle;
 
-  /// Help description for lock exceptions
+  /// No description provided for @helpLockExceptionsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'The app does not lock when you use internal features that open other apps—such as picking photos from the gallery, recording videos, choosing backup location or sharing stories.'**
   String get helpLockExceptionsDesc;
 
-  /// Help title for PIN recovery
+  /// No description provided for @helpPinRecoveryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN Recovery'**
   String get helpPinRecoveryTitle;
 
-  /// Help description for PIN recovery
+  /// No description provided for @helpPinRecoveryDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot your PIN? Use the \"Forgot my PIN\" option on the lock screen. A recovery code will be sent to the registered email.'**
   String get helpPinRecoveryDesc;
 
-  /// Help description for theme settings
+  /// No description provided for @helpThemeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Toggle between light, dark or automatic theme.'**
   String get helpThemeDesc;
 
-  /// Help description for notifications settings
+  /// No description provided for @helpNotificationsSettingsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Set reminders to write in the diary.'**
   String get helpNotificationsSettingsDesc;
 
-  /// Help description for background lock settings
+  /// No description provided for @helpBackgroundLockSettingsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Define how long the app can stay in the background before being locked. You may use values in seconds, minutes or hours, with full freedom.'**
   String get helpBackgroundLockSettingsDesc;
 
-  /// Help title for backup setting item
+  /// No description provided for @helpBackupSettingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup'**
   String get helpBackupSettingTitle;
 
-  /// Help description for backup setting
+  /// No description provided for @helpBackupSettingDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage backup and restore settings.'**
   String get helpBackupSettingDesc;
 
-  /// Help description for trash section
+  /// No description provided for @helpTrashDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted stories stay in the trash for 30 days. Access \"Trash\" in the side menu to recover or permanently delete.'**
   String get helpTrashDesc;
 
-  /// Help description for statistics section
+  /// No description provided for @helpStatisticsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'View statistics about your diary usage: number of stories, words written, top groups, etc.'**
   String get helpStatisticsDesc;
 
-  /// Title for usage tips section in help
+  /// No description provided for @helpTipsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Usage Tips'**
   String get helpTipsTitle;
 
-  /// Help title for organization tip
+  /// No description provided for @helpOrganizationTipTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Organization'**
   String get helpOrganizationTipTitle;
 
-  /// Help description for organization tip
+  /// No description provided for @helpOrganizationTipDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Use groups to categorize your stories by themes, feelings or life periods.'**
   String get helpOrganizationTipDesc;
 
-  /// Help title for search tip
+  /// No description provided for @helpSearchTipTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
   String get helpSearchTipTitle;
 
-  /// Help description for search tip
+  /// No description provided for @helpSearchTipDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the search function to quickly find old stories.'**
   String get helpSearchTipDesc;
 
-  /// Help title for backup tip
+  /// No description provided for @helpBackupTipTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Regular Backup'**
   String get helpBackupTipTitle;
 
-  /// Help description for backup tip
+  /// No description provided for @helpBackupTipDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Back up regularly, especially before updates or device changes.'**
   String get helpBackupTipDesc;
 
-  /// Help title for privacy tip
+  /// No description provided for @helpPrivacyTipTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy'**
   String get helpPrivacyTipTitle;
 
-  /// Help description for privacy tip
+  /// No description provided for @helpPrivacyTipDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Your stories are stored locally and encrypted. Set a PIN for additional protection.'**
   String get helpPrivacyTipDesc;
 
-  /// Help title for support section
+  /// No description provided for @helpSupportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
   String get helpSupportTitle;
 
-  /// Help description for support section
+  /// No description provided for @helpSupportDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'For questions or issues, contact us via support email or check app updates.'**
   String get helpSupportDesc;
+
+  /// Displayed when account creation fails
+  ///
+  /// In en, this message translates to:
+  /// **'Error creating account. Please try again.'**
+  String get errorCreateAccount;
+
+  /// Displayed when sharing fails
+  ///
+  /// In en, this message translates to:
+  /// **'Error sharing'**
+  String get errorShare;
+
+  /// No description provided for @errorPlayAudio.
+  ///
+  /// In en, this message translates to:
+  /// **'Error playing audio: {message}'**
+  String errorPlayAudio(Object message);
+
+  /// No description provided for @errorSelectVideos.
+  ///
+  /// In en, this message translates to:
+  /// **'Error selecting videos: {message}'**
+  String errorSelectVideos(Object message);
+
+  /// No description provided for @errorSelectFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Error selecting file: {message}'**
+  String errorSelectFile(Object message);
+
+  /// No description provided for @errorRecordVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'Error recording video: {message}'**
+  String errorRecordVideo(Object message);
+
+  /// No description provided for @errorStartRecording.
+  ///
+  /// In en, this message translates to:
+  /// **'Error starting recording: {message}'**
+  String errorStartRecording(Object message);
+
+  /// No description provided for @errorPauseRecording.
+  ///
+  /// In en, this message translates to:
+  /// **'Error pausing recording: {message}'**
+  String errorPauseRecording(Object message);
+
+  /// No description provided for @errorResumeRecording.
+  ///
+  /// In en, this message translates to:
+  /// **'Error resuming recording: {message}'**
+  String errorResumeRecording(Object message);
+
+  /// No description provided for @errorStopRecording.
+  ///
+  /// In en, this message translates to:
+  /// **'Error stopping recording: {message}'**
+  String errorStopRecording(Object message);
+
+  /// No description provided for @errorSelectAudios.
+  ///
+  /// In en, this message translates to:
+  /// **'Error selecting audios: {message}'**
+  String errorSelectAudios(Object message);
+
+  /// Displayed when video fails to load
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading video'**
+  String get errorLoadVideo;
+
+  /// Displayed when image selection fails
+  ///
+  /// In en, this message translates to:
+  /// **'Error selecting image'**
+  String get errorSelectImage;
+
+  /// No description provided for @imagePickerTitleMultiple.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Photos'**
+  String get imagePickerTitleMultiple;
+
+  /// No description provided for @imagePickerTitleSingle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Photo'**
+  String get imagePickerTitleSingle;
+
+  /// No description provided for @imagePickerChooseOptionMultiple.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose an option (gallery allows multiple photos):'**
+  String get imagePickerChooseOptionMultiple;
+
+  /// No description provided for @imagePickerChooseOptionSingle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose an option:'**
+  String get imagePickerChooseOptionSingle;
+
+  /// No description provided for @imagePickerGalleryMultiple.
+  ///
+  /// In en, this message translates to:
+  /// **'Select from gallery'**
+  String get imagePickerGalleryMultiple;
+
+  /// No description provided for @imagePickerGallerySingle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick from gallery'**
+  String get imagePickerGallerySingle;
+
+  /// No description provided for @imagePickerTakePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a photo'**
+  String get imagePickerTakePhoto;
+
+  /// No description provided for @audioPickerTitleMultiple.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Audios'**
+  String get audioPickerTitleMultiple;
+
+  /// No description provided for @audioPickerTitleSingle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Audio'**
+  String get audioPickerTitleSingle;
+
+  /// No description provided for @audioPickerChooseOptionMultiple.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose an option (files allow multiple audios):'**
+  String get audioPickerChooseOptionMultiple;
+
+  /// No description provided for @audioPickerChooseOptionSingle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose an option:'**
+  String get audioPickerChooseOptionSingle;
+
+  /// No description provided for @audioPickerSelectFilesMultiple.
+  ///
+  /// In en, this message translates to:
+  /// **'Select audio files'**
+  String get audioPickerSelectFilesMultiple;
+
+  /// No description provided for @audioPickerSelectFilesSingle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick audio file'**
+  String get audioPickerSelectFilesSingle;
+
+  /// No description provided for @audioPickerRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Record audio'**
+  String get audioPickerRecord;
+
+  /// No description provided for @videoPickerTitleMultiple.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Videos'**
+  String get videoPickerTitleMultiple;
+
+  /// No description provided for @videoPickerTitleSingle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Video'**
+  String get videoPickerTitleSingle;
+
+  /// No description provided for @videoPickerChooseOptionMultiple.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose an option (files allow multiple videos):'**
+  String get videoPickerChooseOptionMultiple;
+
+  /// No description provided for @videoPickerChooseOptionSingle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose an option:'**
+  String get videoPickerChooseOptionSingle;
+
+  /// No description provided for @videoPickerSelectFilesMultiple.
+  ///
+  /// In en, this message translates to:
+  /// **'Select video files'**
+  String get videoPickerSelectFilesMultiple;
+
+  /// No description provided for @videoPickerSelectFilesSingle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick video file'**
+  String get videoPickerSelectFilesSingle;
+
+  /// No description provided for @videoPickerRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Record video'**
+  String get videoPickerRecord;
+
+  /// No description provided for @successVideoAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Video added successfully!'**
+  String get successVideoAdded;
+
+  /// No description provided for @successVideosAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} videos added successfully!'**
+  String successVideosAdded(Object count);
+
+  /// No description provided for @startRecording.
+  ///
+  /// In en, this message translates to:
+  /// **'Start recording'**
+  String get startRecording;
+
+  /// No description provided for @recordingPaused.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording paused'**
+  String get recordingPaused;
+
+  /// No description provided for @recording.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording...'**
+  String get recording;
+
+  /// No description provided for @readyToRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to record'**
+  String get readyToRecord;
+
+  /// Title for the notification scheduling dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule Notification'**
+  String get notificationDialogTitle;
+
+  /// Prompt asking when the user wants to be notified
+  ///
+  /// In en, this message translates to:
+  /// **'When would you like to be notified about this entry?'**
+  String get notificationDialogPrompt;
+
+  /// No description provided for @emailAlreadyRegistered.
+  ///
+  /// In en, this message translates to:
+  /// **'E-mail already registered.'**
+  String get emailAlreadyRegistered;
+
+  /// No description provided for @successNotificationScheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification scheduled successfully'**
+  String get successNotificationScheduled;
+
+  /// Title used for entry reminder notifications
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder: {title}'**
+  String notificationReminderTitle(Object title);
+
+  /// No description provided for @successImageAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Image added successfully!'**
+  String get successImageAdded;
+
+  /// No description provided for @successImagesAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} images added successfully!'**
+  String successImagesAdded(Object count);
+
+  /// No description provided for @errorSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Error during search: {message}'**
+  String errorSearch(Object message);
+
+  /// No description provided for @successStoryRestored.
+  ///
+  /// In en, this message translates to:
+  /// **'Story restored successfully'**
+  String get successStoryRestored;
+
+  /// No description provided for @successStoryDeletedPermanently.
+  ///
+  /// In en, this message translates to:
+  /// **'Story permanently deleted'**
+  String get successStoryDeletedPermanently;
+
+  /// No description provided for @trashAlreadyEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Trash is already empty'**
+  String get trashAlreadyEmpty;
+
+  /// No description provided for @successVideoRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'Video recorded successfully!'**
+  String get successVideoRecorded;
+
+  /// No description provided for @permissionMicrophoneDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Microphone permission not granted'**
+  String get permissionMicrophoneDenied;
+
+  /// No description provided for @errorSelectImages.
+  ///
+  /// In en, this message translates to:
+  /// **'Error selecting images: {message}'**
+  String errorSelectImages(Object message);
+
+  /// No description provided for @successPhotoCaptured.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo captured successfully!'**
+  String get successPhotoCaptured;
+
+  /// No description provided for @restoreStoriesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore stories'**
+  String get restoreStoriesTitle;
+
+  /// No description provided for @restoreStoriesConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you want to restore {count} selected story(ies)?'**
+  String restoreStoriesConfirm(Object count);
+
+  /// No description provided for @restoreLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get restoreLabel;
+
+  /// No description provided for @permanentlyDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently delete'**
+  String get permanentlyDeleteTitle;
+
+  /// Confirmation when permanently deleting a story
+  ///
+  /// In en, this message translates to:
+  /// **'This action cannot be undone. Do you really want to permanently delete this story?'**
+  String get permanentlyDeleteConfirm;
+
+  /// No description provided for @permanentlyDeleteLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently delete'**
+  String get permanentlyDeleteLabel;
+
+  /// Confirmation when deleting a group
+  ///
+  /// In en, this message translates to:
+  /// **'Do you want to remove the group \"{name}\" from your stories?'**
+  String deleteGroupConfirm(Object name);
+
+  /// No description provided for @recoverPinDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'We will send a recovery code to your registered email.'**
+  String get recoverPinDescription;
+
+  /// No description provided for @emptyTrashTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty trash'**
+  String get emptyTrashTitle;
+
+  /// No description provided for @emptyTrashConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you want to permanently delete all {count} story(ies) in the trash? This action cannot be undone.'**
+  String emptyTrashConfirm(Object count);
+
+  /// No description provided for @emptyTrashLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty trash'**
+  String get emptyTrashLabel;
+
+  /// No description provided for @errorTakePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Error taking photo: {message}'**
+  String errorTakePhoto(Object message);
 
   /// No description provided for @notifications.
   ///
@@ -1625,18 +2156,6 @@ abstract class AppLocalizations {
   /// **'Archive'**
   String get archiveLabel;
 
-  /// Subtitle do switch de arquivar
-  ///
-  /// In en, this message translates to:
-  /// **'Hide from home screen'**
-  String get archiveSubtitle;
-
-  /// Label usado em switch que indica se a história está arquivada
-  ///
-  /// In en, this message translates to:
-  /// **'Archived'**
-  String get archivedStateLabel;
-
   /// Message for storyArchived
   ///
   /// In en, this message translates to:
@@ -1667,195 +2186,206 @@ abstract class AppLocalizations {
   /// **'Error exporting PDF: {error}'**
   String exportPdfError(Object error);
 
-  /// Mensagem mostrada quando o título não foi fornecido
+  /// No description provided for @titleRequired.
   ///
   /// In en, this message translates to:
   /// **'Title is required!'**
   String get titleRequired;
 
-  /// Mensagem para erro genérico ao salvar história
+  /// No description provided for @errorSavingStory.
   ///
   /// In en, this message translates to:
   /// **'Error saving story: {error}'**
   String errorSavingStory(Object error);
 
-  /// Mensagem usada antes de exportar pdf quando título ou descrição faltam
+  /// No description provided for @exportPdfFieldsRequired.
   ///
   /// In en, this message translates to:
   /// **'Title and description are required to export.'**
   String get exportPdfFieldsRequired;
 
-  /// Título do diálogo de exportação de história
+  /// No description provided for @exportHistory.
   ///
   /// In en, this message translates to:
   /// **'Export Story'**
   String get exportHistory;
 
-  /// Prompt do diálogo de exportação de história
+  /// No description provided for @exportHistoryPrompt.
   ///
   /// In en, this message translates to:
   /// **'Do you want to save before exporting or just preview?'**
   String get exportHistoryPrompt;
 
-  /// Rótulo genérico para botão de preview
+  /// No description provided for @preview.
   ///
   /// In en, this message translates to:
   /// **'Preview'**
   String get preview;
 
-  /// Texto do botão para salvar e exportar
+  /// No description provided for @saveAndExport.
   ///
   /// In en, this message translates to:
   /// **'Save and export'**
   String get saveAndExport;
 
-  /// Rótulo quando não há título
+  /// No description provided for @untitled.
   ///
   /// In en, this message translates to:
   /// **'Untitled'**
   String get untitled;
 
-  /// Mensagem de erro ao carregar arquivo externo
+  /// No description provided for @errorLoadingFile.
   ///
   /// In en, this message translates to:
   /// **'Error loading file: {error}'**
   String errorLoadingFile(Object error);
 
-  /// Rótulo genérico de descartar
+  /// No description provided for @discard.
   ///
   /// In en, this message translates to:
   /// **'Discard'**
   String get discard;
 
-  /// Título do diálogo de descartar história
+  /// No description provided for @discardStoryTitle.
   ///
   /// In en, this message translates to:
   /// **'Discard story?'**
   String get discardStoryTitle;
 
-  /// Prompt exibido quando há história não salva
+  /// No description provided for @unsavedStoryPrompt.
   ///
   /// In en, this message translates to:
   /// **'You have a new unsaved story. Leave without saving?'**
   String get unsavedStoryPrompt;
 
-  /// Tooltip para alterar data
+  /// No description provided for @changeDateTooltip.
   ///
   /// In en, this message translates to:
   /// **'Change date'**
   String get changeDateTooltip;
 
-  /// Label do campo título
+  /// No description provided for @storyTitleLabel.
   ///
   /// In en, this message translates to:
   /// **'Title'**
   String get storyTitleLabel;
 
-  /// Hint do campo título
+  /// No description provided for @storyTitleHint.
   ///
   /// In en, this message translates to:
   /// **'Enter the title'**
   String get storyTitleHint;
 
-  /// Label para seção descrição
+  /// No description provided for @descriptionLabel.
   ///
   /// In en, this message translates to:
   /// **'Description'**
   String get descriptionLabel;
 
-  /// Hint para descrição
+  /// No description provided for @descriptionHint.
   ///
   /// In en, this message translates to:
   /// **'Write your story...'**
   String get descriptionHint;
 
-  /// Rótulo para campo tags
+  /// No description provided for @tagsLabel.
   ///
   /// In en, this message translates to:
   /// **'Tags'**
   String get tagsLabel;
 
-  /// Título da seção de fotos
+  /// No description provided for @photosSection.
   ///
   /// In en, this message translates to:
   /// **'Photos'**
   String get photosSection;
 
-  /// Título da seção de áudios
+  /// No description provided for @audiosSection.
   ///
   /// In en, this message translates to:
   /// **'Audios'**
   String get audiosSection;
 
-  /// Título da seção de vídeos
+  /// No description provided for @videosSection.
   ///
   /// In en, this message translates to:
   /// **'Videos'**
   String get videosSection;
 
-  /// Tooltip para importar .txt
+  /// No description provided for @importTxtTooltip.
   ///
   /// In en, this message translates to:
   /// **'Import .txt'**
   String get importTxtTooltip;
 
-  /// Tooltip para expandir editor
+  /// No description provided for @expandTooltip.
   ///
   /// In en, this message translates to:
   /// **'Expand'**
   String get expandTooltip;
 
-  /// Tooltip para botão de foto
+  /// No description provided for @photoTooltip.
   ///
   /// In en, this message translates to:
   /// **'Photo'**
   String get photoTooltip;
 
-  /// Tooltip para botão de vídeo
+  /// No description provided for @videoTooltip.
   ///
   /// In en, this message translates to:
   /// **'Video'**
   String get videoTooltip;
 
-  /// Tooltip para botão de áudio
+  /// No description provided for @audioTooltip.
   ///
   /// In en, this message translates to:
   /// **'Audio'**
   String get audioTooltip;
 
-  /// Tooltip para botão de emoji
+  /// No description provided for @emojiTooltip.
   ///
   /// In en, this message translates to:
   /// **'Emoji'**
   String get emojiTooltip;
 
-  /// Título da tela de edição de descrição
+  /// No description provided for @editDescription.
   ///
   /// In en, this message translates to:
   /// **'Edit Description'**
   String get editDescription;
 
-  /// Título da tela de edição de história
+  /// No description provided for @editStory.
   ///
   /// In en, this message translates to:
   /// **'Edit Story'**
   String get editStory;
 
-  /// Título para diálogo de descartar alterações
+  /// No description provided for @discardChangesTitle.
   ///
   /// In en, this message translates to:
   /// **'Discard changes?'**
   String get discardChangesTitle;
 
-  /// Prompt de confirmação de descartar alterações não salvas
+  /// No description provided for @discardChangesPrompt.
   ///
   /// In en, this message translates to:
   /// **'You have unsaved changes. Leave without saving?'**
   String get discardChangesPrompt;
+
+  /// No description provided for @archivedStateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived'**
+  String get archivedStateLabel;
+
+  /// No description provided for @archiveSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide from home screen'**
+  String get archiveSubtitle;
 }
 
-class _AppLocalizationsDelegate
-    extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -1864,40 +2394,35 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['en', 'es', 'pt'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>['en', 'es', 'pt'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
+
   // Lookup logic when language+country codes are specified.
   switch (locale.languageCode) {
-    case 'pt':
-      {
-        switch (locale.countryCode) {
-          case 'BR':
-            return AppLocalizationsPtBr();
-        }
-        break;
-      }
+    case 'pt': {
+  switch (locale.countryCode) {
+    case 'BR': return AppLocalizationsPtBr();
+   }
+  break;
+   }
   }
 
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'en':
-      return AppLocalizationsEn();
-    case 'es':
-      return AppLocalizationsEs();
-    case 'pt':
-      return AppLocalizationsPt();
+    case 'en': return AppLocalizationsEn();
+    case 'es': return AppLocalizationsEs();
+    case 'pt': return AppLocalizationsPt();
   }
 
   throw FlutterError(
     'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
     'an issue with the localizations generation tool. Please file an issue '
     'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.',
+    'that was used.'
   );
 }

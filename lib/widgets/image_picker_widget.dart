@@ -57,7 +57,9 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
             Icon(Icons.photo_camera, size: 64, color: AppColors.primaryVariant),
             const SizedBox(height: 16),
             Text(
-              widget.allowMultiple ? 'Adicionar Fotos' : 'Adicionar Foto',
+              widget.allowMultiple
+                  ? AppLocalizations.of(context)!.imagePickerTitleMultiple
+                  : AppLocalizations.of(context)!.imagePickerTitleSingle,
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 24),
@@ -69,8 +71,12 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
             else ...[
               Text(
                 widget.allowMultiple
-                    ? 'Escolha uma opção (galeria permite múltiplas fotos):'
-                    : 'Escolha uma opção:',
+                    ? AppLocalizations.of(
+                        context,
+                      )!.imagePickerChooseOptionMultiple
+                    : AppLocalizations.of(
+                        context,
+                      )!.imagePickerChooseOptionSingle,
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: 14),
               ),
@@ -84,8 +90,8 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
                 ),
                 label: Text(
                   widget.allowMultiple
-                      ? 'Selecionar da galeria'
-                      : 'Buscar na galeria',
+                      ? AppLocalizations.of(context)!.imagePickerGalleryMultiple
+                      : AppLocalizations.of(context)!.imagePickerGallerySingle,
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryVariant,
@@ -101,7 +107,7 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
               OutlinedButton.icon(
                 onPressed: _takePhoto,
                 icon: const Icon(Icons.camera_alt),
-                label: const Text('Tirar uma foto'),
+                label: Text(AppLocalizations.of(context)!.imagePickerTakePhoto),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.primaryVariant,
                   padding: const EdgeInsets.symmetric(

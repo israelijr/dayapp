@@ -12,7 +12,6 @@ import '../providers/locale_provider.dart';
 import '../providers/pin_provider.dart';
 import '../providers/theme_provider.dart';
 import '../services/auto_backup_service.dart';
-import '../services/battery_optimization_service.dart';
 import '../services/biometric_service.dart';
 import '../services/engagement_service.dart';
 import '../services/inactivity_service.dart';
@@ -39,8 +38,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       NotificationPreferencesService();
   final AutoBackupService _autoBackupService = AutoBackupService();
   final EngagementService _engagementService = EngagementService();
-  final BatteryOptimizationService _batteryService =
-      BatteryOptimizationService();
   bool _biometricAvailable = false;
   bool _biometricEnabled = false;
   bool _pinEnabled = false;
@@ -51,8 +48,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       NotificationPreferencesService.defaultAdvanceMinutes;
   // ignore: unused_field
   bool _engagementNotificationsEnabled = true;
-  // ignore: unused_field
-  bool? _batteryOptimizationDisabled;
   String? _userEmail;
   late PinProvider _pinProvider;
 
@@ -193,13 +188,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final enabled = await _notificationService.isNotificationEnabled();
     final advance = await _notificationService.getDefaultNotificationAdvance();
     final engagementEnabled = await _engagementService.isEnabled();
-    final batteryDisabled = await _batteryService
-        .isBatteryOptimizationDisabled();
+
     setState(() {
       _notificationEnabled = enabled;
       _notificationAdvance = advance;
       _engagementNotificationsEnabled = engagementEnabled;
-      _batteryOptimizationDisabled = batteryDisabled;
     });
   }
 

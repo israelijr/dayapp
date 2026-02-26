@@ -71,7 +71,9 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
             Icon(Icons.audiotrack, size: 64, color: AppColors.primaryVariant),
             const SizedBox(height: 16),
             Text(
-              widget.allowMultiple ? 'Adicionar Áudios' : 'Adicionar Áudio',
+              widget.allowMultiple
+                  ? AppLocalizations.of(context)!.audioPickerTitleMultiple
+                  : AppLocalizations.of(context)!.audioPickerTitleSingle,
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 24),
@@ -83,8 +85,12 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
             else ...[
               Text(
                 widget.allowMultiple
-                    ? 'Escolha uma opção (arquivos permite múltiplos áudios):'
-                    : 'Escolha uma opção:',
+                    ? AppLocalizations.of(
+                        context,
+                      )!.audioPickerChooseOptionMultiple
+                    : AppLocalizations.of(
+                        context,
+                      )!.audioPickerChooseOptionSingle,
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: 14),
               ),
@@ -96,8 +102,12 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
                 icon: const Icon(Icons.folder_open),
                 label: Text(
                   widget.allowMultiple
-                      ? 'Selecionar arquivos de áudio'
-                      : 'Buscar arquivo de áudio',
+                      ? AppLocalizations.of(
+                          context,
+                        )!.audioPickerSelectFilesMultiple
+                      : AppLocalizations.of(
+                          context,
+                        )!.audioPickerSelectFilesSingle,
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryVariant,
@@ -117,7 +127,7 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
                   });
                 },
                 icon: const Icon(Icons.mic),
-                label: const Text('Gravar um áudio'),
+                label: Text(AppLocalizations.of(context)!.audioPickerRecord),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.primaryVariant,
                   padding: const EdgeInsets.symmetric(
@@ -156,8 +166,10 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
             const SizedBox(height: 16),
             Text(
               _isRecording
-                  ? (_isPaused ? 'Gravação Pausada' : 'Gravando...')
-                  : 'Pronto para Gravar',
+                  ? (_isPaused
+                        ? AppLocalizations.of(context)!.recordingPaused
+                        : AppLocalizations.of(context)!.recording)
+                  : AppLocalizations.of(context)!.readyToRecord,
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
@@ -174,7 +186,7 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
               ElevatedButton.icon(
                 onPressed: _startRecording,
                 icon: const Icon(Icons.fiber_manual_record),
-                label: const Text('Iniciar Gravação'),
+                label: Text(AppLocalizations.of(context)!.startRecording),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.error,
                   foregroundColor: Theme.of(context).colorScheme.onError,
