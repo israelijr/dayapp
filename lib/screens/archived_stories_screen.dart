@@ -1,4 +1,4 @@
-import 'package:dayapp/l10n/app_localizations.dart';
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
@@ -102,16 +102,20 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
                   highQuality: highQuality,
                 ),
             filename: filename,
-            title: 'Preview - ${historia.titulo}',
+            title: AppLocalizations.of(context)!.previewTitle(historia.titulo),
             onSave: null,
           ),
         ),
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Erro ao exportar PDF: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.exportPdfError(e.toString()),
+          ),
+        ),
+      );
     }
   }
 
@@ -848,7 +852,7 @@ class HistoriaFotosGrid extends StatelessWidget {
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(),
-                          child: const Text('Fechar'),
+                          child: Text(AppLocalizations.of(context)!.close),
                         ),
                       ],
                     );

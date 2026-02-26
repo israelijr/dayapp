@@ -1,3 +1,4 @@
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -465,7 +466,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                   highQuality: highQuality,
                 ),
             filename: filename,
-            title: 'Preview - $titleText',
+            title: AppLocalizations.of(context)!.previewTitle(titleText),
             onSave: () async {
               // Salva sem navegar para a Home
               final savedId = await _saveHistoria(navigateAfterSave: false);

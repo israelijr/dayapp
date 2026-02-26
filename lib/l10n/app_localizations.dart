@@ -680,6 +680,114 @@ abstract class AppLocalizations {
   /// **'Story moved to trash'**
   String get movedToTrash;
 
+  /// No description provided for @errorDeletingStory.
+  ///
+  /// In en, this message translates to:
+  /// **'Error deleting story: {error}'**
+  String errorDeletingStory(Object error);
+
+  /// No description provided for @noRecordsThisDay.
+  ///
+  /// In en, this message translates to:
+  /// **'No records for this day'**
+  String get noRecordsThisDay;
+
+  /// No description provided for @storyUngrouped.
+  ///
+  /// In en, this message translates to:
+  /// **'Story ungrouped'**
+  String get storyUngrouped;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @confirmDeletion.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm deletion'**
+  String get confirmDeletion;
+
+  /// No description provided for @groupDeletedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Group deleted successfully'**
+  String get groupDeletedSuccess;
+
+  /// No description provided for @noGroupsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No groups found'**
+  String get noGroupsFound;
+
+  /// No description provided for @shareError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not share'**
+  String get shareError;
+
+  /// No description provided for @cannotDeletePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot delete this photo'**
+  String get cannotDeletePhoto;
+
+  /// No description provided for @deletePhotoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete photo'**
+  String get deletePhotoTitle;
+
+  /// No description provided for @deletePhotoConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you really want to delete this photo?'**
+  String get deletePhotoConfirm;
+
+  /// No description provided for @deleteGroupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Group'**
+  String get deleteGroupTitle;
+
+  /// No description provided for @share.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get share;
+
+  /// No description provided for @imageCopiedBase64.
+  ///
+  /// In en, this message translates to:
+  /// **'Image copied to clipboard (base64)'**
+  String get imageCopiedBase64;
+
+  /// No description provided for @newGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'New Group'**
+  String get newGroup;
+
+  /// No description provided for @editGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Group'**
+  String get editGroup;
+
+  /// No description provided for @chooseIcon.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose icon'**
+  String get chooseIcon;
+
+  /// No description provided for @groupDeleteWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'This group has {count} story(ies) linked. If deleted, those stories will return to the home screen (no group). Continue?'**
+  String groupDeleteWarning(Object count);
+
   /// Label for unarchive
   ///
   /// In en, this message translates to:
@@ -691,6 +799,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Group'**
   String get group;
+
+  /// No description provided for @selectGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Group'**
+  String get selectGroup;
+
+  /// No description provided for @existingGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'Existing Groups'**
+  String get existingGroups;
+
+  /// No description provided for @createNewGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Create New Group'**
+  String get createNewGroup;
+
+  /// No description provided for @groupNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Group Name'**
+  String get groupNameLabel;
+
+  /// No description provided for @createAndSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Create and Select'**
+  String get createAndSelect;
+
+  /// No description provided for @manageBackups.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Backup'**
+  String get manageBackups;
+
+  /// No description provided for @createAndShareBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Create and Share Backup'**
+  String get createAndShareBackup;
+
+  /// No description provided for @restoreFromFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore from File'**
+  String get restoreFromFile;
+
+  /// No description provided for @backupNotAvailableWeb.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup not available on web'**
+  String get backupNotAvailableWeb;
+
+  /// No description provided for @backupComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Backup'**
+  String get backupComplete;
+
+  /// No description provided for @calendarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get calendarTitle;
+
+  /// No description provided for @groupExists.
+  ///
+  /// In en, this message translates to:
+  /// **'Group already exists'**
+  String get groupExists;
+
+  /// No description provided for @enterGroupName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a name for the group'**
+  String get enterGroupName;
 
   /// Label for archivedTitle
   ///

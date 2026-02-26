@@ -1,3 +1,4 @@
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
@@ -24,26 +25,29 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Gerenciar Backup'), elevation: 0),
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.manageBackups),
+        elevation: 0,
+      ),
       body: kIsWeb
-          ? const Center(
+          ? Center(
               child: Padding(
-                padding: EdgeInsets.all(32),
+                padding: const EdgeInsets.all(32),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.cloud_off, size: 64, color: Colors.grey),
-                    SizedBox(height: 16),
+                    const Icon(Icons.cloud_off, size: 64, color: Colors.grey),
+                    const SizedBox(height: 16),
                     Text(
-                      'Backup não disponível na versão web',
-                      style: TextStyle(
+                      AppLocalizations.of(context)!.backupNotAvailableWeb,
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    SizedBox(height: 12),
-                    Text(
+                    const SizedBox(height: 12),
+                    const Text(
                       'O recurso de backup requer acesso ao sistema de arquivos, '
                       'disponível apenas nas versões Android, iOS e Desktop.',
                       style: TextStyle(fontSize: 14, color: Colors.grey),
@@ -143,9 +147,9 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                                 ],
                               ),
                               const SizedBox(height: 16),
-                              const Text(
-                                '📦 Criar Backup:',
-                                style: TextStyle(
+                              Text(
+                                '📦 ${AppLocalizations.of(context)!.backupComplete}',
+                                style: const TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -161,8 +165,10 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                                     ? null
                                     : _createAndShareBackup,
                                 icon: const Icon(Icons.share),
-                                label: const Text(
-                                  'Criar e Compartilhar Backup',
+                                label: Text(
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.createAndShareBackup,
                                 ),
                                 style: ElevatedButton.styleFrom(
                                   minimumSize: const Size(double.infinity, 48),
@@ -188,7 +194,9 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                               ElevatedButton.icon(
                                 onPressed: _isLoading ? null : _restoreFromFile,
                                 icon: const Icon(Icons.file_upload),
-                                label: const Text('Restaurar de Arquivo'),
+                                label: Text(
+                                  AppLocalizations.of(context)!.restoreFromFile,
+                                ),
                                 style: ElevatedButton.styleFrom(
                                   minimumSize: const Size(double.infinity, 48),
                                   backgroundColor: Colors.deepOrange,
@@ -246,7 +254,9 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                 // Overlay de carregamento - cobre toda a tela
                 if (_isLoading)
                   ColoredBox(
-                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.54),
                     child: Center(
                       child: Card(
                         margin: const EdgeInsets.all(32),

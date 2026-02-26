@@ -138,7 +138,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get invalidEmail => 'Ingrese un correo electrónico válido.';
 
   @override
-  String get emailNotFound => 'Correo no encontrado. Verifique e inténtelo de nuevo.';
+  String get emailNotFound =>
+      'Correo no encontrado. Verifique e inténtelo de nuevo.';
 
   @override
   String codeSent(Object email) {
@@ -158,22 +159,26 @@ class AppLocalizationsEs extends AppLocalizations {
   String get enterNewPassword => 'Ingrese la nueva contraseña.';
 
   @override
-  String get passwordResetSuccess => '¡Contraseña restablecida con éxito! Inicie sesión con la nueva contraseña.';
+  String get passwordResetSuccess =>
+      '¡Contraseña restablecida con éxito! Inicie sesión con la nueva contraseña.';
 
   @override
-  String get errorResetPassword => 'Error al restablecer la contraseña. Intente nuevamente.';
+  String get errorResetPassword =>
+      'Error al restablecer la contraseña. Intente nuevamente.';
 
   @override
   String get passwordsDoNotMatch => 'Las contraseñas no coinciden.';
 
   @override
-  String get resendCodeSuccess => '¡Nuevo código enviado! Verifique su bandeja de entrada.';
+  String get resendCodeSuccess =>
+      '¡Nuevo código enviado! Verifique su bandeja de entrada.';
 
   @override
   String get resendCodeError => 'Error al reenviar código. Intente nuevamente.';
 
   @override
-  String get passwordMinLength => 'La contraseña debe tener al menos 6 caracteres.';
+  String get passwordMinLength =>
+      'La contraseña debe tener al menos 6 caracteres.';
 
   @override
   String get sendCode => 'Enviar código';
@@ -230,19 +235,22 @@ class AppLocalizationsEs extends AppLocalizations {
   String get profileUpdatedSuccess => '¡Perfil actualizado con éxito!';
 
   @override
-  String get profileUpdateError => 'Error al actualizar el perfil. Intente nuevamente.';
+  String get profileUpdateError =>
+      'Error al actualizar el perfil. Intente nuevamente.';
 
   @override
   String get unlockAppReason => 'Desbloquee la aplicación para continuar';
 
   @override
-  String get fillEmailAndPassword => 'Complete el correo electrónico y la contraseña';
+  String get fillEmailAndPassword =>
+      'Complete el correo electrónico y la contraseña';
 
   @override
   String get emailOrPasswordIncorrect => 'Correo o contraseña incorrectos';
 
   @override
-  String get noEmailRegistered => 'Ningún correo registrado. Configurelo en las configuraciones.';
+  String get noEmailRegistered =>
+      'Ningún correo registrado. Configurelo en las configuraciones.';
 
   @override
   String checkEmailOrUseCode(Object email) {
@@ -250,7 +258,8 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get errorGeneratingCode => 'Error al generar código. Intente nuevamente.';
+  String get errorGeneratingCode =>
+      'Error al generar código. Intente nuevamente.';
 
   @override
   String get errorSendingCode => 'Error al enviar código. Intente nuevamente.';
@@ -259,7 +268,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get recoverPinTitle => 'Recuperar PIN';
 
   @override
-  String get enterRecoveryCodePrompt => 'Ingrese el código enviado a su correo:';
+  String get enterRecoveryCodePrompt =>
+      'Ingrese el código enviado a su correo:';
 
   @override
   String get recoveryCodeLabel => 'Código de recuperación (6 dígitos)';
@@ -285,7 +295,8 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get backupRecommendation => 'Recomendamos hacer una copia de seguridad para evitar perder tus datos.';
+  String get backupRecommendation =>
+      'Recomendamos hacer una copia de seguridad para evitar perder tus datos.';
 
   @override
   String get cancel => 'Cancelar';
@@ -306,10 +317,163 @@ class AppLocalizationsEs extends AppLocalizations {
   String get movedToTrash => 'Historia movida a la papelera';
 
   @override
+  String errorDeletingStory(Object error) {
+    return 'Error al eliminar historia: $error';
+  }
+
+  @override
+  String get noRecordsThisDay => 'No hay registros para este día';
+
+  @override
+  String get storyUngrouped => 'Historia desagrupada';
+
+  @override
+  String get save => 'Guardar';
+
+  @override
+  String get confirmDeletion => 'Confirmar eliminación';
+
+  @override
+  String get groupDeletedSuccess => 'Grupo eliminado con éxito';
+
+  @override
+  String get noGroupsFound => 'Ningún grupo encontrado';
+
+  @override
+  String get shareError => 'No se pudo compartir';
+
+  @override
+  String get cannotDeletePhoto => 'No es posible eliminar esta foto';
+
+  @override
+  String get deletePhotoTitle => 'Eliminar foto';
+
+  @override
+  String get deletePhotoConfirm => '¿Desea realmente eliminar esta foto?';
+
+  @override
+  String get deleteGroupTitle => 'Eliminar Grupo';
+
+  @override
+  String groupDeleteWarning(Object count) {
+    return 'Este grupo tiene $count historia(s) vinculada(s). Si se elimina, esas historias volverán a la pantalla principal (sin grupo). ¿Continuar?';
+  }
+
+  @override
   String get unarchive => 'Desarchivar';
 
   @override
   String get group => 'Grupo';
+
+  @override
+  String get share => 'Compartir';
+
+  @override
+  String get imageCopiedBase64 => 'Imagen copiada al portapapeles (base64)';
+
+  @override
+  String get newGroup => 'Nuevo Grupo';
+
+  @override
+  String get editGroup => 'Editar Grupo';
+
+  @override
+  String get chooseIcon => 'Seleccionar ícono';
+
+  @override
+  String get selectGroup => 'Seleccionar Grupo';
+
+  @override
+  String get existingGroups => 'Grupos Existentes';
+
+  @override
+  String get createNewGroup => 'Crear Nuevo Grupo';
+
+  @override
+  String get groupNameLabel => 'Nombre del Grupo';
+
+  @override
+  String get createAndSelect => 'Crear y Seleccionar';
+
+  @override
+  String get manageBackups => 'Administrar copia de seguridad';
+
+  @override
+  String get createAndShareBackup => 'Crear y compartir copia de seguridad';
+
+  @override
+  String get restoreFromFile => 'Restaurar desde archivo';
+
+  @override
+  String get backupNotAvailableWeb =>
+      'Copia de seguridad no disponible en la web';
+
+  @override
+  String get backupComplete => 'Copia de seguridad completa';
+
+  @override
+  String get calendarTitle => 'Calendario';
+
+  @override
+  String get groupExists => 'El grupo ya existe';
+
+  @override
+  String get enterGroupName => 'Ingrese un nombre para el grupo';
+
+  @override
+  String get archivedTitle => 'Archivados';
+
+  @override
+  String get toggleToIcons => 'Cambiar a vista de iconos';
+
+  @override
+  String get toggleToCards => 'Cambiar a vista de tarjetas';
+
+  @override
+  String get menu => 'Menú';
+
+  @override
+  String get editProfile => 'Editar perfil';
+
+  @override
+  String get editTip => 'Editar - doble toque';
+
+  @override
+  String get exportPdf => 'Exportar PDF';
+
+  @override
+  String get close => 'Cerrar';
+
+  @override
+  String get newStory => 'Nueva historia';
+
+  @override
+  String get noArchivedStories => 'No hay historias archivadas.';
+
+  @override
+  String get edit => 'Editar';
+
+  @override
+  String previewTitle(Object title) {
+    return 'Previsualización - $title';
+  }
+
+  @override
+  String get archiveLabel => 'Archiv ar';
+
+  @override
+  String get storyArchived => 'Historia archivada';
+
+  @override
+  String get undo => 'Deshacer';
+
+  @override
+  String get ungroup => 'Desagrupar';
+
+  @override
+  String noStoriesInGroup(Object group) {
+    return 'No hay historias en el grupo $group';
+  }
 
   @override
   String exportPdfError(Object error) {

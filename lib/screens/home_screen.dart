@@ -475,7 +475,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.person),
-              title: const Text('Editar Perfil'),
+              title: Text(AppLocalizations.of(context)!.editProfile),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -600,7 +600,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.pushNamed(context, '/create_historia');
               },
               icon: const Icon(Icons.add),
-              label: const Text('Nova História'),
+              label: Text(AppLocalizations.of(context)!.newStory),
             )
           : null,
       bottomNavigationBar: NavigationBar(

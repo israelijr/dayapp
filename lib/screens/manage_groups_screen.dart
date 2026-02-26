@@ -1,3 +1,4 @@
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -43,18 +44,20 @@ class _ManageGroupsScreenState extends State<ManageGroupsScreen> {
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: const Text('Confirmar exclusão'),
+                title: Text(AppLocalizations.of(context)!.confirmDeletion),
                 content: Text(
-                  'Este grupo tem $historiasCount história(s) vinculada(s). Ao excluir, essas histórias voltarão para a tela inicial (sem grupo). Deseja continuar?',
+                  AppLocalizations.of(
+                    context,
+                  )!.groupDeleteWarning(historiasCount),
                 ),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(false),
-                    child: const Text('Cancelar'),
+                    child: Text(AppLocalizations.of(context)!.cancel),
                   ),
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(true),
-                    child: const Text('Excluir'),
+                    child: Text(AppLocalizations.of(context)!.deleteLabel),
                   ),
                 ],
               );
@@ -72,7 +75,9 @@ class _ManageGroupsScreenState extends State<ManageGroupsScreen> {
       setState(() {});
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Grupo excluído com sucesso')),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.groupDeletedSuccess),
+          ),
         );
       }
     }
@@ -81,7 +86,7 @@ class _ManageGroupsScreenState extends State<ManageGroupsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Gerenciar Grupos')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.manageGroups)),
       body: FutureBuilder<List<Grupo>>(
         future: _loadGrupos(),
         builder: (context, snapshot) {
@@ -90,7 +95,9 @@ class _ManageGroupsScreenState extends State<ManageGroupsScreen> {
           }
           final grupos = snapshot.data ?? [];
           if (grupos.isEmpty) {
-            return const Center(child: Text('Nenhum grupo encontrado'));
+            return Center(
+              child: Text(AppLocalizations.of(context)!.noGroupsFound),
+            );
           }
           return ListView.builder(
             itemCount: grupos.length,

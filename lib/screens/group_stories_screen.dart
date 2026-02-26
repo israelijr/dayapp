@@ -105,16 +105,20 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
                   highQuality: highQuality,
                 ),
             filename: filename,
-            title: 'Preview - ${historia.titulo}',
+            title: AppLocalizations.of(context)!.previewTitle(historia.titulo),
             onSave: null,
           ),
         ),
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Erro ao exportar PDF: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.exportPdfError(e.toString()),
+          ),
+        ),
+      );
     }
   }
 
@@ -633,7 +637,9 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
                 if (!mounted) return;
                 refreshProvider.refresh();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('História desagrupada')),
+                  SnackBar(
+                    content: Text(AppLocalizations.of(context)!.storyUngrouped),
+                  ),
                 );
               }
             },
@@ -739,7 +745,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
           IconButton(
             icon: const Icon(Icons.delete_forever),
             onPressed: () => _deleteGroup(),
-            tooltip: 'Excluir Grupo',
+            tooltip: AppLocalizations.of(context)!.deleteGroupTitle,
           ),
           Builder(
             builder: (context) => IconButton(
@@ -863,7 +869,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
             });
           },
           icon: const Icon(Icons.add),
-          label: const Text('Nova História'),
+          label: Text(AppLocalizations.of(context)!.newStory),
         ),
       ),
     );
@@ -876,7 +882,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Excluir grupo'),
+        title: Text(AppLocalizations.of(context)!.deleteGroupTitle),
         content: Text(
           'Deseja remover o grupo "${widget.grupo.nome}" das suas histórias?',
         ),
@@ -971,7 +977,7 @@ class HistoriaFotosGrid extends StatelessWidget {
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(),
-                          child: const Text('Fechar'),
+                          child: Text(AppLocalizations.of(context)!.close),
                         ),
                       ],
                     );

@@ -1,3 +1,4 @@
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -35,7 +36,7 @@ class _GroupSelectionScreenState extends State<GroupSelectionScreen> {
     final newGroupName = _newGroupController.text.trim();
     if (newGroupName.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Digite um nome para o grupo')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.enterGroupName)),
       );
       return;
     }
@@ -48,9 +49,9 @@ class _GroupSelectionScreenState extends State<GroupSelectionScreen> {
     final existing = await GrupoHelper().getGrupoByNome(userId, newGroupName);
     if (existing != null) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Grupo já existe')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.groupExists)),
+      );
       return;
     }
 
@@ -84,7 +85,7 @@ class _GroupSelectionScreenState extends State<GroupSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Selecionar Grupo')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.selectGroup)),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: FutureBuilder<List<Grupo>>(
@@ -96,9 +97,12 @@ class _GroupSelectionScreenState extends State<GroupSelectionScreen> {
             final grupos = snapshot.data ?? [];
             return Column(
               children: [
-                const Text(
-                  'Grupos Existentes',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Text(
+                  AppLocalizations.of(context)!.existingGroups,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 Expanded(
@@ -131,9 +135,12 @@ class _GroupSelectionScreenState extends State<GroupSelectionScreen> {
                 const SizedBox(height: 16),
                 const Divider(),
                 const SizedBox(height: 16),
-                const Text(
-                  'Criar Novo Grupo',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Text(
+                  AppLocalizations.of(context)!.createNewGroup,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 Row(
@@ -160,7 +167,7 @@ class _GroupSelectionScreenState extends State<GroupSelectionScreen> {
                     Expanded(
                       child: CustomTextField(
                         controller: _newGroupController,
-                        label: 'Nome do Grupo',
+                        label: AppLocalizations.of(context)!.groupNameLabel,
                         textCapitalization: TextCapitalization.sentences,
                       ),
                     ),
@@ -182,7 +189,7 @@ class _GroupSelectionScreenState extends State<GroupSelectionScreen> {
                   width: double.infinity,
                   child: FilledButton(
                     onPressed: _createNewGroup,
-                    child: const Text('Criar e Selecionar'),
+                    child: Text(AppLocalizations.of(context)!.createAndSelect),
                   ),
                 ),
               ],

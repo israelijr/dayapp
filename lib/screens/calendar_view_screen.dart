@@ -1,3 +1,4 @@
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -148,17 +149,17 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Excluir história'),
-        content: const Text('Deseja mover esta história para a lixeira?'),
+        title: Text(AppLocalizations.of(context)!.deleteStoryTitle),
+        content: Text(AppLocalizations.of(context)!.deleteStoryConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: Text(
-              'Excluir',
+              AppLocalizations.of(context)!.deleteLabel,
               style: TextStyle(color: Theme.of(context).colorScheme.error),
             ),
           ),
@@ -183,15 +184,19 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
 
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('História movida para a lixeira')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.movedToTrash)),
         );
 
         _loadHistorias();
       } catch (e) {
         if (!mounted) return;
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Erro ao excluir história: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.errorDeletingStory(e.toString()),
+            ),
+          ),
+        );
       }
     }
   }
@@ -201,9 +206,9 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text(
-          'Calendário',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        title: Text(
+          AppLocalizations.of(context)!.calendarTitle,
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
       body: _isLoading
@@ -293,7 +298,7 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
                               ),
                               const SizedBox(height: 16),
                               Text(
-                                'Nenhum registro neste dia',
+                                AppLocalizations.of(context)!.noRecordsThisDay,
                                 style: TextStyle(
                                   fontSize: 16,
                                   color: Theme.of(
@@ -403,10 +408,13 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
                       }
                     },
                     itemBuilder: (context) => [
-                      const PopupMenuItem(value: 'edit', child: Text('Editar')),
-                      const PopupMenuItem(
+                      PopupMenuItem(
+                        value: 'edit',
+                        child: Text(AppLocalizations.of(context)!.edit),
+                      ),
+                      PopupMenuItem(
                         value: 'delete',
-                        child: Text('Excluir'),
+                        child: Text(AppLocalizations.of(context)!.deleteLabel),
                       ),
                     ],
                   ),

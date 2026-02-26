@@ -306,10 +306,107 @@ class AppLocalizationsEn extends AppLocalizations {
   String get movedToTrash => 'Story moved to trash';
 
   @override
+  String errorDeletingStory(Object error) {
+    return 'Error deleting story: $error';
+  }
+
+  @override
+  String get noRecordsThisDay => 'No records for this day';
+
+  @override
+  String get storyUngrouped => 'Story ungrouped';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get confirmDeletion => 'Confirm deletion';
+
+  @override
+  String get groupDeletedSuccess => 'Group deleted successfully';
+
+  @override
+  String get noGroupsFound => 'No groups found';
+
+  @override
+  String get shareError => 'Could not share';
+
+  @override
+  String get cannotDeletePhoto => 'Cannot delete this photo';
+
+  @override
+  String get deletePhotoTitle => 'Delete photo';
+
+  @override
+  String get deletePhotoConfirm => 'Do you really want to delete this photo?';
+
+  @override
+  String get deleteGroupTitle => 'Delete Group';
+
+  @override
+  String get share => 'Share';
+
+  @override
+  String get imageCopiedBase64 => 'Image copied to clipboard (base64)';
+
+  @override
+  String get newGroup => 'New Group';
+
+  @override
+  String get editGroup => 'Edit Group';
+
+  @override
+  String get chooseIcon => 'Choose icon';
+
+  @override
+  String groupDeleteWarning(Object count) {
+    return 'This group has $count story(ies) linked. If deleted, those stories will return to the home screen (no group). Continue?';
+  }
+
+  @override
   String get unarchive => 'Unarchive';
 
   @override
   String get group => 'Group';
+
+  @override
+  String get selectGroup => 'Select Group';
+
+  @override
+  String get existingGroups => 'Existing Groups';
+
+  @override
+  String get createNewGroup => 'Create New Group';
+
+  @override
+  String get groupNameLabel => 'Group Name';
+
+  @override
+  String get createAndSelect => 'Create and Select';
+
+  @override
+  String get manageBackups => 'Manage Backup';
+
+  @override
+  String get createAndShareBackup => 'Create and Share Backup';
+
+  @override
+  String get restoreFromFile => 'Restore from File';
+
+  @override
+  String get backupNotAvailableWeb => 'Backup not available on web';
+
+  @override
+  String get backupComplete => 'Complete Backup';
+
+  @override
+  String get calendarTitle => 'Calendar';
+
+  @override
+  String get groupExists => 'Group already exists';
+
+  @override
+  String get enterGroupName => 'Enter a name for the group';
 
   @override
   String get archivedTitle => 'Archived';

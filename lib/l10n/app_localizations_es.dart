@@ -306,10 +306,107 @@ class AppLocalizationsEs extends AppLocalizations {
   String get movedToTrash => 'Historia movida a la papelera';
 
   @override
+  String errorDeletingStory(Object error) {
+    return 'Error al eliminar historia: $error';
+  }
+
+  @override
+  String get noRecordsThisDay => 'No hay registros para este día';
+
+  @override
+  String get storyUngrouped => 'Historia desagrupada';
+
+  @override
+  String get save => 'Guardar';
+
+  @override
+  String get confirmDeletion => 'Confirmar eliminación';
+
+  @override
+  String get groupDeletedSuccess => 'Grupo eliminado con éxito';
+
+  @override
+  String get noGroupsFound => 'Ningún grupo encontrado';
+
+  @override
+  String get shareError => 'No se pudo compartir';
+
+  @override
+  String get cannotDeletePhoto => 'No es posible eliminar esta foto';
+
+  @override
+  String get deletePhotoTitle => 'Eliminar foto';
+
+  @override
+  String get deletePhotoConfirm => '¿Desea realmente eliminar esta foto?';
+
+  @override
+  String get deleteGroupTitle => 'Eliminar Grupo';
+
+  @override
+  String get share => 'Compartir';
+
+  @override
+  String get imageCopiedBase64 => 'Imagen copiada al portapapeles (base64)';
+
+  @override
+  String get newGroup => 'Nuevo Grupo';
+
+  @override
+  String get editGroup => 'Editar Grupo';
+
+  @override
+  String get chooseIcon => 'Seleccionar ícono';
+
+  @override
+  String groupDeleteWarning(Object count) {
+    return 'Este grupo tiene $count historia(s) vinculada(s). Si se elimina, esas historias volverán a la pantalla principal (sin grupo). ¿Continuar?';
+  }
+
+  @override
   String get unarchive => 'Desarchivar';
 
   @override
   String get group => 'Grupo';
+
+  @override
+  String get selectGroup => 'Seleccionar Grupo';
+
+  @override
+  String get existingGroups => 'Grupos Existentes';
+
+  @override
+  String get createNewGroup => 'Crear Nuevo Grupo';
+
+  @override
+  String get groupNameLabel => 'Nombre del Grupo';
+
+  @override
+  String get createAndSelect => 'Crear y Seleccionar';
+
+  @override
+  String get manageBackups => 'Administrar copia de seguridad';
+
+  @override
+  String get createAndShareBackup => 'Crear y compartir copia de seguridad';
+
+  @override
+  String get restoreFromFile => 'Restaurar desde archivo';
+
+  @override
+  String get backupNotAvailableWeb => 'Copia de seguridad no disponible en la web';
+
+  @override
+  String get backupComplete => 'Copia de seguridad completa';
+
+  @override
+  String get calendarTitle => 'Calendario';
+
+  @override
+  String get groupExists => 'El grupo ya existe';
+
+  @override
+  String get enterGroupName => 'Ingrese un nombre para el grupo';
 
   @override
   String get archivedTitle => 'Archivados';

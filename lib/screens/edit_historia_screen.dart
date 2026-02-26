@@ -1,3 +1,4 @@
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -643,7 +644,9 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
             highQuality: highQuality,
           ),
           filename: filename,
-          title: 'Preview - ${titleController.text.trim()}',
+          title: AppLocalizations.of(
+            context,
+          )!.previewTitle(titleController.text.trim()),
           onSave: () async {
             final ok = await _save(navigateAfterSave: false);
             return ok;

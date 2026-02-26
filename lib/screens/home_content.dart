@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
@@ -92,16 +93,20 @@ class _HomeContentState extends State<HomeContent> {
                   highQuality: highQuality,
                 ),
             filename: filename,
-            title: 'Preview - ${historia.titulo}',
+            title: AppLocalizations.of(context)!.previewTitle(historia.titulo),
             onSave: null,
           ),
         ),
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Erro ao exportar PDF: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.exportPdfError(e.toString()),
+          ),
+        ),
+      );
     }
   }
 
@@ -249,17 +254,17 @@ class _HomeContentState extends State<HomeContent> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Excluir história'),
-        content: const Text('Deseja mover esta história para a lixeira?'),
+        title: Text(AppLocalizations.of(context)!.deleteStoryTitle),
+        content: Text(AppLocalizations.of(context)!.deleteStoryConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancelar'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             child: Text(
-              'Excluir',
+              AppLocalizations.of(context)!.deleteLabel,
               style: TextStyle(color: Theme.of(context).colorScheme.error),
             ),
           ),
@@ -289,7 +294,7 @@ class _HomeContentState extends State<HomeContent> {
       refreshProvider.refresh();
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('História movida para a lixeira')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.movedToTrash)),
       );
     }
   }
@@ -312,9 +317,9 @@ class _HomeContentState extends State<HomeContent> {
       SnackBar(
         duration: const Duration(seconds: 4),
         behavior: SnackBarBehavior.floating,
-        content: const Text('História arquivada'),
+        content: Text(AppLocalizations.of(context)!.storyArchived),
         action: SnackBarAction(
-          label: 'Desfazer',
+          label: AppLocalizations.of(context)!.undo,
           onPressed: () async {
             await _updateHistoria(
               historia,
@@ -343,7 +348,7 @@ class _HomeContentState extends State<HomeContent> {
                 backgroundColor: Theme.of(context).colorScheme.primary,
                 foregroundColor: Theme.of(context).colorScheme.onPrimary,
                 icon: Icons.archive,
-                label: 'Arquivar',
+                label: AppLocalizations.of(context)!.archiveLabel,
               ),
             ],
           ),
@@ -509,13 +514,17 @@ class _HomeContentState extends State<HomeContent> {
                             }
                           },
                           itemBuilder: (context) => [
-                            const PopupMenuItem(
+                            PopupMenuItem(
                               value: 'edit',
-                              child: Text('Editar - 2 toques '),
+                              child: Text(
+                                AppLocalizations.of(context)!.editTip,
+                              ),
                             ),
-                            const PopupMenuItem(
+                            PopupMenuItem(
                               value: 'delete',
-                              child: Text('Excluir'),
+                              child: Text(
+                                AppLocalizations.of(context)!.deleteLabel,
+                              ),
                             ),
                           ],
                         ),
@@ -568,9 +577,9 @@ class _HomeContentState extends State<HomeContent> {
         alignment: Alignment.centerLeft,
         padding: const EdgeInsets.only(left: 20),
         color: Theme.of(context).colorScheme.primary,
-        child: const Text(
-          'Arquivar',
-          style: TextStyle(
+        child: Text(
+          AppLocalizations.of(context)!.archiveLabel,
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -581,9 +590,9 @@ class _HomeContentState extends State<HomeContent> {
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
         color: AppColors.emoticonGreen,
-        child: const Text(
-          'Grupo',
-          style: TextStyle(
+        child: Text(
+          AppLocalizations.of(context)!.group,
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -690,9 +699,18 @@ class _HomeContentState extends State<HomeContent> {
               }
             },
             itemBuilder: (context) => [
-              const PopupMenuItem(value: 'edit', child: Text('Editar')),
-              const PopupMenuItem(value: 'export', child: Text('Exportar PDF')),
-              const PopupMenuItem(value: 'delete', child: Text('Excluir')),
+              PopupMenuItem(
+                value: 'edit',
+                child: Text(AppLocalizations.of(context)!.edit),
+              ),
+              PopupMenuItem(
+                value: 'export',
+                child: Text(AppLocalizations.of(context)!.exportPdf),
+              ),
+              PopupMenuItem(
+                value: 'delete',
+                child: Text(AppLocalizations.of(context)!.deleteLabel),
+              ),
             ],
           ),
           onTap: () {
@@ -709,7 +727,7 @@ class _HomeContentState extends State<HomeContent> {
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Fechar'),
+                      child: Text(AppLocalizations.of(context)!.close),
                     ),
                   ],
                 );

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -73,17 +74,15 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
         if (mounted) {
           final messenger = ScaffoldMessenger.of(context);
           messenger.showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Imagem copiada para a área de transferência (base64)',
-              ),
+            SnackBar(
+              content: Text(AppLocalizations.of(context)!.imageCopiedBase64),
             ),
           );
         }
       } catch (_) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Não foi possível compartilhar')),
+            SnackBar(content: Text(AppLocalizations.of(context)!.shareError)),
           );
         }
       }
@@ -97,7 +96,9 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
       if (mounted) {
         final messenger = ScaffoldMessenger.of(context);
         messenger.showSnackBar(
-          const SnackBar(content: Text('Não é possível excluir esta foto')),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.cannotDeletePhoto),
+          ),
         );
       }
       return;
@@ -105,17 +106,17 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Excluir foto'),
-        content: const Text('Deseja realmente excluir esta foto?'),
+        title: Text(AppLocalizations.of(context)!.deletePhotoTitle),
+        content: Text(AppLocalizations.of(context)!.deletePhotoConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: Text(
-              'Excluir',
+              AppLocalizations.of(context)!.deleteLabel,
               style: TextStyle(color: Theme.of(context).colorScheme.error),
             ),
           ),
@@ -139,20 +140,20 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.close),
-          tooltip: 'Fechar',
+          tooltip: AppLocalizations.of(context)!.close,
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text('${_currentIndex + 1} / ${widget.images.length}'),
         actions: [
           IconButton(
             icon: const Icon(Icons.share),
-            tooltip: 'Compartilhar',
+            tooltip: AppLocalizations.of(context)!.share,
             onPressed: _shareCurrent,
           ),
           if (widget.photoIds != null)
             IconButton(
               icon: const Icon(Icons.delete),
-              tooltip: 'Excluir foto',
+              tooltip: AppLocalizations.of(context)!.deletePhotoTitle,
               onPressed: _deleteCurrent,
             ),
         ],

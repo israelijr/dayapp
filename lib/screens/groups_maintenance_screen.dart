@@ -1,3 +1,4 @@
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -54,7 +55,11 @@ class _GroupsMaintenanceScreenState extends State<GroupsMaintenanceScreen> {
       builder: (context) => StatefulBuilder(
         builder: (context, setStateDialog) {
           return AlertDialog(
-            title: Text(isEditing ? 'Editar Grupo' : 'Novo Grupo'),
+            title: Text(
+              isEditing
+                  ? AppLocalizations.of(context)!.editGroup
+                  : AppLocalizations.of(context)!.newGroup,
+            ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -91,13 +96,14 @@ class _GroupsMaintenanceScreenState extends State<GroupsMaintenanceScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  selectedEmojiTranslation ?? 'Escolher ícone',
+                  selectedEmojiTranslation ??
+                      AppLocalizations.of(context)!.chooseIcon,
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
                 const SizedBox(height: 16),
                 CustomTextField(
                   controller: nameController,
-                  label: 'Nome do Grupo',
+                  label: AppLocalizations.of(context)!.groupNameLabel,
                   textCapitalization: TextCapitalization.sentences,
                 ),
               ],
@@ -105,7 +111,7 @@ class _GroupsMaintenanceScreenState extends State<GroupsMaintenanceScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Cancelar'),
+                child: Text(AppLocalizations.of(context)!.cancel),
               ),
               FilledButton(
                 onPressed: () async {
@@ -144,7 +150,7 @@ class _GroupsMaintenanceScreenState extends State<GroupsMaintenanceScreen> {
                     // Tratar erro se necessário
                   }
                 },
-                child: const Text('Salvar'),
+                child: Text(AppLocalizations.of(context)!.save),
               ),
             ],
           );
@@ -157,21 +163,21 @@ class _GroupsMaintenanceScreenState extends State<GroupsMaintenanceScreen> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Excluir Grupo'),
+        title: Text(AppLocalizations.of(context)!.deleteGroupTitle),
         content: Text(
           'Deseja excluir o grupo "${grupo.nome}"? As histórias deste grupo não serão excluídas, apenas removidas do grupo.',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(
               foregroundColor: Theme.of(context).colorScheme.error,
             ),
-            child: const Text('Excluir'),
+            child: Text(AppLocalizations.of(context)!.deleteLabel),
           ),
         ],
       ),
@@ -195,7 +201,7 @@ class _GroupsMaintenanceScreenState extends State<GroupsMaintenanceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Gerenciar Grupos')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.manageGroups)),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
@@ -206,7 +212,9 @@ class _GroupsMaintenanceScreenState extends State<GroupsMaintenanceScreen> {
                     children: [
                       const Divider(height: 1, thickness: 1),
                       ListTile(
-                        title: const Text('Arquivados'),
+                        title: Text(
+                          AppLocalizations.of(context)!.archivedTitle,
+                        ),
                         leading: Icon(
                           Icons.archive,
                           color: Theme.of(context).iconTheme.color,
