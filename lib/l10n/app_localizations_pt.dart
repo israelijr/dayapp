@@ -360,7 +360,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String groupDeleteWarning(Object count) {
-    return 'This group has $count story(ies) linked. If deleted, those stories will return to the home screen (no group). Continue?';
+    return 'Este grupo tem $count história(s) vinculada(s). Se excluído, essas histórias voltarão para a tela inicial (sem grupo). Continuar?';
   }
 
   @override
@@ -771,10 +771,107 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get movedToTrash => 'História movida para a lixeira';
 
   @override
+  String errorDeletingStory(Object error) {
+    return 'Erro ao excluir história: $error';
+  }
+
+  @override
+  String get noRecordsThisDay => 'Nenhum registro neste dia';
+
+  @override
+  String get storyUngrouped => 'História desagrupada';
+
+  @override
+  String get save => 'Salvar';
+
+  @override
+  String get confirmDeletion => 'Confirmar exclusão';
+
+  @override
+  String get groupDeletedSuccess => 'Grupo excluído com sucesso';
+
+  @override
+  String get noGroupsFound => 'Nenhum grupo encontrado';
+
+  @override
+  String get shareError => 'Não foi possível compartilhar';
+
+  @override
+  String get cannotDeletePhoto => 'Não é possível excluir esta foto';
+
+  @override
+  String get deletePhotoTitle => 'Excluir foto';
+
+  @override
+  String get deletePhotoConfirm => 'Deseja realmente excluir esta foto?';
+
+  @override
+  String get deleteGroupTitle => 'Excluir Grupo';
+
+  @override
+  String get share => 'Compartilhar';
+
+  @override
+  String get imageCopiedBase64 => 'Imagem copiada para a área de transferência (base64)';
+
+  @override
+  String get newGroup => 'Novo Grupo';
+
+  @override
+  String get editGroup => 'Editar Grupo';
+
+  @override
+  String get chooseIcon => 'Escolher ícone';
+
+  @override
+  String groupDeleteWarning(Object count) {
+    return 'Este grupo tem $count história(s) vinculada(s). Se excluído, essas histórias voltarão para a tela inicial (sem grupo). Continuar?';
+  }
+
+  @override
   String get unarchive => 'Desarquivar';
 
   @override
   String get group => 'Grupo';
+
+  @override
+  String get selectGroup => 'Selecionar Grupo';
+
+  @override
+  String get existingGroups => 'Grupos Existentes';
+
+  @override
+  String get createNewGroup => 'Criar Novo Grupo';
+
+  @override
+  String get groupNameLabel => 'Nome do Grupo';
+
+  @override
+  String get createAndSelect => 'Criar e Selecionar';
+
+  @override
+  String get manageBackups => 'Gerenciar Backup';
+
+  @override
+  String get createAndShareBackup => 'Criar e Compartilhar Backup';
+
+  @override
+  String get restoreFromFile => 'Restaurar de Arquivo';
+
+  @override
+  String get backupNotAvailableWeb => 'Backup não disponível na versão web';
+
+  @override
+  String get backupComplete => 'Backup Completo';
+
+  @override
+  String get calendarTitle => 'Calendário';
+
+  @override
+  String get groupExists => 'Grupo já existe';
+
+  @override
+  String get enterGroupName => 'Digite um nome para o grupo';
 
   @override
   String get archivedTitle => 'Arquivados';

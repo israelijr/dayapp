@@ -152,6 +152,8 @@
   "calendarTitle": "Calendário",
   "groupExists": "Grupo já existe",
   "enterGroupName": "Digite um nome para o grupo",
+  "groupDeleteWarning": "Este grupo tem {count} história(s) vinculada(s). Se excluído, essas histórias voltarão para a tela inicial (sem grupo). Continuar?",
+  "@groupDeleteWarning": { "placeholders": { "count": {} } },
   "archivedTitle": "Arquivados",
   "toggleToIcons": "Alternar para visualização de ícones",
   "toggleToCards": "Alternar para visualização em blocos",
