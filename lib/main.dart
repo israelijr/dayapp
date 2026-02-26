@@ -391,8 +391,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ChangeNotifierProvider(create: (_) => StatisticsProvider()),
         ChangeNotifierProvider.value(value: widget.pinProvider),
       ],
-      child: Consumer<ThemeProvider>(
-        builder: (context, themeProvider, child) {
+      child: Consumer2<ThemeProvider, LocaleProvider>(
+        builder: (context, themeProvider, localeProvider, child) {
           // Determina os ThemeData a partir do esquema selecionado (se houver)
           ThemeData lightTheme = M3ExpressiveTheme.getLightTheme();
           ThemeData darkTheme = M3ExpressiveTheme.getDarkTheme();
@@ -418,9 +418,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               darkTheme = ThemeData.from(colorScheme: darkScheme);
             }
           }
-
-          // Obtém o provider de localidade para aplicar `locale` (null = sistema)
-          final localeProvider = Provider.of<LocaleProvider>(context);
 
           return MaterialApp(
             title: AppLocalizations.of(context)?.appTitle ?? 'DayApp',

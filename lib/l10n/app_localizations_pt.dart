@@ -36,6 +36,42 @@ class AppLocalizationsPt extends AppLocalizations {
   String get theme => 'Tema';
 
   @override
+  String get themeLight => 'Claro';
+
+  @override
+  String get themeDark => 'Escuro';
+
+  @override
+  String get themeSystem => 'Sistema';
+
+  @override
+  String get security => 'Segurança';
+
+  @override
+  String get themeAndScheme => 'Tema e Esquema';
+
+  @override
+  String get backup => 'Backup';
+
+  @override
+  String get automaticBackup => 'Backup Automático';
+
+  @override
+  String get lastAutoBackup => 'Último backup automático';
+
+  @override
+  String get backupOnLogout => 'Backup ao sair';
+
+  @override
+  String get enabled => 'Habilitado';
+
+  @override
+  String get disabled => 'Desabilitado';
+
+  @override
+  String get confirm => 'Confirmar';
+
+  @override
   String get pinUnlock => 'PIN de Desbloqueio';
 
   @override
@@ -499,6 +535,42 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get theme => 'Tema';
+
+  @override
+  String get themeLight => 'Claro';
+
+  @override
+  String get themeDark => 'Escuro';
+
+  @override
+  String get themeSystem => 'Sistema';
+
+  @override
+  String get security => 'Segurança';
+
+  @override
+  String get themeAndScheme => 'Tema e Esquema';
+
+  @override
+  String get backup => 'Backup';
+
+  @override
+  String get automaticBackup => 'Backup Automático';
+
+  @override
+  String get lastAutoBackup => 'Último backup automático';
+
+  @override
+  String get backupOnLogout => 'Backup ao sair';
+
+  @override
+  String get enabled => 'Habilitado';
+
+  @override
+  String get disabled => 'Desabilitado';
+
+  @override
+  String get confirm => 'Confirmar';
 
   @override
   String get pinUnlock => 'PIN de Desbloqueio';

@@ -30,6 +30,10 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   bool _isCardView = true;
+
+  // ScaffoldMessenger local — snackbars ficam escopados à HomeScreen e
+  // são descartados automaticamente ao navegar para outra rota (ex: logout).
+  final _messengerKey = GlobalKey<ScaffoldMessengerState>();
   // Flag estática para garantir que a sugestão de backup seja mostrada
   // apenas uma vez por inicialização do app.
   static bool _backupSuggestionShown = false;
@@ -161,470 +165,487 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          children: [
-            Image.asset('assets/icon/icon.png', width: 32, height: 32),
-            const SizedBox(width: 12),
-            Text(
-              _selectedIndex == 0
-                  ? AppLocalizations.of(context)!.appTitle
-                  : _selectedIndex == 1
-                  ? AppLocalizations.of(context)!.manageGroups
-                  : AppLocalizations.of(context)!.search,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-        actions: [
-          // Só mostra os botões de visualização na aba Home
-          if (_selectedIndex == 0)
-            Builder(
-              builder: (context) {
-                const duration = AppDurations.listSwitch;
-                Widget buildToggle(
-                  String asset,
-                  bool active,
-                  String tooltip,
-                  VoidCallback onTap,
-                ) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 6.0),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(8),
-                      onTap: () {
-                        onTap();
-                      },
-                      child: AnimatedContainer(
-                        duration: duration,
-                        curve: Curves.easeInOut,
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: active
-                              ? Theme.of(
-                                  context,
-                                ).colorScheme.secondary.withValues(alpha: 0.14)
-                              : Colors.transparent,
-                          borderRadius: BorderRadius.circular(8),
-                          border: active
-                              ? Border.all(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.secondary,
-                                  width: 1.2,
-                                )
-                              : null,
-                          boxShadow: active
-                              ? [
-                                  BoxShadow(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .secondary
-                                        .withValues(alpha: 0.08),
-                                    blurRadius: 6,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ]
-                              : null,
-                        ),
-                        child: AnimatedScale(
-                          duration: duration,
-                          curve: Curves.easeOutBack,
-                          scale: active ? 1.05 : 1.0,
-                          child: Image.asset(asset, width: 28, height: 28),
-                        ),
-                      ),
-                    ),
-                  );
-                }
-
-                return Row(
-                  children: [
-                    buildToggle(
-                      'assets/image/card.png',
-                      _isCardView,
-                      'Ver em cards grandes',
-                      () {
-                        setState(() {
-                          _isCardView = true;
-                        });
-                        _saveLayoutPreference(true);
-                      },
-                    ),
-                    buildToggle(
-                      'assets/image/icone_pequeno.png',
-                      !_isCardView,
-                      'Ver em cards reduzidos',
-                      () {
-                        setState(() {
-                          _isCardView = false;
-                        });
-                        _saveLayoutPreference(false);
-                      },
-                    ),
-                    Padding(
+    return ScaffoldMessenger(
+      key: _messengerKey,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Row(
+            children: [
+              Image.asset('assets/icon/icon.png', width: 32, height: 32),
+              const SizedBox(width: 12),
+              Text(
+                _selectedIndex == 0
+                    ? AppLocalizations.of(context)!.appTitle
+                    : _selectedIndex == 1
+                    ? AppLocalizations.of(context)!.manageGroups
+                    : AppLocalizations.of(context)!.search,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          actions: [
+            // Só mostra os botões de visualização na aba Home
+            if (_selectedIndex == 0)
+              Builder(
+                builder: (context) {
+                  const duration = AppDurations.listSwitch;
+                  Widget buildToggle(
+                    String asset,
+                    bool active,
+                    String tooltip,
+                    VoidCallback onTap,
+                  ) {
+                    return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 6.0),
                       child: InkWell(
                         borderRadius: BorderRadius.circular(8),
                         onTap: () {
-                          Navigator.pushNamed(context, '/calendar');
+                          onTap();
                         },
-                        child: Tooltip(
-                          message: 'Ver calendário',
-                          child: Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Image.asset(
-                              'assets/image/calendario.png',
-                              width: 28,
-                              height: 28,
-                            ),
+                        child: AnimatedContainer(
+                          duration: duration,
+                          curve: Curves.easeInOut,
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: active
+                                ? Theme.of(context).colorScheme.secondary
+                                      .withValues(alpha: 0.14)
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(8),
+                            border: active
+                                ? Border.all(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.secondary,
+                                    width: 1.2,
+                                  )
+                                : null,
+                            boxShadow: active
+                                ? [
+                                    BoxShadow(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary
+                                          .withValues(alpha: 0.08),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ]
+                                : null,
+                          ),
+                          child: AnimatedScale(
+                            duration: duration,
+                            curve: Curves.easeOutBack,
+                            scale: active ? 1.05 : 1.0,
+                            child: Image.asset(asset, width: 28, height: 28),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                );
-              },
-            ),
-        ],
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(color: Theme.of(context).primaryColor),
-              child: Builder(
-                builder: (context) {
-                  final user = Provider.of<AuthProvider>(context).user;
-                  ImageProvider profileImage;
-                  if (user != null &&
-                      user.fotoPerfil != null &&
-                      user.fotoPerfil!.isNotEmpty) {
-                    final fp = user.fotoPerfil!;
-                    if (fp.startsWith('http') || fp.startsWith('https')) {
-                      profileImage = NetworkImage(fp);
-                    } else {
-                      try {
-                        final file = File(fp);
-                        if (file.existsSync()) {
-                          profileImage = FileImage(file);
-                        } else {
-                          profileImage = const AssetImage(
-                            'assets/image/icone_pequeno.png',
-                          );
-                        }
-                      } catch (_) {
-                        profileImage = const AssetImage(
-                          'assets/image/icone_pequeno.png',
-                        );
-                      }
-                    }
-                  } else {
-                    profileImage = const AssetImage(
-                      'assets/image/icone_pequeno.png',
                     );
                   }
 
                   return Row(
                     children: [
-                      Image.asset(
-                        'assets/icon/icon.png',
-                        width: 48,
-                        height: 48,
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'DayApp',
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.onPrimary,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              user?.nome ?? '',
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.onPrimary,
-                              ),
-                            ),
-                            Text(
-                              user?.email ?? '',
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.onPrimary,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          // Mostrar foto ampliada em um diálogo
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return Dialog(
-                                backgroundColor: Colors.transparent,
-                                child: Stack(
-                                  children: [
-                                    Center(
-                                      child: Container(
-                                        constraints: BoxConstraints(
-                                          maxWidth:
-                                              MediaQuery.of(
-                                                context,
-                                              ).size.width *
-                                              0.9,
-                                          maxHeight:
-                                              MediaQuery.of(
-                                                context,
-                                              ).size.height *
-                                              0.9,
-                                        ),
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                          child:
-                                              user?.fotoPerfil != null &&
-                                                  user!.fotoPerfil!.isNotEmpty
-                                              ? (user.fotoPerfil!.startsWith(
-                                                          'http',
-                                                        ) ||
-                                                        user.fotoPerfil!
-                                                            .startsWith('https')
-                                                    ? Image.network(
-                                                        user.fotoPerfil!,
-                                                        fit: BoxFit.contain,
-                                                        errorBuilder:
-                                                            (
-                                                              context,
-                                                              error,
-                                                              stackTrace,
-                                                            ) {
-                                                              return Image.asset(
-                                                                'assets/image/icone_pequeno.png',
-                                                                fit: BoxFit
-                                                                    .contain,
-                                                              );
-                                                            },
-                                                      )
-                                                    : (File(
-                                                            user.fotoPerfil!,
-                                                          ).existsSync()
-                                                          ? Image.file(
-                                                              File(
-                                                                user.fotoPerfil!,
-                                                              ),
-                                                              fit: BoxFit
-                                                                  .contain,
-                                                            )
-                                                          : Image.asset(
-                                                              'assets/image/icone_pequeno.png',
-                                                              fit: BoxFit
-                                                                  .contain,
-                                                            )))
-                                              : Image.asset(
-                                                  'assets/image/icone_pequeno.png',
-                                                  fit: BoxFit.contain,
-                                                ),
-                                        ),
-                                      ),
-                                    ),
-                                    Positioned(
-                                      top: 10,
-                                      right: 10,
-                                      child: IconButton(
-                                        icon: Icon(
-                                          Icons.close,
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.onSurface,
-                                          size: 30,
-                                        ),
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          );
+                      buildToggle(
+                        'assets/image/card.png',
+                        _isCardView,
+                        'Ver em cards grandes',
+                        () {
+                          setState(() {
+                            _isCardView = true;
+                          });
+                          _saveLayoutPreference(true);
                         },
-                        child: CircleAvatar(
-                          radius: 24,
-                          backgroundImage: profileImage,
+                      ),
+                      buildToggle(
+                        'assets/image/icone_pequeno.png',
+                        !_isCardView,
+                        'Ver em cards reduzidos',
+                        () {
+                          setState(() {
+                            _isCardView = false;
+                          });
+                          _saveLayoutPreference(false);
+                        },
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 6.0),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(8),
+                          onTap: () {
+                            Navigator.pushNamed(context, '/calendar');
+                          },
+                          child: Tooltip(
+                            message: 'Ver calendário',
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Image.asset(
+                                'assets/image/calendario.png',
+                                width: 28,
+                                height: 28,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ],
                   );
                 },
               ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: Text(AppLocalizations.of(context)!.editProfile),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const EditProfileScreen()),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.analytics_outlined),
-              title: Text(AppLocalizations.of(context)!.statistics),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const StatisticsScreen()),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.group),
-              title: Text(AppLocalizations.of(context)!.manageGroups),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const GroupsMaintenanceScreen(),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.delete),
-              title: Text(AppLocalizations.of(context)!.trash),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, '/trash');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.help_outline),
-              title: Text(AppLocalizations.of(context)!.help),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, '/help');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: Text(AppLocalizations.of(context)!.settings),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, '/settings');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.info_outline),
-              title: Text(AppLocalizations.of(context)!.about),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(context, '/about');
-              },
-            ),
-
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: Text(AppLocalizations.of(context)!.logout),
-              onTap: () async {
-                final navigator = Navigator.of(context);
-                final auth = Provider.of<AuthProvider>(context, listen: false);
-                final pinProvider = Provider.of<PinProvider>(
-                  context,
-                  listen: false,
-                );
-
-                // Fecha o drawer antes de iniciar o backup
-                navigator.pop();
-
-                // Executa backup automático ao fazer logout
-                final autoBackup = AutoBackupService();
-                final configured = await autoBackup.isConfigured();
-                if (configured && mounted) {
-                  final zipPath = await _showAutoBackupProgress(autoBackup);
-                  // Abre a tela de compartilhamento para o usuário escolher onde salvar
-                  if (zipPath != null) {
-                    try {
-                      // Evita bloqueio ao voltar do share sheet
-                      pinProvider.isPickingExternalMedia = true;
-                      // ignore: deprecated_member_use
-                      await Share.shareXFiles(
-                        [XFile(zipPath)],
-                        subject: 'Backup Automático DayApp',
-                        text: 'Backup automático do DayApp',
+          ],
+        ),
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
+                ),
+                child: Builder(
+                  builder: (context) {
+                    final user = Provider.of<AuthProvider>(context).user;
+                    ImageProvider profileImage;
+                    if (user != null &&
+                        user.fotoPerfil != null &&
+                        user.fotoPerfil!.isNotEmpty) {
+                      final fp = user.fotoPerfil!;
+                      if (fp.startsWith('http') || fp.startsWith('https')) {
+                        profileImage = NetworkImage(fp);
+                      } else {
+                        try {
+                          final file = File(fp);
+                          if (file.existsSync()) {
+                            profileImage = FileImage(file);
+                          } else {
+                            profileImage = const AssetImage(
+                              'assets/image/icone_pequeno.png',
+                            );
+                          }
+                        } catch (_) {
+                          profileImage = const AssetImage(
+                            'assets/image/icone_pequeno.png',
+                          );
+                        }
+                      }
+                    } else {
+                      profileImage = const AssetImage(
+                        'assets/image/icone_pequeno.png',
                       );
-                    } catch (e) {
-                      // Silencia erro se o usuário cancelar o compartilhamento
-                    } finally {
-                      pinProvider.isPickingExternalMedia = false;
+                    }
+
+                    return Row(
+                      children: [
+                        Image.asset(
+                          'assets/icon/icon.png',
+                          width: 48,
+                          height: 48,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'DayApp',
+                                style: TextStyle(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                user?.nome ?? '',
+                                style: TextStyle(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimary,
+                                ),
+                              ),
+                              Text(
+                                user?.email ?? '',
+                                style: TextStyle(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onPrimary,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            // Mostrar foto ampliada em um diálogo
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return Dialog(
+                                  backgroundColor: Colors.transparent,
+                                  child: Stack(
+                                    children: [
+                                      Center(
+                                        child: Container(
+                                          constraints: BoxConstraints(
+                                            maxWidth:
+                                                MediaQuery.of(
+                                                  context,
+                                                ).size.width *
+                                                0.9,
+                                            maxHeight:
+                                                MediaQuery.of(
+                                                  context,
+                                                ).size.height *
+                                                0.9,
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                            child:
+                                                user?.fotoPerfil != null &&
+                                                    user!.fotoPerfil!.isNotEmpty
+                                                ? (user.fotoPerfil!.startsWith(
+                                                            'http',
+                                                          ) ||
+                                                          user.fotoPerfil!
+                                                              .startsWith(
+                                                                'https',
+                                                              )
+                                                      ? Image.network(
+                                                          user.fotoPerfil!,
+                                                          fit: BoxFit.contain,
+                                                          errorBuilder:
+                                                              (
+                                                                context,
+                                                                error,
+                                                                stackTrace,
+                                                              ) {
+                                                                return Image.asset(
+                                                                  'assets/image/icone_pequeno.png',
+                                                                  fit: BoxFit
+                                                                      .contain,
+                                                                );
+                                                              },
+                                                        )
+                                                      : (File(
+                                                              user.fotoPerfil!,
+                                                            ).existsSync()
+                                                            ? Image.file(
+                                                                File(
+                                                                  user.fotoPerfil!,
+                                                                ),
+                                                                fit: BoxFit
+                                                                    .contain,
+                                                              )
+                                                            : Image.asset(
+                                                                'assets/image/icone_pequeno.png',
+                                                                fit: BoxFit
+                                                                    .contain,
+                                                              )))
+                                                : Image.asset(
+                                                    'assets/image/icone_pequeno.png',
+                                                    fit: BoxFit.contain,
+                                                  ),
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: 10,
+                                        right: 10,
+                                        child: IconButton(
+                                          icon: Icon(
+                                            Icons.close,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.onSurface,
+                                            size: 30,
+                                          ),
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                          child: CircleAvatar(
+                            radius: 24,
+                            backgroundImage: profileImage,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+              ListTile(
+                leading: const Icon(Icons.person),
+                title: Text(AppLocalizations.of(context)!.editProfile),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const EditProfileScreen(),
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.analytics_outlined),
+                title: Text(AppLocalizations.of(context)!.statistics),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const StatisticsScreen()),
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.group),
+                title: Text(AppLocalizations.of(context)!.manageGroups),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const GroupsMaintenanceScreen(),
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.delete),
+                title: Text(AppLocalizations.of(context)!.trash),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/trash');
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.help_outline),
+                title: Text(AppLocalizations.of(context)!.help),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/help');
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.settings),
+                title: Text(AppLocalizations.of(context)!.settings),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/settings');
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.info_outline),
+                title: Text(AppLocalizations.of(context)!.about),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/about');
+                },
+              ),
+
+              ListTile(
+                leading: const Icon(Icons.logout),
+                title: Text(AppLocalizations.of(context)!.logout),
+                onTap: () async {
+                  final navigator = Navigator.of(context);
+                  final auth = Provider.of<AuthProvider>(
+                    context,
+                    listen: false,
+                  );
+                  final pinProvider = Provider.of<PinProvider>(
+                    context,
+                    listen: false,
+                  );
+
+                  // Fecha o drawer antes de iniciar o backup
+                  navigator.pop();
+
+                  // Executa backup automático ao fazer logout
+                  final autoBackup = AutoBackupService();
+                  final configured = await autoBackup.isConfigured();
+                  if (configured && mounted) {
+                    final zipPath = await _showAutoBackupProgress(autoBackup);
+                    // Abre a tela de compartilhamento para o usuário escolher onde salvar
+                    if (zipPath != null) {
+                      try {
+                        // Evita bloqueio ao voltar do share sheet
+                        pinProvider.isPickingExternalMedia = true;
+                        // ignore: deprecated_member_use
+                        await Share.shareXFiles(
+                          [XFile(zipPath)],
+                          subject: 'Backup Automático DayApp',
+                          text: 'Backup automático do DayApp',
+                        );
+                      } catch (e) {
+                        // Silencia erro se o usuário cancelar o compartilhamento
+                      } finally {
+                        pinProvider.isPickingExternalMedia = false;
+                      }
                     }
                   }
-                }
 
-                await auth.logout();
-                pinProvider.updateUserLoginStatus(false);
-                if (!mounted) return;
-                navigator.pushReplacementNamed('/login');
-              },
+                  await auth.logout();
+                  pinProvider.updateUserLoginStatus(false);
+                  if (!mounted) return;
+                  navigator.pushReplacementNamed('/login');
+                },
+              ),
+            ],
+          ),
+        ),
+        body: _selectedIndex == 0
+            ? HomeContent(isCardView: _isCardView)
+            : _selectedIndex == 1
+            ? const GroupsScreen()
+            : const SearchScreen(),
+        // Mostra o FAB apenas nas abas Home e Grupos
+        floatingActionButton: _selectedIndex != 2
+            ? FloatingActionButton.extended(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/create_historia');
+                },
+                icon: const Icon(Icons.add),
+                label: Text(AppLocalizations.of(context)!.newStory),
+              )
+            : null,
+        bottomNavigationBar: NavigationBar(
+          selectedIndex: _selectedIndex,
+          onDestinationSelected: _onItemTapped,
+          destinations: [
+            const NavigationDestination(
+              icon: Icon(Icons.home_outlined),
+              selectedIcon: Icon(Icons.home),
+              label: 'Home',
+            ),
+            const NavigationDestination(
+              icon: Icon(Icons.group_outlined),
+              selectedIcon: Icon(Icons.group),
+              label: 'Grupos',
+            ),
+            NavigationDestination(
+              icon: const Icon(Icons.search_outlined),
+              selectedIcon: const Icon(Icons.search),
+              label: AppLocalizations.of(context)!.search,
             ),
           ],
         ),
-      ),
-      body: _selectedIndex == 0
-          ? HomeContent(isCardView: _isCardView)
-          : _selectedIndex == 1
-          ? const GroupsScreen()
-          : const SearchScreen(),
-      // Mostra o FAB apenas nas abas Home e Grupos
-      floatingActionButton: _selectedIndex != 2
-          ? FloatingActionButton.extended(
-              onPressed: () {
-                Navigator.pushNamed(context, '/create_historia');
-              },
-              icon: const Icon(Icons.add),
-              label: Text(AppLocalizations.of(context)!.newStory),
-            )
-          : null,
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: _onItemTapped,
-        destinations: [
-          const NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          const NavigationDestination(
-            icon: Icon(Icons.group_outlined),
-            selectedIcon: Icon(Icons.group),
-            label: 'Grupos',
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.search_outlined),
-            selectedIcon: const Icon(Icons.search),
-            label: AppLocalizations.of(context)!.search,
-          ),
-        ],
-      ),
-    );
+      ), // Scaffold
+    ); // ScaffoldMessenger
   }
 
   /// Exibe dialog de progresso durante o backup automático ao fazer logout.

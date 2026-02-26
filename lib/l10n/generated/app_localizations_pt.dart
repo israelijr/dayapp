@@ -36,6 +36,42 @@ class AppLocalizationsPt extends AppLocalizations {
   String get theme => 'Tema';
 
   @override
+  String get themeLight => 'Claro';
+
+  @override
+  String get themeDark => 'Escuro';
+
+  @override
+  String get themeSystem => 'Sistema';
+
+  @override
+  String get security => 'Segurança';
+
+  @override
+  String get themeAndScheme => 'Tema e Esquema';
+
+  @override
+  String get backup => 'Backup';
+
+  @override
+  String get automaticBackup => 'Backup automático';
+
+  @override
+  String get lastAutoBackup => 'Último backup automático';
+
+  @override
+  String get backupOnLogout => 'Backup ao sair';
+
+  @override
+  String get enabled => 'Ativado';
+
+  @override
+  String get disabled => 'Desativado';
+
+  @override
+  String get confirm => 'Confirmar';
+
+  @override
   String get pinUnlock => 'PIN de Desbloqueio';
 
   @override

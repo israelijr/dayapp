@@ -103,47 +103,53 @@ class _SettingsScreenState extends State<SettingsScreen> {
   ) {
     showDialog(
       context: context,
-      builder: (context) {
-        final loc = AppLocalizations.of(context)!;
-        final current = localeProvider.selection;
-        return AlertDialog(
-          title: Text(loc.language),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              RadioListTile<String>(
-                value: 'system',
-                groupValue: current,
-                title: Text(loc.deviceDefault),
-                onChanged: (v) {
-                  if (v == null) return;
-                  // Persiste a escolha assincronamente e fecha o diálogo
-                  localeProvider.setSelection(v);
-                  Navigator.of(context).pop();
-                },
+      builder: (_) {
+        return Consumer<LocaleProvider>(
+          builder: (ctx, lp, child) {
+            final loc = AppLocalizations.of(ctx)!;
+            return AlertDialog(
+              title: Text(loc.language),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  RadioListTile<String>(
+                    value: 'system',
+                    groupValue: lp.selection,
+                    title: Text(loc.deviceDefault),
+                    onChanged: (v) async {
+                      if (v == null) return;
+                      await lp.setSelection(v);
+                      // Mantém o diálogo aberto para que o usuário veja a aplicação imediata
+                    },
+                  ),
+                  RadioListTile<String>(
+                    value: 'en',
+                    groupValue: lp.selection,
+                    title: Text(loc.english),
+                    onChanged: (v) async {
+                      if (v == null) return;
+                      await lp.setSelection(v);
+                    },
+                  ),
+                  RadioListTile<String>(
+                    value: 'es',
+                    groupValue: lp.selection,
+                    title: Text(loc.spanish),
+                    onChanged: (v) async {
+                      if (v == null) return;
+                      await lp.setSelection(v);
+                    },
+                  ),
+                ],
               ),
-              RadioListTile<String>(
-                value: 'en',
-                groupValue: current,
-                title: Text(loc.english),
-                onChanged: (v) {
-                  if (v == null) return;
-                  localeProvider.setSelection(v);
-                  Navigator.of(context).pop();
-                },
-              ),
-              RadioListTile<String>(
-                value: 'es',
-                groupValue: current,
-                title: Text(loc.spanish),
-                onChanged: (v) {
-                  if (v == null) return;
-                  localeProvider.setSelection(v);
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  child: Text(AppLocalizations.of(ctx)?.close ?? 'Fechar'),
+                ),
+              ],
+            );
+          },
         );
       },
     );
@@ -206,8 +212,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text('Configurações')),
+      appBar: AppBar(title: Text(loc.settings)),
       body: ListView(
         children: [
           const SizedBox(height: 16),
@@ -232,12 +239,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
       builder: (context, themeProvider, child) {
         return ListTile(
           leading: const Icon(Icons.brightness_6),
-          title: const Text('Tema'),
+          title: Text(AppLocalizations.of(context)!.theme),
           subtitle: Text(
             // Mostra o modo e, se houver, o esquema personalizado selecionado
             themeProvider.selectedSchemeKey == null
-                ? _getThemeModeText(themeProvider.themeMode)
-                : '${_getThemeModeText(themeProvider.themeMode)} • ${_formatSchemeLabel(themeProvider.selectedSchemeKey!)}',
+                ? _getThemeModeText(context, themeProvider.themeMode)
+                : '${_getThemeModeText(context, themeProvider.themeMode)} • ${_formatSchemeLabel(themeProvider.selectedSchemeKey!)}',
           ),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
@@ -300,14 +307,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  String _getThemeModeText(ThemeMode mode) {
+  String _getThemeModeText(BuildContext context, ThemeMode mode) {
+    final loc = AppLocalizations.of(context)!;
     switch (mode) {
       case ThemeMode.light:
-        return 'Claro';
+        return loc.themeLight;
       case ThemeMode.dark:
-        return 'Escuro';
+        return loc.themeDark;
       case ThemeMode.system:
-        return 'Sistema';
+        return loc.themeSystem;
     }
   }
 
@@ -315,19 +323,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Text(
-            'Segurança',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            AppLocalizations.of(context)!.security,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
 
         // PIN de segurança
         ListTile(
           leading: const Icon(Icons.pin),
-          title: const Text('PIN de Desbloqueio'),
-          subtitle: Text(_pinEnabled ? 'Habilitado' : 'Desabilitado'),
+          title: Text(AppLocalizations.of(context)!.pinUnlock),
+          subtitle: Text(
+            _pinEnabled
+                ? AppLocalizations.of(context)!.enabled
+                : AppLocalizations.of(context)!.disabled,
+          ),
           trailing: Switch(
             value: _pinEnabled,
             onChanged: (value) async {
@@ -351,7 +363,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         if (_pinEnabled)
           ListTile(
             leading: const Icon(Icons.edit),
-            title: const Text('Alterar PIN'),
+            title: Text(AppLocalizations.of(context)!.changePin),
             // contentPadding: const EdgeInsets.only(left: 57.0),
             dense: true,
             onTap: () async {
@@ -370,16 +382,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
         if (_pinEnabled) ...[
           ListTile(
             leading: const Icon(Icons.lock_clock),
-            title: const Text('Bloqueio em Segundo Plano'),
+            title: Text(AppLocalizations.of(context)!.backgroundLock),
             subtitle: Text(
-              'Bloquear após: ${InactivityService.getBackgroundTimeoutLabel(_backgroundLockTimeout)}',
+              '${AppLocalizations.of(context)!.backgroundLock}: ${InactivityService.getBackgroundTimeoutLabel(_backgroundLockTimeout)}',
             ),
             onTap: _showBackgroundLockTimeoutDialog,
           ),
           ListTile(
             leading: const Icon(Icons.email_outlined),
-            title: const Text('E-mail para Recuperação'),
-            subtitle: Text(_userEmail ?? 'Não configurado'),
+            title: Text(AppLocalizations.of(context)!.informYourEmail),
+            subtitle: Text(
+              _userEmail ?? AppLocalizations.of(context)!.noEmailRegistered,
+            ),
             onTap: _showEmailDialog,
           ),
         ] else if (_biometricEnabled) ...[
@@ -406,8 +420,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
         else
           ListTile(
             leading: const Icon(Icons.fingerprint),
-            title: const Text('Login com Biometria'),
-            subtitle: Text(_biometricEnabled ? 'Habilitado' : 'Desabilitado'),
+            title: Text(AppLocalizations.of(context)!.enableBiometrics),
+            subtitle: Text(
+              _biometricEnabled
+                  ? AppLocalizations.of(context)!.enabled
+                  : AppLocalizations.of(context)!.disabled,
+            ),
             trailing: Switch(
               value: _biometricEnabled,
               onChanged: (value) async {
@@ -454,13 +472,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              title: const Text('Habilitar Biometria'),
+              title: Text(AppLocalizations.of(context)!.enableBiometrics),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text(
-                    'Para habilitar a biometria, confirme suas credenciais:',
-                  ),
+                  Text(AppLocalizations.of(outerContext)!.biometricLoginError),
                   const SizedBox(height: 16),
                   CustomTextField(
                     controller: emailController,
@@ -470,7 +486,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   const SizedBox(height: 16),
                   CustomTextField(
                     controller: passwordController,
-                    label: 'Senha',
+                    label: AppLocalizations.of(context)!.password,
                     obscureText: obscurePassword,
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -490,7 +506,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Cancelar'),
+                  child: Text(AppLocalizations.of(context)!.cancel),
                 ),
                 ElevatedButton(
                   onPressed: () async {
@@ -500,11 +516,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     final messenger = ScaffoldMessenger.of(outerContext);
                     final navigator = Navigator.of(outerContext);
                     final errorColor = Theme.of(outerContext).colorScheme.error;
+                    final successMessage = AppLocalizations.of(
+                      outerContext,
+                    )!.biometricsEnabledSuccess;
 
                     if (email.isEmpty || password.isEmpty) {
                       messenger.showSnackBar(
                         SnackBar(
-                          content: const Text('Preencha todos os campos'),
+                          content: Text(
+                            AppLocalizations.of(
+                              outerContext,
+                            )!.fillEmailAndPassword,
+                          ),
                           backgroundColor: Theme.of(
                             outerContext,
                           ).colorScheme.error,
@@ -563,9 +586,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       if (mounted) {
                         messenger.showSnackBar(
                           SnackBar(
-                            content: const Text(
-                              'Biometria habilitada com sucesso!',
-                            ),
+                            content: Text(successMessage),
                             backgroundColor: AppColors.emoticonGreen,
                           ),
                         );
@@ -584,7 +605,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       }
                     }
                   },
-                  child: const Text('Confirmar'),
+                  child: Text(AppLocalizations.of(outerContext)!.confirm),
                 ),
               ],
             );
@@ -868,15 +889,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context: outerContext,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Desabilitar PIN'),
+          title: Text(AppLocalizations.of(context)!.changePin),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('Para desabilitar o PIN, digite seu PIN atual:'),
+              Text(AppLocalizations.of(context)!.enterCurrentPin),
               const SizedBox(height: 16),
               CustomTextField(
                 controller: pinController,
-                label: 'PIN atual',
+                label: AppLocalizations.of(context)!.currentPinLabel,
                 keyboardType: TextInputType.number,
                 obscureText: true,
                 maxLength: 8,
@@ -886,7 +907,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancelar'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             ElevatedButton(
               onPressed: () async {
@@ -899,7 +920,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 if (pin.isEmpty) {
                   messenger.showSnackBar(
                     SnackBar(
-                      content: const Text('Digite o PIN'),
+                      content: Text(
+                        AppLocalizations.of(outerContext)!.enterPin,
+                      ),
                       backgroundColor: errorColor,
                     ),
                   );
@@ -907,6 +930,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 }
 
                 final pinProvider = _pinProvider;
+                final successMessage = AppLocalizations.of(
+                  outerContext,
+                )!.pinConfiguredSuccess;
+                final incorrectMessage = AppLocalizations.of(
+                  outerContext,
+                )!.pinIncorrect;
+
                 final success = await pinProvider.disablePin(pin);
 
                 if (success) {
@@ -916,7 +946,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   if (mounted) {
                     messenger.showSnackBar(
                       SnackBar(
-                        content: const Text('PIN desabilitado com sucesso!'),
+                        content: Text(successMessage),
                         backgroundColor: AppColors.emoticonGreen,
                       ),
                     );
@@ -926,14 +956,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   if (mounted) {
                     messenger.showSnackBar(
                       SnackBar(
-                        content: const Text('PIN incorreto'),
+                        content: Text(incorrectMessage),
                         backgroundColor: errorColor,
                       ),
                     );
                   }
                 }
               },
-              child: const Text('Confirmar'),
+              child: Text(AppLocalizations.of(outerContext)!.confirm),
             ),
           ],
         );
@@ -1105,11 +1135,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(dialogBuilderContext).pop(),
-                child: const Text('Cancelar'),
+                child: Text(AppLocalizations.of(context)!.cancel),
               ),
               FilledButton(
                 onPressed: () async {
-                  final scaffoldMessenger = ScaffoldMessenger.of(context);
+                  final scaffoldMessenger = ScaffoldMessenger.of(
+                    dialogBuilderContext,
+                  );
+                  final message =
+                      '${AppLocalizations.of(dialogBuilderContext)!.backgroundLock}: ${InactivityService.getBackgroundTimeoutLabel(currentSeconds)}';
                   Navigator.of(dialogBuilderContext).pop();
                   await _inactivityService.setBackgroundLockTimeout(
                     currentSeconds,
@@ -1117,14 +1151,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   await _loadBackgroundLockTimeout();
                   if (!mounted) return;
                   scaffoldMessenger.showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'Bloqueio em segundo plano: ${InactivityService.getBackgroundTimeoutLabel(currentSeconds)}',
-                      ),
-                    ),
+                    SnackBar(content: Text(message)),
                   );
                 },
-                child: const Text('Salvar'),
+                child: Text(AppLocalizations.of(context)!.save),
               ),
             ],
           );
@@ -1139,20 +1169,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (dialogBuilderContext) => AlertDialog(
-        title: const Text(
-          'E-mail para Recuperação',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        title: Text(
+          AppLocalizations.of(context)!.informYourEmail,
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              'Configure um e-mail para recuperar seu PIN caso esqueça.',
-            ),
+            Text(AppLocalizations.of(context)!.informYourEmail),
             const SizedBox(height: 16),
             CustomTextField(
               controller: emailController,
-              label: 'E-mail',
+              label: AppLocalizations.of(context)!.email,
               keyboardType: TextInputType.emailAddress,
               prefixIcon: const Icon(Icons.email),
             ),
@@ -1161,7 +1189,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogBuilderContext).pop(),
-            child: const Text('Cancelar'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -1169,7 +1197,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               if (email.isEmpty || !email.contains('@')) {
                 ScaffoldMessenger.of(dialogBuilderContext).showSnackBar(
                   SnackBar(
-                    content: const Text('E-mail inválido'),
+                    content: Text(
+                      AppLocalizations.of(dialogBuilderContext)!.emailInvalid,
+                    ),
                     backgroundColor: Theme.of(
                       dialogBuilderContext,
                     ).colorScheme.error,
@@ -1185,12 +1215,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
               if (!mounted) return;
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: const Text('E-mail salvo com sucesso!'),
+                  content: Text(
+                    AppLocalizations.of(context)!.profileUpdatedSuccess,
+                  ),
                   backgroundColor: AppColors.emoticonGreen,
                 ),
               );
             },
-            child: const Text('Salvar'),
+            child: Text(AppLocalizations.of(context)!.save),
           ),
         ],
       ),

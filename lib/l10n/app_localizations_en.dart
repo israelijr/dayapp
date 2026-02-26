@@ -36,6 +36,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String get theme => 'Theme';
 
   @override
+  String get themeLight => 'Light';
+
+  @override
+  String get themeDark => 'Dark';
+
+  @override
+  String get themeSystem => 'System';
+
+  @override
+  String get security => 'Security';
+
+  @override
+  String get themeAndScheme => 'Theme and Scheme';
+
+  @override
+  String get backup => 'Backup';
+
+  @override
+  String get automaticBackup => 'Automatic Backup';
+
+  @override
+  String get lastAutoBackup => 'Last automatic backup';
+
+  @override
+  String get backupOnLogout => 'Backup on logout';
+
+  @override
+  String get enabled => 'Enabled';
+
+  @override
+  String get disabled => 'Disabled';
+
+  @override
+  String get confirm => 'Confirm';
+
+  @override
   String get pinUnlock => 'Unlock PIN';
 
   @override

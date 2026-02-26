@@ -301,25 +301,33 @@ class _HomeContentState extends State<HomeContent> {
 
   Future<void> _archiveWithUndo(Historia historia) async {
     final previousGrupo = historia.grupo;
-    await _updateHistoria(
-      historia,
-      updates: {'arquivado': 'sim', 'grupo': null},
-    );
-    if (!mounted) return;
-    final refreshProvider = Provider.of<RefreshProvider>(
-      context,
-      listen: false,
-    );
-    refreshProvider.refresh();
 
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
+    // Atualiza o BD diretamente, sem disparar o refresh ainda,
+    // para que o Consumer<RefreshProvider> não reconstrua antes do snackbar.
+    final db = await DatabaseHelper().database;
+    await db.update(
+      'historia',
+      {
+        'arquivado': 'sim',
+        'grupo': null,
+        'data_update': DateTime.now().toIso8601String(),
+        'backed_up': 0,
+      },
+      where: 'id = ?',
+      whereArgs: [historia.id],
+    );
+
+    if (!mounted) return;
+    final localizations = AppLocalizations.of(context)!;
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.hideCurrentSnackBar();
+    final controller = messenger.showSnackBar(
       SnackBar(
         duration: const Duration(seconds: 4),
         behavior: SnackBarBehavior.floating,
-        content: Text(AppLocalizations.of(context)!.storyArchived),
+        content: Text(localizations.storyArchived),
         action: SnackBarAction(
-          label: AppLocalizations.of(context)!.undo,
+          label: localizations.undo,
           onPressed: () async {
             await _updateHistoria(
               historia,
@@ -329,6 +337,14 @@ class _HomeContentState extends State<HomeContent> {
         ),
       ),
     );
+    // Backup: fecha o snackbar após 5 s sem depender de mounted
+    Future.delayed(const Duration(seconds: 5), controller.close);
+
+    // Dispara o refresh no próximo frame, após o snackbar já estar na fila.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      Provider.of<RefreshProvider>(context, listen: false).refresh();
+    });
   }
 
   Widget _buildCardView(Historia historia) {

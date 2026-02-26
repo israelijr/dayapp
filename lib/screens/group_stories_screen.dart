@@ -40,6 +40,10 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
   // Constantes para melhor organização
   static const double cardMargin = 24.0;
 
+  // Key para ScaffoldMessenger local — snackbars ficam escopados a esta tela
+  // e são descartados automaticamente quando o usuário navega para outra rota.
+  final _messengerKey = GlobalKey<ScaffoldMessengerState>();
+
   bool _isCardView = true; // true = modo blocos, false = modo ícones
 
   // Converte nomes de humor antigos para emojis Unicode
@@ -112,7 +116,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
+      _messengerKey.currentState?.showSnackBar(
         SnackBar(
           content: Text(
             AppLocalizations.of(context)!.exportPdfError(e.toString()),
@@ -184,7 +188,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
       );
       refreshProvider.refresh();
 
-      ScaffoldMessenger.of(context).showSnackBar(
+      _messengerKey.currentState?.showSnackBar(
         SnackBar(
           content: Text(
             AppLocalizations.of(context)?.movedToTrash ??
@@ -232,22 +236,33 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
     final previousTag = historia.tag;
     final previousGrupo = historia.grupo;
 
-    await _updateHistoria(
-      historia,
-      updates: {'arquivado': 'sim', 'grupo': null},
+    // Atualiza o BD diretamente, sem disparar o refresh ainda,
+    // para que o Consumer<RefreshProvider> não reconstrua o body
+    // antes de o snackbar ser exibido.
+    final db = await DatabaseHelper().database;
+    await db.update(
+      'historia',
+      {
+        'arquivado': 'sim',
+        'grupo': null,
+        'data_update': DateTime.now().toIso8601String(),
+        'backed_up': 0,
+      },
+      where: 'id = ?',
+      whereArgs: [historia.id],
     );
 
     if (!mounted) return;
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
+    final localizations = AppLocalizations.of(context);
+    final messenger = _messengerKey.currentState!;
+    messenger.hideCurrentSnackBar();
+    final controller = messenger.showSnackBar(
       SnackBar(
         duration: const Duration(seconds: 4),
         behavior: SnackBarBehavior.floating,
-        content: Text(
-          AppLocalizations.of(context)?.storyArchived ?? 'História arquivada',
-        ),
+        content: Text(localizations?.storyArchived ?? 'História arquivada'),
         action: SnackBarAction(
-          label: AppLocalizations.of(context)?.undo ?? 'Desfazer',
+          label: localizations?.undo ?? 'Desfazer',
           onPressed: () async {
             await _updateHistoria(
               historia,
@@ -261,6 +276,16 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
         ),
       ),
     );
+    // Backup: fecha o snackbar após 5 s sem depender do estado de montagem
+    Future.delayed(const Duration(seconds: 5), controller.close);
+
+    // Dispara o refresh no próximo frame, após o snackbar ter sido adicionado
+    // à fila do ScaffoldMessenger, para evitar que a reconstrução do Consumer
+    // interfira no temporizador do snackbar.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      Provider.of<RefreshProvider>(context, listen: false).refresh();
+    });
   }
 
   Widget _buildCardView(Historia historia) {
@@ -636,7 +661,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
                 );
                 if (!mounted) return;
                 refreshProvider.refresh();
-                ScaffoldMessenger.of(context).showSnackBar(
+                _messengerKey.currentState?.showSnackBar(
                   SnackBar(
                     content: Text(AppLocalizations.of(context)!.storyUngrouped),
                   ),
@@ -698,181 +723,191 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        title: Row(
-          children: [
-            if (widget.grupo.emoticon != null &&
-                widget.grupo.emoticon!.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(right: 8),
+    return ScaffoldMessenger(
+      key: _messengerKey,
+      child: Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        appBar: AppBar(
+          title: Row(
+            children: [
+              if (widget.grupo.emoticon != null &&
+                  widget.grupo.emoticon!.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: Text(
+                    widget.grupo.emoticon!,
+                    style: const TextStyle(fontSize: 24),
+                  ),
+                ),
+              Expanded(
                 child: Text(
-                  widget.grupo.emoticon!,
-                  style: const TextStyle(fontSize: 24),
+                  widget.grupo.nome,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-            Expanded(
-              child: Text(
-                widget.grupo.nome,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-                overflow: TextOverflow.ellipsis,
+            ],
+          ),
+          actions: [
+            IconButton(
+              icon: Image.asset(
+                _isCardView
+                    ? 'assets/image/card.png'
+                    : 'assets/image/icone_pequeno.png',
+                width: 34,
+                height: 34,
+              ),
+              onPressed: () {
+                setState(() {
+                  _isCardView = !_isCardView;
+                });
+              },
+              tooltip: _isCardView
+                  ? (AppLocalizations.of(context)?.toggleToIcons ??
+                        'Alternar para modo ícones')
+                  : (AppLocalizations.of(context)?.toggleToCards ??
+                        'Alternar para modo blocos'),
+            ),
+            // delete group
+            IconButton(
+              icon: const Icon(Icons.delete_forever),
+              onPressed: () => _deleteGroup(),
+              tooltip: AppLocalizations.of(context)!.deleteGroupTitle,
+            ),
+            Builder(
+              builder: (context) => IconButton(
+                icon: const Icon(Icons.menu),
+                onPressed: () => Scaffold.of(context).openEndDrawer(),
               ),
             ),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: Image.asset(
-              _isCardView
-                  ? 'assets/image/card.png'
-                  : 'assets/image/icone_pequeno.png',
-              width: 34,
-              height: 34,
-            ),
+        endDrawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
+                ),
+                child: Text(
+                  'Menu',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                    fontSize: 24,
+                  ),
+                ),
+              ),
+              ListTile(
+                leading: const Icon(Icons.person),
+                title: Text(
+                  AppLocalizations.of(context)?.editProfile ?? 'Editar Perfil',
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const EditProfileScreen(),
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.settings),
+                title: Text(
+                  AppLocalizations.of(context)?.settings ?? 'Configurações',
+                ),
+                onTap: () {
+                  Navigator.pushNamed(context, '/settings');
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.logout),
+                title: Text(AppLocalizations.of(context)?.logout ?? 'Sair'),
+                onTap: () async {
+                  final auth = Provider.of<AuthProvider>(
+                    context,
+                    listen: false,
+                  );
+                  final pinProvider = Provider.of<PinProvider>(
+                    context,
+                    listen: false,
+                  );
+                  final navigator = Navigator.of(context);
+                  await auth.logout();
+                  // Atualiza o status de login no PinProvider
+                  pinProvider.updateUserLoginStatus(false);
+                  if (!mounted) return;
+                  navigator.pushReplacementNamed('/login');
+                },
+              ),
+            ],
+          ),
+        ),
+        body: Consumer<RefreshProvider>(
+          builder: (context, refreshProvider, child) {
+            return FutureBuilder<List<Historia>>(
+              key: ValueKey<int>(refreshProvider.refreshCounter),
+              future: _fetchHistoriasByGrupo(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState != ConnectionState.done) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                final historias = snapshot.data ?? [];
+                if (historias.isEmpty) {
+                  return Center(
+                    child: Text(
+                      AppLocalizations.of(
+                            context,
+                          )?.noStoriesInGroup(widget.grupo.nome) ??
+                          'Nenhuma história no grupo "${widget.grupo.nome}".',
+                    ),
+                  );
+                }
+                return AnimatedSwitcher(
+                  duration: AppDurations.listSwitch,
+                  child: ListView.builder(
+                    key: ValueKey<bool>(_isCardView),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 16,
+                      horizontal: 12,
+                    ),
+                    itemCount: historias.length,
+                    itemBuilder: (context, index) {
+                      final historia = historias[index];
+                      return _isCardView
+                          ? _buildCardView(historia)
+                          : _buildIconView(historia);
+                    },
+                  ),
+                );
+              },
+            );
+          },
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: FloatingActionButton.extended(
             onPressed: () {
-              setState(() {
-                _isCardView = !_isCardView;
+              final refreshProvider = Provider.of<RefreshProvider>(
+                context,
+                listen: false,
+              );
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const CreateHistoriaScreen()),
+              ).then((created) {
+                if (!mounted) return;
+                refreshProvider.refresh();
               });
             },
-            tooltip: _isCardView
-                ? (AppLocalizations.of(context)?.toggleToIcons ??
-                      'Alternar para modo ícones')
-                : (AppLocalizations.of(context)?.toggleToCards ??
-                      'Alternar para modo blocos'),
+            icon: const Icon(Icons.add),
+            label: Text(AppLocalizations.of(context)!.newStory),
           ),
-          // delete group
-          IconButton(
-            icon: const Icon(Icons.delete_forever),
-            onPressed: () => _deleteGroup(),
-            tooltip: AppLocalizations.of(context)!.deleteGroupTitle,
-          ),
-          Builder(
-            builder: (context) => IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: () => Scaffold.of(context).openEndDrawer(),
-            ),
-          ),
-        ],
-      ),
-      endDrawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(color: Theme.of(context).primaryColor),
-              child: Text(
-                'Menu',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  fontSize: 24,
-                ),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: Text(
-                AppLocalizations.of(context)?.editProfile ?? 'Editar Perfil',
-              ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const EditProfileScreen()),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: Text(
-                AppLocalizations.of(context)?.settings ?? 'Configurações',
-              ),
-              onTap: () {
-                Navigator.pushNamed(context, '/settings');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: Text(AppLocalizations.of(context)?.logout ?? 'Sair'),
-              onTap: () async {
-                final auth = Provider.of<AuthProvider>(context, listen: false);
-                final pinProvider = Provider.of<PinProvider>(
-                  context,
-                  listen: false,
-                );
-                final navigator = Navigator.of(context);
-                await auth.logout();
-                // Atualiza o status de login no PinProvider
-                pinProvider.updateUserLoginStatus(false);
-                if (!mounted) return;
-                navigator.pushReplacementNamed('/login');
-              },
-            ),
-          ],
         ),
-      ),
-      body: Consumer<RefreshProvider>(
-        builder: (context, refreshProvider, child) {
-          return FutureBuilder<List<Historia>>(
-            key: ValueKey<int>(refreshProvider.refreshCounter),
-            future: _fetchHistoriasByGrupo(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState != ConnectionState.done) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              final historias = snapshot.data ?? [];
-              if (historias.isEmpty) {
-                return Center(
-                  child: Text(
-                    AppLocalizations.of(
-                          context,
-                        )?.noStoriesInGroup(widget.grupo.nome) ??
-                        'Nenhuma história no grupo "${widget.grupo.nome}".',
-                  ),
-                );
-              }
-              return AnimatedSwitcher(
-                duration: AppDurations.listSwitch,
-                child: ListView.builder(
-                  key: ValueKey<bool>(_isCardView),
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 16,
-                    horizontal: 12,
-                  ),
-                  itemCount: historias.length,
-                  itemBuilder: (context, index) {
-                    final historia = historias[index];
-                    return _isCardView
-                        ? _buildCardView(historia)
-                        : _buildIconView(historia);
-                  },
-                ),
-              );
-            },
-          );
-        },
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 12),
-        child: FloatingActionButton.extended(
-          onPressed: () {
-            final refreshProvider = Provider.of<RefreshProvider>(
-              context,
-              listen: false,
-            );
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const CreateHistoriaScreen()),
-            ).then((created) {
-              if (!mounted) return;
-              refreshProvider.refresh();
-            });
-          },
-          icon: const Icon(Icons.add),
-          label: Text(AppLocalizations.of(context)!.newStory),
-        ),
-      ),
-    );
+      ), // Scaffold
+    ); // ScaffoldMessenger
   }
 
   Future<void> _deleteGroup() async {
