@@ -836,121 +836,121 @@ abstract class AppLocalizations {
   /// **'Story moved to trash'**
   String get movedToTrash;
 
-  /// No description provided for @errorDeletingStory.
+  /// Error message when deleting story fails
   ///
   /// In en, this message translates to:
   /// **'Error deleting story: {error}'**
   String errorDeletingStory(Object error);
 
-  /// No description provided for @noRecordsThisDay.
+  /// Message when there are no records on given day
   ///
   /// In en, this message translates to:
   /// **'No records for this day'**
   String get noRecordsThisDay;
 
-  /// No description provided for @storyUngrouped.
+  /// Label showing story is ungrouped
   ///
   /// In en, this message translates to:
   /// **'Story ungrouped'**
   String get storyUngrouped;
 
-  /// No description provided for @save.
+  /// Generic save button text
   ///
   /// In en, this message translates to:
   /// **'Save'**
   String get save;
 
-  /// No description provided for @confirmDeletion.
+  /// Title for deletion confirmation dialog
   ///
   /// In en, this message translates to:
   /// **'Confirm deletion'**
   String get confirmDeletion;
 
-  /// No description provided for @groupDeletedSuccess.
+  /// Snackbar message when a group is deleted
   ///
   /// In en, this message translates to:
   /// **'Group deleted successfully'**
   String get groupDeletedSuccess;
 
-  /// No description provided for @noGroupsFound.
+  /// Displayed when no groups are found
   ///
   /// In en, this message translates to:
   /// **'No groups found'**
   String get noGroupsFound;
 
-  /// No description provided for @shareError.
+  /// Error message when sharing fails
   ///
   /// In en, this message translates to:
   /// **'Could not share'**
   String get shareError;
 
-  /// No description provided for @cannotDeletePhoto.
+  /// Error shown when photo deletion fails
   ///
   /// In en, this message translates to:
   /// **'Cannot delete this photo'**
   String get cannotDeletePhoto;
 
-  /// No description provided for @deletePhotoTitle.
+  /// Dialog title for photo deletion
   ///
   /// In en, this message translates to:
   /// **'Delete photo'**
   String get deletePhotoTitle;
 
-  /// No description provided for @deletePhotoConfirm.
+  /// Confirmation text for deleting a photo
   ///
   /// In en, this message translates to:
   /// **'Do you really want to delete this photo?'**
   String get deletePhotoConfirm;
 
-  /// No description provided for @deleteGroupTitle.
+  /// Dialog title for group deletion
   ///
   /// In en, this message translates to:
   /// **'Delete Group'**
   String get deleteGroupTitle;
 
-  /// No description provided for @share.
+  /// Label for share action
   ///
   /// In en, this message translates to:
   /// **'Share'**
   String get share;
 
-  /// No description provided for @home.
+  /// Label for home tab
   ///
   /// In en, this message translates to:
   /// **'Home'**
   String get home;
 
-  /// No description provided for @groups.
+  /// Label for groups tab
   ///
   /// In en, this message translates to:
   /// **'Groups'**
   String get groups;
 
-  /// No description provided for @imageCopiedBase64.
+  /// Snackbar when image copied
   ///
   /// In en, this message translates to:
   /// **'Image copied to clipboard (base64)'**
   String get imageCopiedBase64;
 
-  /// No description provided for @newGroup.
+  /// Label for creating new group
   ///
   /// In en, this message translates to:
   /// **'New Group'**
   String get newGroup;
 
-  /// No description provided for @editGroup.
+  /// Label for editing a group
   ///
   /// In en, this message translates to:
   /// **'Edit Group'**
   String get editGroup;
 
-  /// No description provided for @chooseIcon.
+  /// Prompt to choose icon
   ///
   /// In en, this message translates to:
   /// **'Choose icon'**
   String get chooseIcon;
 
-  /// No description provided for @groupDeleteWarning.
+  /// Warning shown when deleting a group with stories
   ///
   /// In en, this message translates to:
   /// **'This group has {count} story(ies) linked. If deleted, those stories will return to the home screen (no group). Continue?'**
