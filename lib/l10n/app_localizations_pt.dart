@@ -266,6 +266,27 @@ class AppLocalizationsPt extends AppLocalizations {
   String get fullName => 'Nome completo';
 
   @override
+  String get birthDate => 'Data de nascimento';
+
+  @override
+  String get almostReady => 'quase pronto...';
+
+  @override
+  String get optionalData => 'Os dados abaixo são opcionais';
+
+  @override
+  String get birthDateFormat => 'Data de nascimento (DD/MM/AAAA)';
+
+  @override
+  String get invalidBirthDate => 'Data de nascimento inválida (use DD/MM/AAAA)';
+
+  @override
+  String get userNotFound => 'Usuário não encontrado.';
+
+  @override
+  String get create => 'Criar';
+
+  @override
   String get nameRequired => 'Nome é obrigatório';
 
   @override
@@ -1472,6 +1493,27 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get fullName => 'Nome completo';
+
+  @override
+  String get birthDate => 'Data de nascimento';
+
+  @override
+  String get almostReady => 'quase pronto...';
+
+  @override
+  String get optionalData => 'Os dados abaixo são opcionais';
+
+  @override
+  String get birthDateFormat => 'Data de nascimento (DD/MM/AAAA)';
+
+  @override
+  String get invalidBirthDate => 'Data de nascimento inválida (use DD/MM/AAAA)';
+
+  @override
+  String get userNotFound => 'Usuário não encontrado.';
+
+  @override
+  String get create => 'Criar';
 
   @override
   String get nameRequired => 'Nome é obrigatório';

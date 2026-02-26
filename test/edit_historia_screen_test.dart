@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 
+import 'package:dayapp/db/database_helper.dart';
 import 'package:dayapp/models/historia.dart';
 import 'package:dayapp/screens/edit_historia_screen.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:dayapp/db/database_helper.dart';
 
 import 'test_mocks.dart';
 
@@ -141,7 +141,7 @@ void main() {
       ];
       state.audioIds = [id];
 
-      await state._removeAudio(0);
+      await state.removeAudio(0);
 
       final result = await db.query(
         'historia_audios',
@@ -170,7 +170,7 @@ void main() {
       ];
       state.videoIds = [id];
 
-      await state._removeVideo(0);
+      await state.removeVideo(0);
 
       final result = await db.query(
         'historia_videos',

@@ -188,12 +188,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Editar Perfil'),
+        title: Text(AppLocalizations.of(context)!.editProfile),
         actions: [
           TextButton(
             onPressed: _isLoading ? null : _saveProfile,
             child: Text(
-              'Salvar',
+              AppLocalizations.of(context)!.save,
               style: TextStyle(
                 color: _isLoading ? Colors.grey : Colors.white,
                 fontWeight: FontWeight.bold,
@@ -324,9 +324,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 controller: _birthDateController,
                 readOnly: true,
                 onTap: () => _selectDate(context),
-                decoration: const InputDecoration(
-                  labelText: 'Data de nascimento',
-                  suffixIcon: Icon(Icons.calendar_today),
+                decoration: InputDecoration(
+                  labelText: AppLocalizations.of(context)!.birthDate,
+                  suffixIcon: const Icon(Icons.calendar_today),
                 ),
               ),
               if (_errorMessage != null) ...[
@@ -347,9 +347,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           width: 20,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : const Text(
-                          'Salvar Alterações',
-                          style: TextStyle(fontSize: 16),
+                      : Text(
+                          AppLocalizations.of(context)!.save,
+                          style: const TextStyle(fontSize: 16),
                         ),
                 ),
               ),

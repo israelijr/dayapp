@@ -266,6 +266,27 @@ class AppLocalizationsEs extends AppLocalizations {
   String get fullName => 'Nombre completo';
 
   @override
+  String get birthDate => 'Fecha de nacimiento';
+
+  @override
+  String get almostReady => 'casi listo...';
+
+  @override
+  String get optionalData => 'Los datos a continuación son opcionales';
+
+  @override
+  String get birthDateFormat => 'Fecha de nacimiento (DD/MM/AAAA)';
+
+  @override
+  String get invalidBirthDate => 'Fecha de nacimiento inválida (use DD/MM/AAAA)';
+
+  @override
+  String get userNotFound => 'Usuario no encontrado.';
+
+  @override
+  String get create => 'Crear';
+
+  @override
   String get nameRequired => 'El nombre es obligatorio';
 
   @override

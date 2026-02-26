@@ -28,14 +28,12 @@
   "pinUnlock": "PIN de Desbloqueio",
   "changePin": "Alterar PIN",
   "enableBiometrics": "Login com Biometria",
-  "information": "Informações"
-  ,
+  "information": "Informações",
   "email": "E-mail",
   "password": "Senha",
   "configurePin": "Configurar PIN",
   "biometrics": "Biometria",
   "backgroundLock": "Bloqueio em Segundo Plano"
-  ,
   "statistics": "Estatísticas",
   "noStoriesYetTitle": "Nenhuma história registrada ainda",
   "noStoriesYetSubtitle": "Comece a registrar seus dias para ver as estatísticas",
@@ -56,14 +54,12 @@
   "help": "Ajuda",
   "about": "Sobre",
   "logout": "Sair"
-  ,
   "createAccount": "Criar conta",
   "name": "Nome",
   "confirmPassword": "Confirmar Senha",
   "createAccountButton": "Criar Conta",
   "alreadyHaveAccount": "Já tem uma conta? Faça login",
   "needHelp": "Precisa de ajuda?"
-  ,
   "changePin": "Alterar PIN",
   "currentPinLabel": "PIN atual",
   "newPinLabel": "Novo PIN",
@@ -76,7 +72,6 @@
   "pinIncorrect": "PIN atual incorreto",
   "pinChangedSuccess": "PIN alterado com sucesso!",
   "pinConfiguredSuccess": "PIN configurado com sucesso!"
-  ,
   "informYourEmail": "Informe seu e-mail.",
   "invalidEmail": "Informe um e-mail válido.",
   "emailNotFound": "E-mail não encontrado. Verifique e tente novamente.",
@@ -88,28 +83,31 @@
   "enterNewPassword": "Informe a nova senha.",
   "passwordResetSuccess": "Senha redefinida com sucesso! Faça login com a nova senha.",
   "errorResetPassword": "Erro ao redefinir a senha. Tente novamente."
-    ,
     "passwordsDoNotMatch": "As senhas não coincidem.",
     "resendCodeSuccess": "Novo código enviado! Verifique sua caixa de entrada.",
     "resendCodeError": "Erro ao reenviar código. Tente novamente."
-  ,
   "passwordMinLength": "A senha deve ter pelo menos 6 caracteres."
-    ,
     "sendCode": "Enviar Código",
     "unlock": "Desbloquear",
     "fullName": "Nome completo",
+  "birthDate": "Data de nascimento",
+  "almostReady": "quase pronto...",
+  "optionalData": "Os dados abaixo são opcionais",
+  "birthDateFormat": "Data de nascimento (DD/MM/AAAA)",
+  "invalidBirthDate": "Data de nascimento inválida (use DD/MM/AAAA)",
+  "userNotFound": "Usuário não encontrado.",
+  "create": "Criar",
     "nameRequired": "Nome é obrigatório",
     "nameMinLength": "Nome deve ter pelo menos 2 caracteres",
     "emailRequired": "E-mail é obrigatório",
-    "emailInvalid": "Digite um e-mail válido"
-    ,
+    "emailInvalid": "Digite um e-mail válido",
     "profileUpdatedSuccess": "Perfil atualizado com sucesso!",
     "profileUpdateError": "Erro ao atualizar perfil. Tente novamente."
-    ,
     "unlockAppReason": "Desbloqueie o app para continuar",
     "fillEmailAndPassword": "Preencha o e-mail e a senha",
     "emailOrPasswordIncorrect": "E-mail ou senha incorretos",
     "noEmailRegistered": "Nenhum e-mail cadastrado. Configure nas configurações.",
+   "@noEmailRegistered": { "description": "Não há e-mail registrado", "placeholders": {} },
     "checkEmailOrUseCode": "Verifique seu e-mail em {email} ou use o código exibido",
     "@checkEmailOrUseCode": { "description": "Prompt para verificar e-mail ou usar código", "placeholders": { "email": {} } },
     "errorGeneratingCode": "Erro ao gerar código. Tente novamente.",
@@ -119,7 +117,6 @@
     "recoveryCodeLabel": "Código de recuperação (6 dígitos)",
     "enterPasswordToContinue": "Digite sua senha para continuar",
     "enterPinToContinue": "Digite seu PIN para continuar"
-  ,
   "welcomeBack": "Bem vindo de volta!",
   "accessAccount": "Acesse sua conta",
   "enterPassword": "Digite sua senha",
@@ -132,7 +129,6 @@
   "invalidCredentials": "E-mail ou senha inválidos.",
   "useBiometricsToContinue": "Use sua biometria para continuar",
   "unlockTitle": "Desbloqueie o App"
-  ,
   "search": "Pesquisar",
   "unsavedBackups": "Você tem {count} histórias sem backup.",
   "@unsavedBackups": {
@@ -143,7 +139,6 @@
   "backupRecommendation": "Recomendamos fazer backup para evitar perder seus dados.",
   "cancel": "Cancelar",
   "performBackup": "Fazer backup"
-  ,
   "deleteStoryTitle": "Excluir história",
   "deleteStoryConfirm": "Deseja mover esta história para a lixeira?",
   "deleteLabel": "Excluir",
@@ -153,6 +148,7 @@
   "noRecordsThisDay": "Nenhum registro neste dia",
   "storyUngrouped": "História desagrupada",
   "save": "Salvar",
+  "@birthDate": { "description": "Label para campo de data de nascimento", "type": "text" },
   "confirmDeletion": "Confirmar exclusão",
   "groupDeletedSuccess": "Grupo excluído com sucesso",
   "noGroupsFound": "Nenhum grupo encontrado",
@@ -224,7 +220,6 @@
   "@exportPdfError": {
     "placeholders": { "error": {} }
   }
-  ,
   "@appTitle": { "description": "Label for appTitle", "type": "text" },
   "@settings": { "description": "Label for settings", "type": "text" },
   "@language": { "description": "Label for language", "type": "text" },

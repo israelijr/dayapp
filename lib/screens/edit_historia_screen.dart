@@ -223,8 +223,9 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
   }
 
   void _checkForChanges() {
-    if (!_initialized)
+    if (!_initialized) {
       return; // não faz nada antes dos controllers estarem prontos
+    }
 
     final currentDescription = richTextController.document.toPlainText();
     final hasChanges =
@@ -331,15 +332,33 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     );
   }
 
-  void _removeAudio(int index) async {
-    if (audioIds[index] != 0) {
-      await HistoriaAudioHelper().deleteAudio(audioIds[index]);
+  // método público para permitir testes e reuso, similar a removeFoto
+  Future<void> removeAudio(int index) async {
+    if (index < audioIds.length) {
+      final id = audioIds[index];
+      if (id != 0) {
+        await HistoriaAudioHelper().deleteAudio(id);
+      }
     }
-    if (!mounted) return;
-    setState(() {
+
+    void doRemove() {
       audios.removeAt(index);
-      audioIds.removeAt(index);
-    });
+      if (index < audioIds.length) {
+        audioIds.removeAt(index);
+      }
+      _checkForChanges();
+    }
+
+    if (mounted) {
+      setState(doRemove);
+    } else {
+      doRemove();
+    }
+  }
+
+  void _removeAudio(int index) async {
+    // manter privado para uso interno em widgets
+    await removeAudio(index);
   }
 
   Future<void> _pickVideo() async {
@@ -364,17 +383,33 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     );
   }
 
-  void _removeVideo(int index) async {
-    if (videoIds[index] != 0) {
-      // Vídeo existente - precisa deletar do banco e do sistema de arquivos
-      final videoPath = videos[index]['videoPath'] as String;
-      await HistoriaVideoHelper().deleteVideo(videoIds[index], videoPath);
+  // método público testável para vídeo, adotando mesma lógica de fotos
+  Future<void> removeVideo(int index) async {
+    if (index < videoIds.length) {
+      final id = videoIds[index];
+      if (id != 0) {
+        final videoPath = videos[index]['videoPath'] as String;
+        await HistoriaVideoHelper().deleteVideo(id, videoPath);
+      }
     }
-    if (!mounted) return;
-    setState(() {
+
+    void doRemove() {
       videos.removeAt(index);
-      videoIds.removeAt(index);
-    });
+      if (index < videoIds.length) {
+        videoIds.removeAt(index);
+      }
+      _checkForChanges();
+    }
+
+    if (mounted) {
+      setState(doRemove);
+    } else {
+      doRemove();
+    }
+  }
+
+  void _removeVideo(int index) async {
+    await removeVideo(index);
   }
 
   Future<void> _pickDateTime() async {

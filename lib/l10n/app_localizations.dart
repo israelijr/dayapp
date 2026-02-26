@@ -608,6 +608,48 @@ abstract class AppLocalizations {
   /// **'Full name'**
   String get fullName;
 
+  /// Label for birth date field
+  ///
+  /// In en, this message translates to:
+  /// **'Birth date'**
+  String get birthDate;
+
+  /// No description provided for @almostReady.
+  ///
+  /// In en, this message translates to:
+  /// **'almost ready...'**
+  String get almostReady;
+
+  /// No description provided for @optionalData.
+  ///
+  /// In en, this message translates to:
+  /// **'The fields below are optional'**
+  String get optionalData;
+
+  /// No description provided for @birthDateFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Birth date (DD/MM/YYYY)'**
+  String get birthDateFormat;
+
+  /// No description provided for @invalidBirthDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid birth date (use DD/MM/YYYY)'**
+  String get invalidBirthDate;
+
+  /// No description provided for @userNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'User not found.'**
+  String get userNotFound;
+
+  /// No description provided for @create.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get create;
+
   /// Message for nameRequired
   ///
   /// In en, this message translates to:

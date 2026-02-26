@@ -30,14 +30,12 @@
   "pinUnlock": "PIN de desbloqueo",
   "changePin": "Cambiar PIN",
   "enableBiometrics": "Inicio biométrico",
-  "information": "Información"
-  ,
+  "information": "Información",
   "email": "Correo electrónico",
   "password": "Contraseña",
   "configurePin": "Configurar PIN",
   "biometrics": "Biometría",
-  "backgroundLock": "Bloqueo en segundo plano"
-  ,
+  "backgroundLock": "Bloqueo en segundo plano",
   "statistics": "Estadísticas",
   "noStoriesYetTitle": "Ninguna historia registrada aún",
   "noStoriesYetSubtitle": "Comienza a registrar tus días para ver las estadísticas",
@@ -57,15 +55,13 @@
   "trash": "Papelera",
   "help": "Ayuda",
   "about": "Acerca de",
-  "logout": "Cerrar sesión"
-  ,
+  "logout": "Cerrar sesión",
   "createAccount": "Crear cuenta",
   "name": "Nombre",
   "confirmPassword": "Confirmar contraseña",
   "createAccountButton": "Crear cuenta",
   "alreadyHaveAccount": "¿Ya tienes una cuenta? Inicia sesión",
-  "needHelp": "¿Necesitas ayuda?"
-  ,
+  "needHelp": "¿Necesitas ayuda?",
   "changePin": "Cambiar PIN",
   "currentPinLabel": "PIN actual",
   "newPinLabel": "Nuevo PIN",
@@ -77,8 +73,7 @@
   "pinsDoNotMatch": "Los PIN no coinciden",
   "pinIncorrect": "PIN actual incorrecto",
   "pinChangedSuccess": "¡PIN cambiado con éxito!",
-  "pinConfiguredSuccess": "¡PIN configurado con éxito!"
-  ,
+  "pinConfiguredSuccess": "¡PIN configurado con éxito!",
   "informYourEmail": "Ingrese su correo electrónico.",
   "invalidEmail": "Ingrese un correo electrónico válido.",
   "emailNotFound": "Correo no encontrado. Verifique e inténtelo de nuevo.",
@@ -88,22 +83,25 @@
   "codeInvalid": "Código inválido o expirado. Intente nuevamente.",
   "enterNewPassword": "Ingrese la nueva contraseña.",
   "passwordResetSuccess": "¡Contraseña restablecida con éxito! Inicie sesión con la nueva contraseña.",
-  "errorResetPassword": "Error al restablecer la contraseña. Intente nuevamente."
-  ,
+  "errorResetPassword": "Error al restablecer la contraseña. Intente nuevamente.",
   "passwordsDoNotMatch": "Las contraseñas no coinciden.",
   "resendCodeSuccess": "¡Nuevo código enviado! Verifique su bandeja de entrada.",
-  "resendCodeError": "Error al reenviar código. Intente nuevamente."
-  ,
-  "passwordMinLength": "La contraseña debe tener al menos 6 caracteres."
-  ,
+  "resendCodeError": "Error al reenviar código. Intente nuevamente.",
+  "passwordMinLength": "La contraseña debe tener al menos 6 caracteres.",
   "sendCode": "Enviar código",
   "unlock": "Desbloquear",
   "fullName": "Nombre completo",
+  "birthDate": "Fecha de nacimiento",
+  "almostReady": "casi listo...",
+  "optionalData": "Los datos a continuación son opcionales",
+  "birthDateFormat": "Fecha de nacimiento (DD/MM/AAAA)",
+  "invalidBirthDate": "Fecha de nacimiento inválida (use DD/MM/AAAA)",
+  "userNotFound": "Usuario no encontrado.",
+  "create": "Crear",
   "nameRequired": "El nombre es obligatorio",
   "nameMinLength": "El nombre debe tener al menos 2 caracteres",
   "emailRequired": "Correo electrónico es obligatorio",
-  "emailInvalid": "Ingrese un correo electrónico válido"
-  ,
+  "emailInvalid": "Ingrese un correo electrónico válido",
   "welcomeBack": "¡Bienvenido de nuevo!",
   "accessAccount": "Accede a tu cuenta",
   "enterPassword": "Ingrese su contraseña",
@@ -113,11 +111,9 @@
   "privacyPolicy": "Política de Privacidad",
   "biometricsEnabledSuccess": "¡Biometría habilitada con éxito!",
   "biometricLoginError": "Error al iniciar sesión con biometría.",
-  "invalidCredentials": "Correo electrónico o contraseña inválidos."
-  ,
+  "invalidCredentials": "Correo electrónico o contraseña inválidos.",
   "profileUpdatedSuccess": "¡Perfil actualizado con éxito!",
-  "profileUpdateError": "Error al actualizar el perfil. Intente nuevamente."
-  ,
+  "profileUpdateError": "Error al actualizar el perfil. Intente nuevamente.",
   "unlockAppReason": "Desbloquee la aplicación para continuar",
   "fillEmailAndPassword": "Complete el correo electrónico y la contraseña",
   "emailOrPasswordIncorrect": "Correo o contraseña incorrectos",
@@ -129,11 +125,9 @@
   "enterRecoveryCodePrompt": "Ingrese el código enviado a su correo:",
   "recoveryCodeLabel": "Código de recuperación (6 dígitos)",
   "enterPasswordToContinue": "Ingrese su contraseña para continuar",
-  "enterPinToContinue": "Ingrese su PIN para continuar"
-  ,
+  "enterPinToContinue": "Ingrese su PIN para continuar",
   "useBiometricsToContinue": "Use su biometría para continuar",
-  "unlockTitle": "Desbloquee la aplicación"
-  ,
+  "unlockTitle": "Desbloquee la aplicación",
   "search": "Buscar",
   "unsavedBackups": "Tienes {count} historias sin copia de seguridad.",
   "@unsavedBackups": {
@@ -143,8 +137,7 @@
   },
   "backupRecommendation": "Recomendamos hacer una copia de seguridad para evitar perder tus datos.",
   "cancel": "Cancelar",
-  "performBackup": "Hacer copia de seguridad"
-  ,
+  "performBackup": "Hacer copia de seguridad",
   "deleteStoryTitle": "Eliminar historia",
   "deleteStoryConfirm": "¿Desea mover esta historia a la papelera?",
   "deleteLabel": "Eliminar",
@@ -153,6 +146,7 @@
   "noRecordsThisDay": "No hay registros para este día",
   "storyUngrouped": "Historia desagrupada",
   "save": "Guardar",
+  "@birthDate": { "description": "Etiqueta para fecha de nacimiento", "type": "text" },
   "confirmDeletion": "Confirmar eliminación",
   "groupDeletedSuccess": "Grupo eliminado con éxito",
   "noGroupsFound": "Ningún grupo encontrado",
@@ -413,8 +407,7 @@
   "exportPdfError": "Error al exportar PDF: {error}",
   "@exportPdfError": {
     "placeholders": { "error": {} }
-  }
-  ,
+  },
 
   "titleRequired": "¡El título es obligatorio!",
   "errorSavingStory": "Error al guardar la historia: {error}",

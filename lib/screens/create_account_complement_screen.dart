@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -48,7 +49,7 @@ class _CreateAccountComplementScreenState
         birthDate = DateFormat('dd/MM/yyyy').parse(birthDateController.text);
       } catch (_) {
         setState(() {
-          errorMessage = 'Data de nascimento inválida (use DD/MM/AAAA)';
+          errorMessage = AppLocalizations.of(context)!.invalidBirthDate;
           loading = false;
         });
         return;
@@ -57,7 +58,7 @@ class _CreateAccountComplementScreenState
     final auth = Provider.of<AuthProvider>(context, listen: false);
     if (auth.user == null) {
       setState(() {
-        errorMessage = 'Usuário não encontrado.';
+        errorMessage = AppLocalizations.of(context)!.userNotFound;
         loading = false;
       });
       return;
@@ -92,7 +93,7 @@ class _CreateAccountComplementScreenState
           color: Theme.of(context).colorScheme.onPrimary,
         ),
         title: Text(
-          'quase pronto...',
+          AppLocalizations.of(context)!.almostReady,
           style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
         ),
       ),
@@ -104,7 +105,7 @@ class _CreateAccountComplementScreenState
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  'Os dados abaixo são opcionais',
+                  AppLocalizations.of(context)!.optionalData,
                   style: TextStyle(
                     fontSize: 16,
                     color: Theme.of(
@@ -136,7 +137,7 @@ class _CreateAccountComplementScreenState
                 const SizedBox(height: 24),
                 CustomTextField(
                   controller: birthDateController,
-                  label: 'Data de nascimento (DD/MM/AAAA)',
+                  label: AppLocalizations.of(context)!.birthDateFormat,
                   keyboardType: TextInputType.datetime,
                   style: const TextStyle(color: Colors.black87),
                 ),
@@ -169,7 +170,7 @@ class _CreateAccountComplementScreenState
                             ),
                           )
                         : Text(
-                            'Criar',
+                            AppLocalizations.of(context)!.create,
                             style: TextStyle(
                               fontSize: 16,
                               color: Theme.of(context).colorScheme.onPrimary,

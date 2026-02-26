@@ -34,14 +34,12 @@
   "pinUnlock": "Unlock PIN",
   "changePin": "Change PIN",
   "enableBiometrics": "Biometric login",
-  "information": "Information"
-  ,
+  "information": "Information",
   "email": "E-mail",
   "password": "Password",
   "configurePin": "Configure PIN",
   "biometrics": "Biometrics",
-  "backgroundLock": "Background lock"
-  ,
+  "backgroundLock": "Background lock",
   "statistics": "Statistics",
   "noStoriesYetTitle": "No stories yet",
   "noStoriesYetSubtitle": "Start recording your days to see statistics",
@@ -61,15 +59,13 @@
   "trash": "Trash",
   "help": "Help",
   "about": "About",
-  "logout": "Logout"
-  ,
+  "logout": "Logout",
   "createAccount": "Create account",
   "name": "Name",
   "confirmPassword": "Confirm Password",
   "createAccountButton": "Create Account",
   "alreadyHaveAccount": "Already have an account? Log in",
-  "needHelp": "Need help?"
-  ,
+  "needHelp": "Need help?",
   "changePin": "Change PIN",
   "currentPinLabel": "Current PIN",
   "newPinLabel": "New PIN",
@@ -81,8 +77,7 @@
   "pinsDoNotMatch": "PINs do not match",
   "pinIncorrect": "Current PIN incorrect",
   "pinChangedSuccess": "PIN changed successfully!",
-  "pinConfiguredSuccess": "PIN configured successfully!"
-  ,
+  "pinConfiguredSuccess": "PIN configured successfully!",
   "informYourEmail": "Enter your email.",
   "invalidEmail": "Enter a valid email.",
   "emailNotFound": "Email not found. Check and try again.",
@@ -93,22 +88,25 @@
   "codeInvalid": "Invalid or expired code. Try again.",
   "enterNewPassword": "Enter the new password.",
   "passwordResetSuccess": "Password reset successfully! Log in with the new password.",
-  "errorResetPassword": "Error resetting password. Try again."
-  ,
+  "errorResetPassword": "Error resetting password. Try again.",
   "passwordsDoNotMatch": "Passwords do not match.",
   "resendCodeSuccess": "New code sent! Check your inbox.",
-  "resendCodeError": "Error resending code. Try again."
-  ,
-  "passwordMinLength": "Password must be at least 6 characters."
-  ,
+  "resendCodeError": "Error resending code. Try again.",
+  "passwordMinLength": "Password must be at least 6 characters.",
   "sendCode": "Send code",
   "unlock": "Unlock",
   "fullName": "Full name",
+  "birthDate": "Birth date",
+  "almostReady": "almost ready...",
+  "optionalData": "The fields below are optional",
+  "birthDateFormat": "Birth date (DD/MM/YYYY)",
+  "invalidBirthDate": "Invalid birth date (use DD/MM/YYYY)",
+  "userNotFound": "User not found.",
+  "create": "Create",
   "nameRequired": "Name is required",
   "nameMinLength": "Name must be at least 2 characters",
   "emailRequired": "Email is required",
-  "emailInvalid": "Enter a valid email"
-  ,
+  "emailInvalid": "Enter a valid email",
   "welcomeBack": "Welcome back!",
   "accessAccount": "Access your account",
   "enterPassword": "Enter your password",
@@ -118,11 +116,9 @@
   "privacyPolicy": "Privacy Policy",
   "biometricsEnabledSuccess": "Biometrics enabled successfully!",
   "biometricLoginError": "Error logging in with biometrics.",
-  "invalidCredentials": "Invalid email or password."
-  ,
+  "invalidCredentials": "Invalid email or password.",
   "profileUpdatedSuccess": "Profile updated successfully!",
-  "profileUpdateError": "Error updating profile. Try again."
-  ,
+  "profileUpdateError": "Error updating profile. Try again.",
   "unlockAppReason": "Unlock the app to continue",
   "fillEmailAndPassword": "Fill in email and password",
   "emailOrPasswordIncorrect": "Email or password incorrect",
@@ -135,11 +131,9 @@
   "enterRecoveryCodePrompt": "Enter the code sent to your email:",
   "recoveryCodeLabel": "Recovery code (6 digits)",
   "enterPasswordToContinue": "Enter your password to continue",
-  "enterPinToContinue": "Enter your PIN to continue"
-  ,
+  "enterPinToContinue": "Enter your PIN to continue",
   "useBiometricsToContinue": "Use your biometrics to continue",
-  "unlockTitle": "Unlock the App"
-  ,
+  "unlockTitle": "Unlock the App",
   "search": "Search",
   "unsavedBackups": "You have {count} stories not backed up.",
   "@unsavedBackups": {
@@ -149,8 +143,7 @@
   },
   "backupRecommendation": "We recommend backing up to avoid losing your data.",
   "cancel": "Cancel",
-  "performBackup": "Backup now"
-  ,
+  "performBackup": "Backup now",
   "deleteStoryTitle": "Delete story",
   "deleteStoryConfirm": "Do you want to move this story to the trash?",
   "deleteLabel": "Delete",
@@ -162,6 +155,7 @@
   "storyUngrouped": "Story ungrouped",
   "@storyUngrouped": { "description": "Label showing story is ungrouped", "type": "text" },
   "save": "Save",
+  "@birthDate": { "description": "Label for birth date field", "type": "text" },
   "@save": { "description": "Generic save button text", "type": "text" },
   "confirmDeletion": "Confirm deletion",
   "@confirmDeletion": { "description": "Title for deletion confirmation dialog", "type": "text" },
@@ -443,8 +437,7 @@
   "exportPdfError": "Error exporting PDF: {error}",
   "@exportPdfError": {
     "placeholders": { "error": {} }
-  }
-  ,
+  },
 
   "titleRequired": "Title is required!",
   "errorSavingStory": "Error saving story: {error}",
