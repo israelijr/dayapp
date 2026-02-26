@@ -102,6 +102,48 @@ class AppLocalizationsPt extends AppLocalizations {
   String get statistics => 'Estatísticas';
 
   @override
+  String get noStoriesYetTitle => 'Nenhuma história registrada ainda';
+
+  @override
+  String get noStoriesYetSubtitle => 'Comece a registrar seus dias para ver as estatísticas';
+
+  @override
+  String get trends => 'Tendências';
+
+  @override
+  String get last30Days => 'Últimos 30 dias';
+
+  @override
+  String get activityByWeekday => 'Atividade por dia da semana';
+
+  @override
+  String get streaksTitle => 'Dias seguidos';
+
+  @override
+  String get longestStreakPrefix => 'Sequência mais longa:';
+
+  @override
+  String get tableOfMoods => 'Tabela de humores';
+
+  @override
+  String get moodCount => 'Contagem de humor';
+
+  @override
+  String get topTags => 'Top tags';
+
+  @override
+  String get storiesLabel => 'Histórias';
+
+  @override
+  String get activeDaysLabel => 'Dias ativos';
+
+  @override
+  String get avgPerDayLabel => 'Média/dia';
+
+  @override
+  String get mediaLabel => 'Mídias';
+
+  @override
   String get manageGroups => 'Gerenciar Grupos';
 
   @override
@@ -381,6 +423,12 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get share => 'Compartilhar';
+
+  @override
+  String get home => 'Início';
+
+  @override
+  String get groups => 'Grupos';
 
   @override
   String get imageCopiedBase64 => 'Imagem copiada para a área de transferência (base64)';
@@ -651,6 +699,48 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get statistics => 'Estatísticas';
 
   @override
+  String get noStoriesYetTitle => 'Nenhuma história registrada ainda';
+
+  @override
+  String get noStoriesYetSubtitle => 'Comece a registrar seus dias para ver as estatísticas';
+
+  @override
+  String get trends => 'Tendências';
+
+  @override
+  String get last30Days => 'Últimos 30 dias';
+
+  @override
+  String get activityByWeekday => 'Atividade por dia da semana';
+
+  @override
+  String get streaksTitle => 'Dias seguidos';
+
+  @override
+  String get longestStreakPrefix => 'Sequência mais longa:';
+
+  @override
+  String get tableOfMoods => 'Tabela de humores';
+
+  @override
+  String get moodCount => 'Contagem de humor';
+
+  @override
+  String get topTags => 'Top tags';
+
+  @override
+  String get storiesLabel => 'Histórias';
+
+  @override
+  String get activeDaysLabel => 'Dias ativos';
+
+  @override
+  String get avgPerDayLabel => 'Média/dia';
+
+  @override
+  String get mediaLabel => 'Mídias';
+
+  @override
   String get manageGroups => 'Gerenciar Grupos';
 
   @override
@@ -930,6 +1020,12 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get share => 'Compartilhar';
+
+  @override
+  String get home => 'Início';
+
+  @override
+  String get groups => 'Grupos';
 
   @override
   String get imageCopiedBase64 => 'Imagem copiada para a área de transferência (base64)';

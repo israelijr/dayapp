@@ -102,6 +102,48 @@ class AppLocalizationsEn extends AppLocalizations {
   String get statistics => 'Statistics';
 
   @override
+  String get noStoriesYetTitle => 'No stories yet';
+
+  @override
+  String get noStoriesYetSubtitle => 'Start recording your days to see statistics';
+
+  @override
+  String get trends => 'Trends';
+
+  @override
+  String get last30Days => 'Last 30 days';
+
+  @override
+  String get activityByWeekday => 'Activity by weekday';
+
+  @override
+  String get streaksTitle => 'Streaks';
+
+  @override
+  String get longestStreakPrefix => 'Longest streak:';
+
+  @override
+  String get tableOfMoods => 'Mood table';
+
+  @override
+  String get moodCount => 'Mood count';
+
+  @override
+  String get topTags => 'Top tags';
+
+  @override
+  String get storiesLabel => 'Stories';
+
+  @override
+  String get activeDaysLabel => 'Active days';
+
+  @override
+  String get avgPerDayLabel => 'Avg/day';
+
+  @override
+  String get mediaLabel => 'Media';
+
+  @override
   String get manageGroups => 'Manage groups';
 
   @override
@@ -381,6 +423,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get share => 'Share';
+
+  @override
+  String get home => 'Home';
+
+  @override
+  String get groups => 'Groups';
 
   @override
   String get imageCopiedBase64 => 'Image copied to clipboard (base64)';

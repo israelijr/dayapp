@@ -102,6 +102,48 @@ class AppLocalizationsEs extends AppLocalizations {
   String get statistics => 'Estadísticas';
 
   @override
+  String get noStoriesYetTitle => 'Ninguna historia registrada aún';
+
+  @override
+  String get noStoriesYetSubtitle => 'Comienza a registrar tus días para ver las estadísticas';
+
+  @override
+  String get trends => 'Tendencias';
+
+  @override
+  String get last30Days => 'Últimos 30 días';
+
+  @override
+  String get activityByWeekday => 'Actividad por día de la semana';
+
+  @override
+  String get streaksTitle => 'Rachas';
+
+  @override
+  String get longestStreakPrefix => 'Racha más larga:';
+
+  @override
+  String get tableOfMoods => 'Tabla de estados de ánimo';
+
+  @override
+  String get moodCount => 'Contador de estados';
+
+  @override
+  String get topTags => 'Mejores etiquetas';
+
+  @override
+  String get storiesLabel => 'Historias';
+
+  @override
+  String get activeDaysLabel => 'Días activos';
+
+  @override
+  String get avgPerDayLabel => 'Prom/día';
+
+  @override
+  String get mediaLabel => 'Medios';
+
+  @override
   String get manageGroups => 'Administrar grupos';
 
   @override
@@ -381,6 +423,12 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get share => 'Compartir';
+
+  @override
+  String get home => 'Inicio';
+
+  @override
+  String get groups => 'Grupos';
 
   @override
   String get imageCopiedBase64 => 'Imagen copiada al portapapeles (base64)';

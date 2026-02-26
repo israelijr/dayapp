@@ -6,6 +6,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 
 import '../db/database_helper.dart';
 import '../models/historia.dart';
@@ -282,8 +283,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text('Estatísticas'), elevation: 0),
+      appBar: AppBar(title: Text(loc.statistics), elevation: 0),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _historias.isEmpty
@@ -300,7 +302,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Nenhuma história registrada ainda',
+                    loc.noStoriesYetTitle,
                     style: TextStyle(
                       fontSize: 18,
                       color: Theme.of(
@@ -310,7 +312,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Comece a registrar seus dias para ver as estatísticas',
+                    loc.noStoriesYetSubtitle,
                     style: TextStyle(
                       fontSize: 14,
                       color: Theme.of(
@@ -329,21 +331,21 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildOverviewCard(isDark),
+                    _buildOverviewCard(context, isDark),
                     const SizedBox(height: 16),
-                    _buildTendenciasCard(isDark),
+                    _buildTendenciasCard(context, isDark),
                     const SizedBox(height: 16),
-                    _buildDiasSeguidosCard(isDark),
+                    _buildDiasSeguidosCard(context, isDark),
                     const SizedBox(height: 16),
-                    _buildTabelaHumoresCard(isDark),
+                    _buildTabelaHumoresCard(context, isDark),
                     const SizedBox(height: 16),
-                    _buildContagemHumorCard(isDark),
+                    _buildContagemHumorCard(context, isDark),
                     const SizedBox(height: 16),
-                    _buildTimeSeriesCard(isDark),
+                    _buildTimeSeriesCard(context, isDark),
                     const SizedBox(height: 16),
-                    _buildHeatmapCard(isDark),
+                    _buildHeatmapCard(context, isDark),
                     const SizedBox(height: 16),
-                    _buildTopTagsCard(isDark),
+                    _buildTopTagsCard(context, isDark),
                   ],
                 ),
               ),
@@ -351,7 +353,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     );
   }
 
-  Widget _buildTendenciasCard(bool isDark) {
+  Widget _buildTendenciasCard(BuildContext context, bool isDark) {
+    final loc = AppLocalizations.of(context)!;
     if (_emoticonPercentages.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -368,9 +371,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Tendências',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            Text(
+              loc.trends,
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 24),
             Row(
@@ -430,7 +433,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     );
   }
 
-  Widget _buildOverviewCard(bool isDark) {
+  Widget _buildOverviewCard(BuildContext context, bool isDark) {
+    final loc = AppLocalizations.of(context)!;
     final totalStories = _overview['totalStories'] ?? 0;
     final activeDays = _overview['activeDays'] ?? 0;
     final avg = (_overview['avgPerActiveDay'] ?? 0.0) as double;
@@ -456,17 +460,18 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            infoTile('Histórias', '$totalStories'),
-            infoTile('Dias ativos', '$activeDays'),
-            infoTile('Média/dia', avg.toStringAsFixed(1)),
-            infoTile('Mídias', '$totalMedia'),
+            infoTile(loc.storiesLabel, '$totalStories'),
+            infoTile(loc.activeDaysLabel, '$activeDays'),
+            infoTile(loc.avgPerDayLabel, avg.toStringAsFixed(1)),
+            infoTile(loc.mediaLabel, '$totalMedia'),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildTimeSeriesCard(bool isDark) {
+  Widget _buildTimeSeriesCard(BuildContext context, bool isDark) {
+    final loc = AppLocalizations.of(context)!;
     if (_timeSeries.isEmpty) return const SizedBox.shrink();
 
     return Card(
@@ -477,9 +482,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Últimos 30 dias',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            Text(
+              loc.last30Days,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             SizedBox(
@@ -495,7 +500,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     );
   }
 
-  Widget _buildHeatmapCard(bool isDark) {
+  Widget _buildHeatmapCard(BuildContext context, bool isDark) {
+    final loc = AppLocalizations.of(context)!;
     if (_heatmapRows.isEmpty) return const SizedBox.shrink();
 
     // Agregar por weekday
@@ -512,7 +518,16 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
 
     final maxCnt = weekdayCounts.reduce((a, b) => a > b ? a : b);
 
-    final weekdayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+    // nomes de dias curtos no locale atual
+    final localeName = Localizations.localeOf(context).toString();
+    final weekdayNames = List<String>.generate(7, (i) {
+      // calcula data correspondente ao dia da semana i (0=domingo)
+      final now = DateTime.now();
+      // pega domingo da semana atual
+      final sunday = now.subtract(Duration(days: now.weekday % 7));
+      final date = sunday.add(Duration(days: i));
+      return DateFormat.E(localeName).format(date);
+    });
 
     return Card(
       elevation: 2,
@@ -522,9 +537,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Atividade por dia da semana',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            Text(
+              loc.activityByWeekday,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             Row(
@@ -554,7 +569,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     );
   }
 
-  Widget _buildTopTagsCard(bool isDark) {
+  Widget _buildTopTagsCard(BuildContext context, bool isDark) {
+    final loc = AppLocalizations.of(context)!;
     if (_topTags.isEmpty) return const SizedBox.shrink();
 
     return Card(
@@ -565,9 +581,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Top tags',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            Text(
+              loc.topTags,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             Column(
@@ -591,19 +607,20 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     );
   }
 
-  Widget _buildDiasSeguidosCard(bool isDark) {
+  Widget _buildDiasSeguidosCard(BuildContext context, bool isDark) {
+    final loc = AppLocalizations.of(context)!;
     final today = DateTime.now();
-    final weekDayNames = [
-      'sábado',
-      'domingo',
-      'segunda',
-      'terça',
-      'quarta',
-      'quinta',
-      'sexta',
-    ];
-    final startIndex =
-        (today.weekday + 1) % 7; // Ajustar para começar 6 dias atrás
+    // nomes de dias curtos (ex: Seg, Ter) no idioma atual
+    final localeName = Localizations.localeOf(context).toString();
+    final weekDayNames = List<String>.generate(7, (i) {
+      final date = DateTime(
+        today.year,
+        today.month,
+        today.day,
+      ).subtract(Duration(days: 6 - i));
+      return DateFormat.E(localeName).format(date);
+    });
+    // não precisamos mais de startIndex pois calculamos diretamente pelo date acima
 
     return Builder(
       builder: (context) {
@@ -619,15 +636,17 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Dias seguidos',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                Text(
+                  loc.streaksTitle,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: List.generate(7, (index) {
-                    final dayIndex = (startIndex + index) % 7;
                     final hasEntry = _weekDays[index];
                     final isToday = index == 6;
 
@@ -674,7 +693,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          weekDayNames[dayIndex].substring(0, 3),
+                          weekDayNames[index],
                           style: TextStyle(
                             fontSize: 12,
                             color: Theme.of(
@@ -699,7 +718,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Sequência mais longa: ',
+                        '${loc.longestStreakPrefix} ',
                         style: TextStyle(
                           fontSize: 16,
                           color: Theme.of(
@@ -726,7 +745,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     );
   }
 
-  Widget _buildTabelaHumoresCard(bool isDark) {
+  Widget _buildTabelaHumoresCard(BuildContext context, bool isDark) {
+    final loc = AppLocalizations.of(context)!;
     if (_historias.isEmpty) return const SizedBox.shrink();
 
     // Agrupar histórias por data e calcular média de humor
@@ -757,9 +777,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Tabela de humores',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            Text(
+              loc.tableOfMoods,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 24),
             SizedBox(
@@ -779,7 +799,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     );
   }
 
-  Widget _buildContagemHumorCard(bool isDark) {
+  Widget _buildContagemHumorCard(BuildContext context, bool isDark) {
+    final loc = AppLocalizations.of(context)!;
     if (_emoticonCounts.isEmpty) return const SizedBox.shrink();
 
     final maxCount = _emoticonCounts.values.reduce(math.max);
@@ -792,9 +813,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Contagem de humor',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            Text(
+              loc.moodCount,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 24),
             SizedBox(

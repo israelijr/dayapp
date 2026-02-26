@@ -231,7 +231,9 @@ class _SplashScreenState extends State<SplashScreen>
                           ClipRRect(
                             borderRadius: BorderRadius.circular(10),
                             child: LinearProgressIndicator(
-                              backgroundColor: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.54),
+                              backgroundColor: Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withValues(alpha: 0.54),
                               valueColor: AlwaysStoppedAnimation<Color>(
                                 AppColors.purple700,
                               ),
@@ -239,15 +241,7 @@ class _SplashScreenState extends State<SplashScreen>
                             ),
                           ),
                           const SizedBox(height: 16),
-                          // Texto de carregamento
-                          Text(
-                            'Carregando...',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: AppColors.purple700.withValues(alpha: 0.7),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
+                          // (mensagem removida conforme solicitado)
                         ],
                       ),
                     ),

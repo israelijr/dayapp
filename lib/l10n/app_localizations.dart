@@ -284,6 +284,90 @@ abstract class AppLocalizations {
   /// **'Statistics'**
   String get statistics;
 
+  /// No description provided for @noStoriesYetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No stories yet'**
+  String get noStoriesYetTitle;
+
+  /// No description provided for @noStoriesYetSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start recording your days to see statistics'**
+  String get noStoriesYetSubtitle;
+
+  /// No description provided for @trends.
+  ///
+  /// In en, this message translates to:
+  /// **'Trends'**
+  String get trends;
+
+  /// No description provided for @last30Days.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 30 days'**
+  String get last30Days;
+
+  /// No description provided for @activityByWeekday.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity by weekday'**
+  String get activityByWeekday;
+
+  /// No description provided for @streaksTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Streaks'**
+  String get streaksTitle;
+
+  /// No description provided for @longestStreakPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Longest streak:'**
+  String get longestStreakPrefix;
+
+  /// No description provided for @tableOfMoods.
+  ///
+  /// In en, this message translates to:
+  /// **'Mood table'**
+  String get tableOfMoods;
+
+  /// No description provided for @moodCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Mood count'**
+  String get moodCount;
+
+  /// No description provided for @topTags.
+  ///
+  /// In en, this message translates to:
+  /// **'Top tags'**
+  String get topTags;
+
+  /// No description provided for @storiesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Stories'**
+  String get storiesLabel;
+
+  /// No description provided for @activeDaysLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Active days'**
+  String get activeDaysLabel;
+
+  /// No description provided for @avgPerDayLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg/day'**
+  String get avgPerDayLabel;
+
+  /// No description provided for @mediaLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Media'**
+  String get mediaLabel;
+
   /// Label for manageGroups
   ///
   /// In en, this message translates to:
@@ -829,6 +913,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Share'**
   String get share;
+
+  /// No description provided for @home.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get home;
+
+  /// No description provided for @groups.
+  ///
+  /// In en, this message translates to:
+  /// **'Groups'**
+  String get groups;
 
   /// No description provided for @imageCopiedBase64.
   ///

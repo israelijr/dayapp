@@ -389,7 +389,7 @@ class _HomeContentState extends State<HomeContent> {
                 backgroundColor: AppColors.emoticonGreen,
                 foregroundColor: Theme.of(context).colorScheme.onPrimary,
                 icon: Icons.group,
-                label: 'Grupo',
+                label: AppLocalizations.of(context)!.group,
               ),
             ],
           ),
