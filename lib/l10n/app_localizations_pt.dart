@@ -524,6 +524,80 @@ class AppLocalizationsPt extends AppLocalizations {
   String get backupComplete => 'Backup Completo';
 
   @override
+  String get backupNotAvailableDetail =>
+      'O recurso de backup requer acesso ao sistema de arquivos, disponível apenas nas versões Android, iOS e Desktop.';
+
+  @override
+  String get backupInfoTitle => 'Sobre o Backup';
+
+  @override
+  String get backupInfoDetails =>
+      'O backup completo inclui:\n'
+      '• Banco de dados (histórias, textos, fotos, áudios)\n'
+      '• Arquivos de vídeo\n\n'
+      'Um arquivo ZIP será criado e você pode salvá-lo onde quiser:\n'
+      '• OneDrive\n'
+      '• Google Drive\n'
+      '• Email\n'
+      '• Qualquer outro local';
+
+  @override
+  String get backupZipSubtitle => 'Arquivo ZIP com todos os seus dados';
+
+  @override
+  String get backupZipExplanation =>
+      'Gera um arquivo ZIP que você pode salvar no OneDrive, Google Drive, email ou qualquer outro local.';
+
+  @override
+  String get restoreSectionTitle => 'Restaurar Backup';
+
+  @override
+  String get restoreSectionDescription =>
+      'Selecione um arquivo de backup (ZIP) anteriormente criado para restaurar todos os seus dados.';
+
+  @override
+  String get processing => 'Processando...';
+
+  @override
+  String get pleaseWait => 'Por favor, aguarde...';
+
+  @override
+  String get backupStarting => 'Iniciando backup...';
+
+  @override
+  String get backupCreatedSuccess =>
+      'Arquivo de backup criado! Use o menu de compartilhamento para salvá-lo.';
+
+  @override
+  String backupError(String message) => 'Erro ao criar backup: $message';
+
+  @override
+  String get restoreStarting => 'Iniciando restauração...';
+
+  @override
+  String get restoreSuccess => 'Restauração concluída com sucesso!';
+
+  @override
+  String restoreError(String message) => 'Erro ao restaurar: $message';
+
+  @override
+  String get restoreConfirmTitle => '⚠️ Confirmar Restauração';
+
+  @override
+  String get restoreConfirmContent =>
+      'Todos os dados atuais serão substituídos pelo backup.\n\n'
+      'Esta ação não pode ser desfeita. Deseja continuar?';
+
+  @override
+  String get restoreSuccessTitle => '✅ Restauração Concluída';
+
+  @override
+  String get restoreSuccessContent =>
+      'O backup foi restaurado com sucesso!\n\n'
+      'Todas as suas histórias foram restauradas ao estado do backup.\n\n'
+      'É necessário fazer login novamente para completar o processo.';
+
+  @override
   String get notifications => 'Notificações';
 
   @override
@@ -1184,33 +1258,6 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get createNewGroup => 'Criar Novo Grupo';
-
-  @override
-  String get groupNameLabel => 'Nome do Grupo';
-
-  @override
-  String get createAndSelect => 'Criar e Selecionar';
-
-  @override
-  String get manageBackups => 'Gerenciar Backup';
-
-  @override
-  String get createAndShareBackup => 'Criar e Compartilhar Backup';
-
-  @override
-  String get restoreFromFile => 'Restaurar de Arquivo';
-
-  @override
-  String get backupNotAvailableWeb => 'Backup não disponível na versão web';
-
-  @override
-  String get backupComplete => 'Backup Completo';
-
-  @override
-  String get notifications => 'Notificações';
-
-  @override
-  String get entryNotifications => 'Notificações de Entradas';
 
   @override
   String get entryNotificationsInfo =>

@@ -67,10 +67,10 @@ void main() async {
   // primeira tela quando o sistema está em pt, mesmo que o usuário tenha
   // configurado inglês.
   Locale? initialLocale;
-  const _localePrefKey = 'app_locale_selection';
+  const localePrefKey = 'app_locale_selection';
   try {
     final prefs = await SharedPreferences.getInstance();
-    final sel = prefs.getString(_localePrefKey);
+    final sel = prefs.getString(localePrefKey);
     if (sel != null && sel != 'system') {
       final normalized = sel.contains('_') ? sel.split('_').first : sel;
       switch (normalized) {
@@ -479,10 +479,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
           // DEBUG: verificar qual locale está sendo usado pelo MaterialApp
           debugPrint(
-            'MaterialApp localeProvider.locale=' +
-                (localeProvider.locale?.toString() ?? 'null') +
-                ' system=' +
-                PlatformDispatcher.instance.locale.toString(),
+            'MaterialApp localeProvider.locale=${localeProvider.locale?.toString() ?? 'null'} system=${PlatformDispatcher.instance.locale}',
           );
 
           return MaterialApp(

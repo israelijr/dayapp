@@ -497,6 +497,81 @@ class AppLocalizationsEs extends AppLocalizations {
   String get backupComplete => 'Copia de seguridad completa';
 
   @override
+  String get backupNotAvailableDetail =>
+      'La función de copia de seguridad requiere acceso al sistema de archivos, disponible solo en las versiones de Android, iOS y escritorio.';
+
+  @override
+  String get backupInfoTitle => 'Sobre la copia de seguridad';
+
+  @override
+  String get backupInfoDetails =>
+      'La copia de seguridad completa incluye:\n'
+      '• Base de datos (historias, textos, fotos, audios)\n'
+      '• Archivos de vídeo\n\n'
+      'Se creará un archivo ZIP y puedes guardarlo donde quieras:\n'
+      '• OneDrive\n'
+      '• Google Drive\n'
+      '• Correo electrónico\n'
+      '• Cualquier otra ubicación';
+
+  @override
+  String get backupZipSubtitle => 'Archivo ZIP con todos tus datos';
+
+  @override
+  String get backupZipExplanation =>
+      'Genera un archivo ZIP que puedes guardar en OneDrive, Google Drive, correo electrónico o cualquier otra ubicación.';
+
+  @override
+  String get restoreSectionTitle => 'Restaurar copia de seguridad';
+
+  @override
+  String get restoreSectionDescription =>
+      'Selecciona un archivo de copia de seguridad (ZIP) creado previamente para restaurar todos tus datos.';
+
+  @override
+  String get processing => 'Procesando...';
+
+  @override
+  String get pleaseWait => 'Por favor espera...';
+
+  @override
+  String get backupStarting => 'Iniciando copia de seguridad...';
+
+  @override
+  String get backupCreatedSuccess =>
+      '¡Archivo de copia de seguridad creado! Usa el menú de compartir para guardarlo.';
+
+  @override
+  String backupError(String message) =>
+      'Error al crear copia de seguridad: $message';
+
+  @override
+  String get restoreStarting => 'Iniciando restauración...';
+
+  @override
+  String get restoreSuccess => '¡Restauración completada con éxito!';
+
+  @override
+  String restoreError(String message) => 'Error al restaurar: $message';
+
+  @override
+  String get restoreConfirmTitle => '⚠️ Confirmar restauración';
+
+  @override
+  String get restoreConfirmContent =>
+      'Todos los datos actuales serán reemplazados por la copia de seguridad.\n\n'
+      'Esta acción no se puede deshacer. ¿Deseas continuar?';
+
+  @override
+  String get restoreSuccessTitle => '✅ Restauración completada';
+
+  @override
+  String get restoreSuccessContent =>
+      '¡La copia de seguridad se restauró con éxito!\n\n'
+      'Todas tus historias se han restaurado al estado del backup.\n\n'
+      'Necesitas iniciar sesión nuevamente para completar el proceso.';
+
+  @override
   String get notifications => 'Notificaciones';
 
   @override

@@ -1031,6 +1031,120 @@ abstract class AppLocalizations {
   /// **'Complete Backup'**
   String get backupComplete;
 
+  /// No description provided for @backupNotAvailableDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'The backup feature requires file system access, available only on Android, iOS and desktop versions.'**
+  String get backupNotAvailableDetail;
+
+  /// No description provided for @backupInfoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'About Backup'**
+  String get backupInfoTitle;
+
+  /// No description provided for @backupInfoDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'The complete backup includes: ...'**
+  String get backupInfoDetails;
+
+  /// No description provided for @backupZipSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'ZIP file with all your data'**
+  String get backupZipSubtitle;
+
+  /// No description provided for @backupZipExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Generates a ZIP file that you can save to OneDrive, Google Drive, email or any other location.'**
+  String get backupZipExplanation;
+
+  /// No description provided for @restoreSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore Backup'**
+  String get restoreSectionTitle;
+
+  /// No description provided for @restoreSectionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a backup file (ZIP) previously created to restore all your data.'**
+  String get restoreSectionDescription;
+
+  /// No description provided for @processing.
+  ///
+  /// In en, this message translates to:
+  /// **'Processing...'**
+  String get processing;
+
+  /// No description provided for @pleaseWait.
+  ///
+  /// In en, this message translates to:
+  /// **'Please wait...'**
+  String get pleaseWait;
+
+  /// No description provided for @backupStarting.
+  ///
+  /// In en, this message translates to:
+  /// **'Starting backup...'**
+  String get backupStarting;
+
+  /// No description provided for @backupCreatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup file created! Use the share menu to save it.'**
+  String get backupCreatedSuccess;
+
+  /// No description provided for @backupError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error creating backup: {message}'**
+  String backupError(String message);
+
+  /// No description provided for @restoreStarting.
+  ///
+  /// In en, this message translates to:
+  /// **'Starting restore...'**
+  String get restoreStarting;
+
+  /// No description provided for @restoreSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore completed successfully!'**
+  String get restoreSuccess;
+
+  /// No description provided for @restoreError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error restoring: {message}'**
+  String restoreError(String message);
+
+  /// No description provided for @restoreConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'⚠️ Confirm Restore'**
+  String get restoreConfirmTitle;
+
+  /// No description provided for @restoreConfirmContent.
+  ///
+  /// In en, this message translates to:
+  /// **'All current data will be replaced by the backup.\n\nThis action cannot be undone. Do you wish to continue?'**
+  String get restoreConfirmContent;
+
+  /// No description provided for @restoreSuccessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'✅ Restore Completed'**
+  String get restoreSuccessTitle;
+
+  /// No description provided for @restoreSuccessContent.
+  ///
+  /// In en, this message translates to:
+  /// **'The backup was restored successfully! ...'**
+  String get restoreSuccessContent;
+
   /// No description provided for @notifications.
   ///
   /// In en, this message translates to:

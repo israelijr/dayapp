@@ -21,14 +21,13 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
   final BackupService _backupService = BackupService();
   bool _isLoading = false;
   String _statusMessage = '';
+  bool _statusIsError = false; // nova flag para colorir card de status
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.manageBackups),
-        elevation: 0,
-      ),
+      appBar: AppBar(title: Text(loc.manageBackups), elevation: 0),
       body: kIsWeb
           ? Center(
               child: Padding(
@@ -39,7 +38,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                     const Icon(Icons.cloud_off, size: 64, color: Colors.grey),
                     const SizedBox(height: 16),
                     Text(
-                      AppLocalizations.of(context)!.backupNotAvailableWeb,
+                      loc.backupNotAvailableWeb,
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -47,10 +46,9 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 12),
-                    const Text(
-                      'O recurso de backup requer acesso ao sistema de arquivos, '
-                      'disponível apenas nas versões Android, iOS e Desktop.',
-                      style: TextStyle(fontSize: 14, color: Colors.grey),
+                    Text(
+                      loc.backupNotAvailableDetail,
+                      style: const TextStyle(fontSize: 14, color: Colors.grey),
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -79,9 +77,9 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                                     color: Theme.of(context).primaryColor,
                                   ),
                                   const SizedBox(width: 8),
-                                  const Text(
-                                    'Sobre o Backup',
-                                    style: TextStyle(
+                                  Text(
+                                    loc.backupInfoTitle,
+                                    style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -89,16 +87,9 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                                 ],
                               ),
                               const SizedBox(height: 12),
-                              const Text(
-                                'O backup completo inclui:\n'
-                                '• Banco de dados (histórias, textos, fotos, áudios)\n'
-                                '• Arquivos de vídeo\n\n'
-                                'Um arquivo ZIP será criado e você pode salvá-lo onde quiser:\n'
-                                '• OneDrive\n'
-                                '• Google Drive\n'
-                                '• Email\n'
-                                '• Qualquer outro local',
-                                style: TextStyle(fontSize: 14),
+                              Text(
+                                loc.backupInfoDetails,
+                                style: const TextStyle(fontSize: 14),
                               ),
                             ],
                           ),
@@ -122,21 +113,21 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                                     size: 28,
                                   ),
                                   const SizedBox(width: 12),
-                                  const Expanded(
+                                  Expanded(
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          'Backup Completo',
-                                          style: TextStyle(
+                                          loc.backupComplete,
+                                          style: const TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
                                         Text(
-                                          'Arquivo ZIP com todos os seus dados',
-                                          style: TextStyle(
+                                          loc.backupZipSubtitle,
+                                          style: const TextStyle(
                                             fontSize: 13,
                                             color: Colors.grey,
                                           ),
@@ -148,16 +139,16 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                               ),
                               const SizedBox(height: 16),
                               Text(
-                                '📦 ${AppLocalizations.of(context)!.backupComplete}',
+                                '📦 ${loc.backupComplete}',
                                 style: const TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               const SizedBox(height: 8),
-                              const Text(
-                                'Gera um arquivo ZIP que você pode salvar no OneDrive, Google Drive, email ou qualquer outro local.',
-                                style: TextStyle(fontSize: 13),
+                              Text(
+                                loc.backupZipExplanation,
+                                style: const TextStyle(fontSize: 13),
                               ),
                               const SizedBox(height: 12),
                               ElevatedButton.icon(
@@ -165,11 +156,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                                     ? null
                                     : _createAndShareBackup,
                                 icon: const Icon(Icons.share),
-                                label: Text(
-                                  AppLocalizations.of(
-                                    context,
-                                  )!.createAndShareBackup,
-                                ),
+                                label: Text(loc.createAndShareBackup),
                                 style: ElevatedButton.styleFrom(
                                   minimumSize: const Size(double.infinity, 48),
                                   backgroundColor: AppColors.emoticonGreen,
@@ -178,25 +165,23 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                               const SizedBox(height: 20),
                               const Divider(),
                               const SizedBox(height: 12),
-                              const Text(
-                                '📥 Restaurar Backup:',
-                                style: TextStyle(
+                              Text(
+                                '📥 ${loc.restoreSectionTitle}:',
+                                style: const TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               const SizedBox(height: 8),
-                              const Text(
-                                'Selecione um arquivo de backup (ZIP) anteriormente criado para restaurar todos os seus dados.',
-                                style: TextStyle(fontSize: 13),
+                              Text(
+                                loc.restoreSectionDescription,
+                                style: const TextStyle(fontSize: 13),
                               ),
                               const SizedBox(height: 12),
                               ElevatedButton.icon(
                                 onPressed: _isLoading ? null : _restoreFromFile,
                                 icon: const Icon(Icons.file_upload),
-                                label: Text(
-                                  AppLocalizations.of(context)!.restoreFromFile,
-                                ),
+                                label: Text(loc.restoreFromFile),
                                 style: ElevatedButton.styleFrom(
                                   minimumSize: const Size(double.infinity, 48),
                                   backgroundColor: Colors.deepOrange,
@@ -212,11 +197,11 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                       // Mensagem de status (quando não está carregando)
                       if (!_isLoading && _statusMessage.isNotEmpty)
                         Card(
-                          color:
-                              (_statusMessage.contains('sucesso') ||
-                                  _statusMessage.contains('criado'))
-                              ? Theme.of(context).colorScheme.secondaryContainer
-                              : Theme.of(context).colorScheme.errorContainer,
+                          color: _statusIsError
+                              ? Theme.of(context).colorScheme.errorContainer
+                              : Theme.of(
+                                  context,
+                                ).colorScheme.secondaryContainer,
                           child: Padding(
                             padding: const EdgeInsets.all(16),
                             child: Row(
@@ -226,11 +211,9 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                                           _statusMessage.contains('criado'))
                                       ? Icons.check_circle
                                       : Icons.error,
-                                  color:
-                                      (_statusMessage.contains('sucesso') ||
-                                          _statusMessage.contains('criado'))
-                                      ? AppColors.emoticonGreen
-                                      : Theme.of(context).colorScheme.error,
+                                  color: _statusIsError
+                                      ? Theme.of(context).colorScheme.error
+                                      : AppColors.emoticonGreen,
                                   size: 32,
                                 ),
                                 const SizedBox(width: 12),
@@ -275,7 +258,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                               const SizedBox(height: 24),
                               Text(
                                 _statusMessage.isEmpty
-                                    ? 'Processando...'
+                                    ? loc.processing
                                     : _statusMessage,
                                 textAlign: TextAlign.center,
                                 style: const TextStyle(
@@ -290,7 +273,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                               ),
                               const SizedBox(height: 12),
                               Text(
-                                'Por favor, aguarde...',
+                                loc.pleaseWait,
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: Colors.grey[600],
@@ -308,6 +291,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
   }
 
   Future<void> _createAndShareBackup() async {
+    final loc = AppLocalizations.of(context)!;
     // Obter o PinProvider para evitar bloqueio durante compartilhamento
     final pinProvider = Provider.of<PinProvider>(context, listen: false);
 
@@ -317,7 +301,8 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
 
     setState(() {
       _isLoading = true;
-      _statusMessage = 'Iniciando backup...';
+      _statusMessage = loc.backupStarting;
+      _statusIsError = false;
     });
 
     try {
@@ -334,8 +319,8 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
       if (mounted) {
         setState(() {
           _isLoading = false;
-          _statusMessage =
-              'Arquivo de backup criado! Use o menu de compartilhamento para salvá-lo.';
+          _statusMessage = loc.backupCreatedSuccess;
+          _statusIsError = false;
         });
       }
 
@@ -352,13 +337,15 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
       if (mounted) {
         setState(() {
           _isLoading = false;
-          _statusMessage = 'Erro ao criar backup: $e';
+          _statusMessage = loc.backupError(e.toString());
+          _statusIsError = true;
         });
       }
     }
   }
 
   Future<void> _restoreFromFile() async {
+    final loc = AppLocalizations.of(context)!;
     // Obter o PinProvider para evitar bloqueio durante seleção de arquivo
     final pinProvider = Provider.of<PinProvider>(context, listen: false);
 
@@ -392,20 +379,17 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
       final confirmed = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('⚠️ Confirmar Restauração'),
-          content: const Text(
-            'Todos os dados atuais serão substituídos pelo backup.\n\n'
-            'Esta ação não pode ser desfeita. Deseja continuar?',
-          ),
+          title: Text(loc.restoreConfirmTitle),
+          content: Text(loc.restoreConfirmContent),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancelar'),
+              child: Text(loc.cancel),
             ),
             ElevatedButton(
               onPressed: () => Navigator.pop(context, true),
               style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
-              child: const Text('Sim, Restaurar'),
+              child: Text(loc.confirm),
             ),
           ],
         ),
@@ -420,7 +404,8 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
 
       setState(() {
         _isLoading = true;
-        _statusMessage = 'Iniciando restauração...';
+        _statusMessage = loc.restoreStarting;
+        _statusIsError = false;
       });
 
       // Aguardar o próximo frame para garantir que o setState foi processado
@@ -449,7 +434,8 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
 
       setState(() {
         _isLoading = false;
-        _statusMessage = 'Restauração concluída com sucesso!';
+        _statusMessage = loc.restoreSuccess;
+        _statusIsError = false;
       });
 
       // Mostrar diálogo de sucesso
@@ -458,12 +444,8 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
         context: context,
         barrierDismissible: false,
         builder: (dialogContext) => AlertDialog(
-          title: const Text('✅ Restauração Concluída'),
-          content: const Text(
-            'O backup foi restaurado com sucesso!\n\n'
-            'Todas as suas histórias foram restauradas ao estado do backup.\n\n'
-            'É necessário fazer login novamente para completar o processo.',
-          ),
+          title: Text(loc.restoreSuccessTitle),
+          content: Text(loc.restoreSuccessContent),
           actions: [
             ElevatedButton(
               onPressed: () async {
@@ -474,7 +456,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                 await auth.logout();
                 navigator.pushNamedAndRemoveUntil('/login', (route) => false);
               },
-              child: const Text('Fazer Login'),
+              child: Text(loc.accessAccount),
             ),
           ],
         ),
@@ -487,7 +469,8 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
       if (mounted) {
         setState(() {
           _isLoading = false;
-          _statusMessage = 'Erro ao restaurar: $e';
+          _statusMessage = loc.restoreError(e.toString());
+          _statusIsError = true;
         });
       }
     }

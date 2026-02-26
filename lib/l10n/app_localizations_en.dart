@@ -489,6 +489,80 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backupComplete => 'Complete Backup';
 
   @override
+  String get backupNotAvailableDetail =>
+      'The backup feature requires file system access, available only on Android, iOS and desktop versions.';
+
+  @override
+  String get backupInfoTitle => 'About Backup';
+
+  @override
+  String get backupInfoDetails =>
+      'The complete backup includes:\n'
+      '• Database (stories, texts, photos, audios)\n'
+      '• Video files\n\n'
+      'A ZIP file will be created and you can save it wherever you want:\n'
+      '• OneDrive\n'
+      '• Google Drive\n'
+      '• Email\n'
+      '• Any other location';
+
+  @override
+  String get backupZipSubtitle => 'ZIP file with all your data';
+
+  @override
+  String get backupZipExplanation =>
+      'Generates a ZIP file that you can save to OneDrive, Google Drive, email or any other location.';
+
+  @override
+  String get restoreSectionTitle => 'Restore Backup';
+
+  @override
+  String get restoreSectionDescription =>
+      'Select a backup file (ZIP) previously created to restore all your data.';
+
+  @override
+  String get processing => 'Processing...';
+
+  @override
+  String get pleaseWait => 'Please wait...';
+
+  @override
+  String get backupStarting => 'Starting backup...';
+
+  @override
+  String get backupCreatedSuccess =>
+      'Backup file created! Use the share menu to save it.';
+
+  @override
+  String backupError(String message) => 'Error creating backup: $message';
+
+  @override
+  String get restoreStarting => 'Starting restore...';
+
+  @override
+  String get restoreSuccess => 'Restore completed successfully!';
+
+  @override
+  String restoreError(String message) => 'Error restoring: $message';
+
+  @override
+  String get restoreConfirmTitle => '⚠️ Confirm Restore';
+
+  @override
+  String get restoreConfirmContent =>
+      'All current data will be replaced by the backup.\n\n'
+      'This action cannot be undone. Do you wish to continue?';
+
+  @override
+  String get restoreSuccessTitle => '✅ Restore Completed';
+
+  @override
+  String get restoreSuccessContent =>
+      'The backup was restored successfully!\n\n'
+      'All your stories have been restored to the backup state.\n\n'
+      'You need to log in again to complete the process.';
+
+  @override
   String get notifications => 'Notifications';
 
   @override
