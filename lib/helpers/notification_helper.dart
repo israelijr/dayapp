@@ -1,9 +1,9 @@
 import 'dart:io';
 
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart' as intl;
-import 'package:dayapp/l10n/generated/app_localizations.dart';
 
 import '../db/database_helper.dart';
 import '../services/notification_preferences_service.dart';

@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:printing/printing.dart';
-import 'package:dayapp/l10n/generated/app_localizations.dart';
 
 /// Tela que mostra um preview do PDF gerado e fornece ações: Compartilhar, Salvar, Fechar.
 class PdfPreviewScreen extends StatefulWidget {

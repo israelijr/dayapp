@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:dayapp/l10n/generated/app_localizations.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -141,7 +141,7 @@ class _TrashScreenState extends State<TrashScreen> {
               onPressed: () => Navigator.pop(ctx, true),
               child: Text(
                 loc.permanentlyDeleteLabel,
-                style: TextStyle(color: Colors.red),
+                style: const TextStyle(color: Colors.red),
               ),
             ),
           ],
@@ -199,7 +199,7 @@ class _TrashScreenState extends State<TrashScreen> {
               onPressed: () => Navigator.pop(ctx, true),
               child: Text(
                 loc.emptyTrashLabel,
-                style: TextStyle(color: Colors.red),
+                style: const TextStyle(color: Colors.red),
               ),
             ),
           ],

@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:dayapp/l10n/generated/app_localizations.dart';
 
 class AudioPlayerWidget extends StatefulWidget {
   final List<int> audioData;

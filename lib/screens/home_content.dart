@@ -1230,7 +1230,7 @@ class HistoriaFotosGrid extends StatelessWidget {
                                                     Navigator.pop(ctx2, true),
                                                 child: Text(
                                                   loc.deleteLabel,
-                                                  style: TextStyle(
+                                                  style: const TextStyle(
                                                     color: Colors.red,
                                                   ),
                                                 ),

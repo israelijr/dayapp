@@ -1,7 +1,7 @@
 import 'dart:io';
-import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'dart:typed_data';
 
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
