@@ -98,6 +98,10 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
 
   // Controle de alterações não salvas
   bool _hasUnsavedChanges = false;
+  // flag usada para indicar que initState já terminou e os controllers estão
+  // disponíveis. Isto permite que métodos chamados em testes (sem árvore)
+  // não tentem acessar objetos ainda não inicializados.
+  bool _initialized = false;
   late String _initialTitle;
   late String _initialDescription;
   late String _initialTags;
@@ -159,6 +163,8 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     _loadAudios();
     _loadVideos();
     _loadEmojiTranslation();
+
+    _initialized = true; // marca estado como pronto para verificação
   }
 
   final List<String> legacyEmoticons = [
@@ -217,6 +223,9 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
   }
 
   void _checkForChanges() {
+    if (!_initialized)
+      return; // não faz nada antes dos controllers estarem prontos
+
     final currentDescription = richTextController.document.toPlainText();
     final hasChanges =
         titleController.text != _initialTitle ||
@@ -405,7 +414,12 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
         allowMultiple: true,
         onMultipleImagesPicked: (imagesList) {
           setState(() {
+            // Sempre atualizamos a lista de ids em paralelo com as fotos.
+            // Um novo índice recebe 0 para indicar que ainda não existe no
+            // banco de dados. Isso evita divergência entre os arrays e
+            // previne um RangeError durante o _save().
             fotos.addAll(imagesList);
+            fotoIds.addAll(List.filled(imagesList.length, 0));
             _checkForChanges();
           });
         },
@@ -413,11 +427,33 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     );
   }
 
-  void _removeFoto(int index) {
-    setState(() {
+  // torna público para permitir testes e reuso
+  // garantimos que o método não lance se o State ainda não estiver montado,
+  // pois testes que criam o State manualmente não o inserem na árvore.
+  Future<void> removeFoto(int index) async {
+    // Se a foto tiver um id existente, removemos imediatamente do banco e
+    // do sistema de arquivos. Isto mantém o comportamento de áudio/vídeo e
+    // evita que fotos "fantasmas" reapareçam após salvar.
+    if (index < fotoIds.length) {
+      final id = fotoIds[index];
+      if (id != 0) {
+        await HistoriaFotoHelper().deleteFoto(id);
+      }
+    }
+
+    void doRemove() {
       fotos.removeAt(index);
+      if (index < fotoIds.length) {
+        fotoIds.removeAt(index);
+      }
       _checkForChanges();
-    });
+    }
+
+    if (mounted) {
+      setState(doRemove);
+    } else {
+      doRemove();
+    }
   }
 
   Future<void> _showNotificationDialog(int historiaId) async {
@@ -463,9 +499,12 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
       }
     }
 
-    // Salva novas fotos
+    // Salva novas fotos. A verificação abaixo trata qualquer
+    // inconsistência de comprimentos entre `fotos` e `fotoIds` – mesmo que a
+    // lista de ids esteja menor ou ausente, presumimos que são novas.
     for (int i = 0; i < fotos.length; i++) {
-      if (fotoIds[i] == 0) {
+      final id = i < fotoIds.length ? fotoIds[i] : 0;
+      if (id == 0) {
         await HistoriaFotoHelper().insertFotoFromBytes(
           historiaId: widget.historia.id ?? 0,
           fotoBytes: fotos[i],
@@ -473,9 +512,11 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
       }
     }
 
-    // Salva novos áudios
+    // Salva novos áudios – tornamos o loop robusto caso as listas estejam
+    // fora de sincronia.
     for (int i = 0; i < audios.length; i++) {
-      if (audioIds[i] == 0) {
+      final id = i < audioIds.length ? audioIds[i] : 0;
+      if (id == 0) {
         await HistoriaAudioHelper().insertAudioFromBytes(
           historiaId: widget.historia.id ?? 0,
           audioBytes: audios[i]['audio'],
@@ -484,9 +525,10 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
       }
     }
 
-    // Salva novos vídeos
+    // Salva novos vídeos com checagem de segurança semelhante.
     for (int i = 0; i < videos.length; i++) {
-      if (videoIds[i] == 0) {
+      final id = i < videoIds.length ? videoIds[i] : 0;
+      if (id == 0) {
         try {
           await HistoriaVideoHelper().insertVideoFromBytes(
             historiaId: widget.historia.id ?? 0,
@@ -902,7 +944,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                                   top: 2,
                                   right: 2,
                                   child: IconButton.filled(
-                                    onPressed: () => _removeFoto(i),
+                                    onPressed: () async => await removeFoto(i),
                                     icon: const Icon(Icons.close, size: 14),
                                     style: IconButton.styleFrom(
                                       minimumSize: const Size(24, 24),
