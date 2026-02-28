@@ -102,6 +102,22 @@ class AppLocalizationsEs extends AppLocalizations {
   String get backgroundLock => 'Bloqueo en segundo plano';
 
   @override
+  String get backgroundLockDialogPrompt =>
+      '¿Después de cuánto tiempo en segundo plano debe bloquearse la aplicación?';
+
+  @override
+  String get backgroundLockTimeLabel => 'Tiempo';
+
+  @override
+  String get backgroundLockDialogResult => 'Resultado:';
+
+  @override
+  String get backgroundLockSuggestions => 'Sugerencias:';
+
+  @override
+  String get backgroundLockImmediateHint => '0 = inmediato';
+
+  @override
   String get statistics => 'Estadísticas';
 
   @override

@@ -102,6 +102,22 @@ class AppLocalizationsPt extends AppLocalizations {
   String get backgroundLock => 'Bloqueio em Segundo Plano';
 
   @override
+  String get backgroundLockDialogPrompt =>
+      'Após quanto tempo em segundo plano o app deve ser bloqueado?';
+
+  @override
+  String get backgroundLockTimeLabel => 'Tempo';
+
+  @override
+  String get backgroundLockDialogResult => 'Resultado:';
+
+  @override
+  String get backgroundLockSuggestions => 'Sugestões:';
+
+  @override
+  String get backgroundLockImmediateHint => '0 = imediato';
+
+  @override
   String get statistics => 'Estatísticas';
 
   @override
@@ -573,7 +589,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get backupInfoDetails =>
-      'The complete backup includes:\n• Database (stories, texts, photos, audios)\n• Video files\n\nA ZIP file will be created and you can save it wherever you want:\n• OneDrive\n• Google Drive\n• Email\n• Any other location';
+      'The complete backup includes:• Database (stories, texts, photos, audios)• Video filesA ZIP file will be created and you can save it wherever you want:• OneDrive• Google Drive• Email• Any other location';
 
   @override
   String get backupComplete => 'Backup Completo';
@@ -626,14 +642,14 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get restoreConfirmContent =>
-      'All current data will be replaced by the backup.\n\nThis action cannot be undone. Do you wish to continue?';
+      'All current data will be replaced by the backup.This action cannot be undone. Do you wish to continue?';
 
   @override
   String get restoreSuccessTitle => '✅ Restore Completed';
 
   @override
   String get restoreSuccessContent =>
-      'The backup was restored successfully!\n\nAll your stories have been restored to the backup state.\n\nYou need to log in again to complete the process.';
+      'The backup was restored successfully!All your stories have been restored to the backup state.You need to log in again to complete the process.';
 
   @override
   String get helpAboutTitle => 'About DayApp';
@@ -1392,6 +1408,22 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get backgroundLock => 'Bloqueio em Segundo Plano';
 
   @override
+  String get backgroundLockDialogPrompt =>
+      'Após quanto tempo em segundo plano o app deve ser bloqueado?';
+
+  @override
+  String get backgroundLockTimeLabel => 'Tempo';
+
+  @override
+  String get backgroundLockDialogResult => 'Resultado:';
+
+  @override
+  String get backgroundLockSuggestions => 'Sugestões:';
+
+  @override
+  String get backgroundLockImmediateHint => '0 = imediato';
+
+  @override
   String get statistics => 'Estatísticas';
 
   @override
@@ -1812,7 +1844,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get backupInfoDetails =>
-      'O backup completo inclui:\n• Banco de dados (histórias, textos, fotos, áudios)\n• Arquivos de vídeo\n\nUm arquivo ZIP será criado e você pode salvá-lo onde quiser:\n• OneDrive\n• Google Drive\n• Email\n• Qualquer outro local';
+      'O backup completo inclui:• Banco de dados (histórias, textos, fotos, áudios)• Arquivos de vídeoUm arquivo ZIP será criado e você pode salvá-lo onde quiser:• OneDrive• Google Drive• Email• Qualquer outro local';
 
   @override
   String get backupComplete => 'Backup Completo';
@@ -1865,14 +1897,14 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get restoreConfirmContent =>
-      'Todos os dados atuais serão substituídos pelo backup.\n\nEsta ação não pode ser desfeita. Deseja continuar?';
+      'Todos os dados atuais serão substituídos pelo backup.Esta ação não pode ser desfeita. Deseja continuar?';
 
   @override
   String get restoreSuccessTitle => '✅ Restauração Concluída';
 
   @override
   String get restoreSuccessContent =>
-      'O backup foi restaurado com sucesso!\n\nTodas as suas histórias foram restauradas ao estado do backup.\n\nÉ necessário fazer login novamente para completar o processo.';
+      'O backup foi restaurado com sucesso!Todas as suas histórias foram restauradas ao estado do backup.É necessário fazer login novamente para completar o processo.';
 
   @override
   String get helpAboutTitle => 'Sobre o DayApp';

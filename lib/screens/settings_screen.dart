@@ -957,6 +957,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _showBackgroundLockTimeoutDialog() {
+    final loc = AppLocalizations.of(context)!; // para facilitar referências dentro do diálogo
+
     // Determina a unidade e o valor com base no timeout atual
     String selectedUnit = 'min';
     int displayValue = 0;
@@ -1006,18 +1008,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
           final currentSeconds = calculateSeconds();
 
           return AlertDialog(
-            title: const Text(
-              'Bloqueio em Segundo Plano',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            title: Text(
+              loc.backgroundLock,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             content: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Após quanto tempo em segundo plano o app deve ser bloqueado?',
-                  ),
+                  Text(loc.backgroundLockDialogPrompt),
                   const SizedBox(height: 12),
 
                   // Campo de entrada com seletor de unidade
@@ -1027,8 +1027,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         flex: 2,
                         child: CustomTextField(
                           controller: controller,
-                          label: 'Tempo',
-                          hintText: '0 = imediato',
+                          label: loc.backgroundLockTimeLabel,
+                          hintText: loc.backgroundLockImmediateHint,
                           keyboardType: TextInputType.number,
                           // não mostrar suffixText para evitar renderização vertical indesejada
                           // Força single-line com padding reduzido para evitar altura excessiva
@@ -1066,7 +1066,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   const SizedBox(height: 6),
                   // Mostra o valor resultante
                   Text(
-                    'Resultado: ${InactivityService.getBackgroundTimeoutLabel(currentSeconds)}',
+                    '${loc.backgroundLockDialogResult} ${InactivityService.getBackgroundTimeoutLabel(currentSeconds)}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
@@ -1074,9 +1074,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                   const SizedBox(height: 16),
                   // Atalhos rápidos
-                  const Text(
-                    'Sugestões:',
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+                  Text(
+                    loc.backgroundLockSuggestions,
+                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
                   ),
                   const SizedBox(height: 8),
                   Wrap(

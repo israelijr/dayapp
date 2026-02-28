@@ -287,6 +287,36 @@ abstract class AppLocalizations {
   /// **'Background lock'**
   String get backgroundLock;
 
+  /// Prompt asking the user how long the app should wait in background before locking
+  ///
+  /// In en, this message translates to:
+  /// **'How long should the app be locked after being in background?'**
+  String get backgroundLockDialogPrompt;
+
+  /// Label for the time input field in background lock dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get backgroundLockTimeLabel;
+
+  /// Prefix text shown before the calculated result in the dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Result:'**
+  String get backgroundLockDialogResult;
+
+  /// Title for the suggestions section in background lock dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Suggestions:'**
+  String get backgroundLockSuggestions;
+
+  /// Hint text for the time field when entering 0
+  ///
+  /// In en, this message translates to:
+  /// **'0 = immediate'**
+  String get backgroundLockImmediateHint;
+
   /// Label for statistics
   ///
   /// In en, this message translates to:

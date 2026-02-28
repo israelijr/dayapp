@@ -102,6 +102,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backgroundLock => 'Background lock';
 
   @override
+  String get backgroundLockDialogPrompt =>
+      'How long should the app be locked after being in background?';
+
+  @override
+  String get backgroundLockTimeLabel => 'Time';
+
+  @override
+  String get backgroundLockDialogResult => 'Result:';
+
+  @override
+  String get backgroundLockSuggestions => 'Suggestions:';
+
+  @override
+  String get backgroundLockImmediateHint => '0 = immediate';
+
+  @override
   String get statistics => 'Statistics';
 
   @override

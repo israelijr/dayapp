@@ -40,6 +40,14 @@
   "configurePin": "Configure PIN",
   "biometrics": "Biometrics",
   "backgroundLock": "Background lock",
+
+  // strings for the background lock timeout dialog
+  "backgroundLockDialogPrompt": "How long should the app be locked after being in background?",
+  "backgroundLockTimeLabel": "Time",
+  "backgroundLockDialogResult": "Result:",
+  "backgroundLockSuggestions": "Suggestions:",
+  "backgroundLockImmediateHint": "0 = immediate",
+
   "statistics": "Statistics",
   "noStoriesYetTitle": "No stories yet",
   "noStoriesYetSubtitle": "Start recording your days to see statistics",

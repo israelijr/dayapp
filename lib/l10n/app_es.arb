@@ -36,6 +36,14 @@
   "configurePin": "Configurar PIN",
   "biometrics": "Biometría",
   "backgroundLock": "Bloqueo en segundo plano",
+
+  // cadenas para el diálogo de bloqueo en segundo plano
+  "backgroundLockDialogPrompt": "¿Después de cuánto tiempo en segundo plano debe bloquearse la aplicación?",
+  "backgroundLockTimeLabel": "Tiempo",
+  "backgroundLockDialogResult": "Resultado:",
+  "backgroundLockSuggestions": "Sugerencias:",
+  "backgroundLockImmediateHint": "0 = inmediato",
+
   "statistics": "Estadísticas",
   "noStoriesYetTitle": "Ninguna historia registrada aún",
   "noStoriesYetSubtitle": "Comienza a registrar tus días para ver las estadísticas",
