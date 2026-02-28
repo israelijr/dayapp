@@ -426,6 +426,13 @@ class AppLocalizationsPt extends AppLocalizations {
   String get search => 'Pesquisar';
 
   @override
+  String get searchStoriesTitle => 'Search your stories';
+
+  @override
+  String get searchStoriesSubtitle =>
+      'Use the filters above to find your memories.';
+
+  @override
   String unsavedBackups(Object count) {
     return 'Você tem $count histórias sem backup.';
   }
@@ -1751,6 +1758,13 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get search => 'Pesquisar';
+
+  @override
+  String get searchStoriesTitle => 'Pesquise suas histórias';
+
+  @override
+  String get searchStoriesSubtitle =>
+      'Use os filtros acima para encontrar suas memórias.';
 
   @override
   String unsavedBackups(Object count) {

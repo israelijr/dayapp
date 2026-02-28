@@ -422,6 +422,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get search => 'Search';
 
   @override
+  String get searchStoriesTitle => 'Search your stories';
+
+  @override
+  String get searchStoriesSubtitle =>
+      'Use the filters above to find your memories.';
+
+  @override
   String unsavedBackups(Object count) {
     return 'You have $count stories not backed up.';
   }

@@ -431,6 +431,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get search => 'Buscar';
 
   @override
+  String get searchStoriesTitle => 'Busca tus historias';
+
+  @override
+  String get searchStoriesSubtitle =>
+      'Usa los filtros de arriba para encontrar tus recuerdos.';
+
+  @override
   String unsavedBackups(Object count) {
     return 'Tienes $count historias sin copia de seguridad.';
   }

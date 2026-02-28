@@ -147,6 +147,8 @@
   "forgotPin": "Olvidé mi PIN",
   "unlockTitle": "Desbloquee la aplicación",
   "search": "Buscar",
+  "searchStoriesTitle": "Busca tus historias",
+  "searchStoriesSubtitle": "Usa los filtros de arriba para encontrar tus recuerdos.",
   "unsavedBackups": "Tienes {count} historias sin copia de seguridad.",
   "@unsavedBackups": {
     "placeholders": {

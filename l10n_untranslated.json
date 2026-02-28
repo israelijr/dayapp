@@ -6,6 +6,8 @@
 
   "pt": [
     "defaultLabel",
+    "searchStoriesTitle",
+    "searchStoriesSubtitle",
     "record",
     "records",
     "filterText",

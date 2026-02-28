@@ -911,6 +911,18 @@ abstract class AppLocalizations {
   /// **'Search'**
   String get search;
 
+  /// No description provided for @searchStoriesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Search your stories'**
+  String get searchStoriesTitle;
+
+  /// No description provided for @searchStoriesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the filters above to find your memories.'**
+  String get searchStoriesSubtitle;
+
   /// No description provided for @unsavedBackups.
   ///
   /// In en, this message translates to:

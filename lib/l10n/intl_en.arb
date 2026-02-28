@@ -153,6 +153,8 @@
   "forgotPin": "Forgot my PIN",
   "unlockTitle": "Unlock the App",
   "search": "Search",
+  "searchStoriesTitle": "Search your stories",
+  "searchStoriesSubtitle": "Use the filters above to find your memories.",
   "unsavedBackups": "You have {count} stories not backed up.",
   "@unsavedBackups": {
     "placeholders": {

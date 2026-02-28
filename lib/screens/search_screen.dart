@@ -461,16 +461,39 @@ class _SearchScreenState extends State<SearchScreen> {
     if (!_hasSearched) {
       return LayoutBuilder(
         builder: (context, constraints) {
-          // Calcula o tamanho máximo da imagem baseado no espaço disponível
-          final maxSize = constraints.maxHeight * 0.85;
+          // Calcula o tamanho máximo da imagem baseado em parte da altura disponível
+          // Menor fator evita estouro quando também exibimos textos abaixo.
+          final maxSize = constraints.maxHeight * 0.5;
           final imageSize = maxSize.clamp(150.0, 400.0);
 
           return Center(
-            child: Image.asset(
-              'assets/image/pesquisa_historias.png',
-              width: imageSize,
-              height: imageSize,
-              fit: BoxFit.contain,
+            // Scroll se, mesmo assim, o conteúdo ultrapassar (ex: teclado em tela pequena)
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: imageSize,
+                    height: imageSize,
+                    child: Image.asset(
+                      'assets/image/pesquisa_historias.png',
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  // mesmos tamanhos e cores usados em home_screen para mensagem vazia
+                  Text(
+                    AppLocalizations.of(context)!.searchStoriesTitle,
+                    style: const TextStyle(fontSize: 18, color: Colors.grey),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    AppLocalizations.of(context)!.searchStoriesSubtitle,
+                    style: const TextStyle(fontSize: 14, color: Colors.grey),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
             ),
           );
         },
