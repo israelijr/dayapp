@@ -397,8 +397,15 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get useBiometricsToContinue => 'Use sua biometria para continuar';
+
   @override
   String get usePin => 'Usar PIN';
+
+  @override
+  String get noStoriesHere => 'Nenhuma história para exibir aqui.';
+
+  @override
+  String get storiesGroupedOrArchived => 'Elas estão agrupadas ou arquivadas.';
 
   @override
   String get useBiometrics => 'Usar biometria';
@@ -1717,8 +1724,15 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get useBiometricsToContinue => 'Use sua biometria para continuar';
+
   @override
   String get usePin => 'Usar PIN';
+
+  @override
+  String get noStoriesHere => 'Nenhuma história para exibir aqui.';
+
+  @override
+  String get storiesGroupedOrArchived => 'Elas estão agrupadas ou arquivadas.';
 
   @override
   String get useBiometrics => 'Usar biometria';

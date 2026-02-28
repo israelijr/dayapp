@@ -857,31 +857,43 @@ abstract class AppLocalizations {
   /// **'Use your biometrics to continue'**
   String get useBiometricsToContinue;
 
-  /// Label for usePin
+  /// No description provided for @usePin.
   ///
   /// In en, this message translates to:
   /// **'Use PIN'**
   String get usePin;
 
-  /// Label for useBiometrics
+  /// No description provided for @noStoriesHere.
+  ///
+  /// In en, this message translates to:
+  /// **'No stories to display here.'**
+  String get noStoriesHere;
+
+  /// No description provided for @storiesGroupedOrArchived.
+  ///
+  /// In en, this message translates to:
+  /// **'They are either grouped or archived.'**
+  String get storiesGroupedOrArchived;
+
+  /// No description provided for @useBiometrics.
   ///
   /// In en, this message translates to:
   /// **'Use Biometrics'**
   String get useBiometrics;
 
-  /// Button text for unlocking using biometrics
+  /// No description provided for @unlockWithBiometrics.
   ///
   /// In en, this message translates to:
   /// **'Unlock with Biometrics'**
   String get unlockWithBiometrics;
 
-  /// Label for 'Use account password'
+  /// No description provided for @useAccountPassword.
   ///
   /// In en, this message translates to:
   /// **'Use account password'**
   String get useAccountPassword;
 
-  /// Label for 'Forgot my PIN'
+  /// No description provided for @forgotPin.
   ///
   /// In en, this message translates to:
   /// **'Forgot my PIN'**

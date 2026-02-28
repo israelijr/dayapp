@@ -398,6 +398,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get usePin => 'Use PIN';
 
   @override
+  String get noStoriesHere => 'No stories to display here.';
+
+  @override
+  String get storiesGroupedOrArchived => 'They are either grouped or archived.';
+
+  @override
   String get useBiometrics => 'Use Biometrics';
 
   @override

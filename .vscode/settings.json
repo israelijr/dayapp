@@ -151,6 +151,17 @@
         }
     ],
     
+// .vscode/settings.json
+{
+  "files.associations": {
+    "*.arb": "json"         // trata ARB como JSON estrito
+  },
+  "json.format.enable": true,
+  "json.schemas": [
+     // … seus esquemas …
+  ]
+}
+
     // Instruções para teste e documentação
     "github.copilot.chat.testGeneration.instructions": [
         {

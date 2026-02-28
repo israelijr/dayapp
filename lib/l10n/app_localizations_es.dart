@@ -407,6 +407,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get usePin => 'Usar PIN';
 
   @override
+  String get noStoriesHere => 'No hay historias para mostrar aquí.';
+
+  @override
+  String get storiesGroupedOrArchived => 'Están agrupadas o archivadas.';
+
+  @override
   String get useBiometrics => 'Usar biometría';
 
   @override

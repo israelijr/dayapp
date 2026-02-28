@@ -138,6 +138,9 @@
   "useBiometricsToContinue": "Use su biometría para continuar",
 
   "usePin": "Usar PIN",
+
+  "noStoriesHere": "No hay historias para mostrar aquí.",
+  "storiesGroupedOrArchived": "Están agrupadas o archivadas.",
   "useBiometrics": "Usar biometría",
   "unlockWithBiometrics": "Desbloquear con biometría",
   "useAccountPassword": "Usar contraseña de la cuenta",

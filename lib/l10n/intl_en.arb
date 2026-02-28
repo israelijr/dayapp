@@ -144,6 +144,9 @@
   "useBiometricsToContinue": "Use your biometrics to continue",
 
   "usePin": "Use PIN",
+
+  "noStoriesHere": "No stories to display here.",
+  "storiesGroupedOrArchived": "They are either grouped or archived.",
   "useBiometrics": "Use Biometrics",
   "unlockWithBiometrics": "Unlock with Biometrics",
   "useAccountPassword": "Use account password",
