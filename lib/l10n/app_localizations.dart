@@ -287,31 +287,31 @@ abstract class AppLocalizations {
   /// **'Background lock'**
   String get backgroundLock;
 
-  /// Prompt asking the user how long the app should wait in background before locking
+  /// Prompt asking how long the app should be locked after being in background
   ///
   /// In en, this message translates to:
   /// **'How long should the app be locked after being in background?'**
   String get backgroundLockDialogPrompt;
 
-  /// Label for the time input field in background lock dialog
+  /// No description provided for @backgroundLockTimeLabel.
   ///
   /// In en, this message translates to:
   /// **'Time'**
   String get backgroundLockTimeLabel;
 
-  /// Prefix text shown before the calculated result in the dialog
+  /// No description provided for @backgroundLockDialogResult.
   ///
   /// In en, this message translates to:
   /// **'Result:'**
   String get backgroundLockDialogResult;
 
-  /// Title for the suggestions section in background lock dialog
+  /// No description provided for @backgroundLockSuggestions.
   ///
   /// In en, this message translates to:
   /// **'Suggestions:'**
   String get backgroundLockSuggestions;
 
-  /// Hint text for the time field when entering 0
+  /// No description provided for @backgroundLockImmediateHint.
   ///
   /// In en, this message translates to:
   /// **'0 = immediate'**
@@ -856,6 +856,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Use your biometrics to continue'**
   String get useBiometricsToContinue;
+
+  /// Label for usePin
+  ///
+  /// In en, this message translates to:
+  /// **'Use PIN'**
+  String get usePin;
+
+  /// Label for useBiometrics
+  ///
+  /// In en, this message translates to:
+  /// **'Use Biometrics'**
+  String get useBiometrics;
+
+  /// Button text for unlocking using biometrics
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock with Biometrics'**
+  String get unlockWithBiometrics;
+
+  /// Label for 'Use account password'
+  ///
+  /// In en, this message translates to:
+  /// **'Use account password'**
+  String get useAccountPassword;
+
+  /// Label for 'Forgot my PIN'
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot my PIN'**
+  String get forgotPin;
 
   /// Label for unlockTitle
   ///

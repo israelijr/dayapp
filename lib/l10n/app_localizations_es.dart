@@ -404,6 +404,21 @@ class AppLocalizationsEs extends AppLocalizations {
   String get useBiometricsToContinue => 'Use su biometría para continuar';
 
   @override
+  String get usePin => 'Usar PIN';
+
+  @override
+  String get useBiometrics => 'Usar biometría';
+
+  @override
+  String get unlockWithBiometrics => 'Desbloquear con biometría';
+
+  @override
+  String get useAccountPassword => 'Usar contraseña de la cuenta';
+
+  @override
+  String get forgotPin => 'Olvidé mi PIN';
+
+  @override
   String get unlockTitle => 'Desbloquee la aplicación';
 
   @override
@@ -1077,7 +1092,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String emptyTrashConfirm(Object count) {
-    return 'Do you want to permanently delete all $count story(ies) in the trash? This action cannot be undone.';
+    return '¿Desea eliminar permanentemente $count historia(s) de la papelera?';
   }
 
   @override

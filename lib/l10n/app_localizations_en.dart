@@ -395,6 +395,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get useBiometricsToContinue => 'Use your biometrics to continue';
 
   @override
+  String get usePin => 'Use PIN';
+
+  @override
+  String get useBiometrics => 'Use Biometrics';
+
+  @override
+  String get unlockWithBiometrics => 'Unlock with Biometrics';
+
+  @override
+  String get useAccountPassword => 'Use account password';
+
+  @override
+  String get forgotPin => 'Forgot my PIN';
+
+  @override
   String get unlockTitle => 'Unlock the App';
 
   @override

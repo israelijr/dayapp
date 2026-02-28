@@ -36,8 +36,9 @@
   "configurePin": "Configurar PIN",
   "biometrics": "Biometria",
   "backgroundLock": "Bloqueio em Segundo Plano",
-
-  // strings para o diálogo de bloqueio em segundo plano
+  "@backgroundLockDialogPrompt": {
+    "description": "strings para o diálogo de bloqueio em segundo plano"
+  },
   "backgroundLockDialogPrompt": "Após quanto tempo em segundo plano o app deve ser bloqueado?",
   "backgroundLockTimeLabel": "Tempo",
   "backgroundLockDialogResult": "Resultado:",
@@ -137,6 +138,12 @@
   "enterPasswordToContinue": "Digite sua senha para continuar",
   "enterPinToContinue": "Digite seu PIN para continuar",
   "useBiometricsToContinue": "Use sua biometria para continuar",
+
+  "usePin": "Usar PIN",
+  "useBiometrics": "Usar biometria",
+  "unlockWithBiometrics": "Desbloquear com biometria",
+  "useAccountPassword": "Usar senha da conta",
+  "forgotPin": "Esqueci meu PIN",
   "unlockTitle": "Desbloqueie o App",
   "search": "Pesquisar",
   "unsavedBackups": "Você tem {count} histórias sem backup.",

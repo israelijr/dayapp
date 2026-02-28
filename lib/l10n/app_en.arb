@@ -40,8 +40,9 @@
   "configurePin": "Configure PIN",
   "biometrics": "Biometrics",
   "backgroundLock": "Background lock",
-
-  // strings for the background lock timeout dialog
+  "@backgroundLockDialogPrompt": {
+    "description": "Prompt asking how long the app should be locked after being in background"
+  },
   "backgroundLockDialogPrompt": "How long should the app be locked after being in background?",
   "backgroundLockTimeLabel": "Time",
   "backgroundLockDialogResult": "Result:",
@@ -141,6 +142,12 @@
   "enterPasswordToContinue": "Enter your password to continue",
   "enterPinToContinue": "Enter your PIN to continue",
   "useBiometricsToContinue": "Use your biometrics to continue",
+
+  "usePin": "Use PIN",
+  "useBiometrics": "Use Biometrics",
+  "unlockWithBiometrics": "Unlock with Biometrics",
+  "useAccountPassword": "Use account password",
+  "forgotPin": "Forgot my PIN",
   "unlockTitle": "Unlock the App",
   "search": "Search",
   "unsavedBackups": "You have {count} stories not backed up.",

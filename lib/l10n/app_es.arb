@@ -36,8 +36,9 @@
   "configurePin": "Configurar PIN",
   "biometrics": "Biometría",
   "backgroundLock": "Bloqueo en segundo plano",
-
-  // cadenas para el diálogo de bloqueo en segundo plano
+  "@backgroundLockDialogPrompt": {
+    "description": "cadenas para el diálogo de bloqueo en segundo plano"
+  },
   "backgroundLockDialogPrompt": "¿Después de cuánto tiempo en segundo plano debe bloquearse la aplicación?",
   "backgroundLockTimeLabel": "Tiempo",
   "backgroundLockDialogResult": "Resultado:",
@@ -135,6 +136,12 @@
   "enterPasswordToContinue": "Ingrese su contraseña para continuar",
   "enterPinToContinue": "Ingrese su PIN para continuar",
   "useBiometricsToContinue": "Use su biometría para continuar",
+
+  "usePin": "Usar PIN",
+  "useBiometrics": "Usar biometría",
+  "unlockWithBiometrics": "Desbloquear con biometría",
+  "useAccountPassword": "Usar contraseña de la cuenta",
+  "forgotPin": "Olvidé mi PIN",
   "unlockTitle": "Desbloquee la aplicación",
   "search": "Buscar",
   "unsavedBackups": "Tienes {count} historias sin copia de seguridad.",
@@ -338,6 +345,7 @@
   "@restoreStoriesConfirm": {"placeholders": {"count": {}}},
   "@permanentlyDeleteConfirm": {"description": "Confirmation when permanently deleting a story"},
   "@deleteGroupConfirm": {"description": "Confirmation when deleting a group", "placeholders": {"name": {}}},
+  "emptyTrashConfirm": "¿Desea eliminar permanentemente {count} historia(s) de la papelera?",
   "@emptyTrashConfirm": {"placeholders": {"count": {}}},
   "errorSearch": "Error en la búsqueda: {message}",
   "successStoryRestored": "Historia restaurada con éxito",

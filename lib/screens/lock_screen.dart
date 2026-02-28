@@ -236,6 +236,7 @@ class _LockScreenState extends State<LockScreen> {
   }
 
   void _showRecoveryCodeDialog() async {
+    final loc = AppLocalizations.of(context)!; // usado dentro do diálogo
     final codeController = TextEditingController();
     final newPinController = TextEditingController();
     final confirmPinController = TextEditingController();
@@ -276,7 +277,7 @@ class _LockScreenState extends State<LockScreen> {
                   TextField(
                     controller: newPinController,
                     decoration: InputDecoration(
-                      labelText: 'Novo PIN (4 a 8 dígitos)',
+                      labelText: '${loc.newPinLabel} (4 a 8 dígitos)',
                       border: const OutlineInputBorder(),
                       prefixIcon: const Icon(Icons.pin),
                       suffixIcon: IconButton(
@@ -300,7 +301,7 @@ class _LockScreenState extends State<LockScreen> {
                   TextField(
                     controller: confirmPinController,
                     decoration: InputDecoration(
-                      labelText: 'Confirmar novo PIN',
+                      labelText: loc.confirmPin,
                       border: const OutlineInputBorder(),
                       prefixIcon: const Icon(Icons.pin),
                       suffixIcon: IconButton(
@@ -379,6 +380,9 @@ class _LockScreenState extends State<LockScreen> {
                   final invalidCodeMsg = AppLocalizations.of(
                     dialogContext,
                   )!.codeInvalid;
+                  final successMsg = AppLocalizations.of(
+                    dialogContext,
+                  )!.pinConfiguredSuccess;
                   final pinProvider = Provider.of<PinProvider>(
                     dialogContext,
                     listen: false,
@@ -397,9 +401,9 @@ class _LockScreenState extends State<LockScreen> {
                     if (!mounted) return;
                     navigator.pop();
                     messenger.showSnackBar(
-                      const SnackBar(
-                        content: Text('PIN redefinido com sucesso!'),
-                        duration: Duration(seconds: 3),
+                      SnackBar(
+                        content: Text(successMsg),
+                        duration: const Duration(seconds: 3),
                       ),
                     );
                   } else {
@@ -422,6 +426,7 @@ class _LockScreenState extends State<LockScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
     final pinProvider = Provider.of<PinProvider>(context, listen: false);
     final bool onlyBiometric =
         _isBiometricAvailable && !pinProvider.isPinEnabled;
@@ -449,17 +454,17 @@ class _LockScreenState extends State<LockScreen> {
 
                       // Título
                       Text(
-                        'Desbloqueie o App',
+                        loc.unlockTitle,
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
                       const SizedBox(height: 8),
 
                       Text(
                         _showPasswordMode
-                            ? 'Digite sua senha para continuar'
+                            ? loc.enterPasswordToContinue
                             : onlyBiometric
-                            ? 'Use sua biometria para continuar'
-                            : 'Digite seu PIN para continuar',
+                            ? loc.useBiometricsToContinue
+                            : loc.enterPinToContinue,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
@@ -482,8 +487,8 @@ class _LockScreenState extends State<LockScreen> {
                           icon: const Icon(Icons.pin, size: 18),
                           label: Text(
                             pinProvider.isPinEnabled
-                                ? 'Usar PIN'
-                                : 'Usar Biometria',
+                                ? loc.usePin
+                                : loc.useBiometrics,
                           ),
                         ),
                       ] else ...[
@@ -495,7 +500,7 @@ class _LockScreenState extends State<LockScreen> {
                           if (_showError) ...[
                             const SizedBox(height: 16),
                             Text(
-                              'PIN incorreto. Tente novamente.',
+                              loc.pinIncorrect,
                               style: TextStyle(
                                 color: Theme.of(context).colorScheme.error,
                                 fontWeight: FontWeight.w500,
@@ -520,8 +525,8 @@ class _LockScreenState extends State<LockScreen> {
                             icon: const Icon(Icons.fingerprint),
                             label: Text(
                               onlyBiometric
-                                  ? 'Desbloquear com Biometria'
-                                  : 'Usar Biometria',
+                                  ? loc.unlockWithBiometrics
+                                  : loc.useBiometrics,
                             ),
                             style: ElevatedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(
@@ -545,7 +550,7 @@ class _LockScreenState extends State<LockScreen> {
                                   });
                                 },
                           icon: const Icon(Icons.password, size: 18),
-                          label: const Text('Usar Senha da Conta'),
+                          label: Text(loc.useAccountPassword),
                         ),
 
                         const SizedBox(height: 8),
@@ -554,7 +559,7 @@ class _LockScreenState extends State<LockScreen> {
                         if (pinProvider.isPinEnabled)
                           TextButton(
                             onPressed: _isLoading ? null : _showRecoveryOptions,
-                            child: const Text('Esqueci meu PIN'),
+                            child: Text(loc.forgotPin),
                           ),
                       ],
                     ],
