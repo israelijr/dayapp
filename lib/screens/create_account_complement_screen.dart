@@ -67,9 +67,7 @@ class _CreateAccountComplementScreenState
     await db.update(
       'users',
       {
-        'dt_nascimento': birthDate != null
-            ? DateFormat('dd/MM/yyyy').format(birthDate)
-            : null,
+        'dt_nascimento': birthDate?.toIso8601String(),
         'foto_perfil': profileImagePath,
       },
       where: 'id = ?',
