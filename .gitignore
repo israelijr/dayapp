@@ -78,6 +78,7 @@ serviceAccountKey.json
 
 # Configuração SMTP (credenciais de e-mail)
 lib/services/smtp_config.dart
+lib/services/smtp_config.example.dart
 
 # Arquivos de apoio
 GoogleSite.txt
