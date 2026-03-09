@@ -20,7 +20,6 @@ import '../widgets/rich_text_viewer_widget.dart';
 import 'create_historia_screen.dart';
 import 'edit_historia_screen.dart';
 import 'edit_profile_screen.dart';
-import 'group_selection_screen.dart';
 import 'pdf_preview_screen.dart';
 
 class GroupStoriesScreen extends StatefulWidget {
@@ -313,24 +312,28 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
             motion: const BehindMotion(),
             children: [
               SlidableAction(
-                onPressed: (context) async {
-                  final navigator = Navigator.of(context);
-                  final selectedGroup = await navigator.push<String>(
-                    MaterialPageRoute(
-                      builder: (_) => const GroupSelectionScreen(),
-                    ),
+                onPressed: (slidableContext) async {
+                  final refreshProvider = Provider.of<RefreshProvider>(
+                    slidableContext,
+                    listen: false,
                   );
-                  if (selectedGroup != null) {
-                    await _updateHistoria(
-                      historia,
-                      updates: {'grupo': selectedGroup},
-                    );
-                  }
+                  final ungroupedMsg = AppLocalizations.of(
+                    slidableContext,
+                  )!.storyUngrouped;
+                  await _updateHistoria(
+                    historia,
+                    updates: {'tag': null, 'arquivado': null, 'grupo': null},
+                  );
+                  if (!mounted) return;
+                  refreshProvider.refresh();
+                  _messengerKey.currentState?.showSnackBar(
+                    SnackBar(content: Text(ungroupedMsg)),
+                  );
                 },
                 backgroundColor: AppColors.emoticonGreen,
                 foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                icon: Icons.group,
-                label: AppLocalizations.of(context)!.group,
+                icon: Icons.group_off,
+                label: AppLocalizations.of(context)?.ungroup ?? 'Desagrupar',
               ),
             ],
           ),
@@ -548,7 +551,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
         padding: const EdgeInsets.only(right: 20),
         color: AppColors.emoticonGreen,
         child: Text(
-          AppLocalizations.of(context)?.group ?? 'Grupo',
+          AppLocalizations.of(context)?.ungroup ?? 'Desagrupar',
           style: TextStyle(
             color: Theme.of(context).colorScheme.onPrimary,
             fontSize: 18,
@@ -561,13 +564,21 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
           await _archiveWithUndo(historia);
           return true;
         } else if (direction == DismissDirection.endToStart) {
-          final navigator = Navigator.of(context);
-          final selectedGroup = await navigator.push<String>(
-            MaterialPageRoute(builder: (_) => const GroupSelectionScreen()),
+          final refreshProvider = Provider.of<RefreshProvider>(
+            context,
+            listen: false,
           );
-          if (selectedGroup != null) {
-            await _updateHistoria(historia, updates: {'grupo': selectedGroup});
-          }
+          final ungroupedMsg = AppLocalizations.of(context)!.storyUngrouped;
+          await _updateHistoria(
+            historia,
+            updates: {'tag': null, 'arquivado': null, 'grupo': null},
+          );
+          if (!mounted) return false;
+          refreshProvider.refresh();
+          _messengerKey.currentState?.showSnackBar(
+            SnackBar(content: Text(ungroupedMsg)),
+          );
+          return true;
         }
         return false;
       },
