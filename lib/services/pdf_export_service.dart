@@ -6,6 +6,8 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/widgets.dart' as fw;
 // printing not needed in this file
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart' as pdf;
 import 'package:pdf/widgets.dart' as pw;
 
@@ -22,11 +24,14 @@ class PdfExportService {
     String? tags,
     String? emoticon,
     bool highQuality = false,
+    String? locale,
   }) async {
     final doc = pw.Document();
 
-    final dateStr =
-        '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+    // Formata a data conforme o locale selecionado no app
+    final resolvedLocale = locale ?? 'pt_BR';
+    await initializeDateFormatting(resolvedLocale, null);
+    final dateStr = DateFormat.yMd(resolvedLocale).add_Hm().format(date);
 
     // Tenta carregar fontes TTF (Noto) em assets para suporte Unicode.
     // Se não existir, mantém o fallback para Helvetica (sem suporte Unicode).
@@ -105,6 +110,15 @@ class PdfExportService {
       }
     }
 
+    // Carrega o ícone do app para o cabeçalho do PDF
+    Uint8List? iconBytes;
+    try {
+      final iconData = await rootBundle.load('assets/icon/icon.png');
+      iconBytes = iconData.buffer.asUint8List();
+    } catch (_) {
+      iconBytes = null;
+    }
+
     doc.addPage(
       pw.MultiPage(
         pageFormat: pageFormat,
@@ -112,61 +126,99 @@ class PdfExportService {
         build: (context) {
           final List<pw.Widget> widgets = [];
 
-          // Header: título e meta
+          // Cabeçalho da marca DayApp
           widgets.add(
-            pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
+            pw.Row(
+              crossAxisAlignment: pw.CrossAxisAlignment.center,
               children: [
-                pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                if (iconBytes != null)
+                  pw.Container(
+                    margin: const pw.EdgeInsets.only(right: 8),
+                    child: pw.Image(
+                      pw.MemoryImage(iconBytes),
+                      width: 36,
+                      height: 36,
+                    ),
+                  ),
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
-                    pw.Expanded(
-                      child: pw.Text(
-                        title,
-                        style: pw.TextStyle(font: boldFont, fontSize: 20),
+                    pw.Text(
+                      'DayApp',
+                      style: pw.TextStyle(font: boldFont, fontSize: 18),
+                    ),
+                    pw.Text(
+                      'Seu diário pessoal',
+                      style: pw.TextStyle(
+                        font: baseFont,
+                        fontSize: 10,
+                        color: const pdf.PdfColor.fromInt(0xFF666666),
                       ),
                     ),
-                    if (emoticonPng != null)
-                      pw.Container(
-                        margin: const pw.EdgeInsets.only(left: 8),
-                        child: pw.Image(
-                          pw.MemoryImage(emoticonPng),
-                          width: 26,
-                          height: 26,
-                        ),
-                      )
-                    else if (emoticon != null)
+                  ],
+                ),
+              ],
+            ),
+          );
+
+          widgets.add(pw.SizedBox(height: 8));
+          widgets.add(pw.Divider());
+          widgets.add(pw.SizedBox(height: 8));
+
+          // Título da história
+          widgets.add(
+            pw.Text(title, style: pw.TextStyle(font: boldFont, fontSize: 20)),
+          );
+
+          widgets.add(pw.SizedBox(height: 6));
+
+          // Linha com data/hora à esquerda e emoticon à direita
+          widgets.add(
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text(
+                      dateStr,
+                      style: pw.TextStyle(
+                        font: baseFont,
+                        fontSize: 10,
+                        color: const pdf.PdfColor.fromInt(0xFF666666),
+                      ),
+                    ),
+                    if (tags != null && tags.isNotEmpty)
                       pw.Text(
-                        emoticon,
-                        style: pw.TextStyle(font: baseFont, fontSize: 20),
+                        'Tags: $tags',
+                        style: pw.TextStyle(
+                          font: baseFont,
+                          fontSize: 10,
+                          color: const pdf.PdfColor.fromInt(0xFF666666),
+                        ),
                       ),
                   ],
                 ),
-                pw.SizedBox(height: 6),
-                pw.Text(
-                  'Data: $dateStr',
-                  style: pw.TextStyle(
-                    font: baseFont,
-                    fontSize: 10,
-                    color: const pdf.PdfColor.fromInt(0xFF666666),
-                  ),
-                ),
-                if (tags != null && tags.isNotEmpty)
-                  pw.Text(
-                    'Tags: $tags',
-                    style: pw.TextStyle(
-                      font: baseFont,
-                      fontSize: 10,
-                      color: const pdf.PdfColor.fromInt(0xFF666666),
+                if (emoticonPng != null)
+                  pw.Container(
+                    margin: const pw.EdgeInsets.only(left: 8),
+                    child: pw.Image(
+                      pw.MemoryImage(emoticonPng),
+                      width: 26,
+                      height: 26,
                     ),
+                  )
+                else if (emoticon != null)
+                  pw.Text(
+                    emoticon,
+                    style: pw.TextStyle(font: baseFont, fontSize: 20),
                   ),
-                pw.Divider(),
               ],
             ),
           );
 
           // Conteúdo textual
-          widgets.add(pw.SizedBox(height: 8));
+          widgets.add(pw.SizedBox(height: 16));
           widgets.add(
             pw.Text(content, style: pw.TextStyle(font: baseFont, fontSize: 12)),
           );

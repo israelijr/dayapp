@@ -53,6 +53,7 @@ class _HomeContentState extends State<HomeContent> {
       // Salva referências do contexto antes das operações assíncronas
       final navigator = Navigator.of(context);
       final localizations = AppLocalizations.of(context)!;
+      final localeName = localizations.localeName;
 
       final fotosData = await HistoriaFotoHelper().getFotosComBytesByHistoria(
         historia.id ?? 0,
@@ -66,6 +67,7 @@ class _HomeContentState extends State<HomeContent> {
         images: images,
         tags: historia.tag,
         emoticon: historia.emoticon,
+        locale: localeName,
       );
       final filename =
           'historia_${historia.id ?? DateTime.now().millisecondsSinceEpoch}.pdf';
@@ -83,6 +85,7 @@ class _HomeContentState extends State<HomeContent> {
                   tags: historia.tag,
                   emoticon: historia.emoticon,
                   highQuality: highQuality,
+                  locale: localeName,
                 ),
             filename: filename,
             title: localizations.previewTitle(historia.titulo),

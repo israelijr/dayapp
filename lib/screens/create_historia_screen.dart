@@ -244,7 +244,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
       initialDate: selectedDate,
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
-      locale: const Locale('pt', 'BR'),
+      locale: Localizations.localeOf(context),
     );
     if (!mounted) return;
     if (date != null) {
@@ -449,6 +449,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
             ? null
             : tagsController.text.trim(),
         emoticon: selectedEmoticon,
+        locale: loc.localeName,
       );
 
       final filename = 'historia_${DateTime.now().millisecondsSinceEpoch}.pdf';
@@ -471,6 +472,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                       : tagsController.text.trim(),
                   emoticon: selectedEmoticon,
                   highQuality: highQuality,
+                  locale: loc.localeName,
                 ),
             filename: filename,
             title: AppLocalizations.of(context)!.previewTitle(titleText),

@@ -59,8 +59,12 @@ void main() async {
     databaseFactory = databaseFactoryFfi;
   }
 
-  // Inicialização de data/hora (rápida e necessária para formatação)
-  await initializeDateFormatting('pt_BR', null);
+  // Inicialização de data/hora para todos os locales suportados pelo app
+  await Future.wait([
+    initializeDateFormatting('pt_BR', null),
+    initializeDateFormatting('en_US', null),
+    initializeDateFormatting('es_ES', null),
+  ]);
 
   // Antes de rodar o app, tenta ler a preferência de idioma para poder usar
   // essa escolha já na splash. Isso evita que o app mostre português na

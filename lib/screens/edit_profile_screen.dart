@@ -57,8 +57,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       _nameController.text = user.nome;
       _emailController.text = user.email;
       _selectedDate = user.dtNascimento;
+      final locale = Localizations.localeOf(context).toString();
       _birthDateController.text = user.dtNascimento != null
-          ? DateFormat('dd/MM/yyyy').format(user.dtNascimento!)
+          ? DateFormat.yMd(locale).format(user.dtNascimento!)
           : '';
       _pickedImagePath = user.fotoPerfil;
     }
@@ -78,12 +79,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       initialDate: _selectedDate ?? DateTime.now(),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
-      locale: const Locale('pt', 'BR'),
+      locale: Localizations.localeOf(context),
     );
     if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
-        _birthDateController.text = DateFormat('dd/MM/yyyy').format(picked);
+        _birthDateController.text = DateFormat.yMd(
+          Localizations.localeOf(context).toString(),
+        ).format(picked);
       });
     }
   }

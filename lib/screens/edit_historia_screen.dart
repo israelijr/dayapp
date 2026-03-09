@@ -418,7 +418,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
       initialDate: selectedDate,
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
-      locale: const Locale('pt', 'BR'),
+      locale: Localizations.localeOf(context),
     );
     if (!mounted) return;
     if (date != null) {
@@ -706,6 +706,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
           ? null
           : tagsController.text.trim(),
       emoticon: selectedEmoticon,
+      locale: loc.localeName,
     );
 
     final filename =
@@ -726,6 +727,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                 : tagsController.text.trim(),
             emoticon: selectedEmoticon,
             highQuality: highQuality,
+            locale: loc.localeName,
           ),
           filename: filename,
           title: AppLocalizations.of(

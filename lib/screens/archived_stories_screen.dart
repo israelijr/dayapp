@@ -66,6 +66,8 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
 
   Future<void> _exportHistoria(Historia historia) async {
     try {
+      // Captura o locale antes do primeiro await para evitar uso de context após async
+      final localeName = AppLocalizations.of(context)!.localeName;
       final fotosData = await HistoriaFotoHelper().getFotosComBytesByHistoria(
         historia.id ?? 0,
       );
@@ -78,6 +80,7 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
         images: images,
         tags: historia.tag,
         emoticon: historia.emoticon,
+        locale: localeName,
       );
       final filename =
           'historia_${historia.id ?? DateTime.now().millisecondsSinceEpoch}.pdf';
@@ -96,6 +99,7 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
                   tags: historia.tag,
                   emoticon: historia.emoticon,
                   highQuality: highQuality,
+                  locale: localeName,
                 ),
             filename: filename,
             title: AppLocalizations.of(context)!.previewTitle(historia.titulo),
