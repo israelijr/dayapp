@@ -8,8 +8,6 @@
     "defaultLabel",
     "searchStoriesTitle",
     "searchStoriesSubtitle",
-    "record",
-    "records",
     "filterText",
     "filterTag",
     "filterEmoticon",
@@ -172,8 +170,6 @@
   ],
 
   "pt_BR": [
-    "record",
-    "records",
     "filterText",
     "filterTag",
     "filterEmoticon",

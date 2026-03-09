@@ -5,16 +5,11 @@ import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../db/database_helper.dart';
-import '../db/historia_audio_helper.dart';
-import '../db/historia_foto_helper.dart';
-import '../db/historia_video_helper.dart';
 import '../models/historia.dart';
-import '../models/historia_video_v2.dart' as v2;
 import '../providers/auth_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../theme/m3_expressive_theme.dart';
-import '../widgets/compact_audio_icon.dart';
-import '../widgets/compact_video_icon.dart';
+import '../widgets/historia_media_widgets.dart';
 import '../widgets/rich_text_viewer_widget.dart';
 import 'edit_historia_screen.dart';
 
@@ -428,38 +423,8 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
                   child: RichTextViewerWidget(jsonContent: historia.descricao),
                 ),
               ],
-              // Preview de fotos
-              FutureBuilder<List<FotoComBytes>>(
-                future: HistoriaFotoHelper().getFotosComBytesByHistoria(
-                  historia.id ?? 0,
-                ),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const SizedBox.shrink();
-                  }
-
-                  final fotos = snapshot.data!.take(3).toList();
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: Row(
-                      children: fotos.map((foto) {
-                        return Container(
-                          margin: const EdgeInsets.only(right: 8),
-                          width: 60,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            image: DecorationImage(
-                              image: MemoryImage(foto.bytes),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  );
-                },
-              ),
+              // Grade de fotos com visualizador completo
+              HistoriaFotosGrid(historiaId: historia.id ?? 0, height: 80),
             ],
           ),
         ),
@@ -572,113 +537,13 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
           const SizedBox(height: 16),
         ],
 
-        // Fotos
-        FutureBuilder<List<FotoComBytes>>(
-          future: HistoriaFotoHelper().getFotosComBytesByHistoria(
-            historia.id ?? 0,
-          ),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const SizedBox.shrink();
-            }
-
-            final fotos = snapshot.data!;
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Fotos:',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 8,
-                    mainAxisSpacing: 8,
-                  ),
-                  itemCount: fotos.length,
-                  itemBuilder: (context, index) {
-                    return ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.memory(
-                        fotos[index].bytes,
-                        fit: BoxFit.cover,
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(height: 16),
-              ],
-            );
-          },
-        ),
-        // Áudios
-        FutureBuilder<List<AudioComBytes>>(
-          future: HistoriaAudioHelper().getAudiosComBytesByHistoria(
-            historia.id ?? 0,
-          ),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const SizedBox.shrink();
-            }
-
-            final audios = snapshot.data!;
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Áudios:',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: audios.map((audio) {
-                    return CompactAudioIcon(
-                      audioData: audio.bytes,
-                      duration: audio.duracao,
-                    );
-                  }).toList(),
-                ),
-                const SizedBox(height: 16),
-              ],
-            );
-          },
-        ),
-        // Vídeos
-        FutureBuilder<List<v2.HistoriaVideo>>(
-          future: HistoriaVideoHelper().getVideosByHistoria(historia.id ?? 0),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const SizedBox.shrink();
-            }
-
-            final videos = snapshot.data!;
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Vídeos:',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: videos.map((video) {
-                    return CompactVideoIcon(
-                      videoPath: video.videoPath,
-                      duration: video.duracao,
-                    );
-                  }).toList(),
-                ),
-              ],
-            );
-          },
+        // Fotos com grade e visualizador completo
+        HistoriaFotosGrid(historiaId: historia.id ?? 0, height: 200),
+        const SizedBox(height: 8),
+        // Áudios e vídeos
+        HistoriaMediaRow(
+          historiaId: historia.id ?? 0,
+          emoticon: historia.emoticon,
         ),
       ],
     );

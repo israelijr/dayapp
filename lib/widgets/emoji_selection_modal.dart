@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
 import '../services/emoji_service.dart';
 
 class EmojiSelectionModal extends StatefulWidget {
@@ -33,6 +34,30 @@ class _EmojiSelectionModalState extends State<EmojiSelectionModal> {
     }
   }
 
+  /// Traduz o nome do grupo de emoji (vindo do JSON em português) para o idioma atual
+  String _translateGroup(String group, AppLocalizations loc) {
+    switch (group.toUpperCase()) {
+      case 'SENTIMENTOS':
+        return loc.emojiGroupSentimentos;
+      case 'ANIMAIS':
+        return loc.emojiGroupAnimais;
+      case 'VEGETAIS':
+        return loc.emojiGroupVegetais;
+      case 'CÉU':
+        return loc.emojiGroupCeu;
+      case 'OBJETOS':
+        return loc.emojiGroupObjetos;
+      case 'ALIMENTOS':
+        return loc.emojiGroupAlimentos;
+      case 'LUGARES':
+        return loc.emojiGroupLugares;
+      case 'SÍMBOLOS':
+        return loc.emojiGroupSimbolos;
+      default:
+        return group;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -49,16 +74,16 @@ class _EmojiSelectionModalState extends State<EmojiSelectionModal> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Row(
+                Row(
                   children: [
-                    Text(
+                    const Text(
                       '🙂', // Placeholder icon
                       style: TextStyle(fontSize: 24),
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Text(
-                      'Escolha um emoji',
-                      style: TextStyle(
+                      AppLocalizations.of(context)!.chooseEmoji,
+                      style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
@@ -90,7 +115,7 @@ class _EmojiSelectionModalState extends State<EmojiSelectionModal> {
                     padding: const EdgeInsets.only(right: 8),
                     child: ChoiceChip(
                       label: Text(
-                        group,
+                        _translateGroup(group, AppLocalizations.of(context)!),
                         style: TextStyle(
                           color: isSelected
                               ? Theme.of(context).colorScheme.onPrimary

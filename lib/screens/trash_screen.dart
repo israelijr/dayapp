@@ -4,14 +4,11 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../db/database_helper.dart';
-import '../db/historia_audio_helper.dart';
-import '../db/historia_foto_helper.dart';
-import '../db/historia_video_helper.dart';
 import '../models/historia.dart';
-import '../models/historia_video_v2.dart' as v2;
 import '../providers/auth_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../theme/m3_expressive_theme.dart';
+import '../widgets/historia_media_widgets.dart';
 import '../widgets/rich_text_viewer_widget.dart';
 
 class TrashScreen extends StatefulWidget {
@@ -388,86 +385,11 @@ class _TrashScreenState extends State<TrashScreen> {
                   ),
                 ),
               ],
-              // Mostrar mídia anexada
-              FutureBuilder(
-                future: Future.wait([
-                  HistoriaFotoHelper().getFotosComBytesByHistoria(
-                    historia.id ?? 0,
-                  ),
-                  HistoriaAudioHelper().getAudiosComBytesByHistoria(
-                    historia.id ?? 0,
-                  ),
-                  HistoriaVideoHelper().getVideosByHistoria(historia.id ?? 0),
-                ]),
-                builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
-                  if (!snapshot.hasData) return const SizedBox.shrink();
-
-                  final fotos = snapshot.data![0] as List<FotoComBytes>;
-                  final audios = snapshot.data![1] as List<AudioComBytes>;
-                  final videos = snapshot.data![2] as List<v2.HistoriaVideo>;
-
-                  final hasMedia =
-                      fotos.isNotEmpty ||
-                      audios.isNotEmpty ||
-                      videos.isNotEmpty;
-
-                  if (!hasMedia) return const SizedBox.shrink();
-
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: Row(
-                      children: [
-                        if (fotos.isNotEmpty)
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.image,
-                                size: 16,
-                                color: Colors.grey,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                '${fotos.length}',
-                                style: const TextStyle(fontSize: 12),
-                              ),
-                              const SizedBox(width: 12),
-                            ],
-                          ),
-                        if (audios.isNotEmpty)
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.audiotrack,
-                                size: 16,
-                                color: Colors.grey,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                '${audios.length}',
-                                style: const TextStyle(fontSize: 12),
-                              ),
-                              const SizedBox(width: 12),
-                            ],
-                          ),
-                        if (videos.isNotEmpty)
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.videocam,
-                                size: 16,
-                                color: Colors.grey,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                '${videos.length}',
-                                style: const TextStyle(fontSize: 12),
-                              ),
-                            ],
-                          ),
-                      ],
-                    ),
-                  );
-                },
+              // Mostra fotos com visualizador completo e áudios/vídeos
+              HistoriaFotosGrid(historiaId: historia.id ?? 0, height: 100),
+              HistoriaMediaRow(
+                historiaId: historia.id ?? 0,
+                emoticon: historia.emoticon,
               ),
             ],
           ),

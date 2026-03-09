@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../db/grupo_helper.dart';
+import '../l10n/app_localizations.dart';
 import '../models/grupo.dart';
 import '../providers/auth_provider.dart';
 import 'archived_stories_screen.dart';
@@ -73,7 +74,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Grupos')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.groups)),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
@@ -86,7 +87,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                       ListTile(
                         title: const Text('Arquivados'),
                         subtitle: Text(
-                          '$_arquivadosCount ${_arquivadosCount == 1 ? 'registro' : 'registros'}',
+                          '$_arquivadosCount ${_arquivadosCount == 1 ? AppLocalizations.of(context)!.record : AppLocalizations.of(context)!.records}',
                         ),
                         leading: const Icon(Icons.archive, color: Colors.grey),
                         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
@@ -118,7 +119,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
                   ),
                   title: Text(grupo.nome),
                   subtitle: Text(
-                    '$count ${count == 1 ? 'registro' : 'registros'}',
+                    '$count ${count == 1 ? AppLocalizations.of(context)!.record : AppLocalizations.of(context)!.records}',
                   ),
                   trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                   onTap: () {

@@ -118,6 +118,30 @@ class AppLocalizationsEs extends AppLocalizations {
   String get backgroundLockImmediateHint => '0 = inmediato';
 
   @override
+  String get backgroundLockImmediately => 'Inmediatamente';
+
+  @override
+  String backgroundLockSeconds(int count) {
+    return '$count segundos';
+  }
+
+  @override
+  String get backgroundLockOneMinute => '1 minuto';
+
+  @override
+  String backgroundLockMinutes(int count) {
+    return '$count minutos';
+  }
+
+  @override
+  String get backgroundLockOneHour => '1 hora';
+
+  @override
+  String backgroundLockHours(int count) {
+    return '$count horas';
+  }
+
+  @override
   String get statistics => 'Estadísticas';
 
   @override
@@ -1346,4 +1370,31 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get archiveSubtitle => 'Ocultar de la pantalla principal';
+
+  @override
+  String get chooseEmoji => 'Elige un emoji';
+
+  @override
+  String get emojiGroupSentimentos => 'Sentimientos';
+
+  @override
+  String get emojiGroupAnimais => 'Animales';
+
+  @override
+  String get emojiGroupVegetais => 'Plantas';
+
+  @override
+  String get emojiGroupCeu => 'Cielo';
+
+  @override
+  String get emojiGroupObjetos => 'Objetos';
+
+  @override
+  String get emojiGroupAlimentos => 'Alimentos';
+
+  @override
+  String get emojiGroupLugares => 'Lugares';
+
+  @override
+  String get emojiGroupSimbolos => 'Símbolos';
 }

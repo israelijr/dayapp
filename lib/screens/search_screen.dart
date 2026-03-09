@@ -4,13 +4,13 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../db/database_helper.dart';
-import '../db/historia_foto_helper.dart';
 import '../models/historia.dart';
 import '../providers/auth_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../services/emoji_service.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/emoji_selection_modal.dart';
+import '../widgets/historia_media_widgets.dart';
 import '../widgets/rich_text_viewer_widget.dart';
 import 'edit_historia_screen.dart';
 
@@ -617,144 +617,123 @@ class _SearchScreenState extends State<SearchScreen> {
 
   /// Card de uma história
   Widget _buildHistoriaCard(Historia historia) {
-    return FutureBuilder<List<FotoComBytes>>(
-      future: HistoriaFotoHelper().getFotosComBytesByHistoria(historia.id ?? 0),
-      builder: (context, snapshot) {
-        final hasImages = snapshot.hasData && snapshot.data!.isNotEmpty;
-
-        return GestureDetector(
-          onTap: () {
-            final refreshProvider = Provider.of<RefreshProvider>(
-              context,
-              listen: false,
-            );
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => EditHistoriaScreen(historia: historia),
+    return GestureDetector(
+      onTap: () {
+        final refreshProvider = Provider.of<RefreshProvider>(
+          context,
+          listen: false,
+        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => EditHistoriaScreen(historia: historia),
+          ),
+        ).then((updated) {
+          if (updated == true) {
+            // Atualiza os resultados após edição
+            _performSearch();
+            if (mounted) {
+              refreshProvider.refresh();
+            }
+          }
+        });
+      },
+      child: Card(
+        margin: const EdgeInsets.only(bottom: 12),
+        elevation: 2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Visualização das fotos com grade e visualizador completo
+              HistoriaFotosGrid(historiaId: historia.id ?? 0, height: 120),
+              // Áudios e vídeos
+              HistoriaMediaRow(
+                historiaId: historia.id ?? 0,
+                emoticon: historia.emoticon,
               ),
-            ).then((updated) {
-              if (updated == true) {
-                // Atualiza os resultados após edição
-                _performSearch();
-                if (mounted) {
-                  refreshProvider.refresh();
-                }
-              }
-            });
-          },
-          child: Card(
-            margin: const EdgeInsets.only(bottom: 12),
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+
+              // Título e emoticon
+              Row(
                 children: [
-                  // Imagem da história (se houver)
-                  if (hasImages && snapshot.data!.isNotEmpty) ...[
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Image.memory(
-                        snapshot.data!.first.bytes,
-                        height: 120,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
+                  Expanded(
+                    child: Text(
+                      historia.titulo,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).textTheme.titleLarge?.color,
                       ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 12),
-                  ],
-
-                  // Título e emoticon
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          historia.titulo,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(
-                              context,
-                            ).textTheme.titleLarge?.color,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      if (historia.emoticon != null &&
-                          historia.emoticon!.isNotEmpty) ...[
-                        const SizedBox(width: 8),
-                        _buildEmoticonWidget(historia.emoticon!),
-                      ],
-                    ],
                   ),
-
-                  // Tag (se houver)
-                  if (historia.tag != null && historia.tag!.isNotEmpty) ...[
-                    const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.secondaryContainer,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        historia.tag!,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSecondaryContainer,
-                        ),
-                      ),
-                    ),
+                  if (historia.emoticon != null &&
+                      historia.emoticon!.isNotEmpty) ...[
+                    const SizedBox(width: 8),
+                    _buildEmoticonWidget(historia.emoticon!),
                   ],
+                ],
+              ),
 
-                  // Descrição (resumo)
-                  if (historia.descricao != null &&
-                      historia.descricao!.isNotEmpty) ...[
-                    const SizedBox(height: 8),
-                    SizedBox(
-                      height: 48,
-                      child: RichTextViewerWidget(
-                        jsonContent: historia.descricao,
-                      ),
+              // Tag (se houver)
+              if (historia.tag != null && historia.tag!.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.secondaryContainer,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    historia.tag!,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Theme.of(context).colorScheme.onSecondaryContainer,
                     ),
-                  ],
+                  ),
+                ),
+              ],
 
-                  // Hora
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Icon(
-                        Icons.access_time,
-                        size: 14,
-                        color: Theme.of(context).textTheme.bodySmall?.color,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        DateFormat('HH:mm', 'pt_BR').format(historia.data),
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Theme.of(context).textTheme.bodySmall?.color,
-                        ),
-                      ),
-                    ],
+              // Descrição (resumo)
+              if (historia.descricao != null &&
+                  historia.descricao!.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                SizedBox(
+                  height: 48,
+                  child: RichTextViewerWidget(jsonContent: historia.descricao),
+                ),
+              ],
+
+              // Hora
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Icon(
+                    Icons.access_time,
+                    size: 14,
+                    color: Theme.of(context).textTheme.bodySmall?.color,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    DateFormat('HH:mm', 'pt_BR').format(historia.data),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Theme.of(context).textTheme.bodySmall?.color,
+                    ),
                   ),
                 ],
               ),
-            ),
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 

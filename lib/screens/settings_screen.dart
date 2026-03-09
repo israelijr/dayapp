@@ -381,7 +381,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             leading: const Icon(Icons.lock_clock),
             title: Text(AppLocalizations.of(context)!.backgroundLock),
             subtitle: Text(
-              '${AppLocalizations.of(context)!.backgroundLock}: ${InactivityService.getBackgroundTimeoutLabel(_backgroundLockTimeout)}',
+              '${AppLocalizations.of(context)!.backgroundLock}: ${InactivityService.getBackgroundTimeoutLabel(_backgroundLockTimeout, AppLocalizations.of(context)!)}',
             ),
             onTap: _showBackgroundLockTimeoutDialog,
           ),
@@ -399,7 +399,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             leading: const Icon(Icons.lock_clock),
             title: Text(loc.backgroundLock),
             subtitle: Text(
-              '${loc.backgroundLock}: ${InactivityService.getBackgroundTimeoutLabel(_backgroundLockTimeout)}',
+              '${loc.backgroundLock}: ${InactivityService.getBackgroundTimeoutLabel(_backgroundLockTimeout, AppLocalizations.of(context)!)}',
             ),
             onTap: _showBackgroundLockTimeoutDialog,
           ),
@@ -957,56 +957,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _showBackgroundLockTimeoutDialog() {
-    final loc = AppLocalizations.of(context)!; // para facilitar referências dentro do diálogo
+    final loc = AppLocalizations.of(context)!;
 
-    // Determina a unidade e o valor com base no timeout atual
-    String selectedUnit = 'min';
-    int displayValue = 0;
-
-    if (_backgroundLockTimeout == 0) {
-      displayValue = 0;
-      selectedUnit = 'min';
-    } else if (_backgroundLockTimeout >= 3600 &&
-        _backgroundLockTimeout % 3600 == 0) {
-      displayValue = _backgroundLockTimeout ~/ 3600;
-      selectedUnit = 'h';
-    } else if (_backgroundLockTimeout >= 60 &&
-        _backgroundLockTimeout % 60 == 0) {
-      displayValue = _backgroundLockTimeout ~/ 60;
-      selectedUnit = 'min';
-    } else {
-      displayValue = _backgroundLockTimeout;
-      selectedUnit = 'seg';
-    }
-
-    final controller = TextEditingController(
-      text: displayValue == 0 ? '' : displayValue.toString(),
-    );
+    // Valor selecionado, iniciado com o timeout atual
+    int selectedSeconds = _backgroundLockTimeout;
 
     showDialog(
       context: context,
       builder: (dialogBuilderContext) => StatefulBuilder(
         builder: (context, setDialogState) {
-          // Converte o valor digitado para segundos
-          int calculateSeconds() {
-            final text = controller.text.trim();
-            if (text.isEmpty) return 0;
-            final value = int.tryParse(text) ?? 0;
-            if (value <= 0) return 0;
-            switch (selectedUnit) {
-              case 'seg':
-                return value;
-              case 'min':
-                return value * 60;
-              case 'h':
-                return value * 3600;
-              default:
-                return value * 60;
-            }
-          }
-
-          final currentSeconds = calculateSeconds();
-
           return AlertDialog(
             title: Text(
               loc.backgroundLock,
@@ -1018,65 +977,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(loc.backgroundLockDialogPrompt),
-                  const SizedBox(height: 12),
-
-                  // Campo de entrada com seletor de unidade
-                  Row(
-                    children: [
-                      Expanded(
-                        flex: 2,
-                        child: CustomTextField(
-                          controller: controller,
-                          label: loc.backgroundLockTimeLabel,
-                          hintText: loc.backgroundLockImmediateHint,
-                          keyboardType: TextInputType.number,
-                          // não mostrar suffixText para evitar renderização vertical indesejada
-                          // Força single-line com padding reduzido para evitar altura excessiva
-                          minLines: 1,
-                          maxLines: 1,
-                          contentPadding: const EdgeInsets.symmetric(
-                            vertical: 12,
-                            horizontal: 12,
-                          ),
-                          onChanged: (_) => setDialogState(() {}),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      // Seletor de unidade
-                      SegmentedButton<String>(
-                        segments: const [
-                          ButtonSegment(value: 'seg', label: Text('seg')),
-                          ButtonSegment(value: 'min', label: Text('min')),
-                          ButtonSegment(value: 'h', label: Text('h')),
-                        ],
-                        selected: {selectedUnit},
-                        onSelectionChanged: (value) {
-                          setDialogState(() {
-                            selectedUnit = value.first;
-                          });
-                        },
-                        style: const ButtonStyle(
-                          visualDensity: VisualDensity.compact,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 6),
-                  // Mostra o valor resultante
-                  Text(
-                    '${loc.backgroundLockDialogResult} ${InactivityService.getBackgroundTimeoutLabel(currentSeconds)}',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-
                   const SizedBox(height: 16),
                   // Atalhos rápidos
                   Text(
                     loc.backgroundLockSuggestions,
-                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Wrap(
@@ -1089,27 +997,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           label: Text(
                             InactivityService.getBackgroundTimeoutLabel(
                               seconds,
+                              AppLocalizations.of(context)!,
                             ),
                             style: const TextStyle(fontSize: 12),
                           ),
-                          backgroundColor: currentSeconds == seconds
+                          backgroundColor: selectedSeconds == seconds
                               ? Theme.of(context).colorScheme.primaryContainer
                               : null,
                           onPressed: () {
-                            // Determina unidade e valor para o atalho
-                            if (seconds == 0) {
-                              controller.text = '';
-                              setDialogState(() => selectedUnit = 'min');
-                            } else if (seconds >= 3600 && seconds % 3600 == 0) {
-                              controller.text = (seconds ~/ 3600).toString();
-                              setDialogState(() => selectedUnit = 'h');
-                            } else if (seconds >= 60 && seconds % 60 == 0) {
-                              controller.text = (seconds ~/ 60).toString();
-                              setDialogState(() => selectedUnit = 'min');
-                            } else {
-                              controller.text = seconds.toString();
-                              setDialogState(() => selectedUnit = 'seg');
-                            }
+                            setDialogState(() => selectedSeconds = seconds);
                           },
                         ),
                     ],
@@ -1128,10 +1024,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     dialogBuilderContext,
                   );
                   final message =
-                      '${AppLocalizations.of(dialogBuilderContext)!.backgroundLock}: ${InactivityService.getBackgroundTimeoutLabel(currentSeconds)}';
+                      '${AppLocalizations.of(dialogBuilderContext)!.backgroundLock}: ${InactivityService.getBackgroundTimeoutLabel(selectedSeconds, AppLocalizations.of(dialogBuilderContext)!)}';
                   Navigator.of(dialogBuilderContext).pop();
                   await _inactivityService.setBackgroundLockTimeout(
-                    currentSeconds,
+                    selectedSeconds,
                   );
                   await _loadBackgroundLockTimeout();
                   if (!mounted) return;

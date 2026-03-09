@@ -1,5 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../l10n/app_localizations.dart';
+
 /// Serviço para gerenciar o bloqueio quando o app volta do segundo plano
 class InactivityService {
   static final InactivityService _instance = InactivityService._internal();
@@ -39,21 +41,25 @@ class InactivityService {
   ];
 
   /// Retorna o texto descritivo para opções de bloqueio em segundo plano
-  static String getBackgroundTimeoutLabel(int seconds) {
-    if (seconds == 0) return 'Imediatamente';
-    if (seconds < 60) return '$seconds segundos';
+  static String getBackgroundTimeoutLabel(int seconds, AppLocalizations loc) {
+    if (seconds == 0) return loc.backgroundLockImmediately;
+    if (seconds < 60) return loc.backgroundLockSeconds(seconds);
     if (seconds < 3600) {
       final minutes = seconds ~/ 60;
       final remainingSeconds = seconds % 60;
       if (remainingSeconds == 0) {
-        return minutes == 1 ? '1 minuto' : '$minutes minutos';
+        return minutes == 1
+            ? loc.backgroundLockOneMinute
+            : loc.backgroundLockMinutes(minutes);
       }
       return '$minutes min $remainingSeconds seg';
     }
     final hours = seconds ~/ 3600;
     final remainingMinutes = (seconds % 3600) ~/ 60;
     if (remainingMinutes == 0) {
-      return hours == 1 ? '1 hora' : '$hours horas';
+      return hours == 1
+          ? loc.backgroundLockOneHour
+          : loc.backgroundLockHours(hours);
     }
     return '$hours h $remainingMinutes min';
   }

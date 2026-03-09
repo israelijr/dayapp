@@ -44,6 +44,27 @@
   "backgroundLockDialogResult": "Resultado:",
   "backgroundLockSuggestions": "Sugerencias:",
   "backgroundLockImmediateHint": "0 = inmediato",
+  "backgroundLockImmediately": "Inmediatamente",
+  "backgroundLockSeconds": "{count} segundos",
+  "@backgroundLockSeconds": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "backgroundLockOneMinute": "1 minuto",
+  "backgroundLockMinutes": "{count} minutos",
+  "@backgroundLockMinutes": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "backgroundLockOneHour": "1 hora",
+  "backgroundLockHours": "{count} horas",
+  "@backgroundLockHours": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
 
   "statistics": "Estadísticas",
   "noStoriesYetTitle": "Ninguna historia registrada aún",
@@ -587,5 +608,23 @@
   "@archiveLabel": { "description": "Label for archiveLabel", "type": "text" },
   "@storyArchived": { "description": "Message for storyArchived", "type": "text" },
   "@undo": { "description": "Label for undo", "type": "text" },
-  "@ungroup": { "description": "Label for ungroup", "type": "text" }
+  "@ungroup": { "description": "Label for ungroup", "type": "text" },
+  "chooseEmoji": "Elige un emoji",
+  "@chooseEmoji": { "description": "Título del modal de selección de emoji" },
+  "emojiGroupSentimentos": "Sentimientos",
+  "@emojiGroupSentimentos": { "description": "Grupo de emoji: sentimientos" },
+  "emojiGroupAnimais": "Animales",
+  "@emojiGroupAnimais": { "description": "Grupo de emoji: animales" },
+  "emojiGroupVegetais": "Plantas",
+  "@emojiGroupVegetais": { "description": "Grupo de emoji: plantas" },
+  "emojiGroupCeu": "Cielo",
+  "@emojiGroupCeu": { "description": "Grupo de emoji: cielo" },
+  "emojiGroupObjetos": "Objetos",
+  "@emojiGroupObjetos": { "description": "Grupo de emoji: objetos" },
+  "emojiGroupAlimentos": "Alimentos",
+  "@emojiGroupAlimentos": { "description": "Grupo de emoji: alimentos" },
+  "emojiGroupLugares": "Lugares",
+  "@emojiGroupLugares": { "description": "Grupo de emoji: lugares" },
+  "emojiGroupSimbolos": "Símbolos",
+  "@emojiGroupSimbolos": { "description": "Grupo de emoji: símbolos" }
  }

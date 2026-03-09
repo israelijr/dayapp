@@ -48,6 +48,27 @@
   "backgroundLockDialogResult": "Result:",
   "backgroundLockSuggestions": "Suggestions:",
   "backgroundLockImmediateHint": "0 = immediate",
+  "backgroundLockImmediately": "Immediately",
+  "backgroundLockSeconds": "{count} seconds",
+  "@backgroundLockSeconds": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "backgroundLockOneMinute": "1 minute",
+  "backgroundLockMinutes": "{count} minutes",
+  "@backgroundLockMinutes": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "backgroundLockOneHour": "1 hour",
+  "backgroundLockHours": "{count} hours",
+  "@backgroundLockHours": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
 
   "statistics": "Statistics",
   "noStoriesYetTitle": "No stories yet",
@@ -615,6 +636,24 @@
   "@archiveLabel": { "description": "Label for archiveLabel", "type": "text" },
   "@storyArchived": { "description": "Message for storyArchived", "type": "text" },
   "@undo": { "description": "Label for undo", "type": "text" },
-  "@ungroup": { "description": "Label for ungroup", "type": "text" }
+  "@ungroup": { "description": "Label for ungroup", "type": "text" },
+  "chooseEmoji": "Choose an emoji",
+  "@chooseEmoji": { "description": "Title of the emoji selection modal" },
+  "emojiGroupSentimentos": "Feelings",
+  "@emojiGroupSentimentos": { "description": "Emoji group: feelings/emotions" },
+  "emojiGroupAnimais": "Animals",
+  "@emojiGroupAnimais": { "description": "Emoji group: animals" },
+  "emojiGroupVegetais": "Plants",
+  "@emojiGroupVegetais": { "description": "Emoji group: plants/vegetables" },
+  "emojiGroupCeu": "Sky",
+  "@emojiGroupCeu": { "description": "Emoji group: sky/nature" },
+  "emojiGroupObjetos": "Objects",
+  "@emojiGroupObjetos": { "description": "Emoji group: objects" },
+  "emojiGroupAlimentos": "Food",
+  "@emojiGroupAlimentos": { "description": "Emoji group: food" },
+  "emojiGroupLugares": "Places",
+  "@emojiGroupLugares": { "description": "Emoji group: places" },
+  "emojiGroupSimbolos": "Symbols",
+  "@emojiGroupSimbolos": { "description": "Emoji group: symbols" }
  }
 

@@ -317,6 +317,42 @@ abstract class AppLocalizations {
   /// **'0 = immediate'**
   String get backgroundLockImmediateHint;
 
+  /// No description provided for @backgroundLockImmediately.
+  ///
+  /// In en, this message translates to:
+  /// **'Immediately'**
+  String get backgroundLockImmediately;
+
+  /// No description provided for @backgroundLockSeconds.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} seconds'**
+  String backgroundLockSeconds(int count);
+
+  /// No description provided for @backgroundLockOneMinute.
+  ///
+  /// In en, this message translates to:
+  /// **'1 minute'**
+  String get backgroundLockOneMinute;
+
+  /// No description provided for @backgroundLockMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} minutes'**
+  String backgroundLockMinutes(int count);
+
+  /// No description provided for @backgroundLockOneHour.
+  ///
+  /// In en, this message translates to:
+  /// **'1 hour'**
+  String get backgroundLockOneHour;
+
+  /// No description provided for @backgroundLockHours.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} hours'**
+  String backgroundLockHours(int count);
+
   /// Label for statistics
   ///
   /// In en, this message translates to:
@@ -2512,6 +2548,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hide from home screen'**
   String get archiveSubtitle;
+
+  /// Title of the emoji selection modal
+  ///
+  /// In en, this message translates to:
+  /// **'Choose an emoji'**
+  String get chooseEmoji;
+
+  /// Emoji group: feelings/emotions
+  ///
+  /// In en, this message translates to:
+  /// **'Feelings'**
+  String get emojiGroupSentimentos;
+
+  /// Emoji group: animals
+  ///
+  /// In en, this message translates to:
+  /// **'Animals'**
+  String get emojiGroupAnimais;
+
+  /// Emoji group: plants/vegetables
+  ///
+  /// In en, this message translates to:
+  /// **'Plants'**
+  String get emojiGroupVegetais;
+
+  /// Emoji group: sky/nature
+  ///
+  /// In en, this message translates to:
+  /// **'Sky'**
+  String get emojiGroupCeu;
+
+  /// Emoji group: objects
+  ///
+  /// In en, this message translates to:
+  /// **'Objects'**
+  String get emojiGroupObjetos;
+
+  /// Emoji group: food
+  ///
+  /// In en, this message translates to:
+  /// **'Food'**
+  String get emojiGroupAlimentos;
+
+  /// Emoji group: places
+  ///
+  /// In en, this message translates to:
+  /// **'Places'**
+  String get emojiGroupLugares;
+
+  /// Emoji group: symbols
+  ///
+  /// In en, this message translates to:
+  /// **'Symbols'**
+  String get emojiGroupSimbolos;
 }
 
 class _AppLocalizationsDelegate

@@ -118,6 +118,30 @@ class AppLocalizationsPt extends AppLocalizations {
   String get backgroundLockImmediateHint => '0 = imediato';
 
   @override
+  String get backgroundLockImmediately => 'Imediatamente';
+
+  @override
+  String backgroundLockSeconds(int count) {
+    return '$count segundos';
+  }
+
+  @override
+  String get backgroundLockOneMinute => '1 minuto';
+
+  @override
+  String backgroundLockMinutes(int count) {
+    return '$count minutos';
+  }
+
+  @override
+  String get backgroundLockOneHour => '1 hora';
+
+  @override
+  String backgroundLockHours(int count) {
+    return '$count horas';
+  }
+
+  @override
   String get statistics => 'Estatísticas';
 
   @override
@@ -507,10 +531,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get groups => 'Grupos';
 
   @override
-  String get record => 'record';
+  String get record => 'registro';
 
   @override
-  String get records => 'records';
+  String get records => 'registros';
 
   @override
   String get filterText => 'Text';
@@ -1336,6 +1360,33 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get archiveSubtitle => 'Hide from home screen';
+
+  @override
+  String get chooseEmoji => 'Escolha um emoji';
+
+  @override
+  String get emojiGroupSentimentos => 'Sentimentos';
+
+  @override
+  String get emojiGroupAnimais => 'Animais';
+
+  @override
+  String get emojiGroupVegetais => 'Vegetais';
+
+  @override
+  String get emojiGroupCeu => 'Céu';
+
+  @override
+  String get emojiGroupObjetos => 'Objetos';
+
+  @override
+  String get emojiGroupAlimentos => 'Alimentos';
+
+  @override
+  String get emojiGroupLugares => 'Lugares';
+
+  @override
+  String get emojiGroupSimbolos => 'Símbolos';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -1450,6 +1501,30 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get backgroundLockImmediateHint => '0 = imediato';
+
+  @override
+  String get backgroundLockImmediately => 'Imediatamente';
+
+  @override
+  String backgroundLockSeconds(int count) {
+    return '$count segundos';
+  }
+
+  @override
+  String get backgroundLockOneMinute => '1 minuto';
+
+  @override
+  String backgroundLockMinutes(int count) {
+    return '$count minutos';
+  }
+
+  @override
+  String get backgroundLockOneHour => '1 hora';
+
+  @override
+  String backgroundLockHours(int count) {
+    return '$count horas';
+  }
 
   @override
   String get statistics => 'Estatísticas';
@@ -1839,6 +1914,12 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get groups => 'Grupos';
+
+  @override
+  String get record => 'registro';
+
+  @override
+  String get records => 'registros';
 
   @override
   String get imageCopiedBase64 =>
@@ -2610,4 +2691,31 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get archiveSubtitle => 'Ocultar da tela inicial';
+
+  @override
+  String get chooseEmoji => 'Escolha um emoji';
+
+  @override
+  String get emojiGroupSentimentos => 'Sentimentos';
+
+  @override
+  String get emojiGroupAnimais => 'Animais';
+
+  @override
+  String get emojiGroupVegetais => 'Vegetais';
+
+  @override
+  String get emojiGroupCeu => 'Céu';
+
+  @override
+  String get emojiGroupObjetos => 'Objetos';
+
+  @override
+  String get emojiGroupAlimentos => 'Alimentos';
+
+  @override
+  String get emojiGroupLugares => 'Lugares';
+
+  @override
+  String get emojiGroupSimbolos => 'Símbolos';
 }
