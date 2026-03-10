@@ -118,6 +118,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get backgroundLockImmediateHint => '0 = imediato';
 
   @override
+  String get backgroundLockNever => 'Não bloquear';
+
+  @override
   String get backgroundLockImmediately => 'Imediatamente';
 
   @override
@@ -1528,6 +1531,9 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get backgroundLockImmediateHint => '0 = imediato';
+
+  @override
+  String get backgroundLockNever => 'Não bloquear';
 
   @override
   String get backgroundLockImmediately => 'Imediatamente';

@@ -11,9 +11,12 @@ class InactivityService {
   static const String _backgroundLockTimeoutKey =
       'background_lock_timeout_seconds';
 
-  /// Tempo padrão de bloqueio em segundo plano (em segundos)
-  /// 0 significa imediato
-  static const int defaultBackgroundTimeoutSeconds = 0;
+  /// Valor especial que significa "nunca bloquear"
+  static const int neverLockValue = -1;
+
+  /// Tempo padrão de bloqueio em segundo plano
+  /// -1 significa nunca bloquear (padrão)
+  static const int defaultBackgroundTimeoutSeconds = neverLockValue;
 
   /// Obtém o tempo de bloqueio em segundo plano configurado (em segundos)
   Future<int> getBackgroundLockTimeout() async {
@@ -30,6 +33,7 @@ class InactivityService {
 
   /// Opções rápidas de tempo de bloqueio em segundo plano (em segundos)
   static const List<int> backgroundTimeoutOptions = [
+    -1, // Nunca bloquear (padrão)
     0, // Imediato
     15, // 15 segundos
     30, // 30 segundos
@@ -42,6 +46,7 @@ class InactivityService {
 
   /// Retorna o texto descritivo para opções de bloqueio em segundo plano
   static String getBackgroundTimeoutLabel(int seconds, AppLocalizations loc) {
+    if (seconds == neverLockValue) return loc.backgroundLockNever;
     if (seconds == 0) return loc.backgroundLockImmediately;
     if (seconds < 60) return loc.backgroundLockSeconds(seconds);
     if (seconds < 3600) {

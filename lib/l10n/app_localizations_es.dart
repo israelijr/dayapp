@@ -118,6 +118,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get backgroundLockImmediateHint => '0 = inmediato';
 
   @override
+  String get backgroundLockNever => 'No bloquear';
+
+  @override
   String get backgroundLockImmediately => 'Inmediatamente';
 
   @override

@@ -44,6 +44,7 @@
   "backgroundLockDialogResult": "Resultado:",
   "backgroundLockSuggestions": "Sugestões:",
   "backgroundLockImmediateHint": "0 = imediato",
+  "backgroundLockNever": "Não bloquear",
   "backgroundLockImmediately": "Imediatamente",
   "backgroundLockSeconds": "{count} segundos",
   "@backgroundLockSeconds": {

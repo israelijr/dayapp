@@ -317,6 +317,12 @@ abstract class AppLocalizations {
   /// **'0 = immediate'**
   String get backgroundLockImmediateHint;
 
+  /// No description provided for @backgroundLockNever.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t lock'**
+  String get backgroundLockNever;
+
   /// No description provided for @backgroundLockImmediately.
   ///
   /// In en, this message translates to:

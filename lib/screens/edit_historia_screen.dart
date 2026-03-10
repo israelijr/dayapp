@@ -26,6 +26,7 @@ import '../widgets/custom_text_field.dart';
 import '../widgets/emoji_selection_modal.dart';
 import '../widgets/entry_toolbar.dart';
 import '../widgets/image_picker_widget.dart';
+import '../widgets/mood_energy_selectors.dart';
 import '../widgets/rich_text_editor_widget.dart';
 import '../widgets/video_recorder_widget.dart';
 import 'pdf_preview_screen.dart';
@@ -920,7 +921,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                     const SizedBox(height: 16),
                     Text(loc.moodQuestion, style: theme.textTheme.titleSmall),
                     const SizedBox(height: 8),
-                    _MoodSelector(
+                    MoodSelector(
                       value: _selectedMood,
                       onChanged: (v) => setState(() {
                         _selectedMood = v;
@@ -932,7 +933,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                     const SizedBox(height: 16),
                     Text(loc.energyQuestion, style: theme.textTheme.titleSmall),
                     const SizedBox(height: 8),
-                    _EnergySelector(
+                    EnergySelector(
                       value: _selectedEnergy,
                       onChanged: (v) => setState(() {
                         _selectedEnergy = v;
@@ -1113,121 +1114,6 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
           ],
         ),
       ),
-    );
-  }
-}
-
-/// Seletor de humor com quatro opções: Difícil, Neutro, Bom, Muito bom
-class _MoodSelector extends StatelessWidget {
-  final int value;
-  final ValueChanged<int> onChanged;
-
-  const _MoodSelector({required this.value, required this.onChanged});
-
-  @override
-  Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
-    final options = [
-      (1, '😞', loc.moodDifficult),
-      (2, '😐', loc.moodNeutral),
-      (3, '🙂', loc.moodGood),
-      (4, '😄', loc.moodVeryGood),
-    ];
-    return _SegmentedOptions<int>(
-      options: options,
-      selected: value,
-      onChanged: onChanged,
-    );
-  }
-}
-
-/// Seletor de energia com três opções: Baixa, Normal, Alta
-class _EnergySelector extends StatelessWidget {
-  final int value;
-  final ValueChanged<int> onChanged;
-
-  const _EnergySelector({required this.value, required this.onChanged});
-
-  @override
-  Widget build(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
-    final options = [
-      (1, '🔋', loc.energyLow),
-      (2, '🔋🔋', loc.energyNormal),
-      (3, '🔋🔋🔋', loc.energyHigh),
-    ];
-    return _SegmentedOptions<int>(
-      options: options,
-      selected: value,
-      onChanged: onChanged,
-    );
-  }
-}
-
-/// Widget genérico de seleção segmentada com emoji + rótulo
-class _SegmentedOptions<T> extends StatelessWidget {
-  final List<(T, String, String)> options; // (valor, emoji, rótulo)
-  final T selected;
-  final ValueChanged<T> onChanged;
-
-  const _SegmentedOptions({
-    required this.options,
-    required this.selected,
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Row(
-      children: options.map((opt) {
-        final (val, emoji, label) = opt;
-        final isSelected = val == selected;
-        return Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 2),
-            child: InkWell(
-              onTap: () => onChanged(val),
-              borderRadius: BorderRadius.circular(12),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 150),
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? theme.colorScheme.primaryContainer
-                      : theme.colorScheme.surfaceContainerLow,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: isSelected
-                        ? theme.colorScheme.primary
-                        : theme.colorScheme.outlineVariant,
-                    width: isSelected ? 2 : 1,
-                  ),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(emoji, style: const TextStyle(fontSize: 20)),
-                    const SizedBox(height: 4),
-                    Text(
-                      label,
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: isSelected
-                            ? theme.colorScheme.onPrimaryContainer
-                            : theme.colorScheme.onSurfaceVariant,
-                        fontWeight: isSelected
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      }).toList(),
     );
   }
 }

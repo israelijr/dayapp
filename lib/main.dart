@@ -373,6 +373,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     final pauseDuration = DateTime.now().difference(_pausedTime!);
     final backgroundTimeoutSeconds = await _inactivityService
         .getBackgroundLockTimeout();
+
+    // Nunca bloquear quando o valor for -1
+    if (backgroundTimeoutSeconds == InactivityService.neverLockValue) {
+      debugPrint('LOCK: Ignorando bloqueio - configurado para nunca bloquear');
+      _pausedTime = null;
+      return;
+    }
+
     final backgroundTimeout = Duration(seconds: backgroundTimeoutSeconds);
 
     // Verifica novamente após o await (pode ter mudado)

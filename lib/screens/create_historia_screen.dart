@@ -25,6 +25,7 @@ import '../widgets/custom_text_field.dart';
 import '../widgets/emoji_selection_modal.dart';
 import '../widgets/entry_toolbar.dart';
 import '../widgets/image_picker_widget.dart';
+import '../widgets/mood_energy_selectors.dart';
 import '../widgets/rich_text_editor_widget.dart';
 import '../widgets/video_recorder_widget.dart';
 import 'pdf_preview_screen.dart';
@@ -97,6 +98,8 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
   bool _isLoading = false;
   String? selectedEmoticon;
   String? selectedEmojiTranslation;
+  int _selectedMood = 3; // padrão: Bom
+  int _selectedEnergy = 2; // padrão: Normal
 
   // Controle de alterações não salvas
   bool _hasUnsavedChanges = false;
@@ -122,7 +125,9 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
         fotos.isNotEmpty ||
         audios.isNotEmpty ||
         videos.isNotEmpty ||
-        selectedEmoticon != null;
+        selectedEmoticon != null ||
+        _selectedMood != 3 ||
+        _selectedEnergy != 2;
 
     if (hasChanges != _hasUnsavedChanges) {
       setState(() {
@@ -318,6 +323,8 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
         'data': selectedDate.toIso8601String(),
         'data_criacao': DateTime.now().toIso8601String(),
         'data_update': DateTime.now().toIso8601String(),
+        'humor': _selectedMood,
+        'energia': _selectedEnergy,
       });
 
       // Salva as fotos (se houver)
@@ -767,6 +774,30 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                       controller: tagsController,
                       label: loc.tagsLabel,
                       prefixIcon: const Icon(Icons.tag),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Humor (como você se sentiu)
+                    Text(loc.moodQuestion, style: theme.textTheme.titleSmall),
+                    const SizedBox(height: 8),
+                    MoodSelector(
+                      value: _selectedMood,
+                      onChanged: (v) => setState(() {
+                        _selectedMood = v;
+                        _checkForChanges();
+                      }),
+                    ),
+
+                    // Energia
+                    const SizedBox(height: 16),
+                    Text(loc.energyQuestion, style: theme.textTheme.titleSmall),
+                    const SizedBox(height: 8),
+                    EnergySelector(
+                      value: _selectedEnergy,
+                      onChanged: (v) => setState(() {
+                        _selectedEnergy = v;
+                        _checkForChanges();
+                      }),
                     ),
                     const SizedBox(height: 24),
 
