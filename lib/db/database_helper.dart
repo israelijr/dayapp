@@ -28,7 +28,7 @@ class DatabaseHelper {
       final path = p.join(dbPath, 'dayapp.db');
       return await openDatabase(
         path,
-        version: 13,
+        version: 14,
         onCreate: _onCreate,
         onUpgrade: _onUpgrade,
       );
@@ -68,6 +68,8 @@ class DatabaseHelper {
           data_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           foto_historia TEXT,
           backed_up INTEGER DEFAULT 0,
+          humor INTEGER DEFAULT 3,
+          energia INTEGER DEFAULT 2,
           FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         );
       ''');
@@ -323,6 +325,24 @@ class DatabaseHelper {
         );
       } catch (e) {
         // Column may already exist or operation not supported; ignore
+      }
+    }
+    if (oldVersion < 14) {
+      // Adicionar colunas de humor e energia
+      try {
+        await db.execute(
+          'ALTER TABLE historia ADD COLUMN humor INTEGER DEFAULT 3;',
+        );
+        await db.execute(
+          'ALTER TABLE historia ADD COLUMN energia INTEGER DEFAULT 2;',
+        );
+        // Preencher histórias existentes com os valores padrão
+        await db.execute('UPDATE historia SET humor = 3 WHERE humor IS NULL;');
+        await db.execute(
+          'UPDATE historia SET energia = 2 WHERE energia IS NULL;',
+        );
+      } catch (e) {
+        // Colunas já existem ou erro na migração; ignorar
       }
     }
   }

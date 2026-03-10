@@ -95,6 +95,8 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
   String? selectedEmoticon;
   String? selectedEmojiTranslation;
   bool _isArchived = false;
+  int _selectedMood = 3; // padrão: Bom
+  int _selectedEnergy = 2; // padrão: Normal
 
   // Controle de alterações não salvas
   bool _hasUnsavedChanges = false;
@@ -108,6 +110,8 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
   late DateTime _initialDate;
   late String? _initialEmoticon;
   late bool _initialIsArchived;
+  late int _initialMood;
+  late int _initialEnergy;
 
   String _capitalizeText(String text) {
     if (text.isEmpty) return text;
@@ -145,6 +149,8 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     selectedDate = widget.historia.data;
     selectedEmoticon = widget.historia.emoticon;
     _isArchived = widget.historia.arquivado == 'sim';
+    _selectedMood = widget.historia.humor;
+    _selectedEnergy = widget.historia.energia;
 
     // Salva valores iniciais para detectar mudanças
     _initialTitle = widget.historia.titulo;
@@ -153,6 +159,8 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     _initialDate = widget.historia.data;
     _initialEmoticon = widget.historia.emoticon;
     _initialIsArchived = widget.historia.arquivado == 'sim';
+    _initialMood = widget.historia.humor;
+    _initialEnergy = widget.historia.energia;
 
     // Adiciona listeners para detectar mudanças
     titleController.addListener(_checkForChanges);
@@ -234,7 +242,9 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
         tagsController.text != _initialTags ||
         selectedDate != _initialDate ||
         selectedEmoticon != _initialEmoticon ||
-        _isArchived != _initialIsArchived;
+        _isArchived != _initialIsArchived ||
+        _selectedMood != _initialMood ||
+        _selectedEnergy != _initialEnergy;
 
     if (hasChanges != _hasUnsavedChanges) {
       setState(() {
@@ -516,6 +526,8 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
         'data_update': DateTime.now().toIso8601String(),
         'arquivado': _isArchived ? 'sim' : null,
         'backed_up': 0,
+        'humor': _selectedMood,
+        'energia': _selectedEnergy,
       },
       where: 'id = ?',
       whereArgs: [widget.historia.id],
@@ -904,6 +916,30 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                       contentPadding: EdgeInsets.zero,
                     ),
 
+                    // Humor (como você se sentiu)
+                    const SizedBox(height: 16),
+                    Text(loc.moodQuestion, style: theme.textTheme.titleSmall),
+                    const SizedBox(height: 8),
+                    _MoodSelector(
+                      value: _selectedMood,
+                      onChanged: (v) => setState(() {
+                        _selectedMood = v;
+                        _checkForChanges();
+                      }),
+                    ),
+
+                    // Energia
+                    const SizedBox(height: 16),
+                    Text(loc.energyQuestion, style: theme.textTheme.titleSmall),
+                    const SizedBox(height: 8),
+                    _EnergySelector(
+                      value: _selectedEnergy,
+                      onChanged: (v) => setState(() {
+                        _selectedEnergy = v;
+                        _checkForChanges();
+                      }),
+                    ),
+
                     // Emoticon (agora abaixo do Archive Switch) - ocupa largura disponível
                     if (selectedEmoticon != null) ...[
                       const SizedBox(height: 8),
@@ -1077,6 +1113,121 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Seletor de humor com quatro opções: Difícil, Neutro, Bom, Muito bom
+class _MoodSelector extends StatelessWidget {
+  final int value;
+  final ValueChanged<int> onChanged;
+
+  const _MoodSelector({required this.value, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    final options = [
+      (1, '😞', loc.moodDifficult),
+      (2, '😐', loc.moodNeutral),
+      (3, '🙂', loc.moodGood),
+      (4, '😄', loc.moodVeryGood),
+    ];
+    return _SegmentedOptions<int>(
+      options: options,
+      selected: value,
+      onChanged: onChanged,
+    );
+  }
+}
+
+/// Seletor de energia com três opções: Baixa, Normal, Alta
+class _EnergySelector extends StatelessWidget {
+  final int value;
+  final ValueChanged<int> onChanged;
+
+  const _EnergySelector({required this.value, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    final options = [
+      (1, '🔋', loc.energyLow),
+      (2, '🔋🔋', loc.energyNormal),
+      (3, '🔋🔋🔋', loc.energyHigh),
+    ];
+    return _SegmentedOptions<int>(
+      options: options,
+      selected: value,
+      onChanged: onChanged,
+    );
+  }
+}
+
+/// Widget genérico de seleção segmentada com emoji + rótulo
+class _SegmentedOptions<T> extends StatelessWidget {
+  final List<(T, String, String)> options; // (valor, emoji, rótulo)
+  final T selected;
+  final ValueChanged<T> onChanged;
+
+  const _SegmentedOptions({
+    required this.options,
+    required this.selected,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Row(
+      children: options.map((opt) {
+        final (val, emoji, label) = opt;
+        final isSelected = val == selected;
+        return Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 2),
+            child: InkWell(
+              onTap: () => onChanged(val),
+              borderRadius: BorderRadius.circular(12),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 150),
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? theme.colorScheme.primaryContainer
+                      : theme.colorScheme.surfaceContainerLow,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isSelected
+                        ? theme.colorScheme.primary
+                        : theme.colorScheme.outlineVariant,
+                    width: isSelected ? 2 : 1,
+                  ),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(emoji, style: const TextStyle(fontSize: 20)),
+                    const SizedBox(height: 4),
+                    Text(
+                      label,
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: isSelected
+                            ? theme.colorScheme.onPrimaryContainer
+                            : theme.colorScheme.onSurfaceVariant,
+                        fontWeight: isSelected
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 }

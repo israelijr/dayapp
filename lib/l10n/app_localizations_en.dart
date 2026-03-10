@@ -1384,4 +1384,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get emojiGroupSimbolos => 'Symbols';
+
+  @override
+  String get moodQuestion => 'How did you feel in this story?';
+
+  @override
+  String get moodDifficult => 'Difficult';
+
+  @override
+  String get moodNeutral => 'Neutral';
+
+  @override
+  String get moodGood => 'Good';
+
+  @override
+  String get moodVeryGood => 'Very good';
+
+  @override
+  String get energyQuestion => 'How was your energy?';
+
+  @override
+  String get energyLow => 'Low';
+
+  @override
+  String get energyNormal => 'Normal';
+
+  @override
+  String get energyHigh => 'High';
 }

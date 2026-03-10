@@ -361,6 +361,34 @@ Versão: 2.0.0
                 // ignore
               }
             }
+            // Compatibilidade: backups anteriores ao v14 não possuem as colunas
+            // humor e energia — adicioná-las com os valores padrão.
+            final hasHumor = tableInfo.any((c) => c['name'] == 'humor');
+            if (!hasHumor) {
+              try {
+                await tmpDb.execute(
+                  'ALTER TABLE historia ADD COLUMN humor INTEGER DEFAULT 3;',
+                );
+                await tmpDb.execute(
+                  'UPDATE historia SET humor = 3 WHERE humor IS NULL;',
+                );
+              } catch (_) {
+                // ignore
+              }
+            }
+            final hasEnergia = tableInfo.any((c) => c['name'] == 'energia');
+            if (!hasEnergia) {
+              try {
+                await tmpDb.execute(
+                  'ALTER TABLE historia ADD COLUMN energia INTEGER DEFAULT 2;',
+                );
+                await tmpDb.execute(
+                  'UPDATE historia SET energia = 2 WHERE energia IS NULL;',
+                );
+              } catch (_) {
+                // ignore
+              }
+            }
             // Marcar todas as histórias deste banco restaurado como já salvas
             await tmpDb.update('historia', {'backed_up': 1});
           } finally {

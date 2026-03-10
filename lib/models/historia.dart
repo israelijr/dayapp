@@ -16,6 +16,10 @@ class Historia {
   final String? excluido;
   final DateTime? dataExclusao;
   final bool backedUp;
+  // 1=Difícil, 2=Neutro, 3=Bom (padrão), 4=Muito bom
+  final int humor;
+  // 1=Baixa, 2=Normal (padrão), 3=Alta
+  final int energia;
 
   Historia({
     required this.userId,
@@ -35,6 +39,8 @@ class Historia {
     this.excluido,
     this.dataExclusao,
     this.backedUp = false,
+    this.humor = 3,
+    this.energia = 2,
   });
 
   factory Historia.fromMap(Map<String, dynamic> map) {
@@ -67,6 +73,9 @@ class Historia {
                 ? (map['backed_up'] as int) == 1
                 : (map['backed_up'] == true))
           : false,
+      // Compatibilidade: histórias antigas sem humor/energia usam os valores padrão
+      humor: map['humor'] as int? ?? 3,
+      energia: map['energia'] as int? ?? 2,
     );
   }
 
@@ -89,6 +98,8 @@ class Historia {
       'excluido': excluido,
       'data_exclusao': dataExclusao?.toIso8601String(),
       'backed_up': backedUp ? 1 : 0,
+      'humor': humor,
+      'energia': energia,
     };
   }
 }

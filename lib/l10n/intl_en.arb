@@ -654,6 +654,24 @@
   "emojiGroupLugares": "Places",
   "@emojiGroupLugares": { "description": "Emoji group: places" },
   "emojiGroupSimbolos": "Symbols",
-  "@emojiGroupSimbolos": { "description": "Emoji group: symbols" }
+  "@emojiGroupSimbolos": { "description": "Emoji group: symbols" },
+  "moodQuestion": "How did you feel in this story?",
+  "@moodQuestion": { "description": "Question asking the user about their mood/feeling" },
+  "moodDifficult": "Difficult",
+  "@moodDifficult": { "description": "Mood option: difficult/hard" },
+  "moodNeutral": "Neutral",
+  "@moodNeutral": { "description": "Mood option: neutral" },
+  "moodGood": "Good",
+  "@moodGood": { "description": "Mood option: good" },
+  "moodVeryGood": "Very good",
+  "@moodVeryGood": { "description": "Mood option: very good" },
+  "energyQuestion": "How was your energy?",
+  "@energyQuestion": { "description": "Question asking the user about their energy level" },
+  "energyLow": "Low",
+  "@energyLow": { "description": "Energy level: low" },
+  "energyNormal": "Normal",
+  "@energyNormal": { "description": "Energy level: normal" },
+  "energyHigh": "High",
+  "@energyHigh": { "description": "Energy level: high" }
  }
 

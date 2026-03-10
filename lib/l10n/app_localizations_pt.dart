@@ -1387,6 +1387,33 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get emojiGroupSimbolos => 'Símbolos';
+
+  @override
+  String get moodQuestion => 'Como você se sentiu nessa história?';
+
+  @override
+  String get moodDifficult => 'Difícil';
+
+  @override
+  String get moodNeutral => 'Neutro';
+
+  @override
+  String get moodGood => 'Bom';
+
+  @override
+  String get moodVeryGood => 'Muito bom';
+
+  @override
+  String get energyQuestion => 'Como estava a sua energia?';
+
+  @override
+  String get energyLow => 'Baixa';
+
+  @override
+  String get energyNormal => 'Normal';
+
+  @override
+  String get energyHigh => 'Alta';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -2718,4 +2745,31 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get emojiGroupSimbolos => 'Símbolos';
+
+  @override
+  String get moodQuestion => 'Como você se sentiu nessa história?';
+
+  @override
+  String get moodDifficult => 'Difícil';
+
+  @override
+  String get moodNeutral => 'Neutro';
+
+  @override
+  String get moodGood => 'Bom';
+
+  @override
+  String get moodVeryGood => 'Muito bom';
+
+  @override
+  String get energyQuestion => 'Como estava sua energia?';
+
+  @override
+  String get energyLow => 'Baixa';
+
+  @override
+  String get energyNormal => 'Normal';
+
+  @override
+  String get energyHigh => 'Alta';
 }

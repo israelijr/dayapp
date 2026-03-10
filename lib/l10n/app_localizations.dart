@@ -2602,6 +2602,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Symbols'**
   String get emojiGroupSimbolos;
+
+  /// Question asking the user about their mood/feeling
+  ///
+  /// In en, this message translates to:
+  /// **'How did you feel in this story?'**
+  String get moodQuestion;
+
+  /// Mood option: difficult/hard
+  ///
+  /// In en, this message translates to:
+  /// **'Difficult'**
+  String get moodDifficult;
+
+  /// Mood option: neutral
+  ///
+  /// In en, this message translates to:
+  /// **'Neutral'**
+  String get moodNeutral;
+
+  /// Mood option: good
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
+  String get moodGood;
+
+  /// Mood option: very good
+  ///
+  /// In en, this message translates to:
+  /// **'Very good'**
+  String get moodVeryGood;
+
+  /// Question asking the user about their energy level
+  ///
+  /// In en, this message translates to:
+  /// **'How was your energy?'**
+  String get energyQuestion;
+
+  /// Energy level: low
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get energyLow;
+
+  /// Energy level: normal
+  ///
+  /// In en, this message translates to:
+  /// **'Normal'**
+  String get energyNormal;
+
+  /// Energy level: high
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get energyHigh;
 }
 
 class _AppLocalizationsDelegate
