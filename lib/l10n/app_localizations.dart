@@ -2734,6 +2734,113 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tag name'**
   String get tagNameLabel;
+
+  /// Title of the best-weekday insight card
+  ///
+  /// In en, this message translates to:
+  /// **'💡 Discovery'**
+  String get insightDiscovery;
+
+  /// Title of the positive-tag insight card
+  ///
+  /// In en, this message translates to:
+  /// **'💡 Pattern found'**
+  String get insightPattern;
+
+  /// Title of the mood trend insight card
+  ///
+  /// In en, this message translates to:
+  /// **'📈 Trend'**
+  String get insightTrend;
+
+  /// Title of the monthly summary insight card
+  ///
+  /// In en, this message translates to:
+  /// **'📊 Your month in stories'**
+  String get insightMonthlySummary;
+
+  /// Body text of the best-weekday insight
+  ///
+  /// In en, this message translates to:
+  /// **'{weekday} is usually your most positive day.'**
+  String insightBestWeekday(String weekday);
+
+  /// Body text of the positive-tag insight
+  ///
+  /// In en, this message translates to:
+  /// **'Stories tagged #{tag} tend to have a better mood.'**
+  String insightPositiveTag(String tag);
+
+  /// Body text of the positive trend insight
+  ///
+  /// In en, this message translates to:
+  /// **'Your mood has been improving over the last 7 days compared to the last 30 days.'**
+  String get insightTrendPositive;
+
+  /// Body text of the monthly summary insight (without tag line)
+  ///
+  /// In en, this message translates to:
+  /// **'Entries: {entries}\nAvg mood: {mood}\nAvg energy: {energy}'**
+  String insightMonthlySummaryText(int entries, String mood, String energy);
+
+  /// Body text of the monthly summary insight with top tag
+  ///
+  /// In en, this message translates to:
+  /// **'Entries: {entries}\nAvg mood: {mood}\nAvg energy: {energy}\nTop tag: #{tag}'**
+  String insightMonthlySummaryWithTag(
+    int entries,
+    String mood,
+    String energy,
+    String tag,
+  );
+
+  /// Action button on insight cards that have a related tag
+  ///
+  /// In en, this message translates to:
+  /// **'See stories'**
+  String get insightSeeStories;
+
+  /// Day of the week
+  ///
+  /// In en, this message translates to:
+  /// **'Sunday'**
+  String get weekdaySunday;
+
+  /// Day of the week
+  ///
+  /// In en, this message translates to:
+  /// **'Monday'**
+  String get weekdayMonday;
+
+  /// Day of the week
+  ///
+  /// In en, this message translates to:
+  /// **'Tuesday'**
+  String get weekdayTuesday;
+
+  /// Day of the week
+  ///
+  /// In en, this message translates to:
+  /// **'Wednesday'**
+  String get weekdayWednesday;
+
+  /// Day of the week
+  ///
+  /// In en, this message translates to:
+  /// **'Thursday'**
+  String get weekdayThursday;
+
+  /// Day of the week
+  ///
+  /// In en, this message translates to:
+  /// **'Friday'**
+  String get weekdayFriday;
+
+  /// Day of the week
+  ///
+  /// In en, this message translates to:
+  /// **'Saturday'**
+  String get weekdaySaturday;
 }
 
 class _AppLocalizationsDelegate

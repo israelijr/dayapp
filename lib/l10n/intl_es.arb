@@ -665,5 +665,64 @@
   "renameTagWarning": "Renombrar afectará todas las historias que usen esta etiqueta.",
   "@renameTagWarning": { "description": "Advertencia al renombrar una etiqueta" },
   "tagNameLabel": "Nombre de la etiqueta",
-  "@tagNameLabel": { "description": "Etiqueta del campo de nombre de etiqueta" }
+  "@tagNameLabel": { "description": "Etiqueta del campo de nombre de etiqueta" },
+
+  "insightDiscovery": "💡 Descubrimiento",
+  "@insightDiscovery": { "description": "Título del card del mejor día de la semana" },
+  "insightPattern": "💡 Patrón encontrado",
+  "@insightPattern": { "description": "Título del card de etiqueta positiva" },
+  "insightTrend": "📈 Tendencia",
+  "@insightTrend": { "description": "Título del card de tendencia de estado de ánimo" },
+  "insightMonthlySummary": "📊 Tu mes en historias",
+  "@insightMonthlySummary": { "description": "Título del card de resumen mensual" },
+
+  "insightBestWeekday": "{weekday} suele ser tu día más positivo.",
+  "@insightBestWeekday": {
+    "description": "Texto del insight del mejor día de la semana",
+    "placeholders": { "weekday": { "type": "String" } }
+  },
+  "insightPositiveTag": "Las historias con la etiqueta #{tag} tienden a tener mejor estado de ánimo.",
+  "@insightPositiveTag": {
+    "description": "Texto del insight de etiqueta positiva",
+    "placeholders": { "tag": { "type": "String" } }
+  },
+  "insightTrendPositive": "Tu estado de ánimo mejoró en los últimos 7 días comparado con los últimos 30 días.",
+  "@insightTrendPositive": { "description": "Texto del insight de tendencia positiva" },
+  "insightMonthlySummaryText": "Entradas: {entries}\nEstado de ánimo promedio: {mood}\nEnergía promedio: {energy}",
+  "@insightMonthlySummaryText": {
+    "description": "Texto del resumen mensual sin etiqueta",
+    "placeholders": {
+      "entries": { "type": "int" },
+      "mood": { "type": "String" },
+      "energy": { "type": "String" }
+    }
+  },
+  "insightMonthlySummaryWithTag": "Entradas: {entries}\nEstado de ánimo promedio: {mood}\nEnergía promedio: {energy}\nEtiqueta más frecuente: #{tag}",
+  "@insightMonthlySummaryWithTag": {
+    "description": "Texto del resumen mensual con etiqueta",
+    "placeholders": {
+      "entries": { "type": "int" },
+      "mood": { "type": "String" },
+      "energy": { "type": "String" },
+      "tag": { "type": "String" }
+    }
+  },
+
+  "insightSeeStories": "Ver historias",
+  "@insightSeeStories": { "description": "Botón de acción en cards de insight con etiqueta" },
+
+  "weekdaySunday": "Domingo",
+  "@weekdaySunday": { "description": "Día de la semana" },
+  "weekdayMonday": "Lunes",
+  "@weekdayMonday": { "description": "Día de la semana" },
+  "weekdayTuesday": "Martes",
+  "@weekdayTuesday": { "description": "Día de la semana" },
+  "weekdayWednesday": "Miércoles",
+  "@weekdayWednesday": { "description": "Día de la semana" },
+  "weekdayThursday": "Jueves",
+  "@weekdayThursday": { "description": "Día de la semana" },
+  "weekdayFriday": "Viernes",
+  "@weekdayFriday": { "description": "Día de la semana" },
+  "weekdaySaturday": "Sábado",
+  "@weekdaySaturday": { "description": "Día de la semana" }
  }

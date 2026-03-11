@@ -685,5 +685,64 @@
   "renameTagWarning": "Renomear afetará todas as histórias que usam esta tag.",
   "@renameTagWarning": { "description": "Aviso ao renomear uma tag" },
   "tagNameLabel": "Nome da tag",
-  "@tagNameLabel": { "description": "Rótulo do campo de nome da tag" }
+  "@tagNameLabel": { "description": "Rótulo do campo de nome da tag" },
+
+  "insightDiscovery": "💡 Descoberta",
+  "@insightDiscovery": { "description": "Título do card de melhor dia da semana" },
+  "insightPattern": "💡 Padrão encontrado",
+  "@insightPattern": { "description": "Título do card de tag positiva" },
+  "insightTrend": "📈 Tendência",
+  "@insightTrend": { "description": "Título do card de tendência de humor" },
+  "insightMonthlySummary": "📊 Seu mês em histórias",
+  "@insightMonthlySummary": { "description": "Título do card de resumo mensal" },
+
+  "insightBestWeekday": "{weekday} costuma ser o seu dia mais positivo.",
+  "@insightBestWeekday": {
+    "description": "Texto do insight de melhor dia da semana",
+    "placeholders": { "weekday": { "type": "String" } }
+  },
+  "insightPositiveTag": "Histórias com a tag #{tag} tendem a ter um humor melhor.",
+  "@insightPositiveTag": {
+    "description": "Texto do insight de tag positiva",
+    "placeholders": { "tag": { "type": "String" } }
+  },
+  "insightTrendPositive": "Seu humor melhorou nos últimos 7 dias em comparação com os últimos 30 dias.",
+  "@insightTrendPositive": { "description": "Texto do insight de tendência positiva" },
+  "insightMonthlySummaryText": "Entradas: {entries}\nHumor médio: {mood}\nEnergia média: {energy}",
+  "@insightMonthlySummaryText": {
+    "description": "Texto do resumo mensal sem tag",
+    "placeholders": {
+      "entries": { "type": "int" },
+      "mood": { "type": "String" },
+      "energy": { "type": "String" }
+    }
+  },
+  "insightMonthlySummaryWithTag": "Entradas: {entries}\nHumor médio: {mood}\nEnergia média: {energy}\nTag mais frequente: #{tag}",
+  "@insightMonthlySummaryWithTag": {
+    "description": "Texto do resumo mensal com tag",
+    "placeholders": {
+      "entries": { "type": "int" },
+      "mood": { "type": "String" },
+      "energy": { "type": "String" },
+      "tag": { "type": "String" }
+    }
+  },
+
+  "insightSeeStories": "Ver histórias",
+  "@insightSeeStories": { "description": "Botão de ação nos cards de insight com tag" },
+
+  "weekdaySunday": "Domingo",
+  "@weekdaySunday": { "description": "Dia da semana" },
+  "weekdayMonday": "Segunda-feira",
+  "@weekdayMonday": { "description": "Dia da semana" },
+  "weekdayTuesday": "Terça-feira",
+  "@weekdayTuesday": { "description": "Dia da semana" },
+  "weekdayWednesday": "Quarta-feira",
+  "@weekdayWednesday": { "description": "Dia da semana" },
+  "weekdayThursday": "Quinta-feira",
+  "@weekdayThursday": { "description": "Dia da semana" },
+  "weekdayFriday": "Sexta-feira",
+  "@weekdayFriday": { "description": "Dia da semana" },
+  "weekdaySaturday": "Sábado",
+  "@weekdaySaturday": { "description": "Dia da semana" }
  }

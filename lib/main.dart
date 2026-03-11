@@ -15,6 +15,7 @@ import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 import 'db/database_helper.dart';
 import 'models/historia.dart';
 import 'providers/auth_provider.dart';
+import 'providers/insight_provider.dart';
 import 'providers/locale_provider.dart';
 import 'providers/pin_provider.dart';
 import 'providers/refresh_provider.dart';
@@ -459,6 +460,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ChangeNotifierProvider.value(value: widget.localeProvider),
         // Provider para estatísticas (acesso ao banco local)
         ChangeNotifierProvider(create: (_) => StatisticsProvider()),
+        // Provider para insights automáticos do feed da Home
+        ChangeNotifierProvider(create: (_) => InsightProvider()),
         ChangeNotifierProvider.value(value: widget.pinProvider),
       ],
       child: Consumer2<ThemeProvider, LocaleProvider>(

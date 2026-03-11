@@ -1454,6 +1454,71 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get tagNameLabel => 'Nome da tag';
+
+  @override
+  String get insightDiscovery => '💡 Descoberta';
+
+  @override
+  String get insightPattern => '💡 Padrão encontrado';
+
+  @override
+  String get insightTrend => '📈 Tendência';
+
+  @override
+  String get insightMonthlySummary => '📊 Seu mês em histórias';
+
+  @override
+  String insightBestWeekday(String weekday) {
+    return '$weekday costuma ser o seu dia mais positivo.';
+  }
+
+  @override
+  String insightPositiveTag(String tag) {
+    return 'Histórias com a tag #$tag tendem a ter um humor melhor.';
+  }
+
+  @override
+  String get insightTrendPositive =>
+      'Seu humor melhorou nos últimos 7 dias em comparação com os últimos 30 dias.';
+
+  @override
+  String insightMonthlySummaryText(int entries, String mood, String energy) {
+    return 'Entradas: $entries\nHumor médio: $mood\nEnergia média: $energy';
+  }
+
+  @override
+  String insightMonthlySummaryWithTag(
+    int entries,
+    String mood,
+    String energy,
+    String tag,
+  ) {
+    return 'Entradas: $entries\nHumor médio: $mood\nEnergia média: $energy\nTag mais frequente: #$tag';
+  }
+
+  @override
+  String get insightSeeStories => 'Ver histórias';
+
+  @override
+  String get weekdaySunday => 'Domingo';
+
+  @override
+  String get weekdayMonday => 'Segunda-feira';
+
+  @override
+  String get weekdayTuesday => 'Terça-feira';
+
+  @override
+  String get weekdayWednesday => 'Quarta-feira';
+
+  @override
+  String get weekdayThursday => 'Quinta-feira';
+
+  @override
+  String get weekdayFriday => 'Sexta-feira';
+
+  @override
+  String get weekdaySaturday => 'Sábado';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -2876,4 +2941,69 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get tagNameLabel => 'Nome da tag';
+
+  @override
+  String get insightDiscovery => '💡 Descoberta';
+
+  @override
+  String get insightPattern => '💡 Padrão encontrado';
+
+  @override
+  String get insightTrend => '📈 Tendência';
+
+  @override
+  String get insightMonthlySummary => '📊 Seu mês em histórias';
+
+  @override
+  String insightBestWeekday(String weekday) {
+    return '$weekday costuma ser o seu dia mais positivo.';
+  }
+
+  @override
+  String insightPositiveTag(String tag) {
+    return 'Histórias com a tag #$tag tendem a ter um humor melhor.';
+  }
+
+  @override
+  String get insightTrendPositive =>
+      'Seu humor melhorou nos últimos 7 dias em comparação com os últimos 30 dias.';
+
+  @override
+  String insightMonthlySummaryText(int entries, String mood, String energy) {
+    return 'Entradas: $entries\nHumor médio: $mood\nEnergia média: $energy';
+  }
+
+  @override
+  String insightMonthlySummaryWithTag(
+    int entries,
+    String mood,
+    String energy,
+    String tag,
+  ) {
+    return 'Entradas: $entries\nHumor médio: $mood\nEnergia média: $energy\nTag mais frequente: #$tag';
+  }
+
+  @override
+  String get insightSeeStories => 'Ver histórias';
+
+  @override
+  String get weekdaySunday => 'Domingo';
+
+  @override
+  String get weekdayMonday => 'Segunda-feira';
+
+  @override
+  String get weekdayTuesday => 'Terça-feira';
+
+  @override
+  String get weekdayWednesday => 'Quarta-feira';
+
+  @override
+  String get weekdayThursday => 'Quinta-feira';
+
+  @override
+  String get weekdayFriday => 'Sexta-feira';
+
+  @override
+  String get weekdaySaturday => 'Sábado';
 }

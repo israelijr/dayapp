@@ -1464,4 +1464,69 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get tagNameLabel => 'Nombre de la etiqueta';
+
+  @override
+  String get insightDiscovery => '💡 Descubrimiento';
+
+  @override
+  String get insightPattern => '💡 Patrón encontrado';
+
+  @override
+  String get insightTrend => '📈 Tendencia';
+
+  @override
+  String get insightMonthlySummary => '📊 Tu mes en historias';
+
+  @override
+  String insightBestWeekday(String weekday) {
+    return '$weekday suele ser tu día más positivo.';
+  }
+
+  @override
+  String insightPositiveTag(String tag) {
+    return 'Las historias con la etiqueta #$tag tienden a tener mejor estado de ánimo.';
+  }
+
+  @override
+  String get insightTrendPositive =>
+      'Tu estado de ánimo mejoró en los últimos 7 días comparado con los últimos 30 días.';
+
+  @override
+  String insightMonthlySummaryText(int entries, String mood, String energy) {
+    return 'Entradas: $entries\nEstado de ánimo promedio: $mood\nEnergía promedio: $energy';
+  }
+
+  @override
+  String insightMonthlySummaryWithTag(
+    int entries,
+    String mood,
+    String energy,
+    String tag,
+  ) {
+    return 'Entradas: $entries\nEstado de ánimo promedio: $mood\nEnergía promedio: $energy\nEtiqueta más frecuente: #$tag';
+  }
+
+  @override
+  String get insightSeeStories => 'Ver historias';
+
+  @override
+  String get weekdaySunday => 'Domingo';
+
+  @override
+  String get weekdayMonday => 'Lunes';
+
+  @override
+  String get weekdayTuesday => 'Martes';
+
+  @override
+  String get weekdayWednesday => 'Miércoles';
+
+  @override
+  String get weekdayThursday => 'Jueves';
+
+  @override
+  String get weekdayFriday => 'Viernes';
+
+  @override
+  String get weekdaySaturday => 'Sábado';
 }

@@ -1,0 +1,337 @@
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../db/database_helper.dart';
+import '../models/insight.dart';
+
+/// Serviço responsável por calcular e cachear os insights automáticos.
+///
+/// Os insights são recalculados ao abrir a Home ou após 24h desde o
+/// último cálculo. O resultado é armazenado em SharedPreferences.
+class InsightService {
+  static const String _cacheKey = 'insight_cache';
+  static const String _cacheTimestampKey = 'insight_cache_timestamp';
+  static const Duration _cacheDuration = Duration(hours: 24);
+
+  /// Número mínimo de histórias totais para gerar qualquer insight.
+  static const int _minTotalHistorias = 5;
+
+  /// Número mínimo de histórias por tag ou por dia da semana.
+  static const int _minGroupHistorias = 3;
+
+  /// Limiar de diferença de humor para gerar insight de tendência.
+  static const double _trendThreshold = 0.4;
+
+  /// Máximo de insights exibidos simultaneamente.
+  static const int _maxInsights = 3;
+
+  final DatabaseHelper _db = DatabaseHelper();
+
+  // ---------------------------------------------------------------------------
+  // API pública
+  // ---------------------------------------------------------------------------
+
+  /// Retorna a lista de insights para o usuário.
+  ///
+  /// Usa cache de 24h; passe [forceRefresh] = true para ignorar o cache.
+  Future<List<Insight>> getInsights(
+    String userId, {
+    bool forceRefresh = false,
+  }) async {
+    if (!forceRefresh) {
+      final cached = await _loadCache(userId);
+      if (cached != null) return cached;
+    }
+
+    final insights = await _calculateAll(userId);
+    await _saveCache(userId, insights);
+    return insights;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Orquestrador interno
+  // ---------------------------------------------------------------------------
+
+  Future<List<Insight>> _calculateAll(String userId) async {
+    // Verifica se há histórias suficientes no total
+    final db = await _db.database;
+    final totalResult = await db.rawQuery(
+      '''
+      SELECT COUNT(*) AS total
+      FROM historia
+      WHERE user_id = ?
+        AND excluido IS NULL
+        AND arquivado IS NULL
+      ''',
+      [userId],
+    );
+    final total = (totalResult.first['total'] as int?) ?? 0;
+    if (total < _minTotalHistorias) return [];
+
+    // Calcula todos em paralelo para melhor performance
+    final results = await Future.wait([
+      calculateTrend(userId),
+      calculatePositiveTag(userId),
+      calculateBestWeekday(userId),
+      calculateMonthlySummary(userId),
+    ]);
+
+    // Aplica prioridade (spec §14): trend > tag > dia > resumo mensal
+    final ordered = <Insight>[];
+    for (final insight in results) {
+      if (insight != null) ordered.add(insight);
+    }
+
+    // Limita ao máximo configurado
+    return ordered.take(_maxInsights).toList();
+  }
+
+  // ---------------------------------------------------------------------------
+  // Cálculo: Melhor Dia da Semana (§4)
+  // ---------------------------------------------------------------------------
+
+  /// Identifica o dia da semana com maior humor médio do usuário.
+  /// Retorna null se não houver dados suficientes.
+  Future<Insight?> calculateBestWeekday(String userId) async {
+    final db = await _db.database;
+    final rows = await db.rawQuery(
+      '''
+      SELECT
+        strftime('%w', data) AS dia_semana,
+        AVG(humor)           AS media_humor,
+        COUNT(*)             AS total
+      FROM historia
+      WHERE user_id = ?
+        AND excluido IS NULL
+        AND arquivado IS NULL
+      GROUP BY dia_semana
+      HAVING total >= ?
+      ORDER BY media_humor DESC
+      LIMIT 1
+      ''',
+      [userId, _minGroupHistorias],
+    );
+
+    if (rows.isEmpty) return null;
+
+    final row = rows.first;
+    final diaSemanaIndex = int.tryParse(row['dia_semana'] as String? ?? '');
+    if (diaSemanaIndex == null) return null;
+
+    return Insight(
+      type: InsightType.bestWeekday,
+      icon: '💡',
+      title: 'insightDiscovery', // chave l10n — resolvida no widget
+      description: 'insightBestWeekday', // chave l10n — resolvida no widget
+      metadata: {
+        'weekday_index': diaSemanaIndex,
+        'avg_mood': (row['media_humor'] as num?)?.toDouble() ?? 0.0,
+      },
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Cálculo: Tag com Humor Mais Positivo (§5)
+  // ---------------------------------------------------------------------------
+
+  /// Identifica a tag associada ao maior humor médio.
+  /// Retorna null se não houver dados suficientes.
+  Future<Insight?> calculatePositiveTag(String userId) async {
+    final db = await _db.database;
+    final rows = await db.rawQuery(
+      '''
+      SELECT
+        t.nome,
+        AVG(h.humor) AS media_humor,
+        COUNT(*)     AS total
+      FROM historia h
+      JOIN historia_tags ht ON ht.historia_id = h.id
+      JOIN tags t           ON t.id = ht.tag_id
+      WHERE h.user_id = ?
+        AND h.excluido IS NULL
+        AND h.arquivado IS NULL
+      GROUP BY t.id
+      HAVING total >= ?
+      ORDER BY media_humor DESC
+      LIMIT 1
+      ''',
+      [userId, _minGroupHistorias],
+    );
+
+    if (rows.isEmpty) return null;
+
+    final row = rows.first;
+    final tagNome = row['nome'] as String?;
+    if (tagNome == null) return null;
+
+    return Insight(
+      type: InsightType.positiveTag,
+      icon: '💡',
+      title: 'insightPattern', // chave l10n
+      description: 'insightPositiveTag', // chave l10n
+      metadata: {
+        'tag': tagNome,
+        'avg_mood': (row['media_humor'] as num?)?.toDouble() ?? 0.0,
+      },
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Cálculo: Tendência Recente (§6)
+  // ---------------------------------------------------------------------------
+
+  /// Compara humor médio dos últimos 7 dias com o dos últimos 30 dias.
+  /// Gera insight positivo se a diferença for >= 0.4.
+  /// Retorna null se não houver dados suficientes ou tendência relevante.
+  Future<Insight?> calculateTrend(String userId) async {
+    final db = await _db.database;
+
+    final rows7 = await db.rawQuery(
+      '''
+      SELECT AVG(humor) AS media
+      FROM historia
+      WHERE user_id = ?
+        AND excluido IS NULL
+        AND arquivado IS NULL
+        AND data >= datetime('now', '-7 day')
+      ''',
+      [userId],
+    );
+
+    final rows30 = await db.rawQuery(
+      '''
+      SELECT AVG(humor) AS media
+      FROM historia
+      WHERE user_id = ?
+        AND excluido IS NULL
+        AND arquivado IS NULL
+        AND data >= datetime('now', '-30 day')
+      ''',
+      [userId],
+    );
+
+    final media7 = (rows7.first['media'] as num?)?.toDouble();
+    final media30 = (rows30.first['media'] as num?)?.toDouble();
+
+    if (media7 == null || media30 == null) return null;
+    if (media7 - media30 < _trendThreshold) return null;
+
+    return Insight(
+      type: InsightType.trend,
+      icon: '📈',
+      title: 'insightTrend', // chave l10n
+      description: 'insightTrendPositive', // chave l10n
+      metadata: {
+        'avg_7d': media7,
+        'avg_30d': media30,
+        'diff': media7 - media30,
+      },
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Cálculo: Resumo do Mês (§7)
+  // ---------------------------------------------------------------------------
+
+  /// Gera um resumo do mês atual com total de histórias, humor médio,
+  /// energia média e tag mais frequente.
+  /// Retorna null se não houver histórias no mês.
+  Future<Insight?> calculateMonthlySummary(String userId) async {
+    final db = await _db.database;
+
+    final summaryRows = await db.rawQuery(
+      '''
+      SELECT
+        COUNT(*)     AS total,
+        AVG(humor)   AS humor_medio,
+        AVG(energia) AS energia_media
+      FROM historia
+      WHERE user_id = ?
+        AND excluido IS NULL
+        AND arquivado IS NULL
+        AND strftime('%Y-%m', data) = strftime('%Y-%m', 'now')
+      ''',
+      [userId],
+    );
+
+    if (summaryRows.isEmpty) return null;
+    final summary = summaryRows.first;
+    final total = (summary['total'] as int?) ?? 0;
+    if (total == 0) return null;
+
+    final humorMedio = (summary['humor_medio'] as num?)?.toDouble() ?? 0.0;
+    final energiaMedia = (summary['energia_media'] as num?)?.toDouble() ?? 0.0;
+
+    // Tag mais usada no mês
+    final tagRows = await db.rawQuery(
+      '''
+      SELECT
+        t.nome,
+        COUNT(*) AS total
+      FROM historia h
+      JOIN historia_tags ht ON ht.historia_id = h.id
+      JOIN tags t           ON t.id = ht.tag_id
+      WHERE h.user_id = ?
+        AND h.excluido IS NULL
+        AND h.arquivado IS NULL
+        AND strftime('%Y-%m', h.data) = strftime('%Y-%m', 'now')
+      GROUP BY t.id
+      ORDER BY total DESC
+      LIMIT 1
+      ''',
+      [userId],
+    );
+
+    final topTag = tagRows.isNotEmpty ? tagRows.first['nome'] as String? : null;
+
+    return Insight(
+      type: InsightType.monthlySummary,
+      icon: '📊',
+      title: 'insightMonthlySummary', // chave l10n
+      description: 'insightMonthlySummaryText', // chave l10n
+      metadata: {
+        'total': total,
+        'humor_medio': humorMedio,
+        'energia_media': energiaMedia,
+        if (topTag != null) 'top_tag': topTag,
+      },
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Cache (SharedPreferences)
+  // ---------------------------------------------------------------------------
+
+  /// Chave de cache incluindo userId para isolamento entre contas.
+  String _cacheKeyFor(String userId) => '${_cacheKey}_$userId';
+  String _timestampKeyFor(String userId) => '${_cacheTimestampKey}_$userId';
+
+  /// Carrega do cache se ainda for válido (< 24h). Retorna null se expirado.
+  Future<List<Insight>?> _loadCache(String userId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final timestampMs = prefs.getInt(_timestampKeyFor(userId));
+    if (timestampMs == null) return null;
+
+    final saved = DateTime.fromMillisecondsSinceEpoch(timestampMs);
+    if (DateTime.now().difference(saved) >= _cacheDuration) return null;
+
+    final json = prefs.getString(_cacheKeyFor(userId));
+    if (json == null || json.isEmpty) return null;
+
+    try {
+      return Insight.decodeList(json);
+    } catch (_) {
+      // Cache corrompido — ignora e recalcula
+      return null;
+    }
+  }
+
+  /// Persiste a lista de insights e o timestamp no SharedPreferences.
+  Future<void> _saveCache(String userId, List<Insight> insights) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_cacheKeyFor(userId), Insight.encodeList(insights));
+    await prefs.setInt(
+      _timestampKeyFor(userId),
+      DateTime.now().millisecondsSinceEpoch,
+    );
+  }
+}

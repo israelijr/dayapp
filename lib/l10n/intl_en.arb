@@ -693,6 +693,65 @@
   "renameTagWarning": "Renaming will affect all stories that use this tag.",
   "@renameTagWarning": { "description": "Warning shown when renaming a tag" },
   "tagNameLabel": "Tag name",
-  "@tagNameLabel": { "description": "Label for the tag name text field" }
+  "@tagNameLabel": { "description": "Label for the tag name text field" },
+
+  "insightDiscovery": "💡 Discovery",
+  "@insightDiscovery": { "description": "Title of the best-weekday insight card" },
+  "insightPattern": "💡 Pattern found",
+  "@insightPattern": { "description": "Title of the positive-tag insight card" },
+  "insightTrend": "📈 Trend",
+  "@insightTrend": { "description": "Title of the mood trend insight card" },
+  "insightMonthlySummary": "📊 Your month in stories",
+  "@insightMonthlySummary": { "description": "Title of the monthly summary insight card" },
+
+  "insightBestWeekday": "{weekday} is usually your most positive day.",
+  "@insightBestWeekday": {
+    "description": "Body text of the best-weekday insight",
+    "placeholders": { "weekday": { "type": "String" } }
+  },
+  "insightPositiveTag": "Stories tagged #{tag} tend to have a better mood.",
+  "@insightPositiveTag": {
+    "description": "Body text of the positive-tag insight",
+    "placeholders": { "tag": { "type": "String" } }
+  },
+  "insightTrendPositive": "Your mood has been improving over the last 7 days compared to the last 30 days.",
+  "@insightTrendPositive": { "description": "Body text of the positive trend insight" },
+  "insightMonthlySummaryText": "Entries: {entries}\nAvg mood: {mood}\nAvg energy: {energy}",
+  "@insightMonthlySummaryText": {
+    "description": "Body text of the monthly summary insight (without tag line)",
+    "placeholders": {
+      "entries": { "type": "int" },
+      "mood": { "type": "String" },
+      "energy": { "type": "String" }
+    }
+  },
+  "insightMonthlySummaryWithTag": "Entries: {entries}\nAvg mood: {mood}\nAvg energy: {energy}\nTop tag: #{tag}",
+  "@insightMonthlySummaryWithTag": {
+    "description": "Body text of the monthly summary insight with top tag",
+    "placeholders": {
+      "entries": { "type": "int" },
+      "mood": { "type": "String" },
+      "energy": { "type": "String" },
+      "tag": { "type": "String" }
+    }
+  },
+
+  "insightSeeStories": "See stories",
+  "@insightSeeStories": { "description": "Action button on insight cards that have a related tag" },
+
+  "weekdaySunday": "Sunday",
+  "@weekdaySunday": { "description": "Day of the week" },
+  "weekdayMonday": "Monday",
+  "@weekdayMonday": { "description": "Day of the week" },
+  "weekdayTuesday": "Tuesday",
+  "@weekdayTuesday": { "description": "Day of the week" },
+  "weekdayWednesday": "Wednesday",
+  "@weekdayWednesday": { "description": "Day of the week" },
+  "weekdayThursday": "Thursday",
+  "@weekdayThursday": { "description": "Day of the week" },
+  "weekdayFriday": "Friday",
+  "@weekdayFriday": { "description": "Day of the week" },
+  "weekdaySaturday": "Saturday",
+  "@weekdaySaturday": { "description": "Day of the week" }
  }
 

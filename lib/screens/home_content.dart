@@ -7,19 +7,22 @@ import 'package:provider/provider.dart';
 import '../db/database_helper.dart';
 import '../db/historia_foto_helper.dart';
 import '../db/tag_helper.dart';
-import '../models/tag.dart';
 import '../helpers/rich_text_helper.dart';
 import '../models/historia.dart';
+import '../models/tag.dart';
 import '../providers/auth_provider.dart';
+import '../providers/insight_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../services/pdf_export_service.dart';
 import '../theme/animation_durations.dart';
 import '../theme/m3_expressive_theme.dart';
 import '../widgets/historia_media_widgets.dart';
+import '../widgets/insight_card.dart';
 import '../widgets/rich_text_viewer_widget.dart';
 import 'edit_historia_screen.dart';
 import 'group_selection_screen.dart';
 import 'pdf_preview_screen.dart';
+import 'search_screen.dart';
 
 class HomeContent extends StatefulWidget {
   final bool isCardView;
@@ -849,6 +852,16 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
       if (!_hasRefreshed) {
         _hasRefreshed = true;
         widget.onRefresh();
+        // Carrega insights ao abrir a Home
+        if (!mounted) return;
+        final userId =
+            Provider.of<AuthProvider>(context, listen: false).user?.id ?? '';
+        if (userId.isNotEmpty) {
+          Provider.of<InsightProvider>(
+            context,
+            listen: false,
+          ).loadInsights(userId);
+        }
       }
     });
   }
@@ -900,29 +913,74 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
       },
       child: RefreshIndicator(
         onRefresh: widget.onRefresh,
-        child: ListView.builder(
-          key: ValueKey<bool>(widget.isCardView),
-          controller: widget.scrollController,
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-          // +1 para o indicador de carregamento no final
-          itemCount: widget.historias.length + (widget.hasMoreData ? 1 : 0),
-          itemBuilder: (context, index) {
-            // Indicador de carregamento no final da lista
-            if (index == widget.historias.length) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                child: Center(
-                  child: widget.isLoadingMore
-                      ? const CircularProgressIndicator()
-                      : const SizedBox.shrink(),
-                ),
-              );
-            }
+        child: Consumer<InsightProvider>(
+          builder: (context, insightProvider, _) {
+            final insights = insightProvider.insights;
+            // Um insight a cada 5 histórias; máximo definido pelo InsightService
+            const int insightInterval = 5;
+            const int blockSize =
+                insightInterval + 1; // bloco: 5 histórias + 1 insight
+            final int storiesCount = widget.historias.length;
+            final int insightsInserted = (storiesCount ~/ insightInterval)
+                .clamp(0, insights.length);
+            final int totalItems =
+                storiesCount + insightsInserted + (widget.hasMoreData ? 1 : 0);
 
-            final historia = widget.historias[index];
-            return widget.isCardView
-                ? widget.buildCardView(historia)
-                : widget.buildIconView(historia);
+            return ListView.builder(
+              key: ValueKey<bool>(widget.isCardView),
+              controller: widget.scrollController,
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+              itemCount: totalItems,
+              itemBuilder: (context, index) {
+                final int block = index ~/ blockSize;
+                final int posInBlock = index % blockSize;
+
+                // Dentro de um bloco que terá insight no final
+                if (block < insightsInserted) {
+                  if (posInBlock == insightInterval) {
+                    // Posição do InsightCard
+                    return InsightCard(
+                      insight: insights[block],
+                      onSeeStories: (_) {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const SearchScreen(),
+                          ),
+                        );
+                      },
+                    );
+                  }
+                  // História dentro do bloco
+                  final storyIndex = block * insightInterval + posInBlock;
+                  final historia = widget.historias[storyIndex];
+                  return widget.isCardView
+                      ? widget.buildCardView(historia)
+                      : widget.buildIconView(historia);
+                }
+
+                // Histórias restantes (após os blocos com insight) ou indicador de loading
+                final storyIndex =
+                    insightsInserted * insightInterval +
+                    (index - insightsInserted * blockSize);
+
+                if (storyIndex >= storiesCount) {
+                  // Indicador de carregamento no final
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: Center(
+                      child: widget.isLoadingMore
+                          ? const CircularProgressIndicator()
+                          : const SizedBox.shrink(),
+                    ),
+                  );
+                }
+
+                final historia = widget.historias[storyIndex];
+                return widget.isCardView
+                    ? widget.buildCardView(historia)
+                    : widget.buildIconView(historia);
+              },
+            );
           },
         ),
       ),
