@@ -2267,6 +2267,24 @@ abstract class AppLocalizations {
   /// **'Calendar'**
   String get calendarTitle;
 
+  /// No description provided for @calendarFormatMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Month'**
+  String get calendarFormatMonth;
+
+  /// No description provided for @calendarFormatTwoWeeks.
+  ///
+  /// In en, this message translates to:
+  /// **'2 Weeks'**
+  String get calendarFormatTwoWeeks;
+
+  /// No description provided for @calendarFormatWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Week'**
+  String get calendarFormatWeek;
+
   /// No description provided for @groupExists.
   ///
   /// In en, this message translates to:

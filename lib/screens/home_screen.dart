@@ -16,7 +16,6 @@ import 'groups_maintenance_screen.dart';
 import 'groups_screen.dart';
 import 'home_content.dart';
 import 'search_screen.dart';
-import 'statistics_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -479,17 +478,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     MaterialPageRoute(
                       builder: (_) => const EditProfileScreen(),
                     ),
-                  );
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.analytics_outlined),
-                title: Text(AppLocalizations.of(context)!.statistics),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const StatisticsScreen()),
                   );
                 },
               ),

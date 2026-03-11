@@ -150,16 +150,6 @@ class HelpScreen extends StatelessWidget {
 
           const SizedBox(height: 24),
 
-          // Estatísticas
-          _buildSection(
-            context,
-            loc.statistics,
-            loc.helpStatisticsDesc,
-            Icons.analytics,
-          ),
-
-          const SizedBox(height: 24),
-
           // Dicas de Uso
           _buildSection(
             context,

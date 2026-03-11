@@ -233,6 +233,9 @@
   "biometricAuthFailed": "Falha na autenticação biométrica",
   "confirmIdentityToEnableBiometrics": "Confirme sua identidade para habilitar a biometria",
   "calendarTitle": "Calendário",
+  "calendarFormatMonth": "Mês",
+  "calendarFormatTwoWeeks": "2 Semanas",
+  "calendarFormatWeek": "Semana",
   "groupExists": "Grupo já existe",
   "enterGroupName": "Digite um nome para o grupo",
   "groupDeleteWarning": "Este grupo tem {count} história(s) vinculada(s). Se excluído, essas histórias voltarão para a tela inicial (sem grupo). Continuar?",
@@ -480,7 +483,7 @@
 
   "insightDiscovery": "Descoberta",
   "@insightDiscovery": { "description": "Título do card de melhor dia da semana" },
-  "insightPattern": "Encontrei um comportamento padrão",
+  "insightPattern": "Encontrei um padrão",
   "@insightPattern": { "description": "Título do card de tag positiva" },
   "insightTrend": "📈 Tendência",
   "@insightTrend": { "description": "Título do card de tendência de humor" },

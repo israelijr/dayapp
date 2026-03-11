@@ -19,7 +19,6 @@ import 'providers/insight_provider.dart';
 import 'providers/locale_provider.dart';
 import 'providers/pin_provider.dart';
 import 'providers/refresh_provider.dart';
-import 'providers/statistics_provider.dart';
 import 'providers/theme_provider.dart';
 import 'screens/about_screen.dart';
 import 'screens/backup_manager_screen.dart';
@@ -458,8 +457,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ChangeNotifierProvider.value(value: widget.themeProvider),
         ChangeNotifierProvider.value(value: widget.refreshProvider),
         ChangeNotifierProvider.value(value: widget.localeProvider),
-        // Provider para estatísticas (acesso ao banco local)
-        ChangeNotifierProvider(create: (_) => StatisticsProvider()),
         // Provider para insights automáticos do feed da Home
         ChangeNotifierProvider(create: (_) => InsightProvider()),
         ChangeNotifierProvider.value(value: widget.pinProvider),

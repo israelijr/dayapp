@@ -1207,6 +1207,15 @@ class AppLocalizationsPt extends AppLocalizations {
   String get calendarTitle => 'Calendário';
 
   @override
+  String get calendarFormatMonth => 'Mês';
+
+  @override
+  String get calendarFormatTwoWeeks => '2 Semanas';
+
+  @override
+  String get calendarFormatWeek => 'Semana';
+
+  @override
   String get groupExists => 'Grupo já existe';
 
   @override
@@ -1459,7 +1468,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get insightDiscovery => 'Descoberta';
 
   @override
-  String get insightPattern => 'Encontrei um comportamento padrão';
+  String get insightPattern => 'Encontrei um padrão';
 
   @override
   String get insightTrend => '📈 Tendência';
@@ -2694,6 +2703,15 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get calendarTitle => 'Calendário';
 
   @override
+  String get calendarFormatMonth => 'Mês';
+
+  @override
+  String get calendarFormatTwoWeeks => '2 Semanas';
+
+  @override
+  String get calendarFormatWeek => 'Semana';
+
+  @override
   String get groupExists => 'Grupo já existe';
 
   @override
@@ -2946,7 +2964,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get insightDiscovery => 'Descoberta';
 
   @override
-  String get insightPattern => 'Encontrei um comportamento padrão';
+  String get insightPattern => 'Encontrei um padrão';
 
   @override
   String get insightTrend => '📈 Tendência';

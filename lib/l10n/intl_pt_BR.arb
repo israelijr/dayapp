@@ -428,6 +428,9 @@
   "biometricAuthFailed": "Falha na autenticação biométrica",
   "confirmIdentityToEnableBiometrics": "Confirme sua identidade para habilitar a biometria",
   "calendarTitle": "Calendário",
+  "calendarFormatMonth": "Mês",
+  "calendarFormatTwoWeeks": "2 Semanas",
+  "calendarFormatWeek": "Semana",
   "search": "Pesquisar",
   "@search": {"description": "Label for search action", "type": "text"},
   "groupExists": "Grupo já existe",
@@ -689,7 +692,7 @@
 
   "insightDiscovery": "Descoberta",
   "@insightDiscovery": { "description": "Título do card de melhor dia da semana" },
-  "insightPattern": "Encontrei um comportamento padrão",
+  "insightPattern": "Encontrei um padrão",
   "@insightPattern": { "description": "Título do card de tag positiva" },
   "insightTrend": "📈 Tendência",
   "@insightTrend": { "description": "Título do card de tendência de humor" },

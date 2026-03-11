@@ -198,6 +198,8 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    final localeName = Localizations.localeOf(context).toString();
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
@@ -221,12 +223,12 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
                     calendarFormat: _calendarFormat,
                     selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
                     eventLoader: _getHistoriasForDay,
-                    locale: 'pt_BR',
+                    locale: localeName,
                     startingDayOfWeek: StartingDayOfWeek.sunday,
-                    availableCalendarFormats: const {
-                      CalendarFormat.month: 'Mês',
-                      CalendarFormat.twoWeeks: '2 Semanas',
-                      CalendarFormat.week: 'Semana',
+                    availableCalendarFormats: {
+                      CalendarFormat.month: loc.calendarFormatMonth,
+                      CalendarFormat.twoWeeks: loc.calendarFormatTwoWeeks,
+                      CalendarFormat.week: loc.calendarFormatWeek,
                     },
                     calendarStyle: CalendarStyle(
                       outsideDaysVisible: false,

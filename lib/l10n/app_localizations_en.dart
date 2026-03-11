@@ -1204,6 +1204,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get calendarTitle => 'Calendar';
 
   @override
+  String get calendarFormatMonth => 'Month';
+
+  @override
+  String get calendarFormatTwoWeeks => '2 Weeks';
+
+  @override
+  String get calendarFormatWeek => 'Week';
+
+  @override
   String get groupExists => 'Group already exists';
 
   @override
