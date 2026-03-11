@@ -687,9 +687,9 @@
   "tagNameLabel": "Nome da tag",
   "@tagNameLabel": { "description": "Rótulo do campo de nome da tag" },
 
-  "insightDiscovery": "💡 Descoberta",
+  "insightDiscovery": "Descoberta",
   "@insightDiscovery": { "description": "Título do card de melhor dia da semana" },
-  "insightPattern": "💡 Padrão encontrado",
+  "insightPattern": "Padrão encontrado",
   "@insightPattern": { "description": "Título do card de tag positiva" },
   "insightTrend": "📈 Tendência",
   "@insightTrend": { "description": "Título do card de tendência de humor" },

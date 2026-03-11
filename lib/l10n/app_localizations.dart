@@ -2738,13 +2738,13 @@ abstract class AppLocalizations {
   /// Title of the best-weekday insight card
   ///
   /// In en, this message translates to:
-  /// **'💡 Discovery'**
+  /// **'Discovery'**
   String get insightDiscovery;
 
   /// Title of the positive-tag insight card
   ///
   /// In en, this message translates to:
-  /// **'💡 Pattern found'**
+  /// **'Pattern found'**
   String get insightPattern;
 
   /// Title of the mood trend insight card

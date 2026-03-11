@@ -1456,10 +1456,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get tagNameLabel => 'Nome da tag';
 
   @override
-  String get insightDiscovery => '💡 Descoberta';
+  String get insightDiscovery => 'Descoberta';
 
   @override
-  String get insightPattern => '💡 Padrão encontrado';
+  String get insightPattern => 'Padrão encontrado';
 
   @override
   String get insightTrend => '📈 Tendência';
@@ -2943,10 +2943,10 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get tagNameLabel => 'Nome da tag';
 
   @override
-  String get insightDiscovery => '💡 Descoberta';
+  String get insightDiscovery => 'Descoberta';
 
   @override
-  String get insightPattern => '💡 Padrão encontrado';
+  String get insightPattern => 'Padrão encontrado';
 
   @override
   String get insightTrend => '📈 Tendência';

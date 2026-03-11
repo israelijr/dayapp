@@ -248,7 +248,7 @@ class InsightService {
       WHERE user_id = ?
         AND excluido IS NULL
         AND arquivado IS NULL
-        AND strftime('%Y-%m', data) = strftime('%Y-%m', 'now')
+        AND strftime('%Y-%m', data) = strftime('%Y-%m', 'now', 'localtime')
       ''',
       [userId],
     );
@@ -273,9 +273,9 @@ class InsightService {
       WHERE h.user_id = ?
         AND h.excluido IS NULL
         AND h.arquivado IS NULL
-        AND strftime('%Y-%m', h.data) = strftime('%Y-%m', 'now')
-      GROUP BY t.id
-      ORDER BY total DESC
+        AND strftime('%Y-%m', h.data) = strftime('%Y-%m', 'now', 'localtime')
+      GROUP BY t.id, t.nome
+      ORDER BY total DESC, MAX(h.data) DESC, t.nome ASC
       LIMIT 1
       ''',
       [userId],

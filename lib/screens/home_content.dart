@@ -857,10 +857,9 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
         final userId =
             Provider.of<AuthProvider>(context, listen: false).user?.id ?? '';
         if (userId.isNotEmpty) {
-          Provider.of<InsightProvider>(
-            context,
-            listen: false,
-          ).loadInsights(userId);
+          // Usa refresh (força recálculo) para garantir dados atualizados
+          // após qualquer mutação de histórias
+          Provider.of<InsightProvider>(context, listen: false).refresh(userId);
         }
       }
     });

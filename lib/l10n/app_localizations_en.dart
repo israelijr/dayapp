@@ -1453,10 +1453,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tagNameLabel => 'Tag name';
 
   @override
-  String get insightDiscovery => '💡 Discovery';
+  String get insightDiscovery => 'Discovery';
 
   @override
-  String get insightPattern => '💡 Pattern found';
+  String get insightPattern => 'Pattern found';
 
   @override
   String get insightTrend => '📈 Trend';

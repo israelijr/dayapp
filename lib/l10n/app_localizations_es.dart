@@ -1466,10 +1466,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get tagNameLabel => 'Nombre de la etiqueta';
 
   @override
-  String get insightDiscovery => '💡 Descubrimiento';
+  String get insightDiscovery => 'Descubrimiento';
 
   @override
-  String get insightPattern => '💡 Patrón encontrado';
+  String get insightPattern => 'Patrón encontrado';
 
   @override
   String get insightTrend => '📈 Tendencia';

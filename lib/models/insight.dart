@@ -45,7 +45,7 @@ class Insight {
   /// Tipo do insight (determina a query e o layout de texto).
   final InsightType type;
 
-  /// Título exibido no card (ex.: "💡 Descoberta").
+  /// Título exibido no card (ex.: "Descoberta").
   final String title;
 
   /// Texto descritivo principal do insight.
