@@ -53,6 +53,18 @@ class _TagInputWidgetState extends State<TagInputWidget> {
   }
 
   @override
+  void didUpdateWidget(TagInputWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Atualiza as tags selecionadas quando o pai carrega as tags
+    // assincronamente (ex: ao abrir a tela de edição)
+    if (oldWidget.initialTags != widget.initialTags) {
+      setState(() {
+        _selectedTags = List.from(widget.initialTags);
+      });
+    }
+  }
+
+  @override
   void dispose() {
     _debounce?.cancel();
     _textController.dispose();

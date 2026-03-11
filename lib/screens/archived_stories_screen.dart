@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 
 import '../db/database_helper.dart';
 import '../db/historia_foto_helper.dart';
+import '../db/tag_helper.dart';
+import '../models/tag.dart';
 import '../helpers/rich_text_helper.dart';
 import '../models/historia.dart';
 import '../providers/auth_provider.dart';
@@ -425,34 +427,67 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
                       ],
                     ),
                     // Tags: movidas para abaixo da linha da data
-                    if (historia.tag != null && historia.tag!.isNotEmpty) ...[
-                      const SizedBox(height: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? Theme.of(context).colorScheme.primaryContainer
-                              : Theme.of(context).colorScheme.primaryContainer
-                                    .withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          historia.tag!,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color:
-                                Theme.of(context).brightness == Brightness.dark
-                                ? Theme.of(
-                                    context,
-                                  ).colorScheme.onPrimaryContainer
-                                : Theme.of(context).colorScheme.primary,
-                          ),
-                        ),
-                      ),
-                    ],
+                    FutureBuilder<List<Tag>>(
+                      future: TagHelper().getTagsByHistoria(historia.id ?? 0),
+                      builder: (context, tagSnapshot) {
+                        final newTags = tagSnapshot.data ?? [];
+                        final legacyTag = historia.tag;
+                        final tagNames = newTags.isNotEmpty
+                            ? newTags.map((t) => t.nome).toList()
+                            : (legacyTag != null && legacyTag.isNotEmpty
+                                  ? [legacyTag]
+                                  : <String>[]);
+                        if (tagNames.isEmpty) return const SizedBox.shrink();
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 8),
+                            Wrap(
+                              spacing: 4,
+                              runSpacing: 4,
+                              children: tagNames
+                                  .map(
+                                    (name) => Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color:
+                                            Theme.of(context).brightness ==
+                                                Brightness.dark
+                                            ? Theme.of(
+                                                context,
+                                              ).colorScheme.primaryContainer
+                                            : Theme.of(context)
+                                                  .colorScheme
+                                                  .primaryContainer
+                                                  .withValues(alpha: 0.12),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Text(
+                                        name,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color:
+                                              Theme.of(context).brightness ==
+                                                  Brightness.dark
+                                              ? Theme.of(
+                                                  context,
+                                                ).colorScheme.onPrimaryContainer
+                                              : Theme.of(
+                                                  context,
+                                                ).colorScheme.primary,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
                   ],
                 ),
               ),

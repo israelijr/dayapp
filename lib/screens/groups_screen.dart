@@ -85,7 +85,9 @@ class _GroupsScreenState extends State<GroupsScreen> {
                     children: [
                       const Divider(height: 1, thickness: 1),
                       ListTile(
-                        title: const Text('Arquivados'),
+                        title: Text(
+                          AppLocalizations.of(context)!.archivedTitle,
+                        ),
                         subtitle: Text(
                           '$_arquivadosCount ${_arquivadosCount == 1 ? AppLocalizations.of(context)!.record : AppLocalizations.of(context)!.records}',
                         ),

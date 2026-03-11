@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../db/database_helper.dart';
+import '../db/tag_helper.dart';
 import '../models/historia.dart';
 import '../models/tag.dart';
 import '../providers/auth_provider.dart';
@@ -187,14 +188,15 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Pesquisar'),
+        title: Text(l10n.search),
         actions: [
           if (_hasSearched)
             IconButton(
               icon: const Icon(Icons.clear),
-              tooltip: 'Limpar pesquisa',
+              tooltip: l10n.clearSearchTooltip,
               onPressed: _clearSearch,
             ),
         ],
@@ -213,6 +215,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   /// Constrói a área de filtros de pesquisa
   Widget _buildSearchFilters() {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -224,12 +227,12 @@ class _SearchScreenState extends State<SearchScreen> {
             runSpacing: 8,
             children: [
               ChoiceChip(
-                label: const Row(
+                label: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.text_fields, size: 18),
-                    SizedBox(width: 4),
-                    Text('Texto'),
+                    const Icon(Icons.text_fields, size: 18),
+                    const SizedBox(width: 4),
+                    Text(l10n.filterText),
                   ],
                 ),
                 selected: _currentSearchType == SearchType.text,
@@ -243,12 +246,12 @@ class _SearchScreenState extends State<SearchScreen> {
                 },
               ),
               ChoiceChip(
-                label: const Row(
+                label: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.label, size: 18),
-                    SizedBox(width: 4),
-                    Text('Tag'),
+                    const Icon(Icons.label, size: 18),
+                    const SizedBox(width: 4),
+                    Text(l10n.filterTag),
                   ],
                 ),
                 selected: _currentSearchType == SearchType.tag,
@@ -262,12 +265,12 @@ class _SearchScreenState extends State<SearchScreen> {
                 },
               ),
               ChoiceChip(
-                label: const Row(
+                label: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.mood, size: 18),
-                    SizedBox(width: 4),
-                    Text('Emoticon'),
+                    const Icon(Icons.mood, size: 18),
+                    const SizedBox(width: 4),
+                    Text(l10n.filterEmoticon),
                   ],
                 ),
                 selected: _currentSearchType == SearchType.emoticon,
@@ -295,14 +298,15 @@ class _SearchScreenState extends State<SearchScreen> {
 
   /// Campo de pesquisa por texto
   Widget _buildTextSearchField() {
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       children: [
         Expanded(
           child: CustomTextField(
             controller: _searchController,
             label: _currentSearchType == SearchType.tag
-                ? 'Digite a tag...'
-                : 'Pesquisar no título ou descrição...',
+                ? l10n.searchHintTag
+                : l10n.searchHintText,
             prefixIcon: const Icon(Icons.search),
             suffixIcon: _searchController.text.isNotEmpty
                 ? IconButton(
@@ -323,7 +327,7 @@ class _SearchScreenState extends State<SearchScreen> {
           onPressed: _searchController.text.trim().isNotEmpty
               ? _performSearch
               : null,
-          child: const Text('Buscar'),
+          child: Text(l10n.searchButton),
         ),
       ],
     );
@@ -349,6 +353,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   /// Seletor de emoticons
   Widget _buildEmoticonSelector() {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -356,7 +361,7 @@ class _SearchScreenState extends State<SearchScreen> {
           children: [
             Expanded(
               child: Text(
-                'Toque para selecionar um emoji:',
+                l10n.tapToSelectEmoji,
                 style: TextStyle(
                   fontSize: 14,
                   color: Theme.of(context).textTheme.bodySmall?.color,
@@ -374,7 +379,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   });
                 },
                 icon: const Icon(Icons.clear, size: 18),
-                label: const Text('Limpar'),
+                label: Text(l10n.clear),
               ),
           ],
         ),
@@ -427,7 +432,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         ),
                       ),
                       Text(
-                        'Toque para alterar',
+                        l10n.tapToChangeEmoji,
                         style: TextStyle(
                           fontSize: 12,
                           color: Theme.of(context)
@@ -446,7 +451,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   ),
                   const SizedBox(width: 16),
                   Text(
-                    'Selecionar emoji',
+                    l10n.selectEmoji,
                     style: TextStyle(
                       fontSize: 16,
                       color: Theme.of(context).colorScheme.primary,
@@ -568,11 +573,12 @@ class _SearchScreenState extends State<SearchScreen> {
     final yesterday = today.subtract(const Duration(days: 1));
     final parsedDate = DateTime(date.year, date.month, date.day);
 
+    final l10n = AppLocalizations.of(context)!;
     String displayDate;
     if (parsedDate == today) {
-      displayDate = 'Hoje';
+      displayDate = l10n.today;
     } else if (parsedDate == yesterday) {
-      displayDate = 'Ontem';
+      displayDate = l10n.yesterday;
     } else {
       displayDate = DateFormat("EEEE, d 'de' MMMM", 'pt_BR').format(date);
       // Capitaliza primeira letra
@@ -687,27 +693,55 @@ class _SearchScreenState extends State<SearchScreen> {
                 ],
               ),
 
-              // Tag (se houver)
-              if (historia.tag != null && historia.tag!.isNotEmpty) ...[
-                const SizedBox(height: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.secondaryContainer,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    historia.tag!,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Theme.of(context).colorScheme.onSecondaryContainer,
-                    ),
-                  ),
-                ),
-              ],
+              // Tags (novo sistema + legado)
+              FutureBuilder<List<Tag>>(
+                future: TagHelper().getTagsByHistoria(historia.id ?? 0),
+                builder: (context, tagSnapshot) {
+                  final newTags = tagSnapshot.data ?? [];
+                  final legacyTag = historia.tag;
+                  final tagNames = newTags.isNotEmpty
+                      ? newTags.map((t) => t.nome).toList()
+                      : (legacyTag != null && legacyTag.isNotEmpty
+                            ? [legacyTag]
+                            : <String>[]);
+                  if (tagNames.isEmpty) return const SizedBox.shrink();
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 4,
+                        runSpacing: 4,
+                        children: tagNames
+                            .map(
+                              (name) => Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.secondaryContainer,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text(
+                                  name,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSecondaryContainer,
+                                  ),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ],
+                  );
+                },
+              ),
 
               // Descrição (resumo)
               if (historia.descricao != null &&

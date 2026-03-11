@@ -540,7 +540,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get records => 'registros';
 
   @override
-  String get filterText => 'Text';
+  String get filterText => 'Texto';
 
   @override
   String get filterTag => 'Tag';
@@ -549,19 +549,34 @@ class AppLocalizationsPt extends AppLocalizations {
   String get filterEmoticon => 'Emoticon';
 
   @override
-  String get searchHintTag => 'Type a tag...';
+  String get searchHintTag => 'Digite uma tag...';
 
   @override
-  String get searchHintText => 'Search in title or description...';
+  String get searchHintText => 'Pesquisar no título ou na descrição...';
 
   @override
-  String get clearSearchTooltip => 'Clear search';
+  String get clearSearchTooltip => 'Limpar pesquisa';
 
   @override
-  String get clear => 'Clear';
+  String get clear => 'Limpar';
 
   @override
-  String get tapToSelectEmoji => 'Tap to select an emoji:';
+  String get tapToSelectEmoji => 'Toque para selecionar um emoji:';
+
+  @override
+  String get selectEmoji => 'Selecionar emoji';
+
+  @override
+  String get tapToChangeEmoji => 'Toque para alterar';
+
+  @override
+  String get searchButton => 'Buscar';
+
+  @override
+  String get today => 'Hoje';
+
+  @override
+  String get yesterday => 'Ontem';
 
   @override
   String get takePhoto => 'Take a photo';
@@ -1975,6 +1990,45 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get records => 'registros';
+
+  @override
+  String get filterText => 'Texto';
+
+  @override
+  String get filterTag => 'Tag';
+
+  @override
+  String get filterEmoticon => 'Emoticon';
+
+  @override
+  String get searchHintTag => 'Digite uma tag...';
+
+  @override
+  String get searchHintText => 'Pesquisar no título ou na descrição...';
+
+  @override
+  String get clearSearchTooltip => 'Limpar pesquisa';
+
+  @override
+  String get clear => 'Limpar';
+
+  @override
+  String get tapToSelectEmoji => 'Toque para selecionar um emoji:';
+
+  @override
+  String get selectEmoji => 'Selecionar emoji';
+
+  @override
+  String get tapToChangeEmoji => 'Toque para alterar';
+
+  @override
+  String get searchButton => 'Buscar';
+
+  @override
+  String get today => 'Hoje';
+
+  @override
+  String get yesterday => 'Ontem';
 
   @override
   String get imageCopiedBase64 =>

@@ -1163,6 +1163,36 @@ abstract class AppLocalizations {
   /// **'Tap to select an emoji:'**
   String get tapToSelectEmoji;
 
+  /// No description provided for @selectEmoji.
+  ///
+  /// In en, this message translates to:
+  /// **'Select emoji'**
+  String get selectEmoji;
+
+  /// No description provided for @tapToChangeEmoji.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to change'**
+  String get tapToChangeEmoji;
+
+  /// No description provided for @searchButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get searchButton;
+
+  /// No description provided for @today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// No description provided for @yesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get yesterday;
+
   /// No description provided for @takePhoto.
   ///
   /// In en, this message translates to:

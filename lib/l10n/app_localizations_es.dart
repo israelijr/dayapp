@@ -569,6 +569,21 @@ class AppLocalizationsEs extends AppLocalizations {
   String get tapToSelectEmoji => 'Toque para seleccionar un emoji:';
 
   @override
+  String get selectEmoji => 'Seleccionar emoji';
+
+  @override
+  String get tapToChangeEmoji => 'Toque para cambiar';
+
+  @override
+  String get searchButton => 'Buscar';
+
+  @override
+  String get today => 'Hoy';
+
+  @override
+  String get yesterday => 'Ayer';
+
+  @override
   String get takePhoto => 'Tomar una foto';
 
   @override
