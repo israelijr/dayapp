@@ -1525,4 +1525,111 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get weekdaySaturday => 'Saturday';
+
+  @override
+  String get backupProgressCreating => 'Creating backup file...';
+
+  @override
+  String get backupProgressCopyingDb => 'Copying database...';
+
+  @override
+  String get backupProgressCopyingVideos => 'Copying videos...';
+
+  @override
+  String backupProgressCopyingVideo(int current, int total) {
+    return 'Copying video $current/$total...';
+  }
+
+  @override
+  String get backupProgressCopyingPhotos => 'Copying photos...';
+
+  @override
+  String backupProgressCopyingPhoto(int current, int total) {
+    return 'Copying photo $current/$total...';
+  }
+
+  @override
+  String get backupProgressCopyingAudios => 'Copying audios...';
+
+  @override
+  String backupProgressCopyingAudio(int current, int total) {
+    return 'Copying audio $current/$total...';
+  }
+
+  @override
+  String get backupProgressCreatingMetadata => 'Creating metadata...';
+
+  @override
+  String get backupProgressCompressing => 'Compressing files...';
+
+  @override
+  String get backupProgressSuccess => 'Backup created successfully!';
+
+  @override
+  String get backupShareText =>
+      'Complete DayApp backup with database and videos';
+
+  @override
+  String get errorBackupDbNotFound => 'Database not found.';
+
+  @override
+  String get errorBackupFileNotFound => 'Backup file not found.';
+
+  @override
+  String errorBackupDbNotFoundInFile(int count) {
+    return 'Database not found in backup file. Extracted files: $count';
+  }
+
+  @override
+  String get restoreProgressExtracting => 'Extracting backup file...';
+
+  @override
+  String restoreProgressZipContains(int count) {
+    return 'ZIP contains $count files...';
+  }
+
+  @override
+  String get restoreProgressBackingUpCurrent =>
+      'Backing up current database...';
+
+  @override
+  String get restoreProgressClosingDb => 'Closing database connections...';
+
+  @override
+  String get restoreProgressRestoringDb => 'Restoring database...';
+
+  @override
+  String get restoreProgressCopyingRestoredDb => 'Copying restored database...';
+
+  @override
+  String get restoreProgressRestoringVideos => 'Restoring videos...';
+
+  @override
+  String restoreProgressRestoringVideo(int current, int total) {
+    return 'Restoring video $current/$total...';
+  }
+
+  @override
+  String get restoreProgressRestoringPhotos => 'Restoring photos...';
+
+  @override
+  String restoreProgressRestoringPhoto(int current, int total) {
+    return 'Restoring photo $current/$total...';
+  }
+
+  @override
+  String get restoreProgressRestoringAudios => 'Restoring audios...';
+
+  @override
+  String restoreProgressRestoringAudio(int current, int total) {
+    return 'Restoring audio $current/$total...';
+  }
+
+  @override
+  String get restoreProgressReinitializingDb => 'Reinitializing database...';
+
+  @override
+  String restoreProgressDbStats(int active, int deleted) {
+    return 'Database restored: $active active, $deleted in trash.';
+  }
 }

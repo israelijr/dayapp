@@ -538,5 +538,93 @@
   "weekdayFriday": "Sexta-feira",
   "@weekdayFriday": { "description": "Dia da semana" },
   "weekdaySaturday": "Sábado",
-  "@weekdaySaturday": { "description": "Dia da semana" }
+  "@weekdaySaturday": { "description": "Dia da semana" },
+
+  "backupProgressCreating": "Criando arquivo de backup...",
+  "@backupProgressCreating": { "description": "Mensagem de progresso: criando arquivo de backup" },
+  "backupProgressCopyingDb": "Copiando banco de dados...",
+  "@backupProgressCopyingDb": { "description": "Mensagem de progresso: copiando banco de dados" },
+  "backupProgressCopyingVideos": "Copiando vídeos...",
+  "@backupProgressCopyingVideos": { "description": "Mensagem de progresso: copiando vídeos" },
+  "backupProgressCopyingVideo": "Copiando vídeo {current}/{total}...",
+  "@backupProgressCopyingVideo": {
+    "description": "Mensagem de progresso: copiando um vídeo",
+    "placeholders": { "current": { "type": "int" }, "total": { "type": "int" } }
+  },
+  "backupProgressCopyingPhotos": "Copiando fotos...",
+  "@backupProgressCopyingPhotos": { "description": "Mensagem de progresso: copiando fotos" },
+  "backupProgressCopyingPhoto": "Copiando foto {current}/{total}...",
+  "@backupProgressCopyingPhoto": {
+    "description": "Mensagem de progresso: copiando uma foto",
+    "placeholders": { "current": { "type": "int" }, "total": { "type": "int" } }
+  },
+  "backupProgressCopyingAudios": "Copiando áudios...",
+  "@backupProgressCopyingAudios": { "description": "Mensagem de progresso: copiando áudios" },
+  "backupProgressCopyingAudio": "Copiando áudio {current}/{total}...",
+  "@backupProgressCopyingAudio": {
+    "description": "Mensagem de progresso: copiando um áudio",
+    "placeholders": { "current": { "type": "int" }, "total": { "type": "int" } }
+  },
+  "backupProgressCreatingMetadata": "Criando metadados...",
+  "@backupProgressCreatingMetadata": { "description": "Mensagem de progresso: criando metadados" },
+  "backupProgressCompressing": "Comprimindo arquivos...",
+  "@backupProgressCompressing": { "description": "Mensagem de progresso: comprimindo arquivos" },
+  "backupProgressSuccess": "Backup criado com sucesso!",
+  "@backupProgressSuccess": { "description": "Mensagem de progresso: backup criado com sucesso" },
+  "backupShareText": "Backup completo do DayApp com banco de dados e vídeos",
+  "@backupShareText": { "description": "Texto exibido no compartilhamento do backup" },
+
+  "errorBackupDbNotFound": "Banco de dados não encontrado.",
+  "@errorBackupDbNotFound": { "description": "Erro ao não encontrar o banco de dados no backup" },
+  "errorBackupFileNotFound": "Arquivo de backup não encontrado.",
+  "@errorBackupFileNotFound": { "description": "Erro ao não encontrar o arquivo ZIP de backup" },
+  "errorBackupDbNotFoundInFile": "Banco de dados não encontrado no arquivo de backup. Arquivos extraídos: {count}",
+  "@errorBackupDbNotFoundInFile": {
+    "description": "Erro ao não encontrar o banco dentro do ZIP de backup",
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "restoreProgressExtracting": "Extraindo arquivo de backup...",
+  "@restoreProgressExtracting": { "description": "Mensagem de progresso: extraindo ZIP" },
+  "restoreProgressZipContains": "ZIP contém {count} arquivos...",
+  "@restoreProgressZipContains": {
+    "description": "Mensagem de progresso: quantidade de arquivos no ZIP",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "restoreProgressBackingUpCurrent": "Fazendo backup do banco atual...",
+  "@restoreProgressBackingUpCurrent": { "description": "Mensagem de progresso: backup do banco atual antes da restauração" },
+  "restoreProgressClosingDb": "Fechando conexões do banco...",
+  "@restoreProgressClosingDb": { "description": "Mensagem de progresso: fechando conexões do banco" },
+  "restoreProgressRestoringDb": "Restaurando banco de dados...",
+  "@restoreProgressRestoringDb": { "description": "Mensagem de progresso: restaurando banco de dados" },
+  "restoreProgressCopyingRestoredDb": "Copiando banco de dados restaurado...",
+  "@restoreProgressCopyingRestoredDb": { "description": "Mensagem de progresso: copiando banco restaurado" },
+  "restoreProgressRestoringVideos": "Restaurando vídeos...",
+  "@restoreProgressRestoringVideos": { "description": "Mensagem de progresso: restaurando vídeos" },
+  "restoreProgressRestoringVideo": "Restaurando vídeo {current}/{total}...",
+  "@restoreProgressRestoringVideo": {
+    "description": "Mensagem de progresso: restaurando um vídeo",
+    "placeholders": { "current": { "type": "int" }, "total": { "type": "int" } }
+  },
+  "restoreProgressRestoringPhotos": "Restaurando fotos...",
+  "@restoreProgressRestoringPhotos": { "description": "Mensagem de progresso: restaurando fotos" },
+  "restoreProgressRestoringPhoto": "Restaurando foto {current}/{total}...",
+  "@restoreProgressRestoringPhoto": {
+    "description": "Mensagem de progresso: restaurando uma foto",
+    "placeholders": { "current": { "type": "int" }, "total": { "type": "int" } }
+  },
+  "restoreProgressRestoringAudios": "Restaurando áudios...",
+  "@restoreProgressRestoringAudios": { "description": "Mensagem de progresso: restaurando áudios" },
+  "restoreProgressRestoringAudio": "Restaurando áudio {current}/{total}...",
+  "@restoreProgressRestoringAudio": {
+    "description": "Mensagem de progresso: restaurando um áudio",
+    "placeholders": { "current": { "type": "int" }, "total": { "type": "int" } }
+  },
+  "restoreProgressReinitializingDb": "Reinicializando banco de dados...",
+  "@restoreProgressReinitializingDb": { "description": "Mensagem de progresso: reinicializando banco de dados após restauração" },
+  "restoreProgressDbStats": "Banco restaurado: {active} ativas, {deleted} na lixeira.",
+  "@restoreProgressDbStats": {
+    "description": "Mensagem de progresso com estatísticas do banco restaurado",
+    "placeholders": { "active": { "type": "int" }, "deleted": { "type": "int" } }
+  }
  }

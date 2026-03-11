@@ -1528,6 +1528,115 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get weekdaySaturday => 'Sábado';
+
+  @override
+  String get backupProgressCreating => 'Criando arquivo de backup...';
+
+  @override
+  String get backupProgressCopyingDb => 'Copiando banco de dados...';
+
+  @override
+  String get backupProgressCopyingVideos => 'Copiando vídeos...';
+
+  @override
+  String backupProgressCopyingVideo(int current, int total) {
+    return 'Copiando vídeo $current/$total...';
+  }
+
+  @override
+  String get backupProgressCopyingPhotos => 'Copiando fotos...';
+
+  @override
+  String backupProgressCopyingPhoto(int current, int total) {
+    return 'Copiando foto $current/$total...';
+  }
+
+  @override
+  String get backupProgressCopyingAudios => 'Copiando áudios...';
+
+  @override
+  String backupProgressCopyingAudio(int current, int total) {
+    return 'Copiando áudio $current/$total...';
+  }
+
+  @override
+  String get backupProgressCreatingMetadata => 'Criando metadados...';
+
+  @override
+  String get backupProgressCompressing => 'Comprimindo arquivos...';
+
+  @override
+  String get backupProgressSuccess => 'Backup criado com sucesso!';
+
+  @override
+  String get backupShareText =>
+      'Backup completo do DayApp com banco de dados e vídeos';
+
+  @override
+  String get errorBackupDbNotFound => 'Banco de dados não encontrado.';
+
+  @override
+  String get errorBackupFileNotFound => 'Arquivo de backup não encontrado.';
+
+  @override
+  String errorBackupDbNotFoundInFile(int count) {
+    return 'Banco de dados não encontrado no arquivo de backup. Arquivos extraídos: $count';
+  }
+
+  @override
+  String get restoreProgressExtracting => 'Extraindo arquivo de backup...';
+
+  @override
+  String restoreProgressZipContains(int count) {
+    return 'ZIP contém $count arquivos...';
+  }
+
+  @override
+  String get restoreProgressBackingUpCurrent =>
+      'Fazendo backup do banco atual...';
+
+  @override
+  String get restoreProgressClosingDb => 'Fechando conexões do banco...';
+
+  @override
+  String get restoreProgressRestoringDb => 'Restaurando banco de dados...';
+
+  @override
+  String get restoreProgressCopyingRestoredDb =>
+      'Copiando banco de dados restaurado...';
+
+  @override
+  String get restoreProgressRestoringVideos => 'Restaurando vídeos...';
+
+  @override
+  String restoreProgressRestoringVideo(int current, int total) {
+    return 'Restaurando vídeo $current/$total...';
+  }
+
+  @override
+  String get restoreProgressRestoringPhotos => 'Restaurando fotos...';
+
+  @override
+  String restoreProgressRestoringPhoto(int current, int total) {
+    return 'Restaurando foto $current/$total...';
+  }
+
+  @override
+  String get restoreProgressRestoringAudios => 'Restaurando áudios...';
+
+  @override
+  String restoreProgressRestoringAudio(int current, int total) {
+    return 'Restaurando áudio $current/$total...';
+  }
+
+  @override
+  String get restoreProgressReinitializingDb =>
+      'Reinicializando banco de dados...';
+
+  @override
+  String restoreProgressDbStats(int active, int deleted) {
+    return 'Banco restaurado: $active ativas, $deleted na lixeira.';
+  }
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -3024,4 +3133,113 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get weekdaySaturday => 'Sábado';
+
+  @override
+  String get backupProgressCreating => 'Criando arquivo de backup...';
+
+  @override
+  String get backupProgressCopyingDb => 'Copiando banco de dados...';
+
+  @override
+  String get backupProgressCopyingVideos => 'Copiando vídeos...';
+
+  @override
+  String backupProgressCopyingVideo(int current, int total) {
+    return 'Copiando vídeo $current/$total...';
+  }
+
+  @override
+  String get backupProgressCopyingPhotos => 'Copiando fotos...';
+
+  @override
+  String backupProgressCopyingPhoto(int current, int total) {
+    return 'Copiando foto $current/$total...';
+  }
+
+  @override
+  String get backupProgressCopyingAudios => 'Copiando áudios...';
+
+  @override
+  String backupProgressCopyingAudio(int current, int total) {
+    return 'Copiando áudio $current/$total...';
+  }
+
+  @override
+  String get backupProgressCreatingMetadata => 'Criando metadados...';
+
+  @override
+  String get backupProgressCompressing => 'Comprimindo arquivos...';
+
+  @override
+  String get backupProgressSuccess => 'Backup criado com sucesso!';
+
+  @override
+  String get backupShareText =>
+      'Backup completo do DayApp com banco de dados e vídeos';
+
+  @override
+  String get errorBackupDbNotFound => 'Banco de dados não encontrado.';
+
+  @override
+  String get errorBackupFileNotFound => 'Arquivo de backup não encontrado.';
+
+  @override
+  String errorBackupDbNotFoundInFile(int count) {
+    return 'Banco de dados não encontrado no arquivo de backup. Arquivos extraídos: $count';
+  }
+
+  @override
+  String get restoreProgressExtracting => 'Extraindo arquivo de backup...';
+
+  @override
+  String restoreProgressZipContains(int count) {
+    return 'ZIP contém $count arquivos...';
+  }
+
+  @override
+  String get restoreProgressBackingUpCurrent =>
+      'Fazendo backup do banco atual...';
+
+  @override
+  String get restoreProgressClosingDb => 'Fechando conexões do banco...';
+
+  @override
+  String get restoreProgressRestoringDb => 'Restaurando banco de dados...';
+
+  @override
+  String get restoreProgressCopyingRestoredDb =>
+      'Copiando banco de dados restaurado...';
+
+  @override
+  String get restoreProgressRestoringVideos => 'Restaurando vídeos...';
+
+  @override
+  String restoreProgressRestoringVideo(int current, int total) {
+    return 'Restaurando vídeo $current/$total...';
+  }
+
+  @override
+  String get restoreProgressRestoringPhotos => 'Restaurando fotos...';
+
+  @override
+  String restoreProgressRestoringPhoto(int current, int total) {
+    return 'Restaurando foto $current/$total...';
+  }
+
+  @override
+  String get restoreProgressRestoringAudios => 'Restaurando áudios...';
+
+  @override
+  String restoreProgressRestoringAudio(int current, int total) {
+    return 'Restaurando áudio $current/$total...';
+  }
+
+  @override
+  String get restoreProgressReinitializingDb =>
+      'Reinicializando banco de dados...';
+
+  @override
+  String restoreProgressDbStats(int active, int deleted) {
+    return 'Banco restaurado: $active ativas, $deleted na lixeira.';
+  }
 }

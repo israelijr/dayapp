@@ -2859,6 +2859,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Saturday'**
   String get weekdaySaturday;
+
+  /// Progress message: creating backup file
+  ///
+  /// In en, this message translates to:
+  /// **'Creating backup file...'**
+  String get backupProgressCreating;
+
+  /// Progress message: copying database
+  ///
+  /// In en, this message translates to:
+  /// **'Copying database...'**
+  String get backupProgressCopyingDb;
+
+  /// Progress message: copying videos
+  ///
+  /// In en, this message translates to:
+  /// **'Copying videos...'**
+  String get backupProgressCopyingVideos;
+
+  /// Progress message: copying a single video
+  ///
+  /// In en, this message translates to:
+  /// **'Copying video {current}/{total}...'**
+  String backupProgressCopyingVideo(int current, int total);
+
+  /// Progress message: copying photos
+  ///
+  /// In en, this message translates to:
+  /// **'Copying photos...'**
+  String get backupProgressCopyingPhotos;
+
+  /// Progress message: copying a single photo
+  ///
+  /// In en, this message translates to:
+  /// **'Copying photo {current}/{total}...'**
+  String backupProgressCopyingPhoto(int current, int total);
+
+  /// Progress message: copying audios
+  ///
+  /// In en, this message translates to:
+  /// **'Copying audios...'**
+  String get backupProgressCopyingAudios;
+
+  /// Progress message: copying a single audio
+  ///
+  /// In en, this message translates to:
+  /// **'Copying audio {current}/{total}...'**
+  String backupProgressCopyingAudio(int current, int total);
+
+  /// Progress message: creating metadata
+  ///
+  /// In en, this message translates to:
+  /// **'Creating metadata...'**
+  String get backupProgressCreatingMetadata;
+
+  /// Progress message: compressing files
+  ///
+  /// In en, this message translates to:
+  /// **'Compressing files...'**
+  String get backupProgressCompressing;
+
+  /// Progress message: backup created successfully
+  ///
+  /// In en, this message translates to:
+  /// **'Backup created successfully!'**
+  String get backupProgressSuccess;
+
+  /// Text shown in the share sheet when sharing backup
+  ///
+  /// In en, this message translates to:
+  /// **'Complete DayApp backup with database and videos'**
+  String get backupShareText;
+
+  /// Error thrown when the database file is missing during backup
+  ///
+  /// In en, this message translates to:
+  /// **'Database not found.'**
+  String get errorBackupDbNotFound;
+
+  /// Error thrown when the backup ZIP file is missing
+  ///
+  /// In en, this message translates to:
+  /// **'Backup file not found.'**
+  String get errorBackupFileNotFound;
+
+  /// Error thrown when the database is missing inside the backup ZIP
+  ///
+  /// In en, this message translates to:
+  /// **'Database not found in backup file. Extracted files: {count}'**
+  String errorBackupDbNotFoundInFile(int count);
+
+  /// Progress message: extracting ZIP
+  ///
+  /// In en, this message translates to:
+  /// **'Extracting backup file...'**
+  String get restoreProgressExtracting;
+
+  /// Progress message: how many files the ZIP has
+  ///
+  /// In en, this message translates to:
+  /// **'ZIP contains {count} files...'**
+  String restoreProgressZipContains(int count);
+
+  /// Progress message: backing up current DB before restore
+  ///
+  /// In en, this message translates to:
+  /// **'Backing up current database...'**
+  String get restoreProgressBackingUpCurrent;
+
+  /// Progress message: closing DB connections
+  ///
+  /// In en, this message translates to:
+  /// **'Closing database connections...'**
+  String get restoreProgressClosingDb;
+
+  /// Progress message: restoring database
+  ///
+  /// In en, this message translates to:
+  /// **'Restoring database...'**
+  String get restoreProgressRestoringDb;
+
+  /// Progress message: copying restored DB
+  ///
+  /// In en, this message translates to:
+  /// **'Copying restored database...'**
+  String get restoreProgressCopyingRestoredDb;
+
+  /// Progress message: restoring videos
+  ///
+  /// In en, this message translates to:
+  /// **'Restoring videos...'**
+  String get restoreProgressRestoringVideos;
+
+  /// Progress message: restoring a single video
+  ///
+  /// In en, this message translates to:
+  /// **'Restoring video {current}/{total}...'**
+  String restoreProgressRestoringVideo(int current, int total);
+
+  /// Progress message: restoring photos
+  ///
+  /// In en, this message translates to:
+  /// **'Restoring photos...'**
+  String get restoreProgressRestoringPhotos;
+
+  /// Progress message: restoring a single photo
+  ///
+  /// In en, this message translates to:
+  /// **'Restoring photo {current}/{total}...'**
+  String restoreProgressRestoringPhoto(int current, int total);
+
+  /// Progress message: restoring audios
+  ///
+  /// In en, this message translates to:
+  /// **'Restoring audios...'**
+  String get restoreProgressRestoringAudios;
+
+  /// Progress message: restoring a single audio
+  ///
+  /// In en, this message translates to:
+  /// **'Restoring audio {current}/{total}...'**
+  String restoreProgressRestoringAudio(int current, int total);
+
+  /// Progress message: reinitializing database after restore
+  ///
+  /// In en, this message translates to:
+  /// **'Reinitializing database...'**
+  String get restoreProgressReinitializingDb;
+
+  /// Progress message showing how many stories were restored
+  ///
+  /// In en, this message translates to:
+  /// **'Database restored: {active} active, {deleted} in trash.'**
+  String restoreProgressDbStats(int active, int deleted);
 }
 
 class _AppLocalizationsDelegate

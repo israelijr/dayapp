@@ -755,6 +755,94 @@
   "weekdayFriday": "Friday",
   "@weekdayFriday": { "description": "Day of the week" },
   "weekdaySaturday": "Saturday",
-  "@weekdaySaturday": { "description": "Day of the week" }
+  "@weekdaySaturday": { "description": "Day of the week" },
+
+  "backupProgressCreating": "Creating backup file...",
+  "@backupProgressCreating": { "description": "Progress message: creating backup file" },
+  "backupProgressCopyingDb": "Copying database...",
+  "@backupProgressCopyingDb": { "description": "Progress message: copying database" },
+  "backupProgressCopyingVideos": "Copying videos...",
+  "@backupProgressCopyingVideos": { "description": "Progress message: copying videos" },
+  "backupProgressCopyingVideo": "Copying video {current}/{total}...",
+  "@backupProgressCopyingVideo": {
+    "description": "Progress message: copying a single video",
+    "placeholders": { "current": { "type": "int" }, "total": { "type": "int" } }
+  },
+  "backupProgressCopyingPhotos": "Copying photos...",
+  "@backupProgressCopyingPhotos": { "description": "Progress message: copying photos" },
+  "backupProgressCopyingPhoto": "Copying photo {current}/{total}...",
+  "@backupProgressCopyingPhoto": {
+    "description": "Progress message: copying a single photo",
+    "placeholders": { "current": { "type": "int" }, "total": { "type": "int" } }
+  },
+  "backupProgressCopyingAudios": "Copying audios...",
+  "@backupProgressCopyingAudios": { "description": "Progress message: copying audios" },
+  "backupProgressCopyingAudio": "Copying audio {current}/{total}...",
+  "@backupProgressCopyingAudio": {
+    "description": "Progress message: copying a single audio",
+    "placeholders": { "current": { "type": "int" }, "total": { "type": "int" } }
+  },
+  "backupProgressCreatingMetadata": "Creating metadata...",
+  "@backupProgressCreatingMetadata": { "description": "Progress message: creating metadata" },
+  "backupProgressCompressing": "Compressing files...",
+  "@backupProgressCompressing": { "description": "Progress message: compressing files" },
+  "backupProgressSuccess": "Backup created successfully!",
+  "@backupProgressSuccess": { "description": "Progress message: backup created successfully" },
+  "backupShareText": "Complete DayApp backup with database and videos",
+  "@backupShareText": { "description": "Text shown in the share sheet when sharing backup" },
+
+  "errorBackupDbNotFound": "Database not found.",
+  "@errorBackupDbNotFound": { "description": "Error thrown when the database file is missing during backup" },
+  "errorBackupFileNotFound": "Backup file not found.",
+  "@errorBackupFileNotFound": { "description": "Error thrown when the backup ZIP file is missing" },
+  "errorBackupDbNotFoundInFile": "Database not found in backup file. Extracted files: {count}",
+  "@errorBackupDbNotFoundInFile": {
+    "description": "Error thrown when the database is missing inside the backup ZIP",
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "restoreProgressExtracting": "Extracting backup file...",
+  "@restoreProgressExtracting": { "description": "Progress message: extracting ZIP" },
+  "restoreProgressZipContains": "ZIP contains {count} files...",
+  "@restoreProgressZipContains": {
+    "description": "Progress message: how many files the ZIP has",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "restoreProgressBackingUpCurrent": "Backing up current database...",
+  "@restoreProgressBackingUpCurrent": { "description": "Progress message: backing up current DB before restore" },
+  "restoreProgressClosingDb": "Closing database connections...",
+  "@restoreProgressClosingDb": { "description": "Progress message: closing DB connections" },
+  "restoreProgressRestoringDb": "Restoring database...",
+  "@restoreProgressRestoringDb": { "description": "Progress message: restoring database" },
+  "restoreProgressCopyingRestoredDb": "Copying restored database...",
+  "@restoreProgressCopyingRestoredDb": { "description": "Progress message: copying restored DB" },
+  "restoreProgressRestoringVideos": "Restoring videos...",
+  "@restoreProgressRestoringVideos": { "description": "Progress message: restoring videos" },
+  "restoreProgressRestoringVideo": "Restoring video {current}/{total}...",
+  "@restoreProgressRestoringVideo": {
+    "description": "Progress message: restoring a single video",
+    "placeholders": { "current": { "type": "int" }, "total": { "type": "int" } }
+  },
+  "restoreProgressRestoringPhotos": "Restoring photos...",
+  "@restoreProgressRestoringPhotos": { "description": "Progress message: restoring photos" },
+  "restoreProgressRestoringPhoto": "Restoring photo {current}/{total}...",
+  "@restoreProgressRestoringPhoto": {
+    "description": "Progress message: restoring a single photo",
+    "placeholders": { "current": { "type": "int" }, "total": { "type": "int" } }
+  },
+  "restoreProgressRestoringAudios": "Restoring audios...",
+  "@restoreProgressRestoringAudios": { "description": "Progress message: restoring audios" },
+  "restoreProgressRestoringAudio": "Restoring audio {current}/{total}...",
+  "@restoreProgressRestoringAudio": {
+    "description": "Progress message: restoring a single audio",
+    "placeholders": { "current": { "type": "int" }, "total": { "type": "int" } }
+  },
+  "restoreProgressReinitializingDb": "Reinitializing database...",
+  "@restoreProgressReinitializingDb": { "description": "Progress message: reinitializing database after restore" },
+  "restoreProgressDbStats": "Database restored: {active} active, {deleted} in trash.",
+  "@restoreProgressDbStats": {
+    "description": "Progress message showing how many stories were restored",
+    "placeholders": { "active": { "type": "int" }, "deleted": { "type": "int" } }
+  }
  }
 

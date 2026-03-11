@@ -10,6 +10,7 @@ import '../db/database_helper.dart';
 import '../helpers/audio_file_helper.dart';
 import '../helpers/photo_file_helper.dart';
 import '../helpers/video_file_helper.dart';
+import '../l10n/generated/app_localizations.dart';
 
 /// ServiÃ§o simplificado de backup - apenas arquivo ZIP local
 class BackupService {
@@ -21,9 +22,12 @@ class BackupService {
   /// (para OneDrive, Google Drive, etc)
   Future<String> createBackupZipFile({
     void Function(String)? onProgress,
+    AppLocalizations? l10n,
   }) async {
     try {
-      onProgress?.call('Criando arquivo de backup...');
+      onProgress?.call(
+        l10n?.backupProgressCreating ?? 'Criando arquivo de backup...',
+      );
 
       // Criar diretÃ³rio temporÃ¡rio para o backup
       final tempDir = await getTemporaryDirectory();
@@ -34,12 +38,16 @@ class BackupService {
       await backupDir.create(recursive: true);
 
       // 1. Copiar banco de dados
-      onProgress?.call('Copiando banco de dados...');
+      onProgress?.call(
+        l10n?.backupProgressCopyingDb ?? 'Copiando banco de dados...',
+      );
       final dbPath = await getDatabasesPath();
       final dbFile = File(path.join(dbPath, 'dayapp.db'));
 
       if (!await dbFile.exists()) {
-        throw Exception('Banco de dados nÃ£o encontrado.');
+        throw Exception(
+          l10n?.errorBackupDbNotFound ?? 'Banco de dados não encontrado.',
+        );
       }
 
       // Marcar histórias como já salvas em backup antes de copiar o arquivo
@@ -57,7 +65,9 @@ class BackupService {
       await dbFile.copy(dbBackupFile.path);
 
       // 2. Copiar vídeos
-      onProgress?.call('Copiando vídeos...');
+      onProgress?.call(
+        l10n?.backupProgressCopyingVideos ?? 'Copiando vídeos...',
+      );
       final videosDir = await VideoFileHelper.getVideosDirectory();
       final videoFiles = videosDir
           .listSync()
@@ -72,7 +82,10 @@ class BackupService {
         for (int i = 0; i < videoFiles.length; i++) {
           final videoFile = videoFiles[i];
           final videoFileName = path.basename(videoFile.path);
-          onProgress?.call('Copiando vídeo ${i + 1}/${videoFiles.length}...');
+          onProgress?.call(
+            l10n?.backupProgressCopyingVideo(i + 1, videoFiles.length) ??
+                'Copiando vídeo ${i + 1}/${videoFiles.length}...',
+          );
 
           final videoBackupFile = File(
             path.join(videosBackupDir.path, videoFileName),
@@ -82,7 +95,9 @@ class BackupService {
       }
 
       // 3. Copiar fotos
-      onProgress?.call('Copiando fotos...');
+      onProgress?.call(
+        l10n?.backupProgressCopyingPhotos ?? 'Copiando fotos...',
+      );
       final photosDir = await PhotoFileHelper.getPhotosDirectory();
       final photoFiles = photosDir
           .listSync()
@@ -99,7 +114,10 @@ class BackupService {
         for (int i = 0; i < photoFiles.length; i++) {
           final photoFile = photoFiles[i];
           final photoFileName = path.basename(photoFile.path);
-          onProgress?.call('Copiando foto ${i + 1}/${photoFiles.length}...');
+          onProgress?.call(
+            l10n?.backupProgressCopyingPhoto(i + 1, photoFiles.length) ??
+                'Copiando foto ${i + 1}/${photoFiles.length}...',
+          );
 
           final photoBackupFile = File(
             path.join(photosBackupDir.path, photoFileName),
@@ -109,7 +127,9 @@ class BackupService {
       }
 
       // 4. Copiar áudios
-      onProgress?.call('Copiando áudios...');
+      onProgress?.call(
+        l10n?.backupProgressCopyingAudios ?? 'Copiando áudios...',
+      );
       final audiosDir = await AudioFileHelper.getAudiosDirectory();
       final audioFiles = audiosDir
           .listSync()
@@ -126,7 +146,10 @@ class BackupService {
         for (int i = 0; i < audioFiles.length; i++) {
           final audioFile = audioFiles[i];
           final audioFileName = path.basename(audioFile.path);
-          onProgress?.call('Copiando áudio ${i + 1}/${audioFiles.length}...');
+          onProgress?.call(
+            l10n?.backupProgressCopyingAudio(i + 1, audioFiles.length) ??
+                'Copiando áudio ${i + 1}/${audioFiles.length}...',
+          );
 
           final audioBackupFile = File(
             path.join(audiosBackupDir.path, audioFileName),
@@ -136,7 +159,9 @@ class BackupService {
       }
 
       // 5. Criar arquivo de metadados
-      onProgress?.call('Criando metadados...');
+      onProgress?.call(
+        l10n?.backupProgressCreatingMetadata ?? 'Criando metadados...',
+      );
       final timestamp = DateTime.now().toIso8601String();
       final metadataFile = File(path.join(backupDir.path, 'backup_info.txt'));
       await metadataFile.writeAsString('''
@@ -150,7 +175,9 @@ Versão: 2.0.0
 ''');
 
       // 6. Comprimir tudo em ZIP
-      onProgress?.call('Comprimindo arquivos...');
+      onProgress?.call(
+        l10n?.backupProgressCompressing ?? 'Comprimindo arquivos...',
+      );
       final timestamp2 = DateTime.now().millisecondsSinceEpoch;
       final zipPath = path.join(tempDir.path, 'dayapp_backup_$timestamp2.zip');
 
@@ -226,7 +253,9 @@ Versão: 2.0.0
       // Limpar diretÃ³rio temporÃ¡rio
       await backupDir.delete(recursive: true);
 
-      onProgress?.call('Backup criado com sucesso!');
+      onProgress?.call(
+        l10n?.backupProgressSuccess ?? 'Backup criado com sucesso!',
+      );
       return zipPath;
     } catch (e) {
       rethrow;
@@ -234,13 +263,21 @@ Versão: 2.0.0
   }
 
   /// Compartilha o arquivo de backup (para salvar no OneDrive, Google Drive, etc)
-  Future<void> shareBackupFile({void Function(String)? onProgress}) async {
+  Future<void> shareBackupFile({
+    void Function(String)? onProgress,
+    AppLocalizations? l10n,
+  }) async {
     try {
-      final zipPath = await createBackupZipFile(onProgress: onProgress);
+      final zipPath = await createBackupZipFile(
+        onProgress: onProgress,
+        l10n: l10n,
+      );
       final zipFile = File(zipPath);
 
       if (!await zipFile.exists()) {
-        throw Exception('Arquivo de backup nÃ£o encontrado.');
+        throw Exception(
+          l10n?.errorBackupFileNotFound ?? 'Arquivo de backup não encontrado.',
+        );
       }
 
       // Compartilhar arquivo
@@ -248,7 +285,9 @@ Versão: 2.0.0
       await Share.shareXFiles(
         [XFile(zipPath)],
         subject: 'Backup DayApp',
-        text: 'Backup completo do DayApp com banco de dados e vídeos',
+        text:
+            l10n?.backupShareText ??
+            'Backup completo do DayApp com banco de dados e vídeos',
       );
     } catch (e) {
       rethrow;
@@ -259,9 +298,12 @@ Versão: 2.0.0
   Future<void> restoreFromZipFile(
     String zipFilePath, {
     void Function(String)? onProgress,
+    AppLocalizations? l10n,
   }) async {
     try {
-      onProgress?.call('Extraindo arquivo de backup...');
+      onProgress?.call(
+        l10n?.restoreProgressExtracting ?? 'Extraindo arquivo de backup...',
+      );
 
       // Criar diretório temporário
       final tempDir = await getTemporaryDirectory();
@@ -278,7 +320,10 @@ Versão: 2.0.0
 
       final archive = ZipDecoder().decodeBytes(bytes);
 
-      onProgress?.call('ZIP contém ${archive.length} arquivos...');
+      onProgress?.call(
+        l10n?.restoreProgressZipContains(archive.length) ??
+            'ZIP contém ${archive.length} arquivos...',
+      );
 
       for (final file in archive) {
         final filename = path.join(extractDir.path, file.name);
@@ -302,7 +347,10 @@ Versão: 2.0.0
       }
 
       // 1. Fazer backup do banco atual
-      onProgress?.call('Fazendo backup do banco atual...');
+      onProgress?.call(
+        l10n?.restoreProgressBackingUpCurrent ??
+            'Fazendo backup do banco atual...',
+      );
       final dbPath = await getDatabasesPath();
       final currentDb = File(path.join(dbPath, 'dayapp.db'));
 
@@ -312,14 +360,18 @@ Versão: 2.0.0
       }
 
       // 2. Restaurar banco de dados
-      onProgress?.call('Restaurando banco de dados...');
+      onProgress?.call(
+        l10n?.restoreProgressRestoringDb ?? 'Restaurando banco de dados...',
+      );
 
       // Procurar o arquivo do banco de dados recursivamente
       final restoredDb = findFile(extractDir, 'dayapp.db');
 
       if (restoredDb != null && await restoredDb.exists()) {
         // Fechar todas as conexões com o banco antes de substituir
-        onProgress?.call('Fechando conexões do banco...');
+        onProgress?.call(
+          l10n?.restoreProgressClosingDb ?? 'Fechando conexões do banco...',
+        );
         await DatabaseHelper().resetDatabase();
 
         // Usar deleteDatabase do sqflite para garantir que o arquivo é liberado
@@ -340,7 +392,10 @@ Versão: 2.0.0
         await Future.delayed(const Duration(milliseconds: 500));
 
         // Copiar banco restaurado
-        onProgress?.call('Copiando banco de dados restaurado...');
+        onProgress?.call(
+          l10n?.restoreProgressCopyingRestoredDb ??
+              'Copiando banco de dados restaurado...',
+        );
         await restoredDb.copy(currentDb.path);
         // Após copiar o banco restaurado, garantir compatibilidade com a nova
         // coluna `backed_up` e marcar todas as histórias do backup como já salvas.
@@ -472,15 +527,20 @@ Versão: 2.0.0
         }
       } else {
         throw Exception(
-          'Banco de dados não encontrado no arquivo de backup. '
-          'Arquivos extraídos: ${extractDir.listSync(recursive: true).length}',
+          l10n?.errorBackupDbNotFoundInFile(
+                extractDir.listSync(recursive: true).length,
+              ) ??
+              'Banco de dados não encontrado no arquivo de backup. '
+                  'Arquivos extraídos: ${extractDir.listSync(recursive: true).length}',
         );
       }
 
       // 3. Restaurar vÃ­deos
-      onProgress?.call('Restaurando vÃ­deos...');
+      onProgress?.call(
+        l10n?.restoreProgressRestoringVideos ?? 'Restaurando vídeos...',
+      );
 
-      // Procurar pasta de vÃ­deos recursivamente
+      // Procurar pasta de vídeos recursivamente
       Directory? videosRestoreDir;
       for (final entity in extractDir.listSync(recursive: true)) {
         if (entity is Directory && path.basename(entity.path) == 'videos') {
@@ -510,7 +570,8 @@ Versão: 2.0.0
           final videoFile = restoredVideos[i];
           final videoFileName = path.basename(videoFile.path);
           onProgress?.call(
-            'Restaurando vÃ­deo ${i + 1}/${restoredVideos.length}...',
+            l10n?.restoreProgressRestoringVideo(i + 1, restoredVideos.length) ??
+                'Restaurando vídeo ${i + 1}/${restoredVideos.length}...',
           );
 
           final destFile = File(path.join(videosDir.path, videoFileName));
@@ -519,7 +580,9 @@ Versão: 2.0.0
       }
 
       // 4. Restaurar fotos
-      onProgress?.call('Restaurando fotos...');
+      onProgress?.call(
+        l10n?.restoreProgressRestoringPhotos ?? 'Restaurando fotos...',
+      );
 
       Directory? photosRestoreDir;
       for (final entity in extractDir.listSync(recursive: true)) {
@@ -550,7 +613,8 @@ Versão: 2.0.0
           final photoFile = restoredPhotos[i];
           final photoFileName = path.basename(photoFile.path);
           onProgress?.call(
-            'Restaurando foto ${i + 1}/${restoredPhotos.length}...',
+            l10n?.restoreProgressRestoringPhoto(i + 1, restoredPhotos.length) ??
+                'Restaurando foto ${i + 1}/${restoredPhotos.length}...',
           );
 
           final destFile = File(path.join(photosDir.path, photoFileName));
@@ -559,7 +623,9 @@ Versão: 2.0.0
       }
 
       // 5. Restaurar áudios
-      onProgress?.call('Restaurando áudios...');
+      onProgress?.call(
+        l10n?.restoreProgressRestoringAudios ?? 'Restaurando áudios...',
+      );
 
       Directory? audiosRestoreDir;
       for (final entity in extractDir.listSync(recursive: true)) {
@@ -590,7 +656,8 @@ Versão: 2.0.0
           final audioFile = restoredAudios[i];
           final audioFileName = path.basename(audioFile.path);
           onProgress?.call(
-            'Restaurando áudio ${i + 1}/${restoredAudios.length}...',
+            l10n?.restoreProgressRestoringAudio(i + 1, restoredAudios.length) ??
+                'Restaurando áudio ${i + 1}/${restoredAudios.length}...',
           );
 
           final destFile = File(path.join(audiosDir.path, audioFileName));
@@ -602,7 +669,10 @@ Versão: 2.0.0
       await extractDir.delete(recursive: true);
 
       // Reinicializar conexão com o banco de dados restaurado
-      onProgress?.call('Reinicializando banco de dados...');
+      onProgress?.call(
+        l10n?.restoreProgressReinitializingDb ??
+            'Reinicializando banco de dados...',
+      );
 
       // Garantir que o singleton foi resetado
       await DatabaseHelper().resetDatabase();
@@ -622,11 +692,17 @@ Versão: 2.0.0
       );
 
       onProgress?.call(
-        'Banco restaurado: ${activeCount.first['cnt']} ativas, '
-        '${deletedCount.first['cnt']} na lixeira.',
+        l10n?.restoreProgressDbStats(
+              activeCount.first['cnt'] as int,
+              deletedCount.first['cnt'] as int,
+            ) ??
+            'Banco restaurado: ${activeCount.first['cnt']} ativas, '
+                '${deletedCount.first['cnt']} na lixeira.',
       );
 
-      onProgress?.call('Restauração concluída com sucesso!');
+      onProgress?.call(
+        l10n?.restoreSuccess ?? 'Restauração concluída com sucesso!',
+      );
     } catch (e) {
       rethrow;
     }

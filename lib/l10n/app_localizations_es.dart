@@ -1538,4 +1538,116 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get weekdaySaturday => 'Sábado';
+
+  @override
+  String get backupProgressCreating =>
+      'Creando archivo de copia de seguridad...';
+
+  @override
+  String get backupProgressCopyingDb => 'Copiando base de datos...';
+
+  @override
+  String get backupProgressCopyingVideos => 'Copiando videos...';
+
+  @override
+  String backupProgressCopyingVideo(int current, int total) {
+    return 'Copiando video $current/$total...';
+  }
+
+  @override
+  String get backupProgressCopyingPhotos => 'Copiando fotos...';
+
+  @override
+  String backupProgressCopyingPhoto(int current, int total) {
+    return 'Copiando foto $current/$total...';
+  }
+
+  @override
+  String get backupProgressCopyingAudios => 'Copiando audios...';
+
+  @override
+  String backupProgressCopyingAudio(int current, int total) {
+    return 'Copiando audio $current/$total...';
+  }
+
+  @override
+  String get backupProgressCreatingMetadata => 'Creando metadatos...';
+
+  @override
+  String get backupProgressCompressing => 'Comprimiendo archivos...';
+
+  @override
+  String get backupProgressSuccess => '¡Copia de seguridad creada con éxito!';
+
+  @override
+  String get backupShareText =>
+      'Copia de seguridad completa de DayApp con base de datos y videos';
+
+  @override
+  String get errorBackupDbNotFound => 'Base de datos no encontrada.';
+
+  @override
+  String get errorBackupFileNotFound =>
+      'Archivo de copia de seguridad no encontrado.';
+
+  @override
+  String errorBackupDbNotFoundInFile(int count) {
+    return 'Base de datos no encontrada en el archivo de copia de seguridad. Archivos extraídos: $count';
+  }
+
+  @override
+  String get restoreProgressExtracting =>
+      'Extrayendo archivo de copia de seguridad...';
+
+  @override
+  String restoreProgressZipContains(int count) {
+    return 'El ZIP contiene $count archivos...';
+  }
+
+  @override
+  String get restoreProgressBackingUpCurrent =>
+      'Haciendo copia de la base de datos actual...';
+
+  @override
+  String get restoreProgressClosingDb =>
+      'Cerrando conexiones de la base de datos...';
+
+  @override
+  String get restoreProgressRestoringDb => 'Restaurando base de datos...';
+
+  @override
+  String get restoreProgressCopyingRestoredDb =>
+      'Copiando base de datos restaurada...';
+
+  @override
+  String get restoreProgressRestoringVideos => 'Restaurando videos...';
+
+  @override
+  String restoreProgressRestoringVideo(int current, int total) {
+    return 'Restaurando video $current/$total...';
+  }
+
+  @override
+  String get restoreProgressRestoringPhotos => 'Restaurando fotos...';
+
+  @override
+  String restoreProgressRestoringPhoto(int current, int total) {
+    return 'Restaurando foto $current/$total...';
+  }
+
+  @override
+  String get restoreProgressRestoringAudios => 'Restaurando audios...';
+
+  @override
+  String restoreProgressRestoringAudio(int current, int total) {
+    return 'Restaurando audio $current/$total...';
+  }
+
+  @override
+  String get restoreProgressReinitializingDb => 'Reiniciando base de datos...';
+
+  @override
+  String restoreProgressDbStats(int active, int deleted) {
+    return 'Base de datos restaurada: $active activas, $deleted en la papelera.';
+  }
 }

@@ -312,6 +312,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
             setState(() => _statusMessage = message);
           }
         },
+        l10n: loc,
       );
 
       debugPrint('BACKUP: Compartilhamento concluído');
@@ -418,6 +419,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
             setState(() => _statusMessage = message);
           }
         },
+        l10n: loc,
       );
 
       if (!mounted) {
