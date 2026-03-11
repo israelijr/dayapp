@@ -28,7 +28,7 @@ class DatabaseHelper {
       final path = p.join(dbPath, 'dayapp.db');
       return await openDatabase(
         path,
-        version: 14,
+        version: 16,
         onCreate: _onCreate,
         onUpgrade: _onUpgrade,
       );
@@ -128,6 +128,38 @@ class DatabaseHelper {
       await db.execute('CREATE INDEX idx_historia_data ON historia(data);');
       await db.execute('CREATE INDEX idx_historia_tag ON historia(tag);');
       await db.execute('CREATE INDEX idx_users_email ON users(email);');
+
+      // Tabela de tags (v15)
+      await db.execute('''
+        CREATE TABLE tags (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          user_id TEXT NOT NULL,
+          nome TEXT NOT NULL,
+          slug TEXT NOT NULL,
+          UNIQUE(user_id, slug),
+          FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        );
+      ''');
+      // Tabela de relação N×N entre histórias e tags (v15)
+      await db.execute('''
+        CREATE TABLE historia_tags (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          historia_id INTEGER NOT NULL,
+          tag_id INTEGER NOT NULL,
+          UNIQUE(historia_id, tag_id),
+          FOREIGN KEY (historia_id) REFERENCES historia(id) ON DELETE CASCADE,
+          FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
+        );
+      ''');
+      await db.execute(
+        'CREATE INDEX idx_tags_user_slug ON tags(user_id, slug);',
+      );
+      await db.execute(
+        'CREATE INDEX idx_historia_tags_historia ON historia_tags(historia_id);',
+      );
+      await db.execute(
+        'CREATE INDEX idx_historia_tags_tag ON historia_tags(tag_id);',
+      );
     } catch (e) {
       rethrow;
     }
@@ -344,6 +376,163 @@ class DatabaseHelper {
       } catch (e) {
         // Colunas já existem ou erro na migração; ignorar
       }
+    }
+    if (oldVersion < 15) {
+      // Criação das tabelas de tags e relação história↔tags
+      try {
+        await db.execute('''
+          CREATE TABLE IF NOT EXISTS tags (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id TEXT NOT NULL,
+            nome TEXT NOT NULL,
+            slug TEXT NOT NULL,
+            UNIQUE(user_id, slug),
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+          );
+        ''');
+        await db.execute('''
+          CREATE TABLE IF NOT EXISTS historia_tags (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            historia_id INTEGER NOT NULL,
+            tag_id INTEGER NOT NULL,
+            UNIQUE(historia_id, tag_id),
+            FOREIGN KEY (historia_id) REFERENCES historia(id) ON DELETE CASCADE,
+            FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
+          );
+        ''');
+        await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_tags_user_slug ON tags(user_id, slug);',
+        );
+        await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_historia_tags_historia ON historia_tags(historia_id);',
+        );
+        await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_historia_tags_tag ON historia_tags(tag_id);',
+        );
+      } catch (e) {
+        // Erro criando tabelas; ignorar para não bloquear o app
+        debugPrint('Erro criando tabelas de tags: $e');
+      }
+
+      // Migração: popula as novas tabelas a partir do campo `historia.tag`
+      // (pode conter múltiplas tags separadas por vírgula)
+      await DatabaseHelper.migrateTagsFromLegacyField(db);
+    }
+    if (oldVersion < 16) {
+      // Escala de humor expandida: antigo 1–4 → novo 2–5.
+      // Valor 1 (😞 Muito difícil) é novo; deslocar existentes +1.
+      try {
+        await db.execute(
+          'UPDATE historia SET humor = humor + 1 WHERE humor BETWEEN 1 AND 4;',
+        );
+        // Registros sem humor ficam como Neutro (3)
+        await db.execute('UPDATE historia SET humor = 3 WHERE humor IS NULL;');
+      } catch (e) {
+        // Migração não crítica; ignora erro para não bloquear o app
+        debugPrint('Erro migrando valores de humor (v16): \$e');
+      }
+    }
+  }
+
+  /// Migra tags do campo legado `historia.tag` (texto, pode ter vírgulas)
+  /// para as tabelas `tags` e `historia_tags`.
+  ///
+  /// Exposto como `static` para ser reutilizado pelo [BackupService] ao
+  /// restaurar backups antigos (anteriores à v15).
+  static Future<void> migrateTagsFromLegacyField(Database db) async {
+    try {
+      // Importa o helper de slug inline para evitar dependência circular
+      // (o Tag.generateSlug usa apenas operações de String puras)
+      String generateSlug(String name) {
+        const Map<String, String> accents = {
+          'à': 'a',
+          'á': 'a',
+          'â': 'a',
+          'ã': 'a',
+          'ä': 'a',
+          'è': 'e',
+          'é': 'e',
+          'ê': 'e',
+          'ë': 'e',
+          'ì': 'i',
+          'í': 'i',
+          'î': 'i',
+          'ï': 'i',
+          'ò': 'o',
+          'ó': 'o',
+          'ô': 'o',
+          'õ': 'o',
+          'ö': 'o',
+          'ù': 'u',
+          'ú': 'u',
+          'û': 'u',
+          'ü': 'u',
+          'ç': 'c',
+          'ñ': 'n',
+          'ý': 'y',
+          'ÿ': 'y',
+          'ß': 'ss',
+        };
+        String result = name.toLowerCase().trim();
+        for (final entry in accents.entries) {
+          result = result.replaceAll(entry.key, entry.value);
+        }
+        result = result.replaceAll(RegExp(r'[^a-z0-9]'), '-');
+        result = result.replaceAll(RegExp(r'-+'), '-');
+        result = result.replaceAll(RegExp(r'^-|-$'), '');
+        return result;
+      }
+
+      final historias = await db.query(
+        'historia',
+        columns: ['id', 'user_id', 'tag'],
+        where: 'tag IS NOT NULL AND tag <> ""',
+      );
+
+      for (final h in historias) {
+        final historiaId = h['id'] as int;
+        final userId = h['user_id'] as String;
+        final tagField = h['tag'] as String;
+
+        // Suporta tags separadas por vírgula ou por espaço
+        final tagNames = tagField
+            .split(RegExp(r'[,]'))
+            .map((t) => t.trim())
+            .where((t) => t.isNotEmpty)
+            .toList();
+
+        for (final nome in tagNames) {
+          final slug = generateSlug(nome);
+          if (slug.isEmpty) continue;
+
+          // Insere a tag (ignora conflito por UNIQUE)
+          await db.insert('tags', {
+            'user_id': userId,
+            'nome': nome,
+            'slug': slug,
+          }, conflictAlgorithm: ConflictAlgorithm.ignore);
+
+          // Obtém o id da tag
+          final tagRows = await db.query(
+            'tags',
+            columns: ['id'],
+            where: 'user_id = ? AND slug = ?',
+            whereArgs: [userId, slug],
+            limit: 1,
+          );
+          if (tagRows.isEmpty) continue;
+          final tagId = tagRows.first['id'] as int;
+
+          // Cria a relação
+          await db.insert('historia_tags', {
+            'historia_id': historiaId,
+            'tag_id': tagId,
+          }, conflictAlgorithm: ConflictAlgorithm.ignore);
+        }
+      }
+    } catch (e) {
+      // Migração de tags legadas falhou; não bloqueia o app
+      debugPrint('Erro na migração de tags legadas: $e');
     }
   }
 

@@ -116,7 +116,7 @@ class StatisticsProvider with ChangeNotifier {
     return {'currentStreak': streakCurrent, 'bestStreak': bestStreak};
   }
 
-  // --- Top tags ---
+  // --- Top tags (usando a nova tabela de relações N×N) ---
   Future<List<Map<String, dynamic>>> fetchTopTags({
     int limit = 10,
     String? userId,
@@ -124,14 +124,32 @@ class StatisticsProvider with ChangeNotifier {
     final db = await _dbHelper.database;
     if (userId != null) {
       final rows = await db.rawQuery(
-        'SELECT tag, COUNT(*) as cnt FROM historia WHERE user_id = ? AND tag IS NOT NULL AND tag <> "" GROUP BY tag ORDER BY cnt DESC LIMIT ?',
+        '''
+        SELECT t.nome as tag, COUNT(ht.historia_id) as cnt
+        FROM tags t
+        INNER JOIN historia_tags ht ON ht.tag_id = t.id
+        INNER JOIN historia h ON h.id = ht.historia_id
+        WHERE t.user_id = ? AND h.excluido IS NULL
+        GROUP BY t.id
+        ORDER BY cnt DESC
+        LIMIT ?
+        ''',
         [userId, limit],
       );
       return rows;
     }
 
     final rows = await db.rawQuery(
-      'SELECT tag, COUNT(*) as cnt FROM historia WHERE tag IS NOT NULL AND tag <> "" GROUP BY tag ORDER BY cnt DESC LIMIT ?',
+      '''
+      SELECT t.nome as tag, COUNT(ht.historia_id) as cnt
+      FROM tags t
+      INNER JOIN historia_tags ht ON ht.tag_id = t.id
+      INNER JOIN historia h ON h.id = ht.historia_id
+      WHERE h.excluido IS NULL
+      GROUP BY t.id
+      ORDER BY cnt DESC
+      LIMIT ?
+      ''',
       [limit],
     );
     return rows;

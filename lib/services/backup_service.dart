@@ -391,6 +391,79 @@ Versão: 2.0.0
             }
             // Marcar todas as histórias deste banco restaurado como já salvas
             await tmpDb.update('historia', {'backed_up': 1});
+
+            // --- Compatibilidade v15: tabelas de tags ---
+            // Garante existência das tabelas independente da versão do backup.
+            try {
+              await tmpDb.execute('''
+                CREATE TABLE IF NOT EXISTS tags (
+                  id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  user_id TEXT NOT NULL,
+                  nome TEXT NOT NULL,
+                  slug TEXT NOT NULL,
+                  UNIQUE(user_id, slug),
+                  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+                );
+              ''');
+              await tmpDb.execute('''
+                CREATE TABLE IF NOT EXISTS historia_tags (
+                  id INTEGER PRIMARY KEY AUTOINCREMENT,
+                  historia_id INTEGER NOT NULL,
+                  tag_id INTEGER NOT NULL,
+                  UNIQUE(historia_id, tag_id),
+                  FOREIGN KEY (historia_id) REFERENCES historia(id) ON DELETE CASCADE,
+                  FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
+                );
+              ''');
+              await tmpDb.execute(
+                'CREATE INDEX IF NOT EXISTS idx_tags_user_slug ON tags(user_id, slug);',
+              );
+              await tmpDb.execute(
+                'CREATE INDEX IF NOT EXISTS idx_historia_tags_historia ON historia_tags(historia_id);',
+              );
+              await tmpDb.execute(
+                'CREATE INDEX IF NOT EXISTS idx_historia_tags_tag ON historia_tags(tag_id);',
+              );
+            } catch (_) {
+              // Tabelas/índices já existem; ignorar
+            }
+
+            // Verificar a versão gravada no backup para aplicar migrações
+            // pendentes antes de o DatabaseHelper reabrir o banco.
+            final List<Map<String, dynamic>> versionRows = await tmpDb.rawQuery(
+              'PRAGMA user_version',
+            );
+            final int backupVersion =
+                (versionRows.firstOrNull?['user_version'] as int?) ?? 0;
+
+            // Compatibilidade v15: popular tabelas de tags a partir do campo
+            // texto legado `historia.tag` (backups anteriores à v15).
+            if (backupVersion < 15) {
+              try {
+                await DatabaseHelper.migrateTagsFromLegacyField(tmpDb);
+              } catch (_) {
+                // Migração de tags não crítica; continuar normalmente
+              }
+            }
+
+            // Compatibilidade v16: nova escala de humor 1–5 (antes era 1–4).
+            // O emoji "Muito difícil" foi adicionado na posição 1, deslocando
+            // todos os valores antigos +1 (Difícil=1→2, Neutro=2→3, etc.).
+            if (backupVersion < 16) {
+              try {
+                await tmpDb.execute(
+                  'UPDATE historia SET humor = humor + 1 WHERE humor BETWEEN 1 AND 4;',
+                );
+                await tmpDb.execute(
+                  'UPDATE historia SET humor = 3 WHERE humor IS NULL;',
+                );
+                // Atualizar user_version para evitar dupla migração quando
+                // DatabaseHelper reabrir o banco com version: 16.
+                await tmpDb.execute('PRAGMA user_version = 16;');
+              } catch (_) {
+                // Migração não crítica; ignorar
+              }
+            }
           } finally {
             await tmpDb.close();
           }

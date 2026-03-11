@@ -10,11 +10,14 @@ import '../db/database_helper.dart';
 import '../db/historia_audio_helper.dart';
 import '../db/historia_foto_helper.dart';
 import '../db/historia_video_helper.dart';
+import '../db/tag_helper.dart';
 import '../helpers/audio_file_helper.dart';
 import '../helpers/notification_helper.dart';
 import '../helpers/photo_file_helper.dart';
 import '../helpers/rich_text_helper.dart';
 import '../models/historia.dart';
+import '../models/tag.dart';
+import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
 import '../services/emoji_service.dart';
 import '../services/pdf_export_service.dart';
@@ -28,6 +31,7 @@ import '../widgets/entry_toolbar.dart';
 import '../widgets/image_picker_widget.dart';
 import '../widgets/mood_energy_selectors.dart';
 import '../widgets/rich_text_editor_widget.dart';
+import '../widgets/tag_input_widget.dart';
 import '../widgets/video_recorder_widget.dart';
 import 'pdf_preview_screen.dart';
 import 'rich_text_editor_screen.dart';
@@ -84,7 +88,6 @@ class EditHistoriaScreen extends StatefulWidget {
 class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
   late TextEditingController titleController;
   late QuillController richTextController;
-  late TextEditingController tagsController;
   late DateTime selectedDate;
   List<Uint8List> fotos = [];
   List<int> fotoIds = [];
@@ -96,8 +99,12 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
   String? selectedEmoticon;
   String? selectedEmojiTranslation;
   bool _isArchived = false;
-  int _selectedMood = 3; // padrão: Bom
+  int _selectedMood = 3; // padrão: Neutro
   int _selectedEnergy = 2; // padrão: Normal
+
+  // Lista de tags selecionadas (carregadas do banco em initState)
+  List<Tag> _selectedTags = [];
+  List<Tag> _initialTags = [];
 
   // Controle de alterações não salvas
   bool _hasUnsavedChanges = false;
@@ -107,7 +114,6 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
   bool _initialized = false;
   late String _initialTitle;
   late String _initialDescription;
-  late String _initialTags;
   late DateTime _initialDate;
   late String? _initialEmoticon;
   late bool _initialIsArchived;
@@ -146,7 +152,6 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     richTextController = RichTextHelper.smartController(
       widget.historia.descricao,
     );
-    tagsController = TextEditingController(text: widget.historia.tag ?? '');
     selectedDate = widget.historia.data;
     selectedEmoticon = widget.historia.emoticon;
     _isArchived = widget.historia.arquivado == 'sim';
@@ -156,7 +161,6 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     // Salva valores iniciais para detectar mudanças
     _initialTitle = widget.historia.titulo;
     _initialDescription = richTextController.document.toPlainText();
-    _initialTags = widget.historia.tag ?? '';
     _initialDate = widget.historia.data;
     _initialEmoticon = widget.historia.emoticon;
     _initialIsArchived = widget.historia.arquivado == 'sim';
@@ -166,12 +170,12 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     // Adiciona listeners para detectar mudanças
     titleController.addListener(_checkForChanges);
     richTextController.addListener(_checkForChanges);
-    tagsController.addListener(_checkForChanges);
 
     _loadFotos();
     _loadAudios();
     _loadVideos();
     _loadEmojiTranslation();
+    _loadTags();
 
     _initialized = true; // marca estado como pronto para verificação
   }
@@ -231,16 +235,37 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     }
   }
 
+  /// Carrega as tags associadas a esta história do banco de dados
+  Future<void> _loadTags() async {
+    final id = widget.historia.id;
+    if (id == null) return;
+    try {
+      final tags = await TagHelper().getTagsByHistoria(id);
+      if (mounted) {
+        setState(() {
+          _selectedTags = tags;
+          _initialTags = List.from(tags);
+        });
+      }
+    } catch (e) {
+      // Falha ao carregar tags não é crítica; exibe vazio
+      debugPrint('Erro ao carregar tags: $e');
+    }
+  }
+
   void _checkForChanges() {
     if (!_initialized) {
       return; // não faz nada antes dos controllers estarem prontos
     }
 
     final currentDescription = richTextController.document.toPlainText();
+    final tagsChanged =
+        _selectedTags.length != _initialTags.length ||
+        _selectedTags.any((t) => !_initialTags.any((i) => i.slug == t.slug));
     final hasChanges =
         titleController.text != _initialTitle ||
         currentDescription != _initialDescription ||
-        tagsController.text != _initialTags ||
+        tagsChanged ||
         selectedDate != _initialDate ||
         selectedEmoticon != _initialEmoticon ||
         _isArchived != _initialIsArchived ||
@@ -519,9 +544,8 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
       {
         'titulo': _capitalizeText(titleController.text.trim()),
         'descricao': RichTextHelper.controllerToJson(richTextController),
-        'tag': tagsController.text.trim().isEmpty
-            ? null
-            : tagsController.text.trim(),
+        'tag':
+            null, // campo legado mantido para compatibilidade; usar historia_tags
         'emoticon': selectedEmoticon,
         'data': selectedDate.toIso8601String(),
         'data_update': DateTime.now().toIso8601String(),
@@ -533,6 +557,15 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
       where: 'id = ?',
       whereArgs: [widget.historia.id],
     );
+
+    // Salva/atualiza as tags no sistema de relações
+    if (widget.historia.id != null) {
+      await TagHelper().setTagsForHistoria(
+        widget.historia.id!,
+        _selectedTags,
+        db,
+      );
+    }
 
     // Verifica se a data foi alterada
     if (selectedDate != _initialDate) {
@@ -715,9 +748,9 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
       content: plainText,
       date: selectedDate,
       images: fotos,
-      tags: tagsController.text.trim().isEmpty
+      tags: _selectedTags.isEmpty
           ? null
-          : tagsController.text.trim(),
+          : _selectedTags.map((t) => t.nome).join(', '),
       emoticon: selectedEmoticon,
       locale: loc.localeName,
     );
@@ -735,9 +768,9 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
             content: plainText,
             date: selectedDate,
             images: fotos,
-            tags: tagsController.text.trim().isEmpty
+            tags: _selectedTags.isEmpty
                 ? null
-                : tagsController.text.trim(),
+                : _selectedTags.map((t) => t.nome).join(', '),
             emoticon: selectedEmoticon,
             highQuality: highQuality,
             locale: loc.localeName,
@@ -759,10 +792,8 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
   void dispose() {
     titleController.removeListener(_checkForChanges);
     richTextController.removeListener(_checkForChanges);
-    tagsController.removeListener(_checkForChanges);
     titleController.dispose();
     richTextController.dispose();
-    tagsController.dispose();
     super.dispose();
   }
 
@@ -896,10 +927,23 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                     const SizedBox(height: 16),
 
                     // Tags
-                    CustomTextField(
-                      controller: tagsController,
-                      label: loc.tagsLabel,
-                      prefixIcon: const Icon(Icons.tag),
+                    Builder(
+                      builder: (context) {
+                        final auth = Provider.of<AuthProvider>(
+                          context,
+                          listen: false,
+                        );
+                        return TagInputWidget(
+                          userId: auth.user?.id ?? '',
+                          initialTags: _selectedTags,
+                          onTagsChanged: (tags) {
+                            setState(() {
+                              _selectedTags = tags;
+                              _checkForChanges();
+                            });
+                          },
+                        );
+                      },
                     ),
                     const SizedBox(height: 16),
 

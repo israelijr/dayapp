@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../db/database_helper.dart';
 import '../models/historia.dart';
+import '../models/tag.dart';
 import '../providers/auth_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../services/emoji_service.dart';
@@ -107,12 +108,20 @@ class _SearchScreenState extends State<SearchScreen> {
             });
             return;
           }
-          // Pesquisa por tag
-          results = await db.query(
-            'historia',
-            where: 'user_id = ? AND excluido IS NULL AND tag LIKE ?',
-            whereArgs: [userId, '%$tag%'],
-            orderBy: 'data DESC',
+          // Pesquisa por tag usando a nova tabela de relações (busca por slug
+          // normalizado para ignorar acentos/capitalização)
+          final slug = Tag.generateSlug(tag);
+          results = await db.rawQuery(
+            '''
+            SELECT DISTINCT h.*
+            FROM historia h
+            INNER JOIN historia_tags ht ON ht.historia_id = h.id
+            INNER JOIN tags t ON t.id = ht.tag_id
+            WHERE h.user_id = ? AND h.excluido IS NULL
+              AND (t.slug LIKE ? OR t.nome LIKE ?)
+            ORDER BY h.data DESC
+            ''',
+            [userId, '%$slug%', '%$tag%'],
           );
           break;
 

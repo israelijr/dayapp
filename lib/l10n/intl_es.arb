@@ -630,6 +630,8 @@
   "@emojiGroupSimbolos": { "description": "Grupo de emoji: símbolos" },
   "moodQuestion": "¿Cómo te sentiste en esta historia?",
   "@moodQuestion": { "description": "Pregunta sobre el humor/sentimiento del usuario" },
+  "moodVeryDifficult": "Muy difícil",
+  "@moodVeryDifficult": { "description": "Opción de humor: muy difícil" },
   "moodDifficult": "Difícil",
   "@moodDifficult": { "description": "Opción de humor: difícil" },
   "moodNeutral": "Neutro",
@@ -645,5 +647,18 @@
   "energyNormal": "Normal",
   "@energyNormal": { "description": "Nivel de energía: normal" },
   "energyHigh": "Alta",
-  "@energyHigh": { "description": "Nivel de energía: alta" }
+  "@energyHigh": { "description": "Nivel de energía: alta" },
+
+  "tagsHint": "Escribe y presiona Enter o , para agregar",
+  "@tagsHint": { "description": "Texto de ayuda del campo de etiquetas" },
+  "addTag": "Agregar etiqueta",
+  "@addTag": { "description": "Tooltip del botón para agregar etiqueta" },
+  "tagLongPressHint": "Mantén presionado para renombrar",
+  "@tagLongPressHint": { "description": "Tooltip en los chips de etiqueta" },
+  "renameTagTitle": "Renombrar etiqueta",
+  "@renameTagTitle": { "description": "Título del diálogo para renombrar etiqueta" },
+  "renameTagWarning": "Renombrar afectará todas las historias que usen esta etiqueta.",
+  "@renameTagWarning": { "description": "Advertencia al renombrar una etiqueta" },
+  "tagNameLabel": "Nombre de la etiqueta",
+  "@tagNameLabel": { "description": "Etiqueta del campo de nombre de etiqueta" }
  }

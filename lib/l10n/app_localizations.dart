@@ -2615,7 +2615,13 @@ abstract class AppLocalizations {
   /// **'How did you feel in this story?'**
   String get moodQuestion;
 
-  /// Mood option: difficult/hard
+  /// Mood option: very difficult
+  ///
+  /// In en, this message translates to:
+  /// **'Very difficult'**
+  String get moodVeryDifficult;
+
+  /// Mood option: difficult
   ///
   /// In en, this message translates to:
   /// **'Difficult'**
@@ -2662,6 +2668,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'High'**
   String get energyHigh;
+
+  /// Hint text for the tags input field
+  ///
+  /// In en, this message translates to:
+  /// **'Type and press Enter or , to add'**
+  String get tagsHint;
+
+  /// Tooltip for the add tag button
+  ///
+  /// In en, this message translates to:
+  /// **'Add tag'**
+  String get addTag;
+
+  /// Tooltip shown on tag chips
+  ///
+  /// In en, this message translates to:
+  /// **'Long press to rename'**
+  String get tagLongPressHint;
+
+  /// Title of the rename tag dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Rename tag'**
+  String get renameTagTitle;
+
+  /// Warning shown when renaming a tag
+  ///
+  /// In en, this message translates to:
+  /// **'Renaming will affect all stories that use this tag.'**
+  String get renameTagWarning;
+
+  /// Label for the tag name text field
+  ///
+  /// In en, this message translates to:
+  /// **'Tag name'**
+  String get tagNameLabel;
 }
 
 class _AppLocalizationsDelegate

@@ -10,8 +10,10 @@ import '../db/database_helper.dart';
 import '../db/historia_audio_helper.dart';
 import '../db/historia_foto_helper.dart';
 import '../db/historia_video_helper.dart';
+import '../db/tag_helper.dart';
 import '../helpers/notification_helper.dart';
 import '../helpers/rich_text_helper.dart';
+import '../models/tag.dart';
 import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
 import '../providers/refresh_provider.dart';
@@ -27,6 +29,7 @@ import '../widgets/entry_toolbar.dart';
 import '../widgets/image_picker_widget.dart';
 import '../widgets/mood_energy_selectors.dart';
 import '../widgets/rich_text_editor_widget.dart';
+import '../widgets/tag_input_widget.dart';
 import '../widgets/video_recorder_widget.dart';
 import 'pdf_preview_screen.dart';
 import 'rich_text_editor_screen.dart';
@@ -88,7 +91,6 @@ class CreateHistoriaScreen extends StatefulWidget {
 class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
   final titleController = TextEditingController();
   late final QuillController richTextController;
-  final tagsController = TextEditingController();
   final List<Uint8List> fotos = [];
   final List<Map<String, dynamic>> audios =
       []; // {audio: Uint8List, duration: int}
@@ -98,8 +100,11 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
   bool _isLoading = false;
   String? selectedEmoticon;
   String? selectedEmojiTranslation;
-  int _selectedMood = 3; // padrão: Bom
+  int _selectedMood = 3; // padrão: Neutro
   int _selectedEnergy = 2; // padrão: Normal
+
+  // Lista de tags selecionadas
+  List<Tag> _selectedTags = [];
 
   // Controle de alterações não salvas
   bool _hasUnsavedChanges = false;
@@ -112,7 +117,6 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
     // Adiciona listeners para detectar mudanças
     titleController.addListener(_checkForChanges);
     richTextController.addListener(_checkForChanges);
-    tagsController.addListener(_checkForChanges);
   }
 
   void _checkForChanges() {
@@ -121,7 +125,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
     final hasChanges =
         titleController.text.isNotEmpty ||
         plainText.isNotEmpty ||
-        tagsController.text.isNotEmpty ||
+        _selectedTags.isNotEmpty ||
         fotos.isNotEmpty ||
         audios.isNotEmpty ||
         videos.isNotEmpty ||
@@ -140,10 +144,8 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
   void dispose() {
     titleController.removeListener(_checkForChanges);
     richTextController.removeListener(_checkForChanges);
-    tagsController.removeListener(_checkForChanges);
     titleController.dispose();
     richTextController.dispose();
-    tagsController.dispose();
     super.dispose();
   }
 
@@ -314,9 +316,8 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
         'user_id': auth.user?.id ?? '',
         'titulo': _capitalizeText(titleController.text.trim()),
         'descricao': plainText.isEmpty ? null : richTextJson,
-        'tag': tagsController.text.trim().isEmpty
-            ? null
-            : tagsController.text.trim(),
+        'tag':
+            null, // campo legado mantido para compatibilidade; usar historia_tags
         'grupo': null,
         'arquivado': null,
         'emoticon': selectedEmoticon,
@@ -326,6 +327,11 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
         'humor': _selectedMood,
         'energia': _selectedEnergy,
       });
+
+      // Salva as tags no novo sistema de relações
+      if (_selectedTags.isNotEmpty) {
+        await TagHelper().setTagsForHistoria(historiaId, _selectedTags, db);
+      }
 
       // Salva as fotos (se houver)
       for (final foto in fotos) {
@@ -452,9 +458,9 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
         content: plainText,
         date: selectedDate,
         images: fotos,
-        tags: tagsController.text.trim().isEmpty
+        tags: _selectedTags.isEmpty
             ? null
-            : tagsController.text.trim(),
+            : _selectedTags.map((t) => t.nome).join(', '),
         emoticon: selectedEmoticon,
         locale: loc.localeName,
       );
@@ -474,9 +480,9 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                   content: plainText,
                   date: selectedDate,
                   images: fotos,
-                  tags: tagsController.text.trim().isEmpty
+                  tags: _selectedTags.isEmpty
                       ? null
-                      : tagsController.text.trim(),
+                      : _selectedTags.map((t) => t.nome).join(', '),
                   emoticon: selectedEmoticon,
                   highQuality: highQuality,
                   locale: loc.localeName,
@@ -770,10 +776,23 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                     const SizedBox(height: 16),
 
                     // Tags
-                    CustomTextField(
-                      controller: tagsController,
-                      label: loc.tagsLabel,
-                      prefixIcon: const Icon(Icons.tag),
+                    Builder(
+                      builder: (context) {
+                        final auth = Provider.of<AuthProvider>(
+                          context,
+                          listen: false,
+                        );
+                        return TagInputWidget(
+                          userId: auth.user?.id ?? '',
+                          initialTags: _selectedTags,
+                          onTagsChanged: (tags) {
+                            setState(() {
+                              _selectedTags = tags;
+                              _checkForChanges();
+                            });
+                          },
+                        );
+                      },
                     ),
                     const SizedBox(height: 16),
 

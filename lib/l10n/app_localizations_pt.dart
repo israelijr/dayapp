@@ -1395,6 +1395,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get moodQuestion => 'Como você se sentiu nessa história?';
 
   @override
+  String get moodVeryDifficult => 'Muito difícil';
+
+  @override
   String get moodDifficult => 'Difícil';
 
   @override
@@ -1417,6 +1420,25 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get energyHigh => 'Alta';
+
+  @override
+  String get tagsHint => 'Digite e pressione Enter ou , para adicionar';
+
+  @override
+  String get addTag => 'Adicionar tag';
+
+  @override
+  String get tagLongPressHint => 'Pressione e segure para renomear';
+
+  @override
+  String get renameTagTitle => 'Renomear tag';
+
+  @override
+  String get renameTagWarning =>
+      'Renomear afetará todas as histórias que usam esta tag.';
+
+  @override
+  String get tagNameLabel => 'Nome da tag';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -2756,6 +2778,9 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get moodQuestion => 'Como você se sentiu nessa história?';
 
   @override
+  String get moodVeryDifficult => 'Muito difícil';
+
+  @override
   String get moodDifficult => 'Difícil';
 
   @override
@@ -2778,4 +2803,23 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get energyHigh => 'Alta';
+
+  @override
+  String get tagsHint => 'Digite e pressione Enter ou , para adicionar';
+
+  @override
+  String get addTag => 'Adicionar tag';
+
+  @override
+  String get tagLongPressHint => 'Pressione e segure para renomear';
+
+  @override
+  String get renameTagTitle => 'Renomear tag';
+
+  @override
+  String get renameTagWarning =>
+      'Renomear afetará todas as histórias que usam esta tag.';
+
+  @override
+  String get tagNameLabel => 'Nome da tag';
 }

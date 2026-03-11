@@ -1405,6 +1405,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get moodQuestion => '¿Cómo te sentiste en esta historia?';
 
   @override
+  String get moodVeryDifficult => 'Muy difícil';
+
+  @override
   String get moodDifficult => 'Difícil';
 
   @override
@@ -1427,4 +1430,23 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get energyHigh => 'Alta';
+
+  @override
+  String get tagsHint => 'Escribe y presiona Enter o , para agregar';
+
+  @override
+  String get addTag => 'Agregar etiqueta';
+
+  @override
+  String get tagLongPressHint => 'Mantén presionado para renombrar';
+
+  @override
+  String get renameTagTitle => 'Renombrar etiqueta';
+
+  @override
+  String get renameTagWarning =>
+      'Renombrar afectará todas las historias que usen esta etiqueta.';
+
+  @override
+  String get tagNameLabel => 'Nombre de la etiqueta';
 }

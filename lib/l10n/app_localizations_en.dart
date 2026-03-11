@@ -1392,6 +1392,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get moodQuestion => 'How did you feel in this story?';
 
   @override
+  String get moodVeryDifficult => 'Very difficult';
+
+  @override
   String get moodDifficult => 'Difficult';
 
   @override
@@ -1414,4 +1417,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get energyHigh => 'High';
+
+  @override
+  String get tagsHint => 'Type and press Enter or , to add';
+
+  @override
+  String get addTag => 'Add tag';
+
+  @override
+  String get tagLongPressHint => 'Long press to rename';
+
+  @override
+  String get renameTagTitle => 'Rename tag';
+
+  @override
+  String get renameTagWarning =>
+      'Renaming will affect all stories that use this tag.';
+
+  @override
+  String get tagNameLabel => 'Tag name';
 }

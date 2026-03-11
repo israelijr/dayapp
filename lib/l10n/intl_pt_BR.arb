@@ -642,6 +642,8 @@
   "@emojiGroupSimbolos": { "description": "Grupo de emoji: símbolos" },
   "moodQuestion": "Como você se sentiu nessa história?",
   "@moodQuestion": { "description": "Pergunta sobre o humor/sentimento do usuário" },
+  "moodVeryDifficult": "Muito difícil",
+  "@moodVeryDifficult": { "description": "Opção de humor: muito difícil" },
   "moodDifficult": "Difícil",
   "@moodDifficult": { "description": "Opção de humor: difícil" },
   "moodNeutral": "Neutro",
@@ -657,5 +659,18 @@
   "energyNormal": "Normal",
   "@energyNormal": { "description": "Nível de energia: normal" },
   "energyHigh": "Alta",
-  "@energyHigh": { "description": "Nível de energia: alta" }
+  "@energyHigh": { "description": "Nível de energia: alta" },
+
+  "tagsHint": "Digite e pressione Enter ou , para adicionar",
+  "@tagsHint": { "description": "Texto de dica do campo de tags" },
+  "addTag": "Adicionar tag",
+  "@addTag": { "description": "Tooltip do botão de adicionar tag" },
+  "tagLongPressHint": "Pressione e segure para renomear",
+  "@tagLongPressHint": { "description": "Tooltip nos chips de tag" },
+  "renameTagTitle": "Renomear tag",
+  "@renameTagTitle": { "description": "Título do diálogo de renomear tag" },
+  "renameTagWarning": "Renomear afetará todas as histórias que usam esta tag.",
+  "@renameTagWarning": { "description": "Aviso ao renomear uma tag" },
+  "tagNameLabel": "Nome da tag",
+  "@tagNameLabel": { "description": "Rótulo do campo de nome da tag" }
  }
