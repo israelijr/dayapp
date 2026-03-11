@@ -60,7 +60,6 @@ class InsightService {
       FROM historia
       WHERE user_id = ?
         AND excluido IS NULL
-        AND arquivado IS NULL
       ''',
       [userId],
     );
@@ -102,7 +101,6 @@ class InsightService {
       FROM historia
       WHERE user_id = ?
         AND excluido IS NULL
-        AND arquivado IS NULL
       GROUP BY dia_semana
       HAVING total >= ?
       ORDER BY media_humor DESC
@@ -148,7 +146,6 @@ class InsightService {
       JOIN tags t           ON t.id = ht.tag_id
       WHERE h.user_id = ?
         AND h.excluido IS NULL
-        AND h.arquivado IS NULL
       GROUP BY t.id
       HAVING total >= ?
       ORDER BY media_humor DESC
@@ -191,7 +188,6 @@ class InsightService {
       FROM historia
       WHERE user_id = ?
         AND excluido IS NULL
-        AND arquivado IS NULL
         AND data >= datetime('now', '-7 day')
       ''',
       [userId],
@@ -203,7 +199,6 @@ class InsightService {
       FROM historia
       WHERE user_id = ?
         AND excluido IS NULL
-        AND arquivado IS NULL
         AND data >= datetime('now', '-30 day')
       ''',
       [userId],
@@ -247,7 +242,6 @@ class InsightService {
       FROM historia
       WHERE user_id = ?
         AND excluido IS NULL
-        AND arquivado IS NULL
         AND strftime('%Y-%m', data) = strftime('%Y-%m', 'now', 'localtime')
       ''',
       [userId],
@@ -272,7 +266,6 @@ class InsightService {
       JOIN tags t           ON t.id = ht.tag_id
       WHERE h.user_id = ?
         AND h.excluido IS NULL
-        AND h.arquivado IS NULL
         AND strftime('%Y-%m', h.data) = strftime('%Y-%m', 'now', 'localtime')
       GROUP BY t.id, t.nome
       ORDER BY total DESC, MAX(h.data) DESC, t.nome ASC

@@ -34,7 +34,7 @@ class InsightCard extends StatelessWidget {
     final showButton = onSeeStories != null && tag != null && tag.isNotEmpty;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
       child: AnimatedContainer(
         duration: AppDurations.short,
         child: Card(
@@ -47,7 +47,7 @@ class InsightCard extends StatelessWidget {
             ),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -66,8 +66,7 @@ class InsightCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
-                // Descrição
+                const SizedBox(height: 4),
                 Text(
                   description,
                   style: theme.textTheme.bodyMedium?.copyWith(
@@ -76,7 +75,7 @@ class InsightCard extends StatelessWidget {
                 ),
                 // Botão de ação opcional
                 if (showButton) ...[
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 4),
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(

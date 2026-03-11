@@ -1459,7 +1459,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get insightDiscovery => 'Descoberta';
 
   @override
-  String get insightPattern => 'Padrão encontrado';
+  String get insightPattern => 'Encontrei um comportamento padrão';
 
   @override
   String get insightTrend => '📈 Tendência';
@@ -2946,7 +2946,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get insightDiscovery => 'Descoberta';
 
   @override
-  String get insightPattern => 'Padrão encontrado';
+  String get insightPattern => 'Encontrei um comportamento padrão';
 
   @override
   String get insightTrend => '📈 Tendência';

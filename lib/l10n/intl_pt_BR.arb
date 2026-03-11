@@ -689,7 +689,7 @@
 
   "insightDiscovery": "Descoberta",
   "@insightDiscovery": { "description": "Título do card de melhor dia da semana" },
-  "insightPattern": "Padrão encontrado",
+  "insightPattern": "Encontrei um comportamento padrão",
   "@insightPattern": { "description": "Título do card de tag positiva" },
   "insightTrend": "📈 Tendência",
   "@insightTrend": { "description": "Título do card de tendência de humor" },

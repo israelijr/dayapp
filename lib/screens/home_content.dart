@@ -922,8 +922,18 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
             final int storiesCount = widget.historias.length;
             final int insightsInserted = (storiesCount ~/ insightInterval)
                 .clamp(0, insights.length);
+            // Mostra 1 insight ao final quando há insights disponíveis mas
+            // não há registros suficientes na home para acionar um bloco completo
+            // (ex.: registros estão arquivados ou agrupados)
+            final bool showTrailingInsight =
+                insightsInserted == 0 &&
+                insights.isNotEmpty &&
+                storiesCount > 0;
             final int totalItems =
-                storiesCount + insightsInserted + (widget.hasMoreData ? 1 : 0);
+                storiesCount +
+                insightsInserted +
+                (showTrailingInsight ? 1 : 0) +
+                (widget.hasMoreData ? 1 : 0);
 
             return ListView.builder(
               key: ValueKey<bool>(widget.isCardView),
@@ -963,6 +973,19 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
                     (index - insightsInserted * blockSize);
 
                 if (storyIndex >= storiesCount) {
+                  // Insight ao final quando há poucos registros visíveis na home
+                  if (showTrailingInsight && index == storiesCount) {
+                    return InsightCard(
+                      insight: insights[0],
+                      onSeeStories: (_) {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const SearchScreen(),
+                          ),
+                        );
+                      },
+                    );
+                  }
                   // Indicador de carregamento no final
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16),
