@@ -1443,7 +1443,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get energyHigh => 'High';
 
   @override
-  String get tagsHint => 'Type and press Enter or , to add';
+  String get tagsHint => 'Type and press Enter or comma';
 
   @override
   String get addTag => 'Add tag';

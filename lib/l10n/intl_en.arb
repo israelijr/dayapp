@@ -685,7 +685,7 @@
   "energyHigh": "High",
   "@energyHigh": { "description": "Energy level: high" },
 
-  "tagsHint": "Type and press Enter or , to add",
+  "tagsHint": "Type and press Enter or comma",
   "@tagsHint": { "description": "Hint text for the tags input field" },
   "addTag": "Add tag",
   "@addTag": { "description": "Tooltip for the add tag button" },

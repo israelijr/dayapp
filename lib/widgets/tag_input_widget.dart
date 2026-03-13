@@ -270,7 +270,8 @@ class _TagInputWidgetState extends State<TagInputWidget> {
           focusNode: _focusNode,
           decoration: InputDecoration(
             labelText: loc.tagsLabel,
-            hintText: loc.tagsHint,
+            helperText: loc.tagsHint,
+            helperMaxLines: 2,
             prefixIcon: const Icon(Icons.tag),
             suffixIcon: IconButton(
               icon: const Icon(Icons.add_circle_outline),

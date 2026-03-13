@@ -657,7 +657,7 @@
   "energyHigh": "Alta",
   "@energyHigh": { "description": "Nivel de energía: alta" },
 
-  "tagsHint": "Escribe y presiona Enter o , para agregar",
+  "tagsHint": "Escribe y presiona Enter o coma",
   "@tagsHint": { "description": "Texto de ayuda del campo de etiquetas" },
   "addTag": "Agregar etiqueta",
   "@addTag": { "description": "Tooltip del botón para agregar etiqueta" },

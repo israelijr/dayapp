@@ -21,7 +21,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get deviceDefault => 'Padrão do dispositivo';
 
   @override
-  String get defaultLabel => 'Default';
+  String get defaultLabel => 'Padrão';
 
   @override
   String get english => 'English';
@@ -453,11 +453,11 @@ class AppLocalizationsPt extends AppLocalizations {
   String get search => 'Pesquisar';
 
   @override
-  String get searchStoriesTitle => 'Search your stories';
+  String get searchStoriesTitle => 'Pesquise suas histórias';
 
   @override
   String get searchStoriesSubtitle =>
-      'Use the filters above to find your memories.';
+      'Use os filtros acima para encontrar suas memórias.';
 
   @override
   String unsavedBackups(Object count) {
@@ -579,25 +579,25 @@ class AppLocalizationsPt extends AppLocalizations {
   String get yesterday => 'Ontem';
 
   @override
-  String get takePhoto => 'Take a photo';
+  String get takePhoto => 'Tirar uma foto';
 
   @override
-  String get recordVideoLabel => 'Record a video';
+  String get recordVideoLabel => 'Gravar vídeo';
 
   @override
-  String get recordAudioLabel => 'Record audio';
+  String get recordAudioLabel => 'Gravar áudio';
 
   @override
-  String get continueLabel => 'Continue';
+  String get continueLabel => 'Continuar';
 
   @override
-  String get dontShowAgain => 'Don\'t show again';
+  String get dontShowAgain => 'Não mostrar novamente';
 
   @override
-  String get laterLabel => 'Later';
+  String get laterLabel => 'Mais tarde';
 
   @override
-  String get configureLabel => 'Configure';
+  String get configureLabel => 'Configurar';
 
   @override
   String get imageCopiedBase64 =>
@@ -652,316 +652,317 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get backupNotAvailableDetail =>
-      'The backup feature requires file system access, available only on Android, iOS and desktop versions.';
+      'O recurso de backup requer acesso ao sistema de arquivos, disponível apenas nas versões Android, iOS e Desktop.';
 
   @override
-  String get backupInfoTitle => 'About Backup';
+  String get backupInfoTitle => 'Sobre o Backup';
 
   @override
   String get backupInfoDetails =>
-      'The complete backup includes:\n• Database (stories, texts, photos, audios)\n• Video files\n\nA ZIP file will be created and you can save it wherever you want:\n• OneDrive\n• Google Drive\n• Email\n• Any other location';
+      'O backup completo inclui:\n• Banco de dados (histórias, textos, fotos, áudios)\n• Arquivos de vídeo\n\nUm arquivo ZIP será criado e você pode salvá-lo onde quiser:\n• OneDrive\n• Google Drive\n• Email\n• Qualquer outro local';
 
   @override
   String get backupComplete => 'Backup Completo';
 
   @override
-  String get backupZipSubtitle => 'ZIP file with all your data';
+  String get backupZipSubtitle => 'Arquivo ZIP com todos os seus dados';
 
   @override
   String get backupZipExplanation =>
-      'Generates a ZIP file that you can save to OneDrive, Google Drive, email or any other location.';
+      'Gera um arquivo ZIP que você pode salvar no OneDrive, Google Drive, email ou qualquer outro local.';
 
   @override
-  String get restoreSectionTitle => 'Restore Backup';
+  String get restoreSectionTitle => 'Restaurar Backup';
 
   @override
   String get restoreSectionDescription =>
-      'Select a backup file (ZIP) previously created to restore all your data.';
+      'Selecione um arquivo de backup (ZIP) anteriormente criado para restaurar todos os seus dados.';
 
   @override
-  String get processing => 'Processing...';
+  String get processing => 'Processando...';
 
   @override
-  String get pleaseWait => 'Please wait...';
+  String get pleaseWait => 'Por favor, aguarde...';
 
   @override
-  String get backupStarting => 'Starting backup...';
+  String get backupStarting => 'Iniciando backup...';
 
   @override
   String get backupCreatedSuccess =>
-      'Backup file created! Use the share menu to save it.';
+      'Arquivo de backup criado! Use o menu de compartilhamento para salvá-lo.';
 
   @override
   String backupError(Object message) {
-    return 'Error creating backup: $message';
+    return 'Erro ao criar backup: $message';
   }
 
   @override
-  String get restoreStarting => 'Starting restore...';
+  String get restoreStarting => 'Iniciando restauração...';
 
   @override
-  String get restoreSuccess => 'Restore completed successfully!';
+  String get restoreSuccess => 'Restauração concluída com sucesso!';
 
   @override
   String restoreError(Object message) {
-    return 'Error restoring: $message';
+    return 'Erro ao restaurar: $message';
   }
 
   @override
-  String get restoreConfirmTitle => '⚠️ Confirm Restore';
+  String get restoreConfirmTitle => '⚠️ Confirmar Restauração';
 
   @override
   String get restoreConfirmContent =>
-      'All current data will be replaced by the backup.\n\nThis action cannot be undone. Do you wish to continue?';
+      'Todos os dados atuais serão substituídos pelo backup.\n\nEsta ação não pode ser desfeita. Deseja continuar?';
 
   @override
-  String get restoreSuccessTitle => '✅ Restore Completed';
+  String get restoreSuccessTitle => '✅ Restauração Concluída';
 
   @override
   String get restoreSuccessContent =>
-      'The backup was restored successfully!\n\nAll your stories have been restored to the backup state.\n\nYou need to log in again to complete the process.';
+      'O backup foi restaurado com sucesso!\n\nTodas as suas histórias foram restauradas ao estado do backup.\n\nÉ necessário fazer login novamente para completar o processo.';
 
   @override
-  String get helpAboutTitle => 'About DayApp';
+  String get helpAboutTitle => 'Sobre o DayApp';
 
   @override
   String get helpAboutDescription =>
-      'DayApp is a personal diary app that lets you record your stories, memories and thoughts in an organized and secure way.';
+      'O DayApp é um aplicativo de diário pessoal que permite registrar suas histórias, memórias e pensamentos de forma organizada e segura.';
 
   @override
-  String get helpNavigationTitle => 'Main Navigation';
+  String get helpNavigationTitle => 'Navegação Principal';
 
   @override
   String get helpHomeItemDesc =>
-      'View your stories as cards or list. Tap a story to view, long press for options.';
+      'Visualize suas histórias em cards ou lista. Toque em uma história para visualizar, mantenha pressionado para opções.';
 
   @override
   String get helpGroupsNavDesc =>
-      'Organize your stories into thematic groups. Create custom groups to categorize your memories.';
+      'Organize suas histórias em grupos temáticos. Crie grupos personalizados para categorizar suas memórias.';
 
   @override
   String get helpSearchItemDesc =>
-      'Quickly find stories by title, content or date.';
+      'Encontre histórias rapidamente por título, conteúdo ou data.';
 
   @override
-  String get helpCreatingTitle => 'Creating Stories';
+  String get helpCreatingTitle => 'Criando Histórias';
 
   @override
   String get helpNewStoryDesc =>
-      'Tap the floating (+) button to create a new story. Add title, rich text, images, videos and audios.';
+      'Toque no botão flutuante (+) para criar uma nova história. Adicione título, texto rico, imagens, vídeos e áudios.';
 
   @override
-  String get helpTextEditorTitle => 'Text Editor';
+  String get helpTextEditorTitle => 'Editor de Texto';
 
   @override
   String get helpTextEditorDesc =>
-      'Use rich formatting: bold, italic, lists, links and more.';
+      'Use formatação rica: negrito, itálico, listas, links e muito mais.';
 
   @override
   String get helpMediaDesc =>
-      'Add photos from the gallery or camera, record videos and audios directly in the app.';
+      'Adicione fotos da galeria ou câmera, grave vídeos e áudios diretamente no app.';
 
   @override
   String get helpGroupsAssocDesc =>
-      'Associate each story with one or more groups for better organization.';
+      'Associe cada história a um ou mais grupos para melhor organização.';
 
   @override
   String get helpCalendarDesc =>
-      'View your stories organized by date. Tap a date to see all stories for that day.';
+      'Visualize suas histórias organizadas por data. Toque em uma data para ver todas as histórias daquele dia.';
 
   @override
-  String get helpCreateGroupTitle => 'Create Group';
+  String get helpCreateGroupTitle => 'Criar Grupo';
 
   @override
   String get helpCreateGroupDesc =>
-      'Go to \"Manage Groups\" in the side menu to create new groups with custom colors.';
+      'Acesse \"Gerenciar Grupos\" no menu lateral para criar novos grupos com cores personalizadas.';
 
   @override
-  String get helpEditGroupTitle => 'Edit Group';
+  String get helpEditGroupTitle => 'Editar Grupo';
 
   @override
   String get helpEditGroupDesc =>
-      'Long press a group to edit its name, color or delete it.';
+      'Mantenha pressionado em um grupo para editar nome, cor ou excluir.';
 
   @override
-  String get helpBackupSecurityTitle => 'Backup & Security';
+  String get helpBackupSecurityTitle => 'Backup e Segurança';
 
   @override
-  String get helpAutomaticBackupTitle => 'Automatic Backup';
+  String get helpAutomaticBackupTitle => 'Backup Automático';
 
   @override
   String get helpAutomaticBackupDesc =>
-      'Configure automatic backup on logout in Settings. A backup will be created and you can choose where to save it.';
+      'Configure backup automático no logout nas Configurações. O backup será criado e você poderá escolher onde salvar.';
 
   @override
-  String get helpManualBackupTitle => 'Manual Backup';
+  String get helpManualBackupTitle => 'Backup Manual';
 
   @override
   String get helpManualBackupDesc =>
-      'Go to \"Manage Backup\" in Settings to create a full backup with all media.';
+      'Acesse \"Gerenciar Backup\" nas Configurações para criar backup completo com todas as mídias.';
 
   @override
-  String get helpRestoreTitle => 'Restore';
+  String get helpRestoreTitle => 'Restauração';
 
   @override
   String get helpRestoreDesc =>
-      'Use \"Restore from File\" to recover data from a previous backup.';
+      'Use \"Restaurar de Arquivo\" para recuperar dados de um backup anterior.';
 
   @override
-  String get helpPinSecurityTitle => 'Security PIN';
+  String get helpPinSecurityTitle => 'PIN de Segurança';
 
   @override
   String get helpPinSecurityDesc =>
-      'Set a 4- to 8-digit PIN to protect app access.';
+      'Configure um PIN de 4 a 8 dígitos para proteger o acesso ao app.';
 
   @override
   String get helpBiometricsDesc =>
-      'Use fingerprint or facial recognition to unlock the app quickly, if available on your device.';
+      'Use digital ou reconhecimento facial para desbloquear o app rapidamente, se disponível no dispositivo.';
 
   @override
-  String get helpPasswordUnlockTitle => 'Password Unlock';
+  String get helpPasswordUnlockTitle => 'Desbloqueio por Senha';
 
   @override
   String get helpPasswordUnlockDesc =>
-      'In addition to PIN and biometrics, you can unlock the app using your account password. Useful if you forget the PIN or biometrics fail.';
+      'Além de PIN e biometria, você pode desbloquear o app usando a senha da sua conta. Útil caso esqueça o PIN ou a biometria falhe.';
 
   @override
   String get helpBackgroundLockDesc =>
-      'When the app is minimized or you switch to another app, it locks automatically after the configured time. You can set the time freely in settings (seconds, minutes or hours).';
+      'Quando o app é minimizado ou você troca para outro app, ele é bloqueado automaticamente após o tempo configurado. Você pode definir o tempo livremente nas configurações (segundos, minutos ou horas).';
 
   @override
-  String get helpLockExceptionsTitle => 'Lock Exceptions';
+  String get helpLockExceptionsTitle => 'Exceções de Bloqueio';
 
   @override
   String get helpLockExceptionsDesc =>
-      'The app does not lock when you use internal features that open other apps—such as picking photos from the gallery, recording videos, choosing backup location or sharing stories.';
+      'O app não bloqueia quando você usa recursos internos que abrem outros apps — como selecionar fotos da galeria, gravar vídeos, escolher local de backup ou compartilhar histórias.';
 
   @override
-  String get helpPinRecoveryTitle => 'PIN Recovery';
+  String get helpPinRecoveryTitle => 'Recuperação de PIN';
 
   @override
   String get helpPinRecoveryDesc =>
-      'Forgot your PIN? Use the \"Forgot my PIN\" option on the lock screen. A recovery code will be sent to the registered email.';
+      'Esqueceu o PIN? Use a opção \"Esqueci meu PIN\" na tela de bloqueio. Um código de recuperação será enviado para o e-mail cadastrado.';
 
   @override
-  String get helpThemeDesc => 'Toggle between light, dark or automatic theme.';
+  String get helpThemeDesc => 'Alterne entre tema claro, escuro ou automático.';
 
   @override
   String get helpNotificationsSettingsDesc =>
-      'Set reminders to write in the diary.';
+      'Configure lembretes para escrever no diário.';
 
   @override
   String get helpBackgroundLockSettingsDesc =>
-      'Define how long the app can stay in the background before being locked. You may use values in seconds, minutes or hours, with full freedom.';
+      'Defina por quanto tempo o app pode ficar em segundo plano antes de ser bloqueado. Você pode usar valores em segundos, minutos ou horas, com total liberdade.';
 
   @override
   String get helpBackupSettingTitle => 'Backup';
 
   @override
-  String get helpBackupSettingDesc => 'Manage backup and restore settings.';
+  String get helpBackupSettingDesc =>
+      'Gerencie configurações de backup e restauração.';
 
   @override
   String get helpTrashDesc =>
-      'Deleted stories stay in the trash for 30 days. Access \"Trash\" in the side menu to recover or permanently delete.';
+      'Histórias excluídas ficam na lixeira por 30 dias. Acesse \"Lixeira\" no menu lateral para recuperar ou excluir permanentemente.';
 
   @override
   String get helpStatisticsDesc =>
-      'View statistics about your diary usage: number of stories, words written, top groups, etc.';
+      'Visualize estatísticas sobre seu uso do diário: número de histórias, palavras escritas, grupos mais usados, etc.';
 
   @override
-  String get helpTipsTitle => 'Usage Tips';
+  String get helpTipsTitle => 'Dicas de Uso';
 
   @override
-  String get helpOrganizationTipTitle => 'Organization';
+  String get helpOrganizationTipTitle => 'Organização';
 
   @override
   String get helpOrganizationTipDesc =>
-      'Use groups to categorize your stories by themes, feelings or life periods.';
+      'Use grupos para categorizar suas histórias por temas, sentimentos ou períodos da vida.';
 
   @override
-  String get helpSearchTipTitle => 'Search';
+  String get helpSearchTipTitle => 'Pesquisa';
 
   @override
   String get helpSearchTipDesc =>
-      'Use the search function to quickly find old stories.';
+      'Use a função de pesquisa para encontrar histórias antigas rapidamente.';
 
   @override
-  String get helpBackupTipTitle => 'Regular Backup';
+  String get helpBackupTipTitle => 'Backup Regular';
 
   @override
   String get helpBackupTipDesc =>
-      'Back up regularly, especially before updates or device changes.';
+      'Faça backup regularmente, especialmente antes de atualizações ou mudanças no dispositivo.';
 
   @override
-  String get helpPrivacyTipTitle => 'Privacy';
+  String get helpPrivacyTipTitle => 'Privacidade';
 
   @override
   String get helpPrivacyTipDesc =>
-      'Your stories are stored locally and encrypted. Set a PIN for additional protection.';
+      'Suas histórias são armazenadas localmente e criptografadas. Configure PIN para proteção adicional.';
 
   @override
-  String get helpSupportTitle => 'Support';
+  String get helpSupportTitle => 'Suporte';
 
   @override
   String get helpSupportDesc =>
-      'For questions or issues, contact us via support email or check app updates.';
+      'Para dúvidas ou problemas, entre em contato conosco através do email de suporte ou verifique as atualizações do app.';
 
   @override
-  String get errorCreateAccount => 'Error creating account. Please try again.';
+  String get errorCreateAccount => 'Erro ao criar conta. Tente novamente.';
 
   @override
-  String get errorShare => 'Error sharing';
+  String get errorShare => 'Erro ao compartilhar';
 
   @override
   String errorPlayAudio(Object message) {
-    return 'Error playing audio: $message';
+    return 'Erro ao reproduzir áudio: $message';
   }
 
   @override
   String errorSelectVideos(Object message) {
-    return 'Error selecting videos: $message';
+    return 'Erro ao selecionar vídeos: $message';
   }
 
   @override
   String errorSelectFile(Object message) {
-    return 'Error selecting file: $message';
+    return 'Erro ao selecionar arquivo: $message';
   }
 
   @override
   String errorRecordVideo(Object message) {
-    return 'Error recording video: $message';
+    return 'Erro ao gravar vídeo: $message';
   }
 
   @override
   String errorStartRecording(Object message) {
-    return 'Error starting recording: $message';
+    return 'Erro ao iniciar gravação: $message';
   }
 
   @override
   String errorPauseRecording(Object message) {
-    return 'Error pausing recording: $message';
+    return 'Erro ao pausar gravação: $message';
   }
 
   @override
   String errorResumeRecording(Object message) {
-    return 'Error resuming recording: $message';
+    return 'Erro ao retomar gravação: $message';
   }
 
   @override
   String errorStopRecording(Object message) {
-    return 'Error stopping recording: $message';
+    return 'Erro ao parar gravação: $message';
   }
 
   @override
   String errorSelectAudios(Object message) {
-    return 'Error selecting audios: $message';
+    return 'Erro ao selecionar áudios: $message';
   }
 
   @override
-  String get errorLoadVideo => 'Error loading video';
+  String get errorLoadVideo => 'Erro ao carregar vídeo';
 
   @override
-  String get errorSelectImage => 'Error selecting image';
+  String get errorSelectImage => 'Erro ao selecionar imagem';
 
   @override
   String get imagePickerTitleMultiple => 'Adicionar Fotos';
@@ -1050,104 +1051,105 @@ class AppLocalizationsPt extends AppLocalizations {
   String get readyToRecord => 'Pronto para Gravar';
 
   @override
-  String get notificationDialogTitle => 'Schedule Notification';
+  String get notificationDialogTitle => 'Agendar Notificação';
 
   @override
   String get notificationDialogPrompt =>
-      'When would you like to be notified about this entry?';
+      'Quando você gostaria de ser notificado sobre esta entrada?';
 
   @override
-  String get emailAlreadyRegistered => 'E-mail already registered.';
+  String get emailAlreadyRegistered => 'E-mail já cadastrado.';
 
   @override
-  String get successNotificationScheduled =>
-      'Notification scheduled successfully';
+  String get successNotificationScheduled => 'Notificação agendada com sucesso';
 
   @override
   String notificationReminderTitle(Object title) {
-    return 'Reminder: $title';
+    return 'Lembrete: $title';
   }
 
   @override
-  String get successImageAdded => 'Image added successfully!';
+  String get successImageAdded => 'Imagem adicionada com sucesso!';
 
   @override
   String successImagesAdded(Object count) {
-    return '$count images added successfully!';
+    return '$count imagens adicionadas com sucesso!';
   }
 
   @override
   String errorSearch(Object message) {
-    return 'Error during search: $message';
+    return 'Erro na pesquisa: $message';
   }
 
   @override
-  String get successStoryRestored => 'Story restored successfully';
+  String get successStoryRestored => 'História restaurada com sucesso';
 
   @override
-  String get successStoryDeletedPermanently => 'Story permanently deleted';
+  String get successStoryDeletedPermanently =>
+      'História excluída permanentemente';
 
   @override
-  String get trashAlreadyEmpty => 'Trash is already empty';
+  String get trashAlreadyEmpty => 'A lixeira já está vazia';
 
   @override
-  String get successVideoRecorded => 'Video recorded successfully!';
+  String get successVideoRecorded => 'Vídeo gravado com sucesso!';
 
   @override
-  String get permissionMicrophoneDenied => 'Microphone permission not granted';
+  String get permissionMicrophoneDenied =>
+      'Permissão de microfone não concedida';
 
   @override
   String errorSelectImages(Object message) {
-    return 'Error selecting images: $message';
+    return 'Erro ao selecionar imagens: $message';
   }
 
   @override
-  String get successPhotoCaptured => 'Photo captured successfully!';
+  String get successPhotoCaptured => 'Foto capturada com sucesso!';
 
   @override
-  String get restoreStoriesTitle => 'Restore stories';
+  String get restoreStoriesTitle => 'Restaurar histórias';
 
   @override
   String restoreStoriesConfirm(Object count) {
-    return 'Do you want to restore $count selected story(ies)?';
+    return 'Deseja restaurar $count história(s) selecionada(s)?';
   }
 
   @override
-  String get restoreLabel => 'Restore';
+  String get restoreLabel => 'Restaurar';
 
   @override
-  String get permanentlyDeleteTitle => 'Permanently delete';
+  String get permanentlyDeleteTitle => 'Excluir permanentemente';
 
   @override
   String get permanentlyDeleteConfirm =>
-      'This action cannot be undone. Do you really want to permanently delete this story?';
+      'Esta ação não pode ser desfeita. Deseja realmente excluir esta história permanentemente?';
 
   @override
-  String get permanentlyDeleteLabel => 'Permanently delete';
+  String get permanentlyDeleteLabel => 'Excluir permanentemente';
 
   @override
   String deleteGroupConfirm(Object name) {
-    return 'Do you want to remove the group \"$name\" from your stories?';
+    return 'Deseja remover o grupo \"$name\" das suas histórias?';
   }
 
   @override
   String get recoverPinDescription =>
-      'We will send a recovery code to your registered email.';
+      'Enviaremos um código de recuperação para o seu e-mail cadastrado.';
 
   @override
-  String get emptyTrashTitle => 'Empty trash';
+  String get emptyTrashTitle => 'Esvaziar lixeira';
 
   @override
   String emptyTrashConfirm(Object count) {
-    return 'Do you want to permanently delete all $count story(ies) in the trash? This action cannot be undone.';
+    return 'Deseja excluir permanentemente todas as $count história(s) da lixeira? Esta ação não pode ser desfeita.';
   }
 
   @override
-  String get emptyTrashLabel => 'Empty trash';
+  String get emptyTrashLabel => 'Esvaziar lixeira';
 
   @override
   String errorTakePhoto(Object message) {
-    return 'Error taking photo: $message';
+    return 'Erro ao tirar foto: $message';
   }
 
   @override
@@ -1282,111 +1284,111 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
-  String get titleRequired => 'Title is required!';
+  String get titleRequired => 'Título é obrigatório!';
 
   @override
   String errorSavingStory(Object error) {
-    return 'Error saving story: $error';
+    return 'Erro ao salvar história: $error';
   }
 
   @override
   String get exportPdfFieldsRequired =>
-      'Title and description are required to export.';
+      'Título e descrição são obrigatórios para exportar.';
 
   @override
-  String get exportHistory => 'Export Story';
+  String get exportHistory => 'Exportar História';
 
   @override
   String get exportHistoryPrompt =>
-      'Do you want to save before exporting or just preview?';
+      'Deseja salvar antes de exportar ou ver um preview?';
 
   @override
   String get preview => 'Preview';
 
   @override
-  String get saveAndExport => 'Save and export';
+  String get saveAndExport => 'Salvar e exportar';
 
   @override
-  String get untitled => 'Untitled';
+  String get untitled => 'Sem título';
 
   @override
   String errorLoadingFile(Object error) {
-    return 'Error loading file: $error';
+    return 'Erro ao carregar arquivo: $error';
   }
 
   @override
-  String get discard => 'Discard';
+  String get discard => 'Descartar';
 
   @override
-  String get discardStoryTitle => 'Discard story?';
+  String get discardStoryTitle => 'Descartar história?';
 
   @override
   String get unsavedStoryPrompt =>
-      'You have a new unsaved story. Leave without saving?';
+      'Você tem uma nova história não salva. Deseja sair sem salvar?';
 
   @override
-  String get changeDateTooltip => 'Change date';
+  String get changeDateTooltip => 'Alterar Data';
 
   @override
-  String get storyTitleLabel => 'Title';
+  String get storyTitleLabel => 'Título';
 
   @override
-  String get storyTitleHint => 'Enter the title';
+  String get storyTitleHint => 'Digite o título';
 
   @override
-  String get descriptionLabel => 'Description';
+  String get descriptionLabel => 'Descrição';
 
   @override
-  String get descriptionHint => 'Write your story...';
+  String get descriptionHint => 'Escreva sua história...';
 
   @override
   String get tagsLabel => 'Tags';
 
   @override
-  String get photosSection => 'Photos';
+  String get photosSection => 'Fotos';
 
   @override
-  String get audiosSection => 'Audios';
+  String get audiosSection => 'Áudios';
 
   @override
-  String get videosSection => 'Videos';
+  String get videosSection => 'Vídeos';
 
   @override
-  String get importTxtTooltip => 'Import .txt';
+  String get importTxtTooltip => 'Importar .txt';
 
   @override
-  String get expandTooltip => 'Expand';
+  String get expandTooltip => 'Expandir';
 
   @override
-  String get photoTooltip => 'Photo';
+  String get photoTooltip => 'Foto';
 
   @override
-  String get videoTooltip => 'Video';
+  String get videoTooltip => 'Vídeo';
 
   @override
-  String get audioTooltip => 'Audio';
+  String get audioTooltip => 'Áudio';
 
   @override
   String get emojiTooltip => 'Emoji';
 
   @override
-  String get editDescription => 'Edit Description';
+  String get editDescription => 'Editar Descrição';
 
   @override
-  String get editStory => 'Edit Story';
+  String get editStory => 'Editar História';
 
   @override
-  String get discardChangesTitle => 'Discard changes?';
+  String get discardChangesTitle => 'Descartar alterações?';
 
   @override
   String get discardChangesPrompt =>
-      'You have unsaved changes. Leave without saving?';
+      'Você tem alterações não salvas. Deseja sair sem salvar?';
 
   @override
-  String get archivedStateLabel => 'Archived';
+  String get archivedStateLabel => 'Arquivado';
 
   @override
-  String get archiveSubtitle => 'Hide from home screen';
+  String get archiveSubtitle => 'Ocultar da tela inicial';
 
   @override
   String get chooseEmoji => 'Escolha um emoji';
@@ -1434,7 +1436,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get moodVeryGood => 'Muito bom';
 
   @override
-  String get energyQuestion => 'Como estava a sua energia?';
+  String get energyQuestion => 'Como estava sua energia?';
 
   @override
   String get energyLow => 'Baixa';
@@ -1446,7 +1448,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get energyHigh => 'Alta';
 
   @override
-  String get tagsHint => 'Digite e pressione Enter ou , para adicionar';
+  String get tagsHint => 'Digite e pressione Enter ou vírgula';
 
   @override
   String get addTag => 'Adicionar tag';
@@ -2230,6 +2232,27 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get yesterday => 'Ontem';
 
   @override
+  String get takePhoto => 'Tirar uma foto';
+
+  @override
+  String get recordVideoLabel => 'Gravar vídeo';
+
+  @override
+  String get recordAudioLabel => 'Gravar áudio';
+
+  @override
+  String get continueLabel => 'Continuar';
+
+  @override
+  String get dontShowAgain => 'Não mostrar novamente';
+
+  @override
+  String get laterLabel => 'Mais tarde';
+
+  @override
+  String get configureLabel => 'Configurar';
+
+  @override
   String get imageCopiedBase64 =>
       'Imagem copiada para a área de transferência (base64)';
 
@@ -2767,6 +2790,17 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
       'Enviaremos um código de recuperação para o seu e-mail cadastrado.';
 
   @override
+  String get emptyTrashTitle => 'Esvaziar lixeira';
+
+  @override
+  String emptyTrashConfirm(Object count) {
+    return 'Deseja excluir permanentemente todas as $count história(s) da lixeira? Esta ação não pode ser desfeita.';
+  }
+
+  @override
+  String get emptyTrashLabel => 'Esvaziar lixeira';
+
+  @override
   String errorTakePhoto(Object message) {
     return 'Erro ao tirar foto: $message';
   }
@@ -3067,7 +3101,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get energyHigh => 'Alta';
 
   @override
-  String get tagsHint => 'Digite e pressione Enter ou , para adicionar';
+  String get tagsHint => 'Digite e pressione Enter ou vírgula';
 
   @override
   String get addTag => 'Adicionar tag';

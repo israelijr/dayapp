@@ -2720,7 +2720,7 @@ abstract class AppLocalizations {
   /// Hint text for the tags input field
   ///
   /// In en, this message translates to:
-  /// **'Type and press Enter or , to add'**
+  /// **'Type and press Enter or comma'**
   String get tagsHint;
 
   /// Tooltip for the add tag button
