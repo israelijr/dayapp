@@ -480,9 +480,11 @@ Versão: 2.0.0
   Future<void> restoreFromZipFile(
     String zipFilePath, {
     void Function(String)? onProgress,
+    void Function(double?)? onProgressValue,
     AppLocalizations? l10n,
   }) async {
     try {
+      onProgressValue?.call(0.0);
       onProgress?.call(
         l10n?.restoreProgressExtracting ?? 'Extraindo arquivo de backup...',
       );
@@ -502,17 +504,52 @@ Versão: 2.0.0
 
       final archive = ZipDecoder().decodeBytes(bytes);
 
+      final extractTotalBytes = archive
+          .where((file) => file.isFile)
+          .fold<int>(0, (sum, file) => sum + file.size);
+
+      Future<int> calculateFilesTotalBytes(List<File> files) async {
+        var totalBytes = 0;
+        for (final file in files) {
+          if (await file.exists()) {
+            totalBytes += await file.length();
+          }
+        }
+        return totalBytes;
+      }
+
+      void reportOverallProgress({
+        required int completedWorkBytes,
+        required int totalWorkBytes,
+      }) {
+        if (totalWorkBytes <= 0) {
+          onProgressValue?.call(0.0);
+          return;
+        }
+
+        final ratio = (completedWorkBytes / totalWorkBytes)
+            .clamp(0.0, 1.0)
+            .toDouble();
+        onProgressValue?.call(ratio);
+      }
+
       onProgress?.call(
         l10n?.restoreProgressZipContains(archive.length) ??
             'ZIP contém ${archive.length} arquivos...',
       );
 
+      var extractedBytesDone = 0;
       for (final file in archive) {
         final filename = path.join(extractDir.path, file.name);
         if (file.isFile) {
           final outFile = File(filename);
           await outFile.create(recursive: true);
           await outFile.writeAsBytes(file.content as List<int>);
+          extractedBytesDone += file.size;
+          reportOverallProgress(
+            completedWorkBytes: extractedBytesDone,
+            totalWorkBytes: extractTotalBytes,
+          );
         } else {
           await Directory(filename).create(recursive: true);
         }
@@ -528,17 +565,93 @@ Versão: 2.0.0
         return null;
       }
 
+      Directory? findDirectory(Directory dir, String directoryName) {
+        for (final entity in dir.listSync(recursive: true)) {
+          if (entity is Directory &&
+              path.basename(entity.path) == directoryName) {
+            return entity;
+          }
+        }
+        return null;
+      }
+
+      // Coletar arquivos restauráveis para calcular um progresso calibrado.
+      final restoredDb = findFile(extractDir, 'dayapp.db');
+
+      final videosRestoreDir = findDirectory(extractDir, 'videos');
+      final restoredVideos =
+          (videosRestoreDir
+              ?.listSync()
+              .whereType<File>()
+              .where((f) => f.path.endsWith('.mp4'))
+              .toList()) ??
+          <File>[];
+
+      final photosRestoreDir = findDirectory(extractDir, 'photos');
+      final restoredPhotos =
+          (photosRestoreDir
+              ?.listSync()
+              .whereType<File>()
+              .where((f) => f.path.endsWith('.jpg') || f.path.endsWith('.png'))
+              .toList()) ??
+          <File>[];
+
+      final audiosRestoreDir = findDirectory(extractDir, 'audios');
+      final restoredAudios =
+          (audiosRestoreDir
+              ?.listSync()
+              .whereType<File>()
+              .where((f) => f.path.endsWith('.m4a') || f.path.endsWith('.mp3'))
+              .toList()) ??
+          <File>[];
+
+      final dbPath = await getDatabasesPath();
+      final currentDb = File(path.join(dbPath, 'dayapp.db'));
+
+      final currentDbBytes = await currentDb.exists()
+          ? await currentDb.length()
+          : 0;
+      final restoredDbBytes = (restoredDb != null && await restoredDb.exists())
+          ? await restoredDb.length()
+          : 0;
+      final restoredVideosBytes = await calculateFilesTotalBytes(
+        restoredVideos,
+      );
+      final restoredPhotosBytes = await calculateFilesTotalBytes(
+        restoredPhotos,
+      );
+      final restoredAudiosBytes = await calculateFilesTotalBytes(
+        restoredAudios,
+      );
+
+      final restoreCopyWorkBytes =
+          currentDbBytes +
+          restoredDbBytes +
+          restoredVideosBytes +
+          restoredPhotosBytes +
+          restoredAudiosBytes;
+      final totalWorkBytes = extractTotalBytes + restoreCopyWorkBytes;
+      var completedWorkBytes = extractTotalBytes;
+
+      reportOverallProgress(
+        completedWorkBytes: completedWorkBytes,
+        totalWorkBytes: totalWorkBytes,
+      );
+
       // 1. Fazer backup do banco atual
       onProgress?.call(
         l10n?.restoreProgressBackingUpCurrent ??
             'Fazendo backup do banco atual...',
       );
-      final dbPath = await getDatabasesPath();
-      final currentDb = File(path.join(dbPath, 'dayapp.db'));
 
       if (await currentDb.exists()) {
         final backupCurrent = File(path.join(dbPath, 'dayapp_backup_local.db'));
         await currentDb.copy(backupCurrent.path);
+        completedWorkBytes += currentDbBytes;
+        reportOverallProgress(
+          completedWorkBytes: completedWorkBytes,
+          totalWorkBytes: totalWorkBytes,
+        );
       }
 
       // 2. Restaurar banco de dados
@@ -547,8 +660,6 @@ Versão: 2.0.0
       );
 
       // Procurar o arquivo do banco de dados recursivamente
-      final restoredDb = findFile(extractDir, 'dayapp.db');
-
       if (restoredDb != null && await restoredDb.exists()) {
         // Fechar todas as conexões com o banco antes de substituir
         onProgress?.call(
@@ -579,6 +690,11 @@ Versão: 2.0.0
               'Copiando banco de dados restaurado...',
         );
         await restoredDb.copy(currentDb.path);
+        completedWorkBytes += restoredDbBytes;
+        reportOverallProgress(
+          completedWorkBytes: completedWorkBytes,
+          totalWorkBytes: totalWorkBytes,
+        );
         // Após copiar o banco restaurado, garantir compatibilidade com a nova
         // coluna `backed_up` e marcar todas as histórias do backup como já salvas.
         try {
@@ -722,15 +838,6 @@ Versão: 2.0.0
         l10n?.restoreProgressRestoringVideos ?? 'Restaurando vídeos...',
       );
 
-      // Procurar pasta de vídeos recursivamente
-      Directory? videosRestoreDir;
-      for (final entity in extractDir.listSync(recursive: true)) {
-        if (entity is Directory && path.basename(entity.path) == 'videos') {
-          videosRestoreDir = entity;
-          break;
-        }
-      }
-
       if (videosRestoreDir != null && await videosRestoreDir.exists()) {
         // Limpar vÃ­deos atuais
         final videosDir = await VideoFileHelper.getVideosDirectory();
@@ -740,13 +847,6 @@ Versão: 2.0.0
             await file.delete();
           }
         }
-
-        // Copiar vÃ­deos restaurados
-        final restoredVideos = videosRestoreDir
-            .listSync()
-            .whereType<File>()
-            .where((f) => f.path.endsWith('.mp4'))
-            .toList();
 
         for (int i = 0; i < restoredVideos.length; i++) {
           final videoFile = restoredVideos[i];
@@ -758,6 +858,14 @@ Versão: 2.0.0
 
           final destFile = File(path.join(videosDir.path, videoFileName));
           await videoFile.copy(destFile.path);
+
+          if (await videoFile.exists()) {
+            completedWorkBytes += await videoFile.length();
+            reportOverallProgress(
+              completedWorkBytes: completedWorkBytes,
+              totalWorkBytes: totalWorkBytes,
+            );
+          }
         }
       }
 
@@ -765,14 +873,6 @@ Versão: 2.0.0
       onProgress?.call(
         l10n?.restoreProgressRestoringPhotos ?? 'Restaurando fotos...',
       );
-
-      Directory? photosRestoreDir;
-      for (final entity in extractDir.listSync(recursive: true)) {
-        if (entity is Directory && path.basename(entity.path) == 'photos') {
-          photosRestoreDir = entity;
-          break;
-        }
-      }
 
       if (photosRestoreDir != null && await photosRestoreDir.exists()) {
         // Limpar fotos atuais
@@ -784,13 +884,6 @@ Versão: 2.0.0
           }
         }
 
-        // Copiar fotos restauradas
-        final restoredPhotos = photosRestoreDir
-            .listSync()
-            .whereType<File>()
-            .where((f) => f.path.endsWith('.jpg') || f.path.endsWith('.png'))
-            .toList();
-
         for (int i = 0; i < restoredPhotos.length; i++) {
           final photoFile = restoredPhotos[i];
           final photoFileName = path.basename(photoFile.path);
@@ -801,6 +894,14 @@ Versão: 2.0.0
 
           final destFile = File(path.join(photosDir.path, photoFileName));
           await photoFile.copy(destFile.path);
+
+          if (await photoFile.exists()) {
+            completedWorkBytes += await photoFile.length();
+            reportOverallProgress(
+              completedWorkBytes: completedWorkBytes,
+              totalWorkBytes: totalWorkBytes,
+            );
+          }
         }
       }
 
@@ -808,14 +909,6 @@ Versão: 2.0.0
       onProgress?.call(
         l10n?.restoreProgressRestoringAudios ?? 'Restaurando áudios...',
       );
-
-      Directory? audiosRestoreDir;
-      for (final entity in extractDir.listSync(recursive: true)) {
-        if (entity is Directory && path.basename(entity.path) == 'audios') {
-          audiosRestoreDir = entity;
-          break;
-        }
-      }
 
       if (audiosRestoreDir != null && await audiosRestoreDir.exists()) {
         // Limpar áudios atuais
@@ -827,13 +920,6 @@ Versão: 2.0.0
           }
         }
 
-        // Copiar áudios restaurados
-        final restoredAudios = audiosRestoreDir
-            .listSync()
-            .whereType<File>()
-            .where((f) => f.path.endsWith('.m4a') || f.path.endsWith('.mp3'))
-            .toList();
-
         for (int i = 0; i < restoredAudios.length; i++) {
           final audioFile = restoredAudios[i];
           final audioFileName = path.basename(audioFile.path);
@@ -844,6 +930,14 @@ Versão: 2.0.0
 
           final destFile = File(path.join(audiosDir.path, audioFileName));
           await audioFile.copy(destFile.path);
+
+          if (await audioFile.exists()) {
+            completedWorkBytes += await audioFile.length();
+            reportOverallProgress(
+              completedWorkBytes: completedWorkBytes,
+              totalWorkBytes: totalWorkBytes,
+            );
+          }
         }
       }
 
@@ -885,6 +979,7 @@ Versão: 2.0.0
       onProgress?.call(
         l10n?.restoreSuccess ?? 'Restauração concluída com sucesso!',
       );
+      onProgressValue?.call(1.0);
     } catch (e) {
       rethrow;
     }

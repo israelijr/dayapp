@@ -438,6 +438,11 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
             setState(() => _statusMessage = message);
           }
         },
+        onProgressValue: (value) {
+          if (mounted) {
+            setState(() => _progressValue = value);
+          }
+        },
         l10n: loc,
       );
 
