@@ -9,6 +9,34 @@ class GrupoHelper {
     return await db.insert('grupos', grupo.toMap());
   }
 
+  Future<int> updateGrupoAndRenameHistorias(Grupo grupo, String oldNome) async {
+    final db = await DatabaseHelper().database;
+    return await db.transaction((txn) async {
+      final rowsUpdated = await txn.update(
+        'grupos',
+        grupo.toMap(),
+        where: 'id = ?',
+        whereArgs: [grupo.id],
+      );
+
+      if (oldNome != grupo.nome) {
+        // Mantém as histórias visíveis no grupo após renomear.
+        await txn.update(
+          'historia',
+          {
+            'grupo': grupo.nome,
+            'data_update': DateTime.now().toIso8601String(),
+            'backed_up': 0,
+          },
+          where: 'user_id = ? AND grupo = ?',
+          whereArgs: [grupo.userId, oldNome],
+        );
+      }
+
+      return rowsUpdated;
+    });
+  }
+
   Future<int> updateGrupo(Grupo grupo) async {
     final db = await DatabaseHelper().database;
     return await db.update(

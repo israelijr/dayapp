@@ -127,6 +127,7 @@ class _GroupsMaintenanceScreenState extends State<GroupsMaintenanceScreen> {
 
                   try {
                     if (isEditing) {
+                      final oldName = grupo.nome;
                       final updatedGrupo = Grupo(
                         id: grupo.id,
                         userId: userId,
@@ -134,7 +135,10 @@ class _GroupsMaintenanceScreenState extends State<GroupsMaintenanceScreen> {
                         emoticon: selectedEmoticon,
                         dataCriacao: grupo.dataCriacao,
                       );
-                      await GrupoHelper().updateGrupo(updatedGrupo);
+                      await GrupoHelper().updateGrupoAndRenameHistorias(
+                        updatedGrupo,
+                        oldName,
+                      );
                     } else {
                       final newGrupo = Grupo(
                         userId: userId,

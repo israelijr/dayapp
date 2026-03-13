@@ -106,7 +106,7 @@ class _AboutScreenState extends State<AboutScreen> {
 
           const SizedBox(height: 24),
 
-          // Tecnologias
+          /* // Tecnologias
           _buildSection(
             context,
             'Tecnologias',
@@ -131,8 +131,7 @@ class _AboutScreenState extends State<AboutScreen> {
                 'Design system moderno e acessível',
               ),
             ],
-          ),
-
+          ), */
           const SizedBox(height: 24),
 
           // Desenvolvedor
@@ -226,7 +225,10 @@ class _AboutScreenState extends State<AboutScreen> {
                 Expanded(
                   child: Text(
                     AppLocalizations.of(context)!.help,
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
@@ -287,54 +289,54 @@ class _AboutScreenState extends State<AboutScreen> {
               ),
             ),
             const SizedBox(height: 16),
-              const SizedBox(height: 8),
-              InkWell(
-                onTap: () async {
-                  final pinProvider = Provider.of<PinProvider>(
-                    context,
-                    listen: false,
-                  );
-                  const url =
-                      'https://sites.google.com/view/politicadeprivacidade-dayapp/início';
-                  final Uri uri = Uri.parse(url);
-                  if (await canLaunchUrl(uri)) {
-                    pinProvider.isPickingExternalMedia = true;
-                    try {
-                      await launchUrl(uri, mode: LaunchMode.externalApplication);
-                    } finally {
-                      // Reseta após um breve delay para cobrir a transição
-                      Future.delayed(const Duration(seconds: 2), () {
-                        pinProvider.isPickingExternalMedia = false;
-                      });
-                    }
+            const SizedBox(height: 8),
+            InkWell(
+              onTap: () async {
+                final pinProvider = Provider.of<PinProvider>(
+                  context,
+                  listen: false,
+                );
+                const url =
+                    'https://sites.google.com/view/politicadeprivacidade-dayapp/início';
+                final Uri uri = Uri.parse(url);
+                if (await canLaunchUrl(uri)) {
+                  pinProvider.isPickingExternalMedia = true;
+                  try {
+                    await launchUrl(uri, mode: LaunchMode.externalApplication);
+                  } finally {
+                    // Reseta após um breve delay para cobrir a transição
+                    Future.delayed(const Duration(seconds: 2), () {
+                      pinProvider.isPickingExternalMedia = false;
+                    });
                   }
-                },
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.policy,
-                      color: Theme.of(context).primaryColor,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        AppLocalizations.of(context)!.privacyPolicy,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          decoration: TextDecoration.underline,
-                        ),
+                }
+              },
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.policy,
+                    color: Theme.of(context).primaryColor,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      AppLocalizations.of(context)!.privacyPolicy,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        decoration: TextDecoration.underline,
                       ),
                     ),
-                    Icon(
-                      Icons.open_in_new,
-                      size: 16,
-                      color: Theme.of(context).iconTheme.color,
-                    ),
-                  ],
-                ),
+                  ),
+                  Icon(
+                    Icons.open_in_new,
+                    size: 16,
+                    color: Theme.of(context).iconTheme.color,
+                  ),
+                ],
               ),
+            ),
           ],
         ),
       ),
@@ -456,41 +458,6 @@ class _AboutScreenState extends State<AboutScreen> {
                   ),
                 ),
               ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTechItem(String name, String description) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              name,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              description,
-              style: TextStyle(
-                fontSize: 14,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
             ),
           ),
         ],
