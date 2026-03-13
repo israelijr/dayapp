@@ -722,8 +722,10 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                         const Spacer(flex: 1),
                         if (selectedEmoticon != null)
                           Chip(
-                            avatar: Text(selectedEmoticon!),
-                            label: Text(selectedEmojiTranslation ?? ''),
+                            label: Text(
+                              selectedEmoticon!,
+                              style: const TextStyle(fontSize: 20),
+                            ),
                             onDeleted: () {
                               setState(() {
                                 selectedEmoticon = null;

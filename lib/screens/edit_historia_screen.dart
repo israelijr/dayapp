@@ -1013,14 +1013,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                                     ),
                                   ),
                                 ),
-                                label: Text(
-                                  selectedEmojiTranslation ??
-                                      selectedEmoticon ??
-                                      '',
-                                  // Permite quebra de linha para mostrar o título completo
-                                  maxLines: 2,
-                                  softWrap: true,
-                                ),
+                                label: const SizedBox.shrink(),
                                 onDeleted: () {
                                   setState(() {
                                     selectedEmoticon = null;
