@@ -706,6 +706,10 @@
   "@insightTrend": { "description": "Title of the mood trend insight card" },
   "insightMonthlySummary": "📊 Your month in stories",
   "@insightMonthlySummary": { "description": "Title of the monthly summary insight card" },
+  "insightPositiveWordsTitle": "Positive words",
+  "@insightPositiveWordsTitle": { "description": "Title of the positive word insight card" },
+  "insightDifficultWordsTitle": "Difficult words",
+  "@insightDifficultWordsTitle": { "description": "Title of the difficult word insight card" },
 
   "insightBestWeekday": "{weekday} is usually your most positive day.",
   "@insightBestWeekday": {
@@ -719,6 +723,16 @@
   },
   "insightTrendPositive": "Your mood has been improving over the last 7 days compared to the last 30 days.",
   "@insightTrendPositive": { "description": "Body text of the positive trend insight" },
+  "insightPositiveWords": "Words that appear often in your most positive stories: {words}.",
+  "@insightPositiveWords": {
+    "description": "Body text of the positive words insight",
+    "placeholders": { "words": { "type": "String" } }
+  },
+  "insightDifficultWords": "Words that appear often in your more difficult stories: {words}.",
+  "@insightDifficultWords": {
+    "description": "Body text of the difficult words insight",
+    "placeholders": { "words": { "type": "String" } }
+  },
   "insightMonthlySummaryText": "Entries: {entries}\nAvg mood: {mood}\nAvg energy: {energy}",
   "@insightMonthlySummaryText": {
     "description": "Body text of the monthly summary insight (without tag line)",

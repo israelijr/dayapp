@@ -698,6 +698,10 @@
   "@insightTrend": { "description": "Título do card de tendência de humor" },
   "insightMonthlySummary": "📊 Seu mês em histórias",
   "@insightMonthlySummary": { "description": "Título do card de resumo mensal" },
+  "insightPositiveWordsTitle": "Palavras positivas",
+  "@insightPositiveWordsTitle": { "description": "Título do card de palavras positivas" },
+  "insightDifficultWordsTitle": "Palavras difíceis",
+  "@insightDifficultWordsTitle": { "description": "Título do card de palavras difíceis" },
 
   "insightBestWeekday": "{weekday} costuma ser o seu dia mais positivo.",
   "@insightBestWeekday": {
@@ -711,6 +715,16 @@
   },
   "insightTrendPositive": "Seu humor melhorou nos últimos 7 dias em comparação com os últimos 30 dias.",
   "@insightTrendPositive": { "description": "Texto do insight de tendência positiva" },
+  "insightPositiveWords": "Palavras que aparecem com frequência nas suas histórias mais positivas: {words}.",
+  "@insightPositiveWords": {
+    "description": "Texto do insight de palavras positivas",
+    "placeholders": { "words": { "type": "String" } }
+  },
+  "insightDifficultWords": "Palavras que aparecem com frequência nas suas histórias mais difíceis: {words}.",
+  "@insightDifficultWords": {
+    "description": "Texto do insight de palavras difíceis",
+    "placeholders": { "words": { "type": "String" } }
+  },
   "insightMonthlySummaryText": "Entradas: {entries}\nHumor médio: {mood}\nEnergia média: {energy}",
   "@insightMonthlySummaryText": {
     "description": "Texto do resumo mensal sem tag",

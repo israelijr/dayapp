@@ -9,6 +9,7 @@ import '../db/historia_foto_helper.dart';
 import '../db/tag_helper.dart';
 import '../helpers/rich_text_helper.dart';
 import '../models/historia.dart';
+import '../models/insight.dart';
 import '../models/tag.dart';
 import '../providers/auth_provider.dart';
 import '../providers/insight_provider.dart';
@@ -950,10 +951,17 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
                     // Posição do InsightCard
                     return InsightCard(
                       insight: insights[block],
-                      onSeeStories: (_) {
+                      onSeeStories: (query) {
+                        final searchType =
+                            insights[block].type == InsightType.positiveTag
+                            ? SearchType.tag
+                            : SearchType.text;
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (_) => const SearchScreen(),
+                            builder: (_) => SearchScreen(
+                              initialQuery: query,
+                              initialSearchType: searchType,
+                            ),
                           ),
                         );
                       },
@@ -977,10 +985,17 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
                   if (showTrailingInsight && index == storiesCount) {
                     return InsightCard(
                       insight: insights[0],
-                      onSeeStories: (_) {
+                      onSeeStories: (query) {
+                        final searchType =
+                            insights[0].type == InsightType.positiveTag
+                            ? SearchType.tag
+                            : SearchType.text;
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (_) => const SearchScreen(),
+                            builder: (_) => SearchScreen(
+                              initialQuery: query,
+                              initialSearchType: searchType,
+                            ),
                           ),
                         );
                       },

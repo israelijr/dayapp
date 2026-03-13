@@ -678,6 +678,10 @@
   "@insightTrend": { "description": "Título del card de tendencia de estado de ánimo" },
   "insightMonthlySummary": "📊 Tu mes en historias",
   "@insightMonthlySummary": { "description": "Título del card de resumen mensual" },
+  "insightPositiveWordsTitle": "Palabras positivas",
+  "@insightPositiveWordsTitle": { "description": "Título del card de palabras positivas" },
+  "insightDifficultWordsTitle": "Palabras difíciles",
+  "@insightDifficultWordsTitle": { "description": "Título del card de palabras difíciles" },
 
   "insightBestWeekday": "{weekday} suele ser tu día más positivo.",
   "@insightBestWeekday": {
@@ -691,6 +695,16 @@
   },
   "insightTrendPositive": "Tu estado de ánimo mejoró en los últimos 7 días comparado con los últimos 30 días.",
   "@insightTrendPositive": { "description": "Texto del insight de tendencia positiva" },
+  "insightPositiveWords": "Palabras que aparecen con frecuencia en tus historias más positivas: {words}.",
+  "@insightPositiveWords": {
+    "description": "Texto del insight de palabras positivas",
+    "placeholders": { "words": { "type": "String" } }
+  },
+  "insightDifficultWords": "Palabras que aparecen con frecuencia en tus historias más difíciles: {words}.",
+  "@insightDifficultWords": {
+    "description": "Texto del insight de palabras difíciles",
+    "placeholders": { "words": { "type": "String" } }
+  },
   "insightMonthlySummaryText": "Entradas: {entries}\nEstado de ánimo promedio: {mood}\nEnergía promedio: {energy}",
   "@insightMonthlySummaryText": {
     "description": "Texto del resumen mensual sin etiqueta",

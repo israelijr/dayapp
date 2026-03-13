@@ -16,9 +16,9 @@ import '../widgets/mood_energy_selectors.dart';
 class InsightCard extends StatelessWidget {
   final Insight insight;
 
-  /// Chamado quando o usuário toca em "Ver histórias" (apenas para insights
-  /// com tag associada). Recebe o nome da tag como argumento.
-  final void Function(String tag)? onSeeStories;
+  /// Chamado quando o usuário toca em "Ver histórias".
+  /// Recebe a consulta associada ao insight.
+  final void Function(String query)? onSeeStories;
 
   const InsightCard({required this.insight, this.onSeeStories, super.key});
 
@@ -30,8 +30,9 @@ class InsightCard extends StatelessWidget {
 
     final title = _resolveTitle(l10n);
     final description = _resolveDescription(l10n);
-    final tag = insight.metadata?['tag'] as String?;
-    final showButton = onSeeStories != null && tag != null && tag.isNotEmpty;
+    final searchQuery = _resolveSearchQuery();
+    final showButton =
+        onSeeStories != null && searchQuery != null && searchQuery.isNotEmpty;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
@@ -79,7 +80,7 @@ class InsightCard extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
-                      onPressed: () => onSeeStories!(tag),
+                      onPressed: () => onSeeStories!(searchQuery),
                       style: TextButton.styleFrom(
                         foregroundColor: colorScheme.secondary,
                         padding: const EdgeInsets.symmetric(
@@ -109,6 +110,10 @@ class InsightCard extends StatelessWidget {
         return l10n.insightDiscovery;
       case InsightType.positiveTag:
         return l10n.insightPattern;
+      case InsightType.positiveWords:
+        return l10n.insightPositiveWordsTitle;
+      case InsightType.difficultWords:
+        return l10n.insightDifficultWordsTitle;
       case InsightType.trend:
         return l10n.insightTrend;
       case InsightType.monthlySummary:
@@ -126,6 +131,10 @@ class InsightCard extends StatelessWidget {
         return _resolveBestWeekday(l10n);
       case InsightType.positiveTag:
         return _resolvePositiveTag(l10n);
+      case InsightType.positiveWords:
+        return _resolvePositiveWords(l10n);
+      case InsightType.difficultWords:
+        return _resolveDifficultWords(l10n);
       case InsightType.trend:
         return l10n.insightTrendPositive;
       case InsightType.monthlySummary:
@@ -142,6 +151,14 @@ class InsightCard extends StatelessWidget {
   String _resolvePositiveTag(AppLocalizations l10n) {
     final tag = insight.metadata?['tag'] as String? ?? '';
     return l10n.insightPositiveTag(tag);
+  }
+
+  String _resolvePositiveWords(AppLocalizations l10n) {
+    return l10n.insightPositiveWords(_resolveWordsList());
+  }
+
+  String _resolveDifficultWords(AppLocalizations l10n) {
+    return l10n.insightDifficultWords(_resolveWordsList());
   }
 
   String _resolveMonthlySummary(AppLocalizations l10n) {
@@ -165,6 +182,37 @@ class InsightCard extends StatelessWidget {
       );
     }
     return l10n.insightMonthlySummaryText(total, moodStr, energyStr);
+  }
+
+  String _resolveWordsList() {
+    final words = insight.metadata?['words'] as List<dynamic>? ?? const [];
+    return words
+        .whereType<String>()
+        .where((word) => word.isNotEmpty)
+        .join(', ');
+  }
+
+  String? _resolveSearchQuery() {
+    final directQuery = insight.metadata?['search_query'] as String?;
+    if (directQuery != null && directQuery.isNotEmpty) {
+      return directQuery;
+    }
+
+    final tag = insight.metadata?['tag'] as String?;
+    if (tag != null && tag.isNotEmpty) {
+      return tag;
+    }
+
+    final words = insight.metadata?['words'] as List<dynamic>?;
+    final firstWord = words?.whereType<String>().firstWhere(
+      (word) => word.isNotEmpty,
+      orElse: () => '',
+    );
+
+    if (firstWord == null || firstWord.isEmpty) {
+      return null;
+    }
+    return firstWord;
   }
 
   /// Mapeia índice do SQLite strftime('%w') para nome localizado do dia.

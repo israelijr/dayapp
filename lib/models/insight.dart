@@ -4,6 +4,8 @@ import 'dart:convert';
 enum InsightType {
   bestWeekday,
   positiveTag,
+  positiveWords,
+  difficultWords,
   trend,
   monthlySummary;
 
@@ -14,6 +16,10 @@ enum InsightType {
         return 'best_weekday';
       case InsightType.positiveTag:
         return 'positive_tag';
+      case InsightType.positiveWords:
+        return 'positive_words';
+      case InsightType.difficultWords:
+        return 'difficult_words';
       case InsightType.trend:
         return 'trend';
       case InsightType.monthlySummary:
@@ -28,6 +34,10 @@ enum InsightType {
         return InsightType.bestWeekday;
       case 'positive_tag':
         return InsightType.positiveTag;
+      case 'positive_words':
+        return InsightType.positiveWords;
+      case 'difficult_words':
+        return InsightType.difficultWords;
       case 'trend':
         return InsightType.trend;
       case 'monthly_summary':

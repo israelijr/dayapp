@@ -25,7 +25,14 @@ enum SearchType {
 
 /// Tela de pesquisa de histórias
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key});
+  final String? initialQuery;
+  final SearchType initialSearchType;
+
+  const SearchScreen({
+    this.initialQuery,
+    this.initialSearchType = SearchType.text,
+    super.key,
+  });
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
@@ -45,7 +52,19 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     super.initState();
+    _currentSearchType = widget.initialSearchType;
+    final initialQuery = widget.initialQuery?.trim() ?? '';
+    if (initialQuery.isNotEmpty) {
+      _searchController.text = initialQuery;
+    }
     _loadEmojis();
+    if (initialQuery.isNotEmpty &&
+        widget.initialSearchType != SearchType.emoticon) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _performSearch();
+      });
+    }
   }
 
   Future<void> _loadEmojis() async {

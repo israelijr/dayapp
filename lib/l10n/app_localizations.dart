@@ -2777,6 +2777,18 @@ abstract class AppLocalizations {
   /// **'📊 Your month in stories'**
   String get insightMonthlySummary;
 
+  /// Title of the positive word insight card
+  ///
+  /// In en, this message translates to:
+  /// **'Positive words'**
+  String get insightPositiveWordsTitle;
+
+  /// Title of the difficult word insight card
+  ///
+  /// In en, this message translates to:
+  /// **'Difficult words'**
+  String get insightDifficultWordsTitle;
+
   /// Body text of the best-weekday insight
   ///
   /// In en, this message translates to:
@@ -2794,6 +2806,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your mood has been improving over the last 7 days compared to the last 30 days.'**
   String get insightTrendPositive;
+
+  /// Body text of the positive words insight
+  ///
+  /// In en, this message translates to:
+  /// **'Words that appear often in your most positive stories: {words}.'**
+  String insightPositiveWords(String words);
+
+  /// Body text of the difficult words insight
+  ///
+  /// In en, this message translates to:
+  /// **'Words that appear often in your more difficult stories: {words}.'**
+  String insightDifficultWords(String words);
 
   /// Body text of the monthly summary insight (without tag line)
   ///

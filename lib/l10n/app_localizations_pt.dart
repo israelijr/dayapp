@@ -1477,6 +1477,12 @@ class AppLocalizationsPt extends AppLocalizations {
   String get insightMonthlySummary => '📊 Seu mês em histórias';
 
   @override
+  String get insightPositiveWordsTitle => 'Palavras positivas';
+
+  @override
+  String get insightDifficultWordsTitle => 'Palavras difíceis';
+
+  @override
   String insightBestWeekday(String weekday) {
     return '$weekday costuma ser o seu dia mais positivo.';
   }
@@ -1489,6 +1495,16 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get insightTrendPositive =>
       'Seu humor melhorou nos últimos 7 dias em comparação com os últimos 30 dias.';
+
+  @override
+  String insightPositiveWords(String words) {
+    return 'Palavras que aparecem com frequência nas suas histórias mais positivas: $words.';
+  }
+
+  @override
+  String insightDifficultWords(String words) {
+    return 'Palavras que aparecem com frequência nas suas histórias mais difíceis: $words.';
+  }
 
   @override
   String insightMonthlySummaryText(int entries, String mood, String energy) {
@@ -3082,6 +3098,12 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get insightMonthlySummary => '📊 Seu mês em histórias';
 
   @override
+  String get insightPositiveWordsTitle => 'Palavras positivas';
+
+  @override
+  String get insightDifficultWordsTitle => 'Palavras difíceis';
+
+  @override
   String insightBestWeekday(String weekday) {
     return '$weekday costuma ser o seu dia mais positivo.';
   }
@@ -3094,6 +3116,16 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get insightTrendPositive =>
       'Seu humor melhorou nos últimos 7 dias em comparação com os últimos 30 dias.';
+
+  @override
+  String insightPositiveWords(String words) {
+    return 'Palavras que aparecem com frequência nas suas histórias mais positivas: $words.';
+  }
+
+  @override
+  String insightDifficultWords(String words) {
+    return 'Palavras que aparecem com frequência nas suas histórias mais difíceis: $words.';
+  }
 
   @override
   String insightMonthlySummaryText(int entries, String mood, String energy) {

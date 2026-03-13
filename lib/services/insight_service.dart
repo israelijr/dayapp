@@ -2,6 +2,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../db/database_helper.dart';
 import '../models/insight.dart';
+import 'word_insight_analyzer.dart';
 
 /// Serviço responsável por calcular e cachear os insights automáticos.
 ///
@@ -22,9 +23,10 @@ class InsightService {
   static const double _trendThreshold = 0.4;
 
   /// Máximo de insights exibidos simultaneamente.
-  static const int _maxInsights = 3;
+  static const int _maxInsights = 5;
 
   final DatabaseHelper _db = DatabaseHelper();
+  final WordInsightAnalyzer _wordInsightAnalyzer = const WordInsightAnalyzer();
 
   // ---------------------------------------------------------------------------
   // API pública
@@ -47,6 +49,62 @@ class InsightService {
     return insights;
   }
 
+  /// Analisa palavras recorrentes nas histórias do usuário.
+  Future<WordInsightAnalysis> analyzeWordAssociations(String userId) async {
+    final db = await _db.database;
+    final rows = await db.query(
+      'historia',
+      columns: ['titulo', 'descricao', 'humor'],
+      where: 'user_id = ? AND excluido IS NULL',
+      whereArgs: [userId],
+    );
+
+    final stories = rows
+        .map(
+          (row) => StoryTextEntry(
+            title: row['titulo'] as String? ?? '',
+            description: row['descricao'] as String?,
+            mood: row['humor'] as int? ?? 3,
+          ),
+        )
+        .toList(growable: false);
+
+    return _wordInsightAnalyzer.analyzeStories(stories);
+  }
+
+  /// Converte o resultado da análise textual em insights exibíveis.
+  List<Insight> createWordInsights(WordInsightAnalysis analysis) {
+    final insights = <Insight>[];
+
+    if (analysis.positiveWords.isNotEmpty) {
+      final words = analysis.positiveWords.map((item) => item.word).toList();
+      insights.add(
+        Insight(
+          type: InsightType.positiveWords,
+          icon: '🌤',
+          title: 'insightPositiveWordsTitle',
+          description: 'insightPositiveWords',
+          metadata: {'words': words, 'search_query': words.first},
+        ),
+      );
+    }
+
+    if (analysis.difficultWords.isNotEmpty) {
+      final words = analysis.difficultWords.map((item) => item.word).toList();
+      insights.add(
+        Insight(
+          type: InsightType.difficultWords,
+          icon: '🌧',
+          title: 'insightDifficultWordsTitle',
+          description: 'insightDifficultWords',
+          metadata: {'words': words, 'search_query': words.first},
+        ),
+      );
+    }
+
+    return insights;
+  }
+
   // ---------------------------------------------------------------------------
   // Orquestrador interno
   // ---------------------------------------------------------------------------
@@ -66,19 +124,26 @@ class InsightService {
     final total = (totalResult.first['total'] as int?) ?? 0;
     if (total < _minTotalHistorias) return [];
 
-    // Calcula todos em paralelo para melhor performance
-    final results = await Future.wait([
-      calculateTrend(userId),
-      calculatePositiveTag(userId),
-      calculateBestWeekday(userId),
-      calculateMonthlySummary(userId),
-    ]);
+    // Dispara todos os cálculos em paralelo para melhor performance.
+    final trendFuture = calculateTrend(userId);
+    final positiveTagFuture = calculatePositiveTag(userId);
+    final bestWeekdayFuture = calculateBestWeekday(userId);
+    final monthlySummaryFuture = calculateMonthlySummary(userId);
+    final wordAnalysisFuture = analyzeWordAssociations(userId);
 
-    // Aplica prioridade (spec §14): trend > tag > dia > resumo mensal
+    final trendInsight = await trendFuture;
+    final positiveTagInsight = await positiveTagFuture;
+    final bestWeekdayInsight = await bestWeekdayFuture;
+    final monthlySummaryInsight = await monthlySummaryFuture;
+    final wordInsights = createWordInsights(await wordAnalysisFuture);
+
+    // Aplica prioridade: tendência > palavras > tag > dia > resumo mensal.
     final ordered = <Insight>[];
-    for (final insight in results) {
-      if (insight != null) ordered.add(insight);
-    }
+    if (trendInsight != null) ordered.add(trendInsight);
+    ordered.addAll(wordInsights);
+    if (positiveTagInsight != null) ordered.add(positiveTagInsight);
+    if (bestWeekdayInsight != null) ordered.add(bestWeekdayInsight);
+    if (monthlySummaryInsight != null) ordered.add(monthlySummaryInsight);
 
     // Limita ao máximo configurado
     return ordered.take(_maxInsights).toList();
