@@ -21,6 +21,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
   final BackupService _backupService = BackupService();
   bool _isLoading = false;
   String _statusMessage = '';
+  double? _progressValue;
   bool _statusIsError = false; // nova flag para colorir card de status
 
   @override
@@ -267,10 +268,19 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                                 ),
                               ),
                               const SizedBox(height: 16),
-                              const SizedBox(
+                              SizedBox(
                                 width: 200,
-                                child: LinearProgressIndicator(),
+                                child: LinearProgressIndicator(
+                                  value: _progressValue,
+                                ),
                               ),
+                              if (_progressValue != null) ...[
+                                const SizedBox(height: 8),
+                                Text(
+                                  '${(_progressValue! * 100).toStringAsFixed(0)}%',
+                                  style: const TextStyle(fontSize: 12),
+                                ),
+                              ],
                               const SizedBox(height: 12),
                               Text(
                                 loc.pleaseWait,
@@ -302,6 +312,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
     setState(() {
       _isLoading = true;
       _statusMessage = loc.backupStarting;
+      _progressValue = null;
       _statusIsError = false;
     });
 
@@ -310,6 +321,11 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
         onProgress: (message) {
           if (mounted) {
             setState(() => _statusMessage = message);
+          }
+        },
+        onProgressValue: (value) {
+          if (mounted) {
+            setState(() => _progressValue = value);
           }
         },
         l10n: loc,
@@ -321,6 +337,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
         setState(() {
           _isLoading = false;
           _statusMessage = loc.backupCreatedSuccess;
+          _progressValue = null;
           _statusIsError = false;
         });
       }
@@ -339,6 +356,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
         setState(() {
           _isLoading = false;
           _statusMessage = loc.backupError(e.toString());
+          _progressValue = null;
           _statusIsError = true;
         });
       }
@@ -406,6 +424,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
       setState(() {
         _isLoading = true;
         _statusMessage = loc.restoreStarting;
+        _progressValue = null;
         _statusIsError = false;
       });
 
@@ -437,6 +456,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
       setState(() {
         _isLoading = false;
         _statusMessage = loc.restoreSuccess;
+        _progressValue = null;
         _statusIsError = false;
       });
 
@@ -472,6 +492,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
         setState(() {
           _isLoading = false;
           _statusMessage = loc.restoreError(e.toString());
+          _progressValue = null;
           _statusIsError = true;
         });
       }

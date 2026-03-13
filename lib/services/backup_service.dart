@@ -1,4 +1,7 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:archive/archive_io.dart';
 import 'package:path/path.dart' as path;
@@ -12,6 +15,52 @@ import '../helpers/photo_file_helper.dart';
 import '../helpers/video_file_helper.dart';
 import '../l10n/generated/app_localizations.dart';
 
+void _createZipFileInIsolate(Map<String, dynamic> zipConfig) {
+  final sendPort = zipConfig['sendPort'] as SendPort;
+  final zipPath = zipConfig['zipPath'] as String;
+  final entries = (zipConfig['entries'] as List)
+      .cast<Map>()
+      .map((entry) => entry.cast<String, dynamic>())
+      .toList();
+
+  try {
+    final encoder = ZipFileEncoder();
+    encoder.create(zipPath);
+
+    final totalBytes = (zipConfig['totalBytes'] as int?) ?? 0;
+    var processedBytes = 0;
+
+    for (final entry in entries) {
+      final sourcePath = entry['sourcePath'] as String?;
+      final archivePath = entry['archivePath'] as String?;
+      final sizeBytes = (entry['sizeBytes'] as int?) ?? 0;
+
+      if (sourcePath == null || archivePath == null) {
+        continue;
+      }
+
+      final sourceFile = File(sourcePath);
+      if (!sourceFile.existsSync()) {
+        continue;
+      }
+
+      encoder.addFile(sourceFile, archivePath);
+      processedBytes += sizeBytes;
+
+      sendPort.send({
+        'type': 'progress',
+        'processedBytes': processedBytes,
+        'totalBytes': totalBytes,
+      });
+    }
+
+    encoder.close();
+    sendPort.send({'type': 'done'});
+  } catch (e) {
+    sendPort.send({'type': 'error', 'error': e.toString()});
+  }
+}
+
 /// ServiÃ§o simplificado de backup - apenas arquivo ZIP local
 class BackupService {
   static final BackupService _instance = BackupService._internal();
@@ -22,9 +71,11 @@ class BackupService {
   /// (para OneDrive, Google Drive, etc)
   Future<String> createBackupZipFile({
     void Function(String)? onProgress,
+    void Function(double?)? onProgressValue,
     AppLocalizations? l10n,
   }) async {
     try {
+      onProgressValue?.call(0.0);
       onProgress?.call(
         l10n?.backupProgressCreating ?? 'Criando arquivo de backup...',
       );
@@ -50,6 +101,46 @@ class BackupService {
         );
       }
 
+      final videosDir = await VideoFileHelper.getVideosDirectory();
+      final videoFiles = videosDir
+          .listSync()
+          .whereType<File>()
+          .where((file) => file.path.endsWith('.mp4'))
+          .toList();
+
+      final photosDir = await PhotoFileHelper.getPhotosDirectory();
+      final photoFiles = photosDir
+          .listSync()
+          .whereType<File>()
+          .where(
+            (file) => file.path.endsWith('.jpg') || file.path.endsWith('.png'),
+          )
+          .toList();
+
+      final audiosDir = await AudioFileHelper.getAudiosDirectory();
+      final audioFiles = audiosDir
+          .listSync()
+          .whereType<File>()
+          .where(
+            (file) => file.path.endsWith('.m4a') || file.path.endsWith('.mp3'),
+          )
+          .toList();
+
+      Future<int> calculateFilesTotalBytes(List<File> files) async {
+        var totalBytes = 0;
+        for (final file in files) {
+          if (await file.exists()) {
+            totalBytes += await file.length();
+          }
+        }
+        return totalBytes;
+      }
+
+      final dbBytes = await dbFile.length();
+      final videosBytes = await calculateFilesTotalBytes(videoFiles);
+      final photosBytes = await calculateFilesTotalBytes(photoFiles);
+      final audiosBytes = await calculateFilesTotalBytes(audioFiles);
+
       // Marcar histórias como já salvas em backup antes de copiar o arquivo
       try {
         final db = await DatabaseHelper().database;
@@ -61,19 +152,48 @@ class BackupService {
         // Não quebrar o fluxo de backup se a marcação falhar
       }
 
+      String buildMetadataContent() {
+        final timestamp = DateTime.now().toIso8601String();
+        return '''
+DayApp Backup
+Data: $timestamp
+Banco de dados: ${dbFile.lengthSync()} bytes
+Vídeos: ${videoFiles.length} arquivo(s)
+Fotos: ${photoFiles.length} arquivo(s)
+Áudios: ${audioFiles.length} arquivo(s)
+Versão: 2.0.0
+''';
+      }
+
+      final metadataPreview = buildMetadataContent();
+      final metadataBytes = utf8.encode(metadataPreview).length;
+
+      final copyWorkBytes = dbBytes + videosBytes + photosBytes + audiosBytes;
+      final compressionWorkBytes = copyWorkBytes + metadataBytes;
+      final totalWorkBytes = copyWorkBytes + compressionWorkBytes;
+      var completedWorkBytes = 0;
+
+      void reportOverallProgress() {
+        if (totalWorkBytes <= 0) {
+          onProgressValue?.call(0.0);
+          return;
+        }
+
+        final ratio = (completedWorkBytes / totalWorkBytes)
+            .clamp(0.0, 1.0)
+            .toDouble();
+        onProgressValue?.call(ratio);
+      }
+
       final dbBackupFile = File(path.join(backupDir.path, 'dayapp.db'));
       await dbFile.copy(dbBackupFile.path);
+      completedWorkBytes += dbBytes;
+      reportOverallProgress();
 
       // 2. Copiar vídeos
       onProgress?.call(
         l10n?.backupProgressCopyingVideos ?? 'Copiando vídeos...',
       );
-      final videosDir = await VideoFileHelper.getVideosDirectory();
-      final videoFiles = videosDir
-          .listSync()
-          .whereType<File>()
-          .where((file) => file.path.endsWith('.mp4'))
-          .toList();
 
       if (videoFiles.isNotEmpty) {
         final videosBackupDir = Directory(path.join(backupDir.path, 'videos'));
@@ -91,6 +211,11 @@ class BackupService {
             path.join(videosBackupDir.path, videoFileName),
           );
           await videoFile.copy(videoBackupFile.path);
+
+          if (await videoFile.exists()) {
+            completedWorkBytes += await videoFile.length();
+            reportOverallProgress();
+          }
         }
       }
 
@@ -98,15 +223,6 @@ class BackupService {
       onProgress?.call(
         l10n?.backupProgressCopyingPhotos ?? 'Copiando fotos...',
       );
-      final photosDir = await PhotoFileHelper.getPhotosDirectory();
-      final photoFiles = photosDir
-          .listSync()
-          .whereType<File>()
-          .where(
-            (file) => file.path.endsWith('.jpg') || file.path.endsWith('.png'),
-          )
-          .toList();
-
       if (photoFiles.isNotEmpty) {
         final photosBackupDir = Directory(path.join(backupDir.path, 'photos'));
         await photosBackupDir.create();
@@ -123,6 +239,11 @@ class BackupService {
             path.join(photosBackupDir.path, photoFileName),
           );
           await photoFile.copy(photoBackupFile.path);
+
+          if (await photoFile.exists()) {
+            completedWorkBytes += await photoFile.length();
+            reportOverallProgress();
+          }
         }
       }
 
@@ -130,15 +251,6 @@ class BackupService {
       onProgress?.call(
         l10n?.backupProgressCopyingAudios ?? 'Copiando áudios...',
       );
-      final audiosDir = await AudioFileHelper.getAudiosDirectory();
-      final audioFiles = audiosDir
-          .listSync()
-          .whereType<File>()
-          .where(
-            (file) => file.path.endsWith('.m4a') || file.path.endsWith('.mp3'),
-          )
-          .toList();
-
       if (audioFiles.isNotEmpty) {
         final audiosBackupDir = Directory(path.join(backupDir.path, 'audios'));
         await audiosBackupDir.create();
@@ -155,6 +267,11 @@ class BackupService {
             path.join(audiosBackupDir.path, audioFileName),
           );
           await audioFile.copy(audioBackupFile.path);
+
+          if (await audioFile.exists()) {
+            completedWorkBytes += await audioFile.length();
+            reportOverallProgress();
+          }
         }
       }
 
@@ -162,17 +279,11 @@ class BackupService {
       onProgress?.call(
         l10n?.backupProgressCreatingMetadata ?? 'Criando metadados...',
       );
-      final timestamp = DateTime.now().toIso8601String();
       final metadataFile = File(path.join(backupDir.path, 'backup_info.txt'));
-      await metadataFile.writeAsString('''
-DayApp Backup
-Data: $timestamp
-Banco de dados: ${dbFile.lengthSync()} bytes
-Vídeos: ${videoFiles.length} arquivo(s)
-Fotos: ${photoFiles.length} arquivo(s)
-Áudios: ${audioFiles.length} arquivo(s)
-Versão: 2.0.0
-''');
+      final metadataContent = buildMetadataContent();
+      await metadataFile.writeAsString(metadataContent);
+      completedWorkBytes += metadataBytes;
+      reportOverallProgress();
 
       // 6. Comprimir tudo em ZIP
       onProgress?.call(
@@ -181,74 +292,143 @@ Versão: 2.0.0
       final timestamp2 = DateTime.now().millisecondsSinceEpoch;
       final zipPath = path.join(tempDir.path, 'dayapp_backup_$timestamp2.zip');
 
-      // Criar arquivo usando Archive em vez de ZipFileEncoder para melhor controle
-      final archive = Archive();
+      // Monta a lista de arquivos que entrarão no ZIP para manter feedback de progresso.
+      final zipEntries = <Map<String, String>>[
+        {
+          'sourcePath': path.join(backupDir.path, 'dayapp.db'),
+          'archivePath': 'dayapp.db',
+        },
+        {
+          'sourcePath': path.join(backupDir.path, 'backup_info.txt'),
+          'archivePath': 'backup_info.txt',
+        },
+      ];
 
-      // Adicionar banco de dados na raiz do ZIP
-      final dbFileData = await File(
-        path.join(backupDir.path, 'dayapp.db'),
-      ).readAsBytes();
-      archive.addFile(ArchiveFile('dayapp.db', dbFileData.length, dbFileData));
+      final mediaDirs = [
+        {
+          'folder': 'videos',
+          'extensions': ['.mp4'],
+        },
+        {
+          'folder': 'photos',
+          'extensions': ['.jpg', '.png'],
+        },
+        {
+          'folder': 'audios',
+          'extensions': ['.m4a', '.mp3'],
+        },
+      ];
 
-      // Adicionar metadados na raiz do ZIP
-      final metadataData = await File(
-        path.join(backupDir.path, 'backup_info.txt'),
-      ).readAsBytes();
-      archive.addFile(
-        ArchiveFile('backup_info.txt', metadataData.length, metadataData),
-      );
+      for (final mediaDir in mediaDirs) {
+        final folderName = mediaDir['folder'] as String;
+        final allowedExtensions = mediaDir['extensions'] as List<String>;
+        final sourceDir = Directory(path.join(backupDir.path, folderName));
 
-      // Adicionar vídeos com estrutura videos/
-      final videosBackupDir = Directory(path.join(backupDir.path, 'videos'));
-      if (await videosBackupDir.exists()) {
-        final backupVideoFiles = videosBackupDir
+        if (!await sourceDir.exists()) {
+          continue;
+        }
+
+        final filesInDir = sourceDir
             .listSync()
             .whereType<File>()
+            .where(
+              (file) => allowedExtensions.any(
+                (extension) => file.path.toLowerCase().endsWith(extension),
+              ),
+            )
             .toList();
-        for (final videoFile in backupVideoFiles) {
-          final videoData = await videoFile.readAsBytes();
-          final videoName = path.basename(videoFile.path);
-          archive.addFile(
-            ArchiveFile('videos/$videoName', videoData.length, videoData),
-          );
+
+        for (final file in filesInDir) {
+          final fileName = path.basename(file.path);
+          zipEntries.add({
+            'sourcePath': file.path,
+            'archivePath': '$folderName/$fileName',
+          });
         }
       }
 
-      // Adicionar fotos com estrutura photos/
-      final photosBackupDir = Directory(path.join(backupDir.path, 'photos'));
-      if (await photosBackupDir.exists()) {
-        final backupPhotoFiles = photosBackupDir
-            .listSync()
-            .whereType<File>()
-            .toList();
-        for (final photoFile in backupPhotoFiles) {
-          final photoData = await photoFile.readAsBytes();
-          final photoName = path.basename(photoFile.path);
-          archive.addFile(
-            ArchiveFile('photos/$photoName', photoData.length, photoData),
-          );
+      final zipEntriesWithSize = <Map<String, dynamic>>[];
+      var totalBytes = 0;
+
+      for (final entry in zipEntries) {
+        final sourcePath = entry['sourcePath'];
+        final archivePath = entry['archivePath'];
+
+        if (sourcePath == null || archivePath == null) {
+          continue;
         }
+
+        final file = File(sourcePath);
+        if (!await file.exists()) {
+          continue;
+        }
+
+        final sizeBytes = await file.length();
+        totalBytes += sizeBytes;
+
+        zipEntriesWithSize.add({
+          'sourcePath': sourcePath,
+          'archivePath': archivePath,
+          'sizeBytes': sizeBytes,
+        });
       }
 
-      // Adicionar áudios com estrutura audios/
-      final audiosBackupDir = Directory(path.join(backupDir.path, 'audios'));
-      if (await audiosBackupDir.exists()) {
-        final backupAudioFiles = audiosBackupDir
-            .listSync()
-            .whereType<File>()
-            .toList();
-        for (final audioFile in backupAudioFiles) {
-          final audioData = await audioFile.readAsBytes();
-          final audioName = path.basename(audioFile.path);
-          archive.addFile(
-            ArchiveFile('audios/$audioName', audioData.length, audioData),
-          );
-        }
-      }
+      final compressionStartWorkBytes = completedWorkBytes;
+      reportOverallProgress();
 
-      // Codificar e salvar ZIP
-      final zipData = ZipEncoder().encode(archive);
-      await File(zipPath).writeAsBytes(zipData!);
+      final receivePort = ReceivePort();
+      final isolate = await Isolate.spawn(_createZipFileInIsolate, {
+        'sendPort': receivePort.sendPort,
+        'zipPath': zipPath,
+        'entries': zipEntriesWithSize,
+        'totalBytes': totalBytes,
+      });
+
+      final completer = Completer<void>();
+      late final StreamSubscription<dynamic> subscription;
+
+      subscription = receivePort.listen((message) {
+        if (message is! Map) {
+          return;
+        }
+
+        final type = message['type'];
+        if (type == 'progress') {
+          final processedBytes = (message['processedBytes'] as int?) ?? 0;
+          final workerTotalBytes =
+              (message['totalBytes'] as int?) ?? totalBytes;
+
+          final ratio = workerTotalBytes <= 0
+              ? 1.0
+              : (processedBytes / workerTotalBytes).clamp(0.0, 1.0).toDouble();
+
+          final percentage = (ratio * 100).toStringAsFixed(0);
+          onProgress?.call(
+            '${l10n?.backupProgressCompressing ?? 'Comprimindo arquivos...'} ($percentage%)',
+          );
+          final compressionDoneBytes = (compressionWorkBytes * ratio).round();
+          completedWorkBytes = compressionStartWorkBytes + compressionDoneBytes;
+          reportOverallProgress();
+        } else if (type == 'done') {
+          completedWorkBytes = totalWorkBytes;
+          onProgressValue?.call(1.0);
+          if (!completer.isCompleted) {
+            completer.complete();
+          }
+        } else if (type == 'error') {
+          if (!completer.isCompleted) {
+            completer.completeError(Exception(message['error']));
+          }
+        }
+      });
+
+      try {
+        await completer.future;
+      } finally {
+        await subscription.cancel();
+        receivePort.close();
+        isolate.kill(priority: Isolate.immediate);
+      }
 
       // Limpar diretÃ³rio temporÃ¡rio
       await backupDir.delete(recursive: true);
@@ -265,11 +445,13 @@ Versão: 2.0.0
   /// Compartilha o arquivo de backup (para salvar no OneDrive, Google Drive, etc)
   Future<void> shareBackupFile({
     void Function(String)? onProgress,
+    void Function(double?)? onProgressValue,
     AppLocalizations? l10n,
   }) async {
     try {
       final zipPath = await createBackupZipFile(
         onProgress: onProgress,
+        onProgressValue: onProgressValue,
         l10n: l10n,
       );
       final zipFile = File(zipPath);
