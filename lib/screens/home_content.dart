@@ -873,28 +873,6 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    // Mostra mensagem se não houver histórias
-    if (widget.historias.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset('assets/image/home_vazia.png', width: 250, height: 250),
-            const SizedBox(height: 16),
-            Text(
-              AppLocalizations.of(context)!.noStoriesHere,
-              style: const TextStyle(fontSize: 18, color: Colors.grey),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              AppLocalizations.of(context)!.storiesGroupedOrArchived,
-              style: const TextStyle(fontSize: 14, color: Colors.grey),
-            ),
-          ],
-        ),
-      );
-    }
-
     // Lista com paginação
     return AnimatedSwitcher(
       duration: AppDurations.listSwitch,
@@ -916,24 +894,95 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
         child: Consumer<InsightProvider>(
           builder: (context, insightProvider, _) {
             final insights = insightProvider.insights;
+            final storiesCount = widget.historias.length;
+
+            // Estado vazio: mantém feedback visual e permite mostrar insights
+            // mesmo quando não há histórias visíveis na Home.
+            if (storiesCount == 0) {
+              if (insights.isEmpty) {
+                return ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.7,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/image/home_vazia.png',
+                              width: 250,
+                              height: 250,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              AppLocalizations.of(context)!.noStoriesHere,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              AppLocalizations.of(
+                                context,
+                              )!.storiesGroupedOrArchived,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }
+
+              return ListView.builder(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 16,
+                  horizontal: 12,
+                ),
+                itemCount: insights.length,
+                itemBuilder: (context, index) {
+                  final insight = insights[index];
+                  return InsightCard(
+                    insight: insight,
+                    onSeeStories: (query) {
+                      final searchType = insight.type == InsightType.positiveTag
+                          ? SearchType.tag
+                          : SearchType.text;
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => SearchScreen(
+                            initialQuery: query,
+                            initialSearchType: searchType,
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              );
+            }
+
             // Um insight a cada 5 histórias; máximo definido pelo InsightService
             const int insightInterval = 5;
             const int blockSize =
                 insightInterval + 1; // bloco: 5 histórias + 1 insight
-            final int storiesCount = widget.historias.length;
             final int insightsInserted = (storiesCount ~/ insightInterval)
                 .clamp(0, insights.length);
-            // Mostra 1 insight ao final quando há insights disponíveis mas
-            // não há registros suficientes na home para acionar um bloco completo
-            // (ex.: registros estão arquivados ou agrupados)
-            final bool showTrailingInsight =
-                insightsInserted == 0 &&
-                insights.isNotEmpty &&
-                storiesCount > 0;
+            // Exibe todos os insights restantes ao final da lista para evitar
+            // ocultar cards quando houver poucas histórias visíveis.
+            final int trailingInsightsCount =
+                insights.length - insightsInserted;
+            final int interleavedItemsCount = storiesCount + insightsInserted;
             final int totalItems =
-                storiesCount +
-                insightsInserted +
-                (showTrailingInsight ? 1 : 0) +
+                interleavedItemsCount +
+                trailingInsightsCount +
                 (widget.hasMoreData ? 1 : 0);
 
             return ListView.builder(
@@ -975,19 +1024,18 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
                       : widget.buildIconView(historia);
                 }
 
-                // Histórias restantes (após os blocos com insight) ou indicador de loading
-                final storyIndex =
-                    insightsInserted * insightInterval +
-                    (index - insightsInserted * blockSize);
+                // Itens após a área intercalada: insights restantes + loading.
+                final int postInterleavedIndex = index - interleavedItemsCount;
 
-                if (storyIndex >= storiesCount) {
-                  // Insight ao final quando há poucos registros visíveis na home
-                  if (showTrailingInsight && index == storiesCount) {
+                if (postInterleavedIndex >= 0) {
+                  if (postInterleavedIndex < trailingInsightsCount) {
+                    final insight =
+                        insights[insightsInserted + postInterleavedIndex];
                     return InsightCard(
-                      insight: insights[0],
+                      insight: insight,
                       onSeeStories: (query) {
                         final searchType =
-                            insights[0].type == InsightType.positiveTag
+                            insight.type == InsightType.positiveTag
                             ? SearchType.tag
                             : SearchType.text;
                         Navigator.of(context).push(
@@ -1001,7 +1049,8 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
                       },
                     );
                   }
-                  // Indicador de carregamento no final
+
+                  // Indicador de carregamento no final.
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     child: Center(
@@ -1012,6 +1061,10 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
                   );
                 }
 
+                // Histórias restantes que não entraram em blocos completos.
+                final storyIndex =
+                    insightsInserted * insightInterval +
+                    (index - insightsInserted * blockSize);
                 final historia = widget.historias[storyIndex];
                 return widget.isCardView
                     ? widget.buildCardView(historia)

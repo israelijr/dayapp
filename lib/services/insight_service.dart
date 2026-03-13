@@ -23,7 +23,7 @@ class InsightService {
   static const double _trendThreshold = 0.4;
 
   /// Máximo de insights exibidos simultaneamente.
-  static const int _maxInsights = 5;
+  static final int _maxInsights = InsightType.values.length;
 
   final DatabaseHelper _db = DatabaseHelper();
   final WordInsightAnalyzer _wordInsightAnalyzer = const WordInsightAnalyzer();
