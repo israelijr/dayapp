@@ -68,7 +68,6 @@ class InsightService {
           ),
         )
         .toList(growable: false);
-
     return _wordInsightAnalyzer.analyzeStories(stories);
   }
 

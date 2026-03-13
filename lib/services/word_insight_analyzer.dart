@@ -252,6 +252,10 @@ class WordInsightAnalyzer {
     'vou',
   };
 
+  /// Stopwords padrão do analisador, útil para composição com listas dinâmicas.
+  static Set<String> get defaultStopwords =>
+      Set.unmodifiable(_defaultStopwords);
+
   const WordInsightAnalyzer();
 
   String normalizeText(String text) {
