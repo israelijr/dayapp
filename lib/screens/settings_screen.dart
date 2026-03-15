@@ -297,7 +297,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(6),
         gradient: LinearGradient(colors: [scheme.primary, scheme.secondary]),
-        border: Border.all(color: scheme.onSurface.withOpacity(0.12)),
+        border: Border.all(color: scheme.onSurface.withValues(alpha: 0.12)),
       ),
     );
   }
