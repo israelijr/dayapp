@@ -761,7 +761,7 @@ class _HistoriaThumbnailImageState extends State<HistoriaThumbnailImage> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return Container(
+      return ColoredBox(
         color: Theme.of(context).colorScheme.surfaceContainerHigh,
         child: const Center(
           child: SizedBox(
@@ -777,7 +777,7 @@ class _HistoriaThumbnailImageState extends State<HistoriaThumbnailImage> {
       _thumbnailBytes ?? widget.imageBytes,
       fit: BoxFit.cover,
       errorBuilder: (context, error, stackTrace) {
-        return Container(
+        return ColoredBox(
           color: Theme.of(context).colorScheme.surfaceContainerHigh,
           child: Center(
             child: Icon(
