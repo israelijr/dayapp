@@ -126,7 +126,9 @@ class _RichTextEditorScreenState extends State<RichTextEditorScreen> {
               ),
               TextButton(
                 onPressed: () => Navigator.of(context).pop('discard'),
-                style: TextButton.styleFrom(foregroundColor: Colors.red),
+                style: TextButton.styleFrom(
+                  foregroundColor: Theme.of(context).colorScheme.error,
+                ),
                 child: Text(loc.discard),
               ),
               TextButton(

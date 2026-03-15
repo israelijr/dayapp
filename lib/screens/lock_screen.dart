@@ -383,6 +383,7 @@ class _LockScreenState extends State<LockScreen> {
                   final successMsg = AppLocalizations.of(
                     dialogContext,
                   )!.pinConfiguredSuccess;
+                  final errorColor = Theme.of(dialogContext).colorScheme.error;
                   final pinProvider = Provider.of<PinProvider>(
                     dialogContext,
                     listen: false,
@@ -410,7 +411,7 @@ class _LockScreenState extends State<LockScreen> {
                     messenger.showSnackBar(
                       SnackBar(
                         content: Text(invalidCodeMsg),
-                        backgroundColor: Colors.red,
+                        backgroundColor: errorColor,
                       ),
                     );
                   }
@@ -724,7 +725,7 @@ class _LockScreenState extends State<LockScreen> {
             shape: BoxShape.circle,
             color: isFilled
                 ? Theme.of(context).colorScheme.primary
-                : Colors.transparent,
+                : const Color(0x00000000),
             border: Border.all(
               color: _showError
                   ? Theme.of(context).colorScheme.error
@@ -768,7 +769,7 @@ class _LockScreenState extends State<LockScreen> {
     return Padding(
       padding: const EdgeInsets.all(8),
       child: Material(
-        color: Colors.transparent,
+        color: const Color(0x00000000),
         child: InkWell(
           onTap: _isLoading
               ? null

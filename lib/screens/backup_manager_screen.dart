@@ -36,7 +36,11 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.cloud_off, size: 64, color: Colors.grey),
+                    Icon(
+                      Icons.cloud_off,
+                      size: 64,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                     const SizedBox(height: 16),
                     Text(
                       loc.backupNotAvailableWeb,
@@ -49,7 +53,10 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                     const SizedBox(height: 12),
                     Text(
                       loc.backupNotAvailableDetail,
-                      style: const TextStyle(fontSize: 14, color: Colors.grey),
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -128,9 +135,11 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                                         ),
                                         Text(
                                           loc.backupZipSubtitle,
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontSize: 13,
-                                            color: Colors.grey,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.onSurfaceVariant,
                                           ),
                                         ),
                                       ],
@@ -185,7 +194,9 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                                 label: Text(loc.restoreFromFile),
                                 style: ElevatedButton.styleFrom(
                                   minimumSize: const Size(double.infinity, 48),
-                                  backgroundColor: Colors.deepOrange,
+                                  backgroundColor: Theme.of(
+                                    context,
+                                  ).colorScheme.tertiary,
                                 ),
                               ),
                             ],
@@ -286,7 +297,9 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                                 loc.pleaseWait,
                                 style: TextStyle(
                                   fontSize: 13,
-                                  color: Colors.grey[600],
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
                                 ),
                               ),
                             ],
@@ -407,7 +420,9 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
             ),
             ElevatedButton(
               onPressed: () => Navigator.pop(context, true),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.tertiary,
+              ),
               child: Text(loc.confirm),
             ),
           ],

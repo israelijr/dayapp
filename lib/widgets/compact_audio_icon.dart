@@ -8,7 +8,8 @@ class CompactAudioIcon extends StatelessWidget {
   final VoidCallback? onDelete;
 
   const CompactAudioIcon({
-    required this.audioData, super.key,
+    required this.audioData,
+    super.key,
     this.duration,
     this.onDelete,
   });
@@ -79,11 +80,15 @@ class CompactAudioIcon extends StatelessWidget {
               onTap: onDelete,
               child: Container(
                 padding: const EdgeInsets.all(2),
-                decoration: const BoxDecoration(
-                  color: Colors.red,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.error,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.close, color: Colors.white, size: 16),
+                child: Icon(
+                  Icons.close,
+                  color: Theme.of(context).colorScheme.onError,
+                  size: 16,
+                ),
               ),
             ),
           ),

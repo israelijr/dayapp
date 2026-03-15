@@ -425,14 +425,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 if (value) {
                   _showEnableBiometricDialog();
                 } else {
+                  final messenger = ScaffoldMessenger.of(context);
+                  final tertiaryColor = Theme.of(context).colorScheme.tertiary;
                   await _biometricService.disableBiometric();
                   await _checkBiometricStatus();
                   if (!mounted) return;
-                  // ignore: use_build_context_synchronously
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  messenger.showSnackBar(
                     SnackBar(
                       content: Text(loc.biometricsDisabled),
-                      backgroundColor: Colors.orange,
+                      backgroundColor: tertiaryColor,
                     ),
                   );
                 }

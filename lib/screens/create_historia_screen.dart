@@ -607,7 +607,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
     final Emoji? result = await showModalBottomSheet<Emoji>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: const Color(0x00000000),
       builder: (context) => const EmojiSelectionModal(),
     );
     if (result != null) {
@@ -648,7 +648,9 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
               ),
               TextButton(
                 onPressed: () => Navigator.of(context).pop('discard'),
-                style: TextButton.styleFrom(foregroundColor: Colors.red),
+                style: TextButton.styleFrom(
+                  foregroundColor: Theme.of(context).colorScheme.error,
+                ),
                 child: Text(loc.discard),
               ),
               TextButton(

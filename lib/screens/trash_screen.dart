@@ -138,7 +138,7 @@ class _TrashScreenState extends State<TrashScreen> {
               onPressed: () => Navigator.pop(ctx, true),
               child: Text(
                 loc.permanentlyDeleteLabel,
-                style: const TextStyle(color: Colors.red),
+                style: TextStyle(color: Theme.of(ctx).colorScheme.error),
               ),
             ),
           ],
@@ -196,7 +196,7 @@ class _TrashScreenState extends State<TrashScreen> {
               onPressed: () => Navigator.pop(ctx, true),
               child: Text(
                 loc.emptyTrashLabel,
-                style: const TextStyle(color: Colors.red),
+                style: TextStyle(color: Theme.of(ctx).colorScheme.error),
               ),
             ),
           ],
@@ -483,16 +483,26 @@ class _TrashScreenState extends State<TrashScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.delete_outline, size: 80, color: Colors.grey[400]),
+                  Icon(
+                    Icons.delete_outline,
+                    size: 80,
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
                   const SizedBox(height: 16),
                   Text(
                     'Lixeira vazia',
-                    style: TextStyle(fontSize: 20, color: Colors.grey[600]),
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'As histórias excluídas aparecerão aqui',
-                    style: TextStyle(fontSize: 14, color: Colors.grey[500]),
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),

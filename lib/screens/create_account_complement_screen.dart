@@ -85,7 +85,7 @@ class _CreateAccountComplementScreenState
     return Scaffold(
       backgroundColor: AppColors.primary,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: const Color(0x00000000),
         elevation: 0,
         iconTheme: IconThemeData(
           color: Theme.of(context).colorScheme.onPrimary,
@@ -118,7 +118,7 @@ class _CreateAccountComplementScreenState
                     onTap: _pickImage,
                     child: CircleAvatar(
                       radius: 56,
-                      backgroundColor: Colors.white,
+                      backgroundColor: Theme.of(context).colorScheme.surface,
                       backgroundImage: profileImagePath != null
                           ? FileImage(File(profileImagePath!))
                           : null,
@@ -137,13 +137,17 @@ class _CreateAccountComplementScreenState
                   controller: birthDateController,
                   label: AppLocalizations.of(context)!.birthDateFormat,
                   keyboardType: TextInputType.datetime,
-                  style: const TextStyle(color: Colors.black87),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                 ),
                 if (errorMessage != null) ...[
                   const SizedBox(height: 8),
                   Text(
                     errorMessage!,
-                    style: const TextStyle(color: Colors.white),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
                   ),
                 ],
                 const SizedBox(height: 24),

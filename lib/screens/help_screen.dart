@@ -1,6 +1,8 @@
 import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 
+import '../theme/m3_expressive_theme.dart';
+
 class HelpScreen extends StatelessWidget {
   const HelpScreen({super.key});
 
@@ -243,7 +245,7 @@ class HelpScreen extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             description,
-            style: const TextStyle(fontSize: 14, color: Colors.grey),
+            style: TextStyle(fontSize: 14, color: AppColors.neutralGrey),
           ),
         ],
       ),

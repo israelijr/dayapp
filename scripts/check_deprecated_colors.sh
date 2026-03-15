@@ -80,7 +80,7 @@ if [ -n "$WITH_OPACITY_MATCHES" ]; then
   FOUND=1
 fi
 
-COLORS_MATCHES="$(collect_matches 'Colors\.')"
+COLORS_MATCHES="$(collect_matches '(^|[^[:alnum:]_])Colors\.')"
 if [ -n "$COLORS_MATCHES" ]; then
   echo "\nForbidden pattern 'Colors.' found in added lines:" >&2
   echo "$COLORS_MATCHES" >&2

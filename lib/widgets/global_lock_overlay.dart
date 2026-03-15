@@ -35,7 +35,9 @@ class GlobalLockOverlay extends StatelessWidget {
                     BackdropFilter(
                       filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
                       child: ColoredBox(
-                        color: Colors.black.withValues(alpha: 0.5),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.scrim.withValues(alpha: 0.5),
                         child: const SizedBox.expand(),
                       ),
                     ),

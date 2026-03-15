@@ -92,7 +92,7 @@ class HistoriaFotosGrid extends StatelessWidget {
           return ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: Material(
-              color: Colors.grey[200],
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
               child: InkWell(
                 onTap: () => _openViewer(context, displayFotos, index),
                 child: Stack(
@@ -120,8 +120,10 @@ class HistoriaFotosGrid extends StatelessWidget {
                             children: [
                               Text(
                                 '+${total - 3}',
-                                style: const TextStyle(
-                                  color: Colors.white,
+                                style: TextStyle(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onInverseSurface,
                                   fontSize: 22,
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -240,12 +242,12 @@ class HistoriaFotosGrid extends StatelessWidget {
           builder: (ctx2, setState) {
             return Dialog(
               insetPadding: const EdgeInsets.all(8),
-              backgroundColor: Colors.transparent,
+              backgroundColor: const Color(0x00000000),
               child: Container(
                 width: MediaQuery.of(parentContext).size.width * 0.98,
                 height: MediaQuery.of(parentContext).size.height * 0.88,
                 decoration: BoxDecoration(
-                  color: Colors.black,
+                  color: Theme.of(parentContext).colorScheme.inverseSurface,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Stack(
@@ -287,7 +289,9 @@ class HistoriaFotosGrid extends StatelessWidget {
                               elevation: 8,
                               child: IconButton(
                                 iconSize: 44,
-                                color: Colors.white,
+                                color: Theme.of(
+                                  ctx2,
+                                ).colorScheme.onInverseSurface,
                                 onPressed: currentIndex > 0
                                     ? () => controller.previousPage(
                                         duration: const Duration(
@@ -323,7 +327,9 @@ class HistoriaFotosGrid extends StatelessWidget {
                               elevation: 8,
                               child: IconButton(
                                 iconSize: 44,
-                                color: Colors.white,
+                                color: Theme.of(
+                                  ctx2,
+                                ).colorScheme.onInverseSurface,
                                 onPressed: currentIndex < localImages.length - 1
                                     ? () => controller.nextPage(
                                         duration: const Duration(
@@ -350,7 +356,12 @@ class HistoriaFotosGrid extends StatelessWidget {
                           ).colorScheme.onSurface.withValues(alpha: 0.45),
                           shape: const CircleBorder(),
                           child: IconButton(
-                            icon: const Icon(Icons.close, color: Colors.white),
+                            icon: Icon(
+                              Icons.close,
+                              color: Theme.of(
+                                ctx2,
+                              ).colorScheme.onInverseSurface,
+                            ),
                             onPressed: () => Navigator.of(ctx2).pop(false),
                           ),
                         ),
@@ -372,9 +383,11 @@ class HistoriaFotosGrid extends StatelessWidget {
                             shape: const CircleBorder(),
                             elevation: 6,
                             child: IconButton(
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.share,
-                                color: Colors.white,
+                                color: Theme.of(
+                                  ctx2,
+                                ).colorScheme.onInverseSurface,
                               ),
                               onPressed: () async {
                                 final messenger = ScaffoldMessenger.of(
@@ -420,9 +433,11 @@ class HistoriaFotosGrid extends StatelessWidget {
                               shape: const CircleBorder(),
                               elevation: 6,
                               child: IconButton(
-                                icon: const Icon(
+                                icon: Icon(
                                   Icons.delete,
-                                  color: Colors.white,
+                                  color: Theme.of(
+                                    ctx2,
+                                  ).colorScheme.onInverseSurface,
                                 ),
                                 onPressed: () async {
                                   final id = localIds[currentIndex];
@@ -453,8 +468,10 @@ class HistoriaFotosGrid extends StatelessWidget {
                                               Navigator.pop(ctx2, true),
                                           child: Text(
                                             loc.deleteLabel,
-                                            style: const TextStyle(
-                                              color: Colors.red,
+                                            style: TextStyle(
+                                              color: Theme.of(
+                                                ctx2,
+                                              ).colorScheme.error,
                                             ),
                                           ),
                                         ),
@@ -521,7 +538,7 @@ class HistoriaFotosGrid extends StatelessWidget {
                             height: active ? 10 : 6,
                             decoration: BoxDecoration(
                               color: active
-                                  ? Colors.white
+                                  ? Theme.of(ctx2).colorScheme.onInverseSurface
                                   : Theme.of(ctx2).colorScheme.onSurface
                                         .withValues(alpha: 0.54),
                               shape: BoxShape.circle,
@@ -745,7 +762,7 @@ class _HistoriaThumbnailImageState extends State<HistoriaThumbnailImage> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return Container(
-        color: Colors.grey[300],
+        color: Theme.of(context).colorScheme.surfaceContainerHigh,
         child: const Center(
           child: SizedBox(
             width: 20,
@@ -761,9 +778,12 @@ class _HistoriaThumbnailImageState extends State<HistoriaThumbnailImage> {
       fit: BoxFit.cover,
       errorBuilder: (context, error, stackTrace) {
         return Container(
-          color: Colors.grey[300],
-          child: const Center(
-            child: Icon(Icons.broken_image, color: Colors.grey),
+          color: Theme.of(context).colorScheme.surfaceContainerHigh,
+          child: Center(
+            child: Icon(
+              Icons.broken_image,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
         );
       },

@@ -198,7 +198,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             child: Text(
               AppLocalizations.of(context)!.save,
               style: TextStyle(
-                color: _isLoading ? Colors.grey : Colors.white,
+                color: _isLoading
+                    ? Theme.of(context).colorScheme.onSurfaceVariant
+                    : Theme.of(context).colorScheme.onPrimary,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -218,7 +220,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   children: [
                     CircleAvatar(
                       radius: 60,
-                      backgroundColor: Colors.grey[300],
+                      backgroundColor: Theme.of(
+                        context,
+                      ).colorScheme.surfaceContainerHighest,
                       backgroundImage: _pickedImagePath != null
                           ? (_pickedImagePath!.startsWith('http')
                                 ? NetworkImage(_pickedImagePath!)
@@ -260,10 +264,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           (_pickedImagePath == null &&
                               context.watch<AuthProvider>().user!.fotoPerfil ==
                                   null)
-                          ? const Icon(
+                          ? Icon(
                               Icons.person,
                               size: 60,
-                              color: Colors.grey,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                             )
                           : null,
                     ),
@@ -274,9 +280,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         radius: 20,
                         backgroundColor: Theme.of(context).primaryColor,
                         child: IconButton(
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.camera_alt,
-                            color: Colors.white,
+                            color: Theme.of(context).colorScheme.onPrimary,
                             size: 16,
                           ),
                           onPressed: _pickImage,
@@ -334,7 +340,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
               if (_errorMessage != null) ...[
                 const SizedBox(height: 16),
-                Text(_errorMessage!, style: const TextStyle(color: Colors.red)),
+                Text(
+                  _errorMessage!,
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                ),
               ],
               const SizedBox(height: 32),
               SizedBox(

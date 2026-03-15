@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 
+import '../theme/m3_expressive_theme.dart';
+
 class VideoPlayerWidget extends StatefulWidget {
   final List<int>? videoData; // Para vídeos novos (bytes)
   final String? videoPath; // Para vídeos existentes (caminho)
@@ -208,7 +210,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                     Theme.of(
                       context,
                     ).colorScheme.onSurface.withValues(alpha: 0.7),
-                    Colors.transparent,
+                    const Color(0x00000000),
                   ],
                 ),
               ),
@@ -266,7 +268,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Colors.blue.shade300, Colors.purple.shade300],
+          colors: [AppColors.emoticonBlue2, AppColors.purple300],
         ),
         borderRadius: BorderRadius.circular(12),
       ),

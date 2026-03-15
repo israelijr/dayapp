@@ -90,7 +90,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     return Scaffold(
       backgroundColor: AppColors.primary,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: const Color(0x00000000),
         elevation: 0,
         iconTheme: IconThemeData(
           color: Theme.of(context).colorScheme.onPrimary,

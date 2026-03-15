@@ -102,7 +102,7 @@ class _SplashScreenState extends State<SplashScreen>
             colors: [
               AppColors.lilacLight, // Lilás claro
               AppColors.backgroundLight, // Lilás muito claro
-              Colors.white,
+              Theme.of(context).colorScheme.surface,
             ],
           ),
         ),
@@ -195,12 +195,12 @@ class _SplashScreenState extends State<SplashScreen>
                                 ],
                               ).createShader(bounds);
                             },
-                            child: const Text(
+                            child: Text(
                               'DayApp',
                               style: TextStyle(
                                 fontSize: 56,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: Theme.of(context).colorScheme.onPrimary,
                                 letterSpacing: 2,
                               ),
                             ),

@@ -91,7 +91,10 @@ class _GroupsScreenState extends State<GroupsScreen> {
                         subtitle: Text(
                           '$_arquivadosCount ${_arquivadosCount == 1 ? AppLocalizations.of(context)!.record : AppLocalizations.of(context)!.records}',
                         ),
-                        leading: const Icon(Icons.archive, color: Colors.grey),
+                        leading: Icon(
+                          Icons.archive,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                         onTap: () {
                           _navigateAndRefresh(const ArchivedStoriesScreen());

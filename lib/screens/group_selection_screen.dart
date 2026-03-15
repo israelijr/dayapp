@@ -71,7 +71,7 @@ class _GroupSelectionScreenState extends State<GroupSelectionScreen> {
     final Emoji? result = await showModalBottomSheet<Emoji>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: const Color(0x00000000),
       builder: (context) => const EmojiSelectionModal(),
     );
     if (result != null) {

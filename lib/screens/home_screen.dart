@@ -85,7 +85,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 8),
                   Text(
                     AppLocalizations.of(context)!.backupRecommendation,
-                    style: const TextStyle(fontSize: 13, color: Colors.black54),
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -190,7 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             color: active
                                 ? Theme.of(context).colorScheme.secondary
                                       .withValues(alpha: 0.14)
-                                : Colors.transparent,
+                                : const Color(0x00000000),
                             borderRadius: BorderRadius.circular(8),
                             border: active
                                 ? Border.all(
@@ -368,7 +371,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               context: context,
                               builder: (BuildContext context) {
                                 return Dialog(
-                                  backgroundColor: Colors.transparent,
+                                  backgroundColor: const Color(0x00000000),
                                   child: Stack(
                                     children: [
                                       Center(

@@ -627,8 +627,8 @@ class _HomeContentState extends State<HomeContent> {
         color: Theme.of(context).colorScheme.primary,
         child: Text(
           AppLocalizations.of(context)!.archiveLabel,
-          style: const TextStyle(
-            color: Colors.white,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onPrimary,
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
@@ -640,8 +640,8 @@ class _HomeContentState extends State<HomeContent> {
         color: AppColors.emoticonGreen,
         child: Text(
           AppLocalizations.of(context)!.group,
-          style: const TextStyle(
-            color: Colors.white,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onPrimary,
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
@@ -674,9 +674,7 @@ class _HomeContentState extends State<HomeContent> {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? Colors.grey[800]
-                  : Colors.grey[200],
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Center(
@@ -917,9 +915,11 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
                             const SizedBox(height: 16),
                             Text(
                               AppLocalizations.of(context)!.noStoriesHere,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 18,
-                                color: Colors.grey,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
                               ),
                             ),
                             const SizedBox(height: 8),
@@ -927,9 +927,11 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
                               AppLocalizations.of(
                                 context,
                               )!.storiesGroupedOrArchived,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 14,
-                                color: Colors.grey,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
                               ),
                             ),
                           ],

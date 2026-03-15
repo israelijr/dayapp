@@ -250,17 +250,20 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFB388FF),
+      backgroundColor: AppColors.primary,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: const Color(0x00000000),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: const Text(
+        title: Text(
           'Recuperar Senha',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
         ),
       ),
       body: Center(
@@ -271,14 +274,18 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // Ícone e título
-                const Icon(Icons.lock_reset, size: 64, color: Colors.white),
+                Icon(
+                  Icons.lock_reset,
+                  size: 64,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
                 const SizedBox(height: 16),
                 Text(
                   _getStepTitle(),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onPrimary,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -313,17 +320,17 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
                     ),
                     child: Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.check_circle,
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.onPrimary,
                           size: 20,
                         ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             successMessage!,
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onPrimary,
                               fontSize: 13,
                             ),
                           ),
@@ -345,17 +352,17 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
                     ),
                     child: Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.error_outline,
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.onPrimary,
                           size: 20,
                         ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             errorMessage!,
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onPrimary,
                               fontSize: 13,
                             ),
                           ),
@@ -376,7 +383,7 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF5E35B1),
+                      backgroundColor: AppColors.primaryVariant,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -387,16 +394,13 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
                         ? const SizedBox(
                             height: 18,
                             width: 18,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
-                            ),
+                            child: CircularProgressIndicator(strokeWidth: 2),
                           )
                         : Text(
                             _getStepButtonLabel(),
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 16,
-                              color: Colors.white,
+                              color: Theme.of(context).colorScheme.onPrimary,
                             ),
                           ),
                   ),
@@ -407,10 +411,10 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
                   const SizedBox(height: 12),
                   TextButton(
                     onPressed: loading ? null : _resendCode,
-                    child: const Text(
+                    child: Text(
                       'Reenviar código',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.onPrimary,
                         decoration: TextDecoration.underline,
                       ),
                     ),
@@ -497,7 +501,7 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: isActive
-                ? const Color(0xFF5E35B1)
+                ? AppColors.primaryVariant
                 : Theme.of(
                     context,
                   ).colorScheme.onSurface.withValues(alpha: 0.3),
@@ -510,12 +514,16 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
           ),
           child: Center(
             child: isActive && !isCurrent
-                ? const Icon(Icons.check, color: Colors.white, size: 18)
+                ? Icon(
+                    Icons.check,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                    size: 18,
+                  )
                 : Text(
                     '${step + 1}',
                     style: TextStyle(
                       color: isActive
-                          ? Colors.white
+                          ? Theme.of(context).colorScheme.onPrimary
                           : Theme.of(
                               context,
                             ).colorScheme.onSurface.withValues(alpha: 0.7),
@@ -530,7 +538,7 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
           label,
           style: TextStyle(
             color: isActive
-                ? Colors.white
+                ? Theme.of(context).colorScheme.onPrimary
                 : Theme.of(
                     context,
                   ).colorScheme.onSurface.withValues(alpha: 0.7),
@@ -549,8 +557,8 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
         width: 40,
         height: 2,
         color: isActive
-            ? const Color(0xFF5E35B1)
-            : Colors.white.withValues(alpha: 0.3),
+            ? AppColors.primaryVariant
+            : Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.3),
       ),
     );
   }
@@ -598,11 +606,11 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
           prefixIcon: const Icon(Icons.lock_outline),
           keyboardType: TextInputType.number,
           maxLength: 6,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 24,
             letterSpacing: 8,
             fontWeight: FontWeight.bold,
-            color: Colors.black87,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
           textAlign: TextAlign.center,
         ),

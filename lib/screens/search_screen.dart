@@ -357,7 +357,7 @@ class _SearchScreenState extends State<SearchScreen> {
     final result = await showModalBottomSheet<Emoji>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: const Color(0x00000000),
       builder: (context) => const EmojiSelectionModal(),
     );
 
@@ -517,12 +517,18 @@ class _SearchScreenState extends State<SearchScreen> {
                   // mesmos tamanhos e cores usados em home_screen para mensagem vazia
                   Text(
                     AppLocalizations.of(context)!.searchStoriesTitle,
-                    style: const TextStyle(fontSize: 18, color: Colors.grey),
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     AppLocalizations.of(context)!.searchStoriesSubtitle,
-                    style: const TextStyle(fontSize: 14, color: Colors.grey),
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 ],

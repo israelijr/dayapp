@@ -493,7 +493,10 @@ class _AboutScreenState extends State<AboutScreen> {
             padding: const EdgeInsets.only(left: 24),
             child: Text(
               description,
-              style: const TextStyle(fontSize: 14, color: Colors.grey),
+              style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ),
         ],

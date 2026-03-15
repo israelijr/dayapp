@@ -53,7 +53,6 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -65,11 +64,9 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
                 Text(
                   'Alta qualidade',
                   style: TextStyle(
-                    color: isDark
-                        ? Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.7)
-                        : Colors.black87,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
                 Switch.adaptive(
@@ -78,14 +75,14 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
                     setState(() => _highQuality = v);
                     await _generate(_highQuality);
                   },
-                  activeThumbColor: isDark ? Colors.white : Colors.black,
-                  activeTrackColor: isDark
-                      ? Colors.white24
-                      : Theme.of(
-                          context,
-                        ).colorScheme.onSurface.withValues(alpha: 0.26),
-                  inactiveThumbColor: Colors.grey,
-                  inactiveTrackColor: Colors.grey.shade300,
+                  activeThumbColor: Theme.of(context).colorScheme.onSurface,
+                  activeTrackColor: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.26),
+                  inactiveThumbColor: Theme.of(context).colorScheme.outline,
+                  inactiveTrackColor: Theme.of(
+                    context,
+                  ).colorScheme.outlineVariant,
                 ),
               ],
             ),
@@ -129,8 +126,8 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
                 ? const Center(child: Text('Nenhum PDF disponível'))
                 : PdfPreview(
                     build: (format) async => _pdfBytes!,
-                    scrollViewDecoration: const BoxDecoration(
-                      color: Colors.white,
+                    scrollViewDecoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surface,
                     ),
                     useActions: false,
                   )),
