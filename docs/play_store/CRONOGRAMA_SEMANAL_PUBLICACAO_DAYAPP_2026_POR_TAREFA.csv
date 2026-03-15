@@ -1,0 +1,28 @@
+Semana,Inicio,Fim,TaskID,Fase,Tarefa,Responsavel,Prioridade,EstimativaHoras,Dependencias,Status,InfoFaltante
+Semana 1,2026-03-16,2026-03-22,1,Fase 0 - Escopo,Definir recursos da v1.0.0,Product Owner,Alta,2,,Nao iniciado,Nao
+Semana 1,2026-03-16,2026-03-22,4,Fase 1 - Documentacao,Atualizar politica de privacidade,Dev,Alta,4,1,Nao iniciado,Nao
+Semana 1,2026-03-16,2026-03-22,5,Fase 1 - Documentacao,Publicar politica em URL estavel,Dev,Alta,2,4,Nao iniciado,Sim
+Semana 1,2026-03-16,2026-03-22,6,Fase 1 - Documentacao,Atualizar tela Sobre,Dev,Alta,4,4,Nao iniciado,Nao
+Semana 1,2026-03-16,2026-03-22,7,Fase 1 - Documentacao,Atualizar tela Ajuda,Dev,Alta,3,4,Nao iniciado,Nao
+Semana 1,2026-03-16,2026-03-22,9,Fase 2 - Monetizacao,Criar/validar conta AdMob,Product Owner,Alta,1,,Nao iniciado,Sim
+Semana 1,2026-03-16,2026-03-22,10,Fase 2 - Monetizacao,Cadastrar app no AdMob,Product Owner,Alta,1,9,Nao iniciado,Nao
+Semana 1,2026-03-16,2026-03-22,11,Fase 2 - Monetizacao,Criar unidades de anuncio,Product Owner,Alta,1,10,Nao iniciado,Sim
+Semana 2,2026-03-23,2026-03-29,12,Fase 2 - Monetizacao,Trocar IDs de teste por producao,Dev,Alta,2,11,Nao iniciado,Sim
+Semana 2,2026-03-23,2026-03-29,14,Fase 3 - Assinatura,Criar keystore de upload,Dev,Alta,1,,Nao iniciado,Sim
+Semana 2,2026-03-23,2026-03-29,15,Fase 3 - Assinatura,Configurar key.properties,Dev,Alta,1,14,Nao iniciado,Sim
+Semana 2,2026-03-23,2026-03-29,16,Fase 4 - Build e QA,Atualizar versionamento,Dev,Media,0.5,15,Nao iniciado,Nao
+Semana 2,2026-03-23,2026-03-29,17,Fase 4 - Build e QA,Gerar AAB release,Dev,Alta,1,16,Nao iniciado,Nao
+Semana 2,2026-03-23,2026-03-29,18,Fase 4 - Build e QA,Teste funcional em dispositivo fisico,QA,Alta,4,17,Nao iniciado,Nao
+Semana 2,2026-03-23,2026-03-29,19,Fase 5 - Store assets,Criar feature graphic,Designer,Media,2,1,Nao iniciado,Nao
+Semana 2,2026-03-23,2026-03-29,20,Fase 5 - Store assets,Criar screenshots da loja,Designer,Alta,4,1,Nao iniciado,Nao
+Semana 2,2026-03-23,2026-03-29,21,Fase 5 - Store assets,Fechar textos da loja,Product Owner,Alta,2,4,Nao iniciado,Nao
+Semana 3,2026-03-30,2026-04-05,22,Fase 6 - Play Console,Criar app no Play Console,Product Owner,Alta,1,2,Nao iniciado,Nao
+Semana 3,2026-03-30,2026-04-05,23,Fase 6 - Play Console,Preencher ficha da loja,Product Owner,Alta,2,20,Nao iniciado,Nao
+Semana 3,2026-03-30,2026-04-05,24,Fase 6 - Play Console,Responder classificacao de conteudo IARC,Product Owner,Alta,1,22,Nao iniciado,Nao
+Semana 3,2026-03-30,2026-04-05,25,Fase 6 - Play Console,Preencher Data Safety,Product Owner,Alta,2,4,Nao iniciado,Sim
+Semana 3,2026-03-30,2026-04-05,26,Fase 6 - Play Console,Declarar anuncios,Product Owner,Alta,0.5,12,Nao iniciado,Nao
+Semana 3,2026-03-30,2026-04-05,27,Fase 7 - Teste interno,Criar faixa de teste interno,Dev,Alta,1,23,Nao iniciado,Nao
+Semana 4,2026-04-06,2026-04-12,28,Fase 7 - Teste interno,Executar rodada de testes internos,QA,Alta,6,27,Nao iniciado,Nao
+Semana 4,2026-04-06,2026-04-12,29,Fase 7 - Teste interno,Corrigir bloqueadores e reenviar,Dev,Alta,6,28,Nao iniciado,Nao
+Semana 4,2026-04-06,2026-04-12,30,Fase 8 - Producao,Enviar para revisao de producao,Product Owner,Alta,1,29,Nao iniciado,Nao
+Semana 5,2026-04-13,2026-04-19,31,Fase 8 - Producao,Monitorar pos-publicacao 7 dias,Product Owner,Media,4,30,Nao iniciado,Nao
