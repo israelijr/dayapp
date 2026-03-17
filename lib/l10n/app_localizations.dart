@@ -473,6 +473,228 @@ abstract class AppLocalizations {
   /// **'About'**
   String get about;
 
+  /// No description provided for @aboutScreenAboutDayAppTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'About DayApp'**
+  String get aboutScreenAboutDayAppTitle;
+
+  /// No description provided for @aboutScreenAboutDayAppDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'DayApp is a modern and secure personal journal app that lets you record your stories, memories, and thoughts in an organized and private way. With an intuitive interface and advanced features, DayApp helps you preserve your most meaningful experiences.'**
+  String get aboutScreenAboutDayAppDescription;
+
+  /// No description provided for @aboutScreenFeaturesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Features'**
+  String get aboutScreenFeaturesTitle;
+
+  /// No description provided for @aboutScreenFeatureRichEditorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rich Editor'**
+  String get aboutScreenFeatureRichEditorTitle;
+
+  /// No description provided for @aboutScreenFeatureRichEditorDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Create stories with advanced formatting, images, videos, and audio'**
+  String get aboutScreenFeatureRichEditorDescription;
+
+  /// No description provided for @aboutScreenFeatureSmartOrganizationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart Organization'**
+  String get aboutScreenFeatureSmartOrganizationTitle;
+
+  /// No description provided for @aboutScreenFeatureSmartOrganizationDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Categorize your stories into custom thematic groups'**
+  String get aboutScreenFeatureSmartOrganizationDescription;
+
+  /// No description provided for @aboutScreenFeatureAdvancedSearchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced Search'**
+  String get aboutScreenFeatureAdvancedSearchTitle;
+
+  /// No description provided for @aboutScreenFeatureAdvancedSearchDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Quickly find any story by content or date'**
+  String get aboutScreenFeatureAdvancedSearchDescription;
+
+  /// No description provided for @aboutScreenFeatureSecureBackupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Secure Backup'**
+  String get aboutScreenFeatureSecureBackupTitle;
+
+  /// No description provided for @aboutScreenFeatureSecureBackupDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Protect your data with automatic and manual backups'**
+  String get aboutScreenFeatureSecureBackupDescription;
+
+  /// No description provided for @aboutScreenFeatureTotalPrivacyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Privacy'**
+  String get aboutScreenFeatureTotalPrivacyTitle;
+
+  /// No description provided for @aboutScreenFeatureTotalPrivacyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data is stored locally and encrypted'**
+  String get aboutScreenFeatureTotalPrivacyDescription;
+
+  /// No description provided for @aboutScreenFeatureAdaptiveInterfaceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Adaptive Interface'**
+  String get aboutScreenFeatureAdaptiveInterfaceTitle;
+
+  /// No description provided for @aboutScreenFeatureAdaptiveInterfaceDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Light and dark themes with customizable layouts'**
+  String get aboutScreenFeatureAdaptiveInterfaceDescription;
+
+  /// No description provided for @aboutScreenVersionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get aboutScreenVersionTitle;
+
+  /// About screen app version and build label
+  ///
+  /// In en, this message translates to:
+  /// **'Version {version} (Build {build})'**
+  String aboutScreenVersionBuild(String version, String build);
+
+  /// Short app version shown in about header
+  ///
+  /// In en, this message translates to:
+  /// **'Version {version}'**
+  String aboutScreenVersionShort(String version);
+
+  /// No description provided for @aboutScreenDevelopmentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Development'**
+  String get aboutScreenDevelopmentTitle;
+
+  /// No description provided for @aboutScreenDevelopmentDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Built with care to offer the best experience for recording personal memories.'**
+  String get aboutScreenDevelopmentDescription;
+
+  /// No description provided for @aboutScreenPrivacySecurityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy and Security'**
+  String get aboutScreenPrivacySecurityTitle;
+
+  /// No description provided for @aboutScreenPrivacyLocalDataTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Local Data'**
+  String get aboutScreenPrivacyLocalDataTitle;
+
+  /// No description provided for @aboutScreenPrivacyLocalDataDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'All your stories are stored only on your device'**
+  String get aboutScreenPrivacyLocalDataDescription;
+
+  /// No description provided for @aboutScreenPrivacyEncryptionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Encryption'**
+  String get aboutScreenPrivacyEncryptionTitle;
+
+  /// No description provided for @aboutScreenPrivacyEncryptionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Sensitive content is protected with advanced encryption'**
+  String get aboutScreenPrivacyEncryptionDescription;
+
+  /// No description provided for @aboutScreenPrivacyNoTrackingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Tracking'**
+  String get aboutScreenPrivacyNoTrackingTitle;
+
+  /// No description provided for @aboutScreenPrivacyNoTrackingDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'We do not collect personal data or track your usage'**
+  String get aboutScreenPrivacyNoTrackingDescription;
+
+  /// No description provided for @aboutScreenPrivacyPinSecurityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Security PIN'**
+  String get aboutScreenPrivacyPinSecurityTitle;
+
+  /// No description provided for @aboutScreenPrivacyPinSecurityDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Protect app access with PIN or biometrics'**
+  String get aboutScreenPrivacyPinSecurityDescription;
+
+  /// No description provided for @aboutScreenContactSupportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact and Support'**
+  String get aboutScreenContactSupportTitle;
+
+  /// No description provided for @aboutScreenContactSupportDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'For questions, suggestions, or technical support:'**
+  String get aboutScreenContactSupportDescription;
+
+  /// No description provided for @aboutScreenSupportEmailSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'DayApp Support'**
+  String get aboutScreenSupportEmailSubject;
+
+  /// Support e-mail body prefilled on about screen
+  ///
+  /// In en, this message translates to:
+  /// **'Hello, I need help with DayApp...\n\nVersion: {version}\n'**
+  String aboutScreenSupportEmailBody(String version);
+
+  /// No description provided for @aboutScreenAcknowledgementsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Acknowledgments'**
+  String get aboutScreenAcknowledgementsTitle;
+
+  /// No description provided for @aboutScreenAcknowledgementsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you for choosing DayApp to record your most precious memories. Your trust and feedback are essential for us to keep improving.'**
+  String get aboutScreenAcknowledgementsDescription;
+
+  /// No description provided for @aboutScreenHeaderSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Personal Diary'**
+  String get aboutScreenHeaderSubtitle;
+
+  /// No description provided for @aboutScreenCopyright.
+  ///
+  /// In en, this message translates to:
+  /// **'© 2026 DayApp. All rights reserved.'**
+  String get aboutScreenCopyright;
+
   /// Label for logout
   ///
   /// In en, this message translates to:

@@ -203,6 +203,137 @@ class AppLocalizationsEn extends AppLocalizations {
   String get about => 'About';
 
   @override
+  String get aboutScreenAboutDayAppTitle => 'About DayApp';
+
+  @override
+  String get aboutScreenAboutDayAppDescription =>
+      'DayApp is a modern and secure personal journal app that lets you record your stories, memories, and thoughts in an organized and private way. With an intuitive interface and advanced features, DayApp helps you preserve your most meaningful experiences.';
+
+  @override
+  String get aboutScreenFeaturesTitle => 'Features';
+
+  @override
+  String get aboutScreenFeatureRichEditorTitle => 'Rich Editor';
+
+  @override
+  String get aboutScreenFeatureRichEditorDescription =>
+      'Create stories with advanced formatting, images, videos, and audio';
+
+  @override
+  String get aboutScreenFeatureSmartOrganizationTitle => 'Smart Organization';
+
+  @override
+  String get aboutScreenFeatureSmartOrganizationDescription =>
+      'Categorize your stories into custom thematic groups';
+
+  @override
+  String get aboutScreenFeatureAdvancedSearchTitle => 'Advanced Search';
+
+  @override
+  String get aboutScreenFeatureAdvancedSearchDescription =>
+      'Quickly find any story by content or date';
+
+  @override
+  String get aboutScreenFeatureSecureBackupTitle => 'Secure Backup';
+
+  @override
+  String get aboutScreenFeatureSecureBackupDescription =>
+      'Protect your data with automatic and manual backups';
+
+  @override
+  String get aboutScreenFeatureTotalPrivacyTitle => 'Total Privacy';
+
+  @override
+  String get aboutScreenFeatureTotalPrivacyDescription =>
+      'Your data is stored locally and encrypted';
+
+  @override
+  String get aboutScreenFeatureAdaptiveInterfaceTitle => 'Adaptive Interface';
+
+  @override
+  String get aboutScreenFeatureAdaptiveInterfaceDescription =>
+      'Light and dark themes with customizable layouts';
+
+  @override
+  String get aboutScreenVersionTitle => 'Version';
+
+  @override
+  String aboutScreenVersionBuild(String version, String build) {
+    return 'Version $version (Build $build)';
+  }
+
+  @override
+  String aboutScreenVersionShort(String version) {
+    return 'Version $version';
+  }
+
+  @override
+  String get aboutScreenDevelopmentTitle => 'Development';
+
+  @override
+  String get aboutScreenDevelopmentDescription =>
+      'Built with care to offer the best experience for recording personal memories.';
+
+  @override
+  String get aboutScreenPrivacySecurityTitle => 'Privacy and Security';
+
+  @override
+  String get aboutScreenPrivacyLocalDataTitle => 'Local Data';
+
+  @override
+  String get aboutScreenPrivacyLocalDataDescription =>
+      'All your stories are stored only on your device';
+
+  @override
+  String get aboutScreenPrivacyEncryptionTitle => 'Encryption';
+
+  @override
+  String get aboutScreenPrivacyEncryptionDescription =>
+      'Sensitive content is protected with advanced encryption';
+
+  @override
+  String get aboutScreenPrivacyNoTrackingTitle => 'No Tracking';
+
+  @override
+  String get aboutScreenPrivacyNoTrackingDescription =>
+      'We do not collect personal data or track your usage';
+
+  @override
+  String get aboutScreenPrivacyPinSecurityTitle => 'Security PIN';
+
+  @override
+  String get aboutScreenPrivacyPinSecurityDescription =>
+      'Protect app access with PIN or biometrics';
+
+  @override
+  String get aboutScreenContactSupportTitle => 'Contact and Support';
+
+  @override
+  String get aboutScreenContactSupportDescription =>
+      'For questions, suggestions, or technical support:';
+
+  @override
+  String get aboutScreenSupportEmailSubject => 'DayApp Support';
+
+  @override
+  String aboutScreenSupportEmailBody(String version) {
+    return 'Hello, I need help with DayApp...\n\nVersion: $version\n';
+  }
+
+  @override
+  String get aboutScreenAcknowledgementsTitle => 'Acknowledgments';
+
+  @override
+  String get aboutScreenAcknowledgementsDescription =>
+      'Thank you for choosing DayApp to record your most precious memories. Your trust and feedback are essential for us to keep improving.';
+
+  @override
+  String get aboutScreenHeaderSubtitle => 'Your Personal Diary';
+
+  @override
+  String get aboutScreenCopyright => '© 2026 DayApp. All rights reserved.';
+
+  @override
   String get logout => 'Logout';
 
   @override

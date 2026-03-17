@@ -37,11 +37,10 @@ class _AboutScreenState extends State<AboutScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.about),
-        elevation: 0,
-      ),
+      appBar: AppBar(title: Text(l10n.about), elevation: 0),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -53,8 +52,8 @@ class _AboutScreenState extends State<AboutScreen> {
           // Descrição do App
           _buildSection(
             context,
-            'Sobre o DayApp',
-            'O DayApp é um aplicativo de diário pessoal moderno e seguro que permite registrar suas histórias, memórias e pensamentos de forma organizada e privada. Com interface intuitiva e recursos avançados, o DayApp ajuda você a preservar suas experiências mais importantes.',
+            l10n.aboutScreenAboutDayAppTitle,
+            l10n.aboutScreenAboutDayAppDescription,
             Icons.description,
           ),
 
@@ -63,33 +62,33 @@ class _AboutScreenState extends State<AboutScreen> {
           // Funcionalidades Principais
           _buildSection(
             context,
-            'Funcionalidades',
+            l10n.aboutScreenFeaturesTitle,
             '',
             Icons.star,
             children: [
               _buildFeatureItem(
-                'Editor Rico',
-                'Crie histórias com formatação avançada, imagens, vídeos e áudios',
+                l10n.aboutScreenFeatureRichEditorTitle,
+                l10n.aboutScreenFeatureRichEditorDescription,
               ),
               _buildFeatureItem(
-                'Organização Inteligente',
-                'Categorize suas histórias em grupos temáticos personalizados',
+                l10n.aboutScreenFeatureSmartOrganizationTitle,
+                l10n.aboutScreenFeatureSmartOrganizationDescription,
               ),
               _buildFeatureItem(
-                'Pesquisa Avançada',
-                'Encontre rapidamente qualquer história por conteúdo ou data',
+                l10n.aboutScreenFeatureAdvancedSearchTitle,
+                l10n.aboutScreenFeatureAdvancedSearchDescription,
               ),
               _buildFeatureItem(
-                'Backup Seguro',
-                'Proteja seus dados com backup automático e manual',
+                l10n.aboutScreenFeatureSecureBackupTitle,
+                l10n.aboutScreenFeatureSecureBackupDescription,
               ),
               _buildFeatureItem(
-                'Privacidade Total',
-                'Seus dados ficam armazenados localmente e criptografados',
+                l10n.aboutScreenFeatureTotalPrivacyTitle,
+                l10n.aboutScreenFeatureTotalPrivacyDescription,
               ),
               _buildFeatureItem(
-                'Interface Adaptável',
-                'Tema claro/escuro e layouts personalizáveis',
+                l10n.aboutScreenFeatureAdaptiveInterfaceTitle,
+                l10n.aboutScreenFeatureAdaptiveInterfaceDescription,
               ),
             ],
           ),
@@ -99,8 +98,8 @@ class _AboutScreenState extends State<AboutScreen> {
           // Versão e Build
           _buildSection(
             context,
-            'Versão',
-            'Versão $_version (Build $_buildNumber)',
+            l10n.aboutScreenVersionTitle,
+            l10n.aboutScreenVersionBuild(_version, _buildNumber),
             Icons.info,
           ),
 
@@ -137,8 +136,8 @@ class _AboutScreenState extends State<AboutScreen> {
           // Desenvolvedor
           _buildSection(
             context,
-            'Desenvolvimento',
-            'Desenvolvido com dedicação para oferecer a melhor experiência em registro de memórias pessoais.',
+            l10n.aboutScreenDevelopmentTitle,
+            l10n.aboutScreenDevelopmentDescription,
             Icons.person,
           ),
 
@@ -147,25 +146,25 @@ class _AboutScreenState extends State<AboutScreen> {
           // Privacidade e Segurança
           _buildSection(
             context,
-            'Privacidade e Segurança',
+            l10n.aboutScreenPrivacySecurityTitle,
             '',
             Icons.security,
             children: [
               _buildPrivacyItem(
-                'Dados Locais',
-                'Todas as suas histórias ficam armazenadas apenas no seu dispositivo',
+                l10n.aboutScreenPrivacyLocalDataTitle,
+                l10n.aboutScreenPrivacyLocalDataDescription,
               ),
               _buildPrivacyItem(
-                'Criptografia',
-                'Conteúdo sensível é protegido com criptografia avançada',
+                l10n.aboutScreenPrivacyEncryptionTitle,
+                l10n.aboutScreenPrivacyEncryptionDescription,
               ),
               _buildPrivacyItem(
-                'Sem Rastreamento',
-                'Não coletamos dados pessoais nem rastreamos seu uso',
+                l10n.aboutScreenPrivacyNoTrackingTitle,
+                l10n.aboutScreenPrivacyNoTrackingDescription,
               ),
               _buildPrivacyItem(
-                'PIN de Segurança',
-                'Proteja o acesso ao app com PIN ou biometria',
+                l10n.aboutScreenPrivacyPinSecurityTitle,
+                l10n.aboutScreenPrivacyPinSecurityDescription,
               ),
             ],
           ),
@@ -180,8 +179,8 @@ class _AboutScreenState extends State<AboutScreen> {
           // Agradecimentos
           _buildSection(
             context,
-            'Agradecimentos',
-            'Agradecemos por escolher o DayApp para registrar suas memórias mais preciosas. Sua confiança e feedback são essenciais para continuarmos melhorando.',
+            l10n.aboutScreenAcknowledgementsTitle,
+            l10n.aboutScreenAcknowledgementsDescription,
             Icons.favorite,
           ),
 
@@ -190,7 +189,7 @@ class _AboutScreenState extends State<AboutScreen> {
           // Copyright
           Center(
             child: Text(
-              '© 2026 DayApp. Todos os direitos reservados.',
+              l10n.aboutScreenCopyright,
               style: TextStyle(
                 fontSize: 12,
                 color: Theme.of(
@@ -208,6 +207,8 @@ class _AboutScreenState extends State<AboutScreen> {
   }
 
   Widget _buildContactSection(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -224,7 +225,7 @@ class _AboutScreenState extends State<AboutScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    AppLocalizations.of(context)!.help,
+                    l10n.aboutScreenContactSupportTitle,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -235,7 +236,7 @@ class _AboutScreenState extends State<AboutScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Para dúvidas, sugestões ou suporte técnico:',
+              l10n.aboutScreenContactSupportDescription,
               style: TextStyle(
                 fontSize: 14,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -252,9 +253,8 @@ class _AboutScreenState extends State<AboutScreen> {
                   scheme: 'mailto',
                   path: 'israelijr.app@gmail.com',
                   queryParameters: {
-                    'subject': 'Suporte DayApp',
-                    'body':
-                        'Olá, preciso de ajuda com o DayApp...\n\nVersão: $_version\n',
+                    'subject': l10n.aboutScreenSupportEmailSubject,
+                    'body': l10n.aboutScreenSupportEmailBody(_version),
                   },
                 );
                 if (await canLaunchUrl(emailUri)) {
@@ -344,6 +344,8 @@ class _AboutScreenState extends State<AboutScreen> {
   }
 
   Widget _buildAppHeader(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -357,7 +359,7 @@ class _AboutScreenState extends State<AboutScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Seu Diário Pessoal',
+              l10n.aboutScreenHeaderSubtitle,
               style: TextStyle(
                 fontSize: 16,
                 color: Theme.of(
@@ -367,7 +369,7 @@ class _AboutScreenState extends State<AboutScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Versão $_version',
+              l10n.aboutScreenVersionShort(_version),
               style: TextStyle(
                 fontSize: 14,
                 color: Theme.of(

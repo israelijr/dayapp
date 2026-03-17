@@ -86,6 +86,62 @@
   "trash": "Lixeira",
   "help": "Ajuda",
   "about": "Sobre",
+  "aboutScreenAboutDayAppTitle": "Sobre o DayApp",
+  "aboutScreenAboutDayAppDescription": "O DayApp é um aplicativo de diário pessoal moderno e seguro que permite registrar suas histórias, memórias e pensamentos de forma organizada e privada. Com interface intuitiva e recursos avançados, o DayApp ajuda você a preservar suas experiências mais importantes.",
+  "aboutScreenFeaturesTitle": "Funcionalidades",
+  "aboutScreenFeatureRichEditorTitle": "Editor Rico",
+  "aboutScreenFeatureRichEditorDescription": "Crie histórias com formatação avançada, imagens, vídeos e áudios",
+  "aboutScreenFeatureSmartOrganizationTitle": "Organização Inteligente",
+  "aboutScreenFeatureSmartOrganizationDescription": "Categorize suas histórias em grupos temáticos personalizados",
+  "aboutScreenFeatureAdvancedSearchTitle": "Pesquisa Avançada",
+  "aboutScreenFeatureAdvancedSearchDescription": "Encontre rapidamente qualquer história por conteúdo ou data",
+  "aboutScreenFeatureSecureBackupTitle": "Backup Seguro",
+  "aboutScreenFeatureSecureBackupDescription": "Proteja seus dados com backup automático e manual",
+  "aboutScreenFeatureTotalPrivacyTitle": "Privacidade Total",
+  "aboutScreenFeatureTotalPrivacyDescription": "Seus dados ficam armazenados localmente e criptografados",
+  "aboutScreenFeatureAdaptiveInterfaceTitle": "Interface Adaptável",
+  "aboutScreenFeatureAdaptiveInterfaceDescription": "Tema claro/escuro e layouts personalizáveis",
+  "aboutScreenVersionTitle": "Versão",
+  "aboutScreenVersionBuild": "Versão {version} (Build {build})",
+  "@aboutScreenVersionBuild": {
+    "description": "Rótulo de versão e build na tela sobre",
+    "placeholders": {
+      "version": {"type": "String"},
+      "build": {"type": "String"}
+    }
+  },
+  "aboutScreenVersionShort": "Versão {version}",
+  "@aboutScreenVersionShort": {
+    "description": "Versão curta exibida no cabeçalho da tela sobre",
+    "placeholders": {
+      "version": {"type": "String"}
+    }
+  },
+  "aboutScreenDevelopmentTitle": "Desenvolvimento",
+  "aboutScreenDevelopmentDescription": "Desenvolvido com dedicação para oferecer a melhor experiência em registro de memórias pessoais.",
+  "aboutScreenPrivacySecurityTitle": "Privacidade e Segurança",
+  "aboutScreenPrivacyLocalDataTitle": "Dados Locais",
+  "aboutScreenPrivacyLocalDataDescription": "Todas as suas histórias ficam armazenadas apenas no seu dispositivo",
+  "aboutScreenPrivacyEncryptionTitle": "Criptografia",
+  "aboutScreenPrivacyEncryptionDescription": "Conteúdo sensível é protegido com criptografia avançada",
+  "aboutScreenPrivacyNoTrackingTitle": "Sem Rastreamento",
+  "aboutScreenPrivacyNoTrackingDescription": "Não coletamos dados pessoais nem rastreamos seu uso",
+  "aboutScreenPrivacyPinSecurityTitle": "PIN de Segurança",
+  "aboutScreenPrivacyPinSecurityDescription": "Proteja o acesso ao app com PIN ou biometria",
+  "aboutScreenContactSupportTitle": "Contato e Suporte",
+  "aboutScreenContactSupportDescription": "Para dúvidas, sugestões ou suporte técnico:",
+  "aboutScreenSupportEmailSubject": "Suporte DayApp",
+  "aboutScreenSupportEmailBody": "Olá, preciso de ajuda com o DayApp...\n\nVersão: {version}\n",
+  "@aboutScreenSupportEmailBody": {
+    "description": "Corpo de e-mail de suporte pré-preenchido na tela sobre",
+    "placeholders": {
+      "version": {"type": "String"}
+    }
+  },
+  "aboutScreenAcknowledgementsTitle": "Agradecimentos",
+  "aboutScreenAcknowledgementsDescription": "Agradecemos por escolher o DayApp para registrar suas memórias mais preciosas. Sua confiança e feedback são essenciais para continuarmos melhorando.",
+  "aboutScreenHeaderSubtitle": "Seu Diário Pessoal",
+  "aboutScreenCopyright": "© 2026 DayApp. Todos os direitos reservados.",
   "logout": "Sair",
   "createAccount": "Criar conta",
   "name": "Nome",
