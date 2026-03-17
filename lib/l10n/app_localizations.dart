@@ -191,6 +191,150 @@ abstract class AppLocalizations {
   /// **'Theme and Scheme'**
   String get themeAndScheme;
 
+  /// No description provided for @themeRelva.
+  ///
+  /// In en, this message translates to:
+  /// **'Grass'**
+  String get themeRelva;
+
+  /// No description provided for @themeOutono.
+  ///
+  /// In en, this message translates to:
+  /// **'Autumn'**
+  String get themeOutono;
+
+  /// No description provided for @themeCeu.
+  ///
+  /// In en, this message translates to:
+  /// **'Sky'**
+  String get themeCeu;
+
+  /// No description provided for @themeConfort.
+  ///
+  /// In en, this message translates to:
+  /// **'Comfort'**
+  String get themeConfort;
+
+  /// No description provided for @themeSunset.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunset'**
+  String get themeSunset;
+
+  /// No description provided for @themeDefaultLightDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Default light theme'**
+  String get themeDefaultLightDescription;
+
+  /// No description provided for @themeDefaultDarkDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Default dark theme'**
+  String get themeDefaultDarkDescription;
+
+  /// No description provided for @themeFollowSystemDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow system theme'**
+  String get themeFollowSystemDescription;
+
+  /// No description provided for @themeCustomSchemesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Schemes'**
+  String get themeCustomSchemesTitle;
+
+  /// No description provided for @themeRelvaLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Relva (Light)'**
+  String get themeRelvaLight;
+
+  /// No description provided for @themeRelvaDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Relva (Dark)'**
+  String get themeRelvaDark;
+
+  /// No description provided for @themeOutonoLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Outono (Light)'**
+  String get themeOutonoLight;
+
+  /// No description provided for @themeOutonoDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Outono (Dark)'**
+  String get themeOutonoDark;
+
+  /// No description provided for @themeRelvaLightDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Green and natural tones'**
+  String get themeRelvaLightDescription;
+
+  /// No description provided for @themeRelvaDarkDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark version of the Relva scheme'**
+  String get themeRelvaDarkDescription;
+
+  /// No description provided for @themeOutonoLightDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Warm earthy tones'**
+  String get themeOutonoLightDescription;
+
+  /// No description provided for @themeOutonoDarkDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark version of the Outono scheme'**
+  String get themeOutonoDarkDescription;
+
+  /// No description provided for @themeRemoveScheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Scheme'**
+  String get themeRemoveScheme;
+
+  /// No description provided for @themeRemoveSchemeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Go back to the default theme scheme'**
+  String get themeRemoveSchemeDescription;
+
+  /// No description provided for @timeAtConnector.
+  ///
+  /// In en, this message translates to:
+  /// **'at'**
+  String get timeAtConnector;
+
+  /// No description provided for @timeAgoNow.
+  ///
+  /// In en, this message translates to:
+  /// **'just now'**
+  String get timeAgoNow;
+
+  /// No description provided for @timeAgoMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} min ago'**
+  String timeAgoMinutes(int count);
+
+  /// No description provided for @timeAgoHours.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}h ago'**
+  String timeAgoHours(int count);
+
+  /// No description provided for @timeAgoDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} day(s) ago'**
+  String timeAgoDays(int count);
+
   /// No description provided for @backup.
   ///
   /// In en, this message translates to:

@@ -142,7 +142,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(ctx).pop(),
-                  child: Text(AppLocalizations.of(ctx)?.close ?? 'Fechar'),
+                  child: Text(AppLocalizations.of(ctx)!.close),
                 ),
               ],
             );
@@ -235,26 +235,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
         return ListTile(
           leading: const Icon(Icons.brightness_6),
           title: Text(AppLocalizations.of(context)!.theme),
-          subtitle: Text(
-            // Mostra o modo e, se houver, o esquema personalizado selecionado
-            themeProvider.selectedSchemeKey == null
-                ? _getThemeModeText(context, themeProvider.themeMode)
-                : '${_getThemeModeText(context, themeProvider.themeMode)} • ${_formatSchemeLabel(themeProvider.selectedSchemeKey!)}',
-          ),
+          subtitle: Text(_getThemeSummary(context, themeProvider)),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Preview do esquema atual (pequeno gradiente com primary/secondary)
               _buildSchemePreview(context, themeProvider),
-              const SizedBox(width: 8),
-              Switch(
-                value: themeProvider.themeMode == ThemeMode.dark,
-                onChanged: (value) {
-                  themeProvider.setThemeMode(
-                    value ? ThemeMode.dark : ThemeMode.light,
-                  );
-                },
-              ),
+              const SizedBox(width: 4),
+              const Icon(Icons.chevron_right),
             ],
           ),
           onTap: () => _showThemeDialog(context, themeProvider),
@@ -263,33 +250,51 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  // Retorna um rótulo legível para a chave do esquema
-  String _formatSchemeLabel(String key) {
+  String _getThemeSummary(BuildContext context, ThemeProvider themeProvider) {
+    final loc = AppLocalizations.of(context)!;
+
+    if (themeProvider.themeMode == ThemeMode.system) {
+      return loc.themeSystem;
+    }
+
+    final schemeLabel = themeProvider.selectedSchemeKey == null
+        ? loc.defaultLabel
+        : _formatSchemeLabel(context, themeProvider.selectedSchemeKey!);
+
+    return '$schemeLabel • ${_getThemeModeText(context, themeProvider.themeMode)}';
+  }
+
+  String _formatSchemeLabel(BuildContext context, String key) {
+    final loc = AppLocalizations.of(context)!;
     switch (key) {
-      case 'relvaLight':
-        return 'Relva (Claro)';
-      case 'relvaDark':
-        return 'Relva (Escuro)';
-      case 'outonoLight':
-        return 'Outono (Claro)';
-      case 'outonoDark':
-        return 'Outono (Escuro)';
+      case CustomColorSchemes.relvaFamilyKey:
+        return loc.themeRelva;
+      case CustomColorSchemes.outonoFamilyKey:
+        return loc.themeOutono;
+      case CustomColorSchemes.ceuFamilyKey:
+        return loc.themeCeu;
+      case CustomColorSchemes.confortFamilyKey:
+        return loc.themeConfort;
+      case CustomColorSchemes.sunsetFamilyKey:
+        return loc.themeSunset;
       default:
         return key;
     }
   }
 
-  // Widget que desenha uma pré-visualização pequena do esquema ativo
   Widget _buildSchemePreview(
     BuildContext context,
     ThemeProvider themeProvider,
   ) {
-    final schemeKey = themeProvider.selectedSchemeKey;
+    final brightness = themeProvider.themeMode == ThemeMode.dark
+        ? Brightness.dark
+        : Brightness.light;
     final ColorScheme scheme =
-        (schemeKey != null &&
-            CustomColorSchemes.customSchemes.containsKey(schemeKey))
-        ? CustomColorSchemes.customSchemes[schemeKey]!
-        : Theme.of(context).colorScheme;
+        CustomColorSchemes.getSchemeForFamily(
+          themeProvider.selectedSchemeKey,
+          brightness,
+        ) ??
+        Theme.of(context).colorScheme;
 
     return Container(
       width: 44,
@@ -312,6 +317,81 @@ class _SettingsScreenState extends State<SettingsScreen> {
       case ThemeMode.system:
         return loc.themeSystem;
     }
+  }
+
+  ThemeMode _resolveCustomThemeMode(
+    BuildContext context,
+    ThemeProvider themeProvider,
+  ) {
+    if (themeProvider.themeMode != ThemeMode.system) {
+      return themeProvider.themeMode;
+    }
+
+    return Theme.of(context).brightness == Brightness.dark
+        ? ThemeMode.dark
+        : ThemeMode.light;
+  }
+
+  Future<void> _selectThemeOption(
+    BuildContext context,
+    ThemeProvider themeProvider, {
+    required ThemeMode themeMode,
+    String? familyKey,
+  }) async {
+    await themeProvider.setThemeMode(themeMode);
+    await themeProvider.setSelectedSchemeKey(familyKey);
+  }
+
+  Widget _buildThemeModeButton({
+    required BuildContext context,
+    required IconData icon,
+    required String tooltip,
+    required bool selected,
+    required bool enabled,
+    required VoidCallback onPressed,
+  }) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return IconButton(
+      onPressed: enabled ? onPressed : null,
+      tooltip: tooltip,
+      style: IconButton.styleFrom(
+        backgroundColor: selected
+            ? colorScheme.primaryContainer
+            : colorScheme.surfaceContainerHighest,
+        foregroundColor: selected
+            ? colorScheme.onPrimaryContainer
+            : colorScheme.onSurfaceVariant,
+        disabledBackgroundColor: colorScheme.surfaceContainerHighest.withValues(
+          alpha: 0.5,
+        ),
+        disabledForegroundColor: colorScheme.onSurfaceVariant.withValues(
+          alpha: 0.5,
+        ),
+      ),
+      icon: Icon(icon),
+    );
+  }
+
+  Widget _buildThemeOption({
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+    required bool selected,
+    required VoidCallback onTap,
+  }) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+      leading: Icon(icon),
+      title: Text(label),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      selected: selected,
+      selectedTileColor: colorScheme.secondaryContainer.withValues(alpha: 0.7),
+      trailing: selected ? Icon(Icons.check, color: colorScheme.primary) : null,
+      onTap: onTap,
+    );
   }
 
   Widget _buildBiometricSection(BuildContext context) {
@@ -472,7 +552,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   const SizedBox(height: 16),
                   CustomTextField(
                     controller: emailController,
-                    label: 'E-mail',
+                    label: AppLocalizations.of(context)!.email,
                     keyboardType: TextInputType.emailAddress,
                   ),
                   const SizedBox(height: 16),
@@ -607,171 +687,204 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void _showThemeDialog(BuildContext context, ThemeProvider themeProvider) {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return SimpleDialog(
-          title: const Text('Tema e Esquema'),
-          children: [
-            SimpleDialogOption(
-              onPressed: () {
-                themeProvider.setThemeMode(ThemeMode.light);
-                themeProvider.setSelectedSchemeKey(null);
-                Navigator.of(context).pop();
-              },
-              child: ListTile(
-                leading: const Icon(Icons.wb_sunny),
-                title: const Text('Claro'),
-                subtitle: const Text('Tema claro padrão'),
-                trailing:
-                    themeProvider.themeMode == ThemeMode.light &&
-                        themeProvider.selectedSchemeKey == null
-                    ? Icon(
-                        Icons.check,
-                        color: Theme.of(context).colorScheme.primary,
-                      )
-                    : null,
-              ),
-            ),
-            SimpleDialogOption(
-              onPressed: () {
-                themeProvider.setThemeMode(ThemeMode.dark);
-                themeProvider.setSelectedSchemeKey(null);
-                Navigator.of(context).pop();
-              },
-              child: ListTile(
-                leading: const Icon(Icons.nights_stay),
-                title: const Text('Escuro'),
-                subtitle: const Text('Tema escuro padrão'),
-                trailing:
-                    themeProvider.themeMode == ThemeMode.dark &&
-                        themeProvider.selectedSchemeKey == null
-                    ? Icon(
-                        Icons.check,
-                        color: Theme.of(context).colorScheme.primary,
-                      )
-                    : null,
-              ),
-            ),
-            SimpleDialogOption(
-              onPressed: () {
-                themeProvider.setThemeMode(ThemeMode.system);
-                themeProvider.setSelectedSchemeKey(null);
-                Navigator.of(context).pop();
-              },
-              child: ListTile(
-                leading: const Icon(Icons.phone_iphone),
-                title: const Text('Sistema'),
-                subtitle: const Text('Seguir tema do sistema'),
-                trailing:
-                    themeProvider.themeMode == ThemeMode.system &&
-                        themeProvider.selectedSchemeKey == null
-                    ? Icon(
-                        Icons.check,
-                        color: Theme.of(context).colorScheme.primary,
-                      )
-                    : null,
-              ),
-            ),
-            const Divider(),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: 8.0,
-              ),
-              child: Text(
-                'Esquemas Personalizados',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+      builder: (dialogContext) {
+        return Consumer<ThemeProvider>(
+          builder: (context, currentThemeProvider, child) {
+            final loc = AppLocalizations.of(context)!;
+            final isSystemSelected =
+                currentThemeProvider.themeMode == ThemeMode.system;
+
+            return AlertDialog(
+              title: Text(loc.themeAndScheme),
+              content: SizedBox(
+                width: double.maxFinite,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _buildThemeModeButton(
+                            context: context,
+                            icon: Icons.wb_sunny_outlined,
+                            tooltip: loc.themeLight,
+                            selected:
+                                currentThemeProvider.themeMode ==
+                                ThemeMode.light,
+                            enabled: !isSystemSelected,
+                            onPressed: () {
+                              currentThemeProvider.setThemeMode(
+                                ThemeMode.light,
+                              );
+                            },
+                          ),
+                          const SizedBox(width: 12),
+                          _buildThemeModeButton(
+                            context: context,
+                            icon: Icons.dark_mode_outlined,
+                            tooltip: loc.themeDark,
+                            selected:
+                                currentThemeProvider.themeMode ==
+                                ThemeMode.dark,
+                            enabled: !isSystemSelected,
+                            onPressed: () {
+                              currentThemeProvider.setThemeMode(ThemeMode.dark);
+                            },
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      _buildThemeOption(
+                        context: context,
+                        icon: Icons.phone_iphone,
+                        label: loc.themeSystem,
+                        selected: isSystemSelected,
+                        onTap: () {
+                          _selectThemeOption(
+                            context,
+                            currentThemeProvider,
+                            themeMode: ThemeMode.system,
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                      _buildThemeOption(
+                        context: context,
+                        icon: Icons.auto_awesome,
+                        label: loc.defaultLabel,
+                        selected:
+                            !isSystemSelected &&
+                            currentThemeProvider.selectedSchemeKey == null,
+                        onTap: () {
+                          _selectThemeOption(
+                            context,
+                            currentThemeProvider,
+                            themeMode: _resolveCustomThemeMode(
+                              context,
+                              currentThemeProvider,
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                      _buildThemeOption(
+                        context: context,
+                        icon: Icons.eco,
+                        label: loc.themeRelva,
+                        selected:
+                            !isSystemSelected &&
+                            currentThemeProvider.selectedSchemeKey ==
+                                CustomColorSchemes.relvaFamilyKey,
+                        onTap: () {
+                          _selectThemeOption(
+                            context,
+                            currentThemeProvider,
+                            themeMode: _resolveCustomThemeMode(
+                              context,
+                              currentThemeProvider,
+                            ),
+                            familyKey: CustomColorSchemes.relvaFamilyKey,
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                      _buildThemeOption(
+                        context: context,
+                        icon: Icons.park_outlined,
+                        label: loc.themeOutono,
+                        selected:
+                            !isSystemSelected &&
+                            currentThemeProvider.selectedSchemeKey ==
+                                CustomColorSchemes.outonoFamilyKey,
+                        onTap: () {
+                          _selectThemeOption(
+                            context,
+                            currentThemeProvider,
+                            themeMode: _resolveCustomThemeMode(
+                              context,
+                              currentThemeProvider,
+                            ),
+                            familyKey: CustomColorSchemes.outonoFamilyKey,
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                      _buildThemeOption(
+                        context: context,
+                        icon: Icons.cloud_outlined,
+                        label: loc.themeCeu,
+                        selected:
+                            !isSystemSelected &&
+                            currentThemeProvider.selectedSchemeKey ==
+                                CustomColorSchemes.ceuFamilyKey,
+                        onTap: () {
+                          _selectThemeOption(
+                            context,
+                            currentThemeProvider,
+                            themeMode: _resolveCustomThemeMode(
+                              context,
+                              currentThemeProvider,
+                            ),
+                            familyKey: CustomColorSchemes.ceuFamilyKey,
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                      _buildThemeOption(
+                        context: context,
+                        icon: Icons.wb_incandescent_outlined,
+                        label: loc.themeConfort,
+                        selected:
+                            !isSystemSelected &&
+                            currentThemeProvider.selectedSchemeKey ==
+                                CustomColorSchemes.confortFamilyKey,
+                        onTap: () {
+                          _selectThemeOption(
+                            context,
+                            currentThemeProvider,
+                            themeMode: _resolveCustomThemeMode(
+                              context,
+                              currentThemeProvider,
+                            ),
+                            familyKey: CustomColorSchemes.confortFamilyKey,
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                      _buildThemeOption(
+                        context: context,
+                        icon: Icons.wb_twilight_outlined,
+                        label: loc.themeSunset,
+                        selected:
+                            !isSystemSelected &&
+                            currentThemeProvider.selectedSchemeKey ==
+                                CustomColorSchemes.sunsetFamilyKey,
+                        onTap: () {
+                          _selectThemeOption(
+                            context,
+                            currentThemeProvider,
+                            themeMode: _resolveCustomThemeMode(
+                              context,
+                              currentThemeProvider,
+                            ),
+                            familyKey: CustomColorSchemes.sunsetFamilyKey,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            SimpleDialogOption(
-              onPressed: () {
-                themeProvider.setSelectedSchemeKey('relvaLight');
-                Navigator.of(context).pop();
-              },
-              child: ListTile(
-                leading: const Icon(Icons.eco),
-                title: const Text('Relva (Claro)'),
-                subtitle: const Text('Tons verdes e naturais'),
-                trailing: themeProvider.selectedSchemeKey == 'relvaLight'
-                    ? Icon(
-                        Icons.check,
-                        color: Theme.of(context).colorScheme.primary,
-                      )
-                    : null,
-              ),
-            ),
-            SimpleDialogOption(
-              onPressed: () {
-                themeProvider.setSelectedSchemeKey('relvaDark');
-                Navigator.of(context).pop();
-              },
-              child: ListTile(
-                leading: const Icon(Icons.eco),
-                title: const Text('Relva (Escuro)'),
-                subtitle: const Text('Versão escura do esquema Relva'),
-                trailing: themeProvider.selectedSchemeKey == 'relvaDark'
-                    ? Icon(
-                        Icons.check,
-                        color: Theme.of(context).colorScheme.primary,
-                      )
-                    : null,
-              ),
-            ),
-            SimpleDialogOption(
-              onPressed: () {
-                themeProvider.setSelectedSchemeKey('outonoLight');
-                Navigator.of(context).pop();
-              },
-              child: ListTile(
-                leading: const Icon(Icons.park),
-                title: const Text('Outono (Claro)'),
-                subtitle: const Text('Tons quentes e terrosos'),
-                trailing: themeProvider.selectedSchemeKey == 'outonoLight'
-                    ? Icon(
-                        Icons.check,
-                        color: Theme.of(context).colorScheme.primary,
-                      )
-                    : null,
-              ),
-            ),
-            SimpleDialogOption(
-              onPressed: () {
-                themeProvider.setSelectedSchemeKey('outonoDark');
-                Navigator.of(context).pop();
-              },
-              child: ListTile(
-                leading: const Icon(Icons.park),
-                title: const Text('Outono (Escuro)'),
-                subtitle: const Text('Versão escura do esquema Outono'),
-                trailing: themeProvider.selectedSchemeKey == 'outonoDark'
-                    ? Icon(
-                        Icons.check,
-                        color: Theme.of(context).colorScheme.primary,
-                      )
-                    : null,
-              ),
-            ),
-            SimpleDialogOption(
-              onPressed: () {
-                themeProvider.setSelectedSchemeKey(null);
-                Navigator.of(context).pop();
-              },
-              child: ListTile(
-                leading: const Icon(Icons.clear),
-                title: const Text('Remover Esquema'),
-                subtitle: const Text('Voltar ao esquema padrão do tema'),
-                trailing: themeProvider.selectedSchemeKey == null
-                    ? Icon(
-                        Icons.check,
-                        color: Theme.of(context).colorScheme.primary,
-                      )
-                    : null,
-              ),
-            ),
-          ],
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                  child: Text(loc.close),
+                ),
+              ],
+            );
+          },
         );
       },
     );
@@ -824,7 +937,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ListTile(
               leading: const Icon(Icons.history),
               title: Text(loc.lastAutoBackup),
-              subtitle: Text(_formatLastBackupTime(_lastAutoBackupTime!)),
+              subtitle: Text(
+                _formatLastBackupTime(context, _lastAutoBackupTime!),
+              ),
               dense: true,
             ),
           ListTile(
@@ -839,7 +954,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   /// Formata a data do último backup para exibição
-  String _formatLastBackupTime(DateTime dateTime) {
+  String _formatLastBackupTime(BuildContext context, DateTime dateTime) {
+    final loc = AppLocalizations.of(context)!;
     final now = DateTime.now();
     final difference = now.difference(dateTime);
 
@@ -849,16 +965,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final hour = dateTime.hour.toString().padLeft(2, '0');
     final minute = dateTime.minute.toString().padLeft(2, '0');
 
-    final formatted = '$day/$month/$year às $hour:$minute';
+    final formatted = '$day/$month/$year ${loc.timeAtConnector} $hour:$minute';
 
     if (difference.inMinutes < 1) {
-      return '$formatted (agora)';
+      return '$formatted (${loc.timeAgoNow})';
     } else if (difference.inMinutes < 60) {
-      return '$formatted (${difference.inMinutes} min atrás)';
+      return '$formatted (${loc.timeAgoMinutes(difference.inMinutes)})';
     } else if (difference.inHours < 24) {
-      return '$formatted (${difference.inHours}h atrás)';
+      return '$formatted (${loc.timeAgoHours(difference.inHours)})';
     } else {
-      return '$formatted (${difference.inDays} dia(s) atrás)';
+      return '$formatted (${loc.timeAgoDays(difference.inDays)})';
     }
   }
 

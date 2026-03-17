@@ -54,6 +54,85 @@ class AppLocalizationsEs extends AppLocalizations {
   String get themeAndScheme => 'Tema y Esquema';
 
   @override
+  String get themeRelva => 'Hierba';
+
+  @override
+  String get themeOutono => 'Otoño';
+
+  @override
+  String get themeCeu => 'Cielo';
+
+  @override
+  String get themeConfort => 'Conforto';
+
+  @override
+  String get themeSunset => 'Atardecer';
+
+  @override
+  String get themeDefaultLightDescription => 'Tema claro predeterminado';
+
+  @override
+  String get themeDefaultDarkDescription => 'Tema oscuro predeterminado';
+
+  @override
+  String get themeFollowSystemDescription => 'Seguir tema del sistema';
+
+  @override
+  String get themeCustomSchemesTitle => 'Esquemas personalizados';
+
+  @override
+  String get themeRelvaLight => 'Relva (Claro)';
+
+  @override
+  String get themeRelvaDark => 'Relva (Oscuro)';
+
+  @override
+  String get themeOutonoLight => 'Outono (Claro)';
+
+  @override
+  String get themeOutonoDark => 'Outono (Oscuro)';
+
+  @override
+  String get themeRelvaLightDescription => 'Tonos verdes y naturales';
+
+  @override
+  String get themeRelvaDarkDescription => 'Versión oscura del esquema Relva';
+
+  @override
+  String get themeOutonoLightDescription => 'Tonos cálidos y terrosos';
+
+  @override
+  String get themeOutonoDarkDescription => 'Versión oscura del esquema Outono';
+
+  @override
+  String get themeRemoveScheme => 'Quitar esquema';
+
+  @override
+  String get themeRemoveSchemeDescription =>
+      'Volver al esquema predeterminado del tema';
+
+  @override
+  String get timeAtConnector => 'a las';
+
+  @override
+  String get timeAgoNow => 'ahora';
+
+  @override
+  String timeAgoMinutes(int count) {
+    return 'hace $count min';
+  }
+
+  @override
+  String timeAgoHours(int count) {
+    return 'hace ${count}h';
+  }
+
+  @override
+  String timeAgoDays(int count) {
+    return 'hace $count día(s)';
+  }
+
+  @override
   String get backup => 'Copia de seguridad';
 
   @override

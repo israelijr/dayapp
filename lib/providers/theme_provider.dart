@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../theme/custom_color_schemes.dart';
+
 class ThemeProvider with ChangeNotifier {
   static const String _themeKey = 'theme_mode';
   static const String _schemeKey = 'custom_scheme_key';
@@ -27,7 +29,15 @@ class ThemeProvider with ChangeNotifier {
       await prefs.setInt(_themeKey, _themeMode.index);
     }
     // Carrega o esquema customizado, se houver
-    _selectedSchemeKey = prefs.getString(_schemeKey);
+    final storedSchemeKey = prefs.getString(_schemeKey);
+    _selectedSchemeKey = CustomColorSchemes.normalizeFamilyKey(storedSchemeKey);
+    if (storedSchemeKey != _selectedSchemeKey) {
+      if (_selectedSchemeKey == null) {
+        await prefs.remove(_schemeKey);
+      } else {
+        await prefs.setString(_schemeKey, _selectedSchemeKey!);
+      }
+    }
     _isLoaded = true;
     notifyListeners();
   }
@@ -42,14 +52,14 @@ class ThemeProvider with ChangeNotifier {
 
   /// Define o esquema customizado pelo nome (chave do map em CustomColorSchemes)
   Future<void> setSelectedSchemeKey(String? key) async {
-    _selectedSchemeKey = key;
+    _selectedSchemeKey = CustomColorSchemes.normalizeFamilyKey(key);
     notifyListeners();
 
     final prefs = await SharedPreferences.getInstance();
-    if (key == null) {
+    if (_selectedSchemeKey == null) {
       await prefs.remove(_schemeKey);
     } else {
-      await prefs.setString(_schemeKey, key);
+      await prefs.setString(_schemeKey, _selectedSchemeKey!);
     }
   }
 

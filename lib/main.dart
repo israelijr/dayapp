@@ -467,23 +467,22 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           ThemeData lightTheme = M3ExpressiveTheme.getLightTheme();
           ThemeData darkTheme = M3ExpressiveTheme.getDarkTheme();
 
-          final schemeKey = themeProvider.selectedSchemeKey;
-          if (schemeKey != null &&
-              CustomColorSchemes.customSchemes.containsKey(schemeKey)) {
-            // Usa o esquema selecionado para o tema claro
+          final schemeFamilyKey = themeProvider.selectedSchemeKey;
+          if (schemeFamilyKey != null) {
             final ColorScheme? lightScheme =
-                CustomColorSchemes.customSchemes[schemeKey];
+                CustomColorSchemes.getSchemeForFamily(
+                  schemeFamilyKey,
+                  Brightness.light,
+                );
             if (lightScheme != null) {
               lightTheme = ThemeData.from(colorScheme: lightScheme);
             }
 
-            // Tenta mapear para a variante dark (ex.: 'relvaLight' -> 'relvaDark')
-            String darkKey = schemeKey;
-            if (darkKey.endsWith('Light')) {
-              darkKey = darkKey.replaceAll('Light', 'Dark');
-            }
             final ColorScheme? darkScheme =
-                CustomColorSchemes.customSchemes[darkKey];
+                CustomColorSchemes.getSchemeForFamily(
+                  schemeFamilyKey,
+                  Brightness.dark,
+                );
             if (darkScheme != null) {
               darkTheme = ThemeData.from(colorScheme: darkScheme);
             }

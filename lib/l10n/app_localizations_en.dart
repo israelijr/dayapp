@@ -54,6 +54,85 @@ class AppLocalizationsEn extends AppLocalizations {
   String get themeAndScheme => 'Theme and Scheme';
 
   @override
+  String get themeRelva => 'Grass';
+
+  @override
+  String get themeOutono => 'Autumn';
+
+  @override
+  String get themeCeu => 'Sky';
+
+  @override
+  String get themeConfort => 'Comfort';
+
+  @override
+  String get themeSunset => 'Sunset';
+
+  @override
+  String get themeDefaultLightDescription => 'Default light theme';
+
+  @override
+  String get themeDefaultDarkDescription => 'Default dark theme';
+
+  @override
+  String get themeFollowSystemDescription => 'Follow system theme';
+
+  @override
+  String get themeCustomSchemesTitle => 'Custom Schemes';
+
+  @override
+  String get themeRelvaLight => 'Relva (Light)';
+
+  @override
+  String get themeRelvaDark => 'Relva (Dark)';
+
+  @override
+  String get themeOutonoLight => 'Outono (Light)';
+
+  @override
+  String get themeOutonoDark => 'Outono (Dark)';
+
+  @override
+  String get themeRelvaLightDescription => 'Green and natural tones';
+
+  @override
+  String get themeRelvaDarkDescription => 'Dark version of the Relva scheme';
+
+  @override
+  String get themeOutonoLightDescription => 'Warm earthy tones';
+
+  @override
+  String get themeOutonoDarkDescription => 'Dark version of the Outono scheme';
+
+  @override
+  String get themeRemoveScheme => 'Remove Scheme';
+
+  @override
+  String get themeRemoveSchemeDescription =>
+      'Go back to the default theme scheme';
+
+  @override
+  String get timeAtConnector => 'at';
+
+  @override
+  String get timeAgoNow => 'just now';
+
+  @override
+  String timeAgoMinutes(int count) {
+    return '$count min ago';
+  }
+
+  @override
+  String timeAgoHours(int count) {
+    return '${count}h ago';
+  }
+
+  @override
+  String timeAgoDays(int count) {
+    return '$count day(s) ago';
+  }
+
+  @override
   String get backup => 'Backup';
 
   @override

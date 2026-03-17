@@ -24,6 +24,45 @@
   "themeSystem": "System",
   "security": "Security",
   "themeAndScheme": "Theme and Scheme",
+  "themeRelva": "Grass",
+  "themeOutono": "Autumn",
+  "themeCeu": "Sky",
+  "themeConfort": "Comfort",
+  "themeSunset": "Sunset",
+  "themeDefaultLightDescription": "Default light theme",
+  "themeDefaultDarkDescription": "Default dark theme",
+  "themeFollowSystemDescription": "Follow system theme",
+  "themeCustomSchemesTitle": "Custom Schemes",
+  "themeRelvaLight": "Relva (Light)",
+  "themeRelvaDark": "Relva (Dark)",
+  "themeOutonoLight": "Outono (Light)",
+  "themeOutonoDark": "Outono (Dark)",
+  "themeRelvaLightDescription": "Green and natural tones",
+  "themeRelvaDarkDescription": "Dark version of the Relva scheme",
+  "themeOutonoLightDescription": "Warm earthy tones",
+  "themeOutonoDarkDescription": "Dark version of the Outono scheme",
+  "themeRemoveScheme": "Remove Scheme",
+  "themeRemoveSchemeDescription": "Go back to the default theme scheme",
+  "timeAtConnector": "at",
+  "timeAgoNow": "just now",
+  "timeAgoMinutes": "{count} min ago",
+  "@timeAgoMinutes": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "timeAgoHours": "{count}h ago",
+  "@timeAgoHours": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "timeAgoDays": "{count} day(s) ago",
+  "@timeAgoDays": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
   "backup": "Backup",
   "automaticBackup": "Automatic Backup",
   "lastAutoBackup": "Last automatic backup",

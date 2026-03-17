@@ -20,6 +20,45 @@
   "themeSystem": "Sistema",
   "security": "Segurança",
   "themeAndScheme": "Tema e Esquema",
+  "themeRelva": "Relva",
+  "themeOutono": "Outono",
+  "themeCeu": "Céu",
+  "themeConfort": "Conforto",
+  "themeSunset": "Pôr do Sol",
+  "themeDefaultLightDescription": "Tema claro padrão",
+  "themeDefaultDarkDescription": "Tema escuro padrão",
+  "themeFollowSystemDescription": "Seguir tema do sistema",
+  "themeCustomSchemesTitle": "Esquemas Personalizados",
+  "themeRelvaLight": "Relva (Claro)",
+  "themeRelvaDark": "Relva (Escuro)",
+  "themeOutonoLight": "Outono (Claro)",
+  "themeOutonoDark": "Outono (Escuro)",
+  "themeRelvaLightDescription": "Tons verdes e naturais",
+  "themeRelvaDarkDescription": "Versão escura do esquema Relva",
+  "themeOutonoLightDescription": "Tons quentes e terrosos",
+  "themeOutonoDarkDescription": "Versão escura do esquema Outono",
+  "themeRemoveScheme": "Remover Esquema",
+  "themeRemoveSchemeDescription": "Voltar ao esquema padrão do tema",
+  "timeAtConnector": "às",
+  "timeAgoNow": "agora",
+  "timeAgoMinutes": "{count} min atrás",
+  "@timeAgoMinutes": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "timeAgoHours": "{count}h atrás",
+  "@timeAgoHours": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "timeAgoDays": "{count} dia(s) atrás",
+  "@timeAgoDays": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
   "backup": "Backup",
   "automaticBackup": "Backup Automático",
   "lastAutoBackup": "Último backup automático",
