@@ -5,10 +5,12 @@ import 'package:uuid/uuid.dart';
 
 import '../db/database_helper.dart';
 import '../models/user.dart';
+import '../services/pin_recovery_service.dart';
 import '../services/secure_storage_service.dart';
 
 class AuthProvider extends ChangeNotifier {
   final SecureStorageService _secureStorage = SecureStorageService();
+  final PinRecoveryService _pinRecoveryService = PinRecoveryService();
   User? _user;
   User? get user => _user;
   bool get isLoggedIn => _user != null;
@@ -93,6 +95,10 @@ class AuthProvider extends ChangeNotifier {
         dtNascimento: dtNascimento,
         fotoPerfil: fotoPerfil,
       );
+
+      // Salva o e-mail de recuperação automaticamente
+      await _pinRecoveryService.saveUserEmail(email);
+
       notifyListeners();
       return true;
     } catch (e) {

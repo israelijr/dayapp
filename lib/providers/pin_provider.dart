@@ -12,10 +12,42 @@ class PinProvider extends ChangeNotifier {
   bool _shouldShowPinScreen = false;
   bool _isUserLoggedIn = false;
 
+  /// Controla se o overlay deve mostrar a tela de recuperação de PIN
+  bool _showPinRecovery = false;
+
+  /// Controla se o overlay deve mostrar a tela de recuperação de senha
+  bool _showPasswordRecovery = false;
+
   bool get isAuthenticated => _isAuthenticated;
   bool get isPinEnabled => _isPinEnabled;
   bool get isBiometricEnabled => _isBiometricEnabled;
   bool get shouldShowPinScreen => _shouldShowPinScreen;
+  bool get showPinRecovery => _showPinRecovery;
+  bool get showPasswordRecovery => _showPasswordRecovery;
+
+  /// Ativa o modo de recuperação de PIN no overlay
+  void startPinRecovery() {
+    _showPinRecovery = true;
+    notifyListeners();
+  }
+
+  /// Desativa o modo de recuperação de PIN no overlay
+  void stopPinRecovery() {
+    _showPinRecovery = false;
+    notifyListeners();
+  }
+
+  /// Ativa o modo de recuperação de senha no overlay
+  void startPasswordRecovery() {
+    _showPasswordRecovery = true;
+    notifyListeners();
+  }
+
+  /// Desativa o modo de recuperação de senha no overlay
+  void stopPasswordRecovery() {
+    _showPasswordRecovery = false;
+    notifyListeners();
+  }
 
   /// Retorna true se qualquer método de bloqueio está habilitado (PIN ou Biometria)
   bool get isLockEnabled => _isPinEnabled || _isBiometricEnabled;
@@ -197,6 +229,12 @@ class PinProvider extends ChangeNotifier {
       _shouldShowPinScreen = false;
     }
 
+    notifyListeners();
+  }
+
+  /// Atualiza o status de PIN habilitado (útil após recuperação de PIN)
+  void updatePinEnabled(bool enabled) {
+    _isPinEnabled = enabled;
     notifyListeners();
   }
 }

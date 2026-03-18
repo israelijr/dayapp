@@ -32,6 +32,7 @@ import 'screens/help_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/password_recovery_screen.dart';
+import 'screens/pin_recovery_screen.dart';
 import 'screens/search_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/splash_screen.dart';
@@ -522,6 +523,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             routes: {
               '/login': (context) => const LoginScreen(),
               '/password_recovery': (context) => const PasswordRecoveryScreen(),
+              '/pin_recovery': (context) => const PinRecoveryScreen(),
               '/create_account': (context) => const CreateAccountScreen(),
               '/create_account_complement': (context) =>
                   const CreateAccountComplementScreen(),

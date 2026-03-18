@@ -1241,7 +1241,7 @@ abstract class AppLocalizations {
   /// **'Enter the code sent to your email:'**
   String get enterRecoveryCodePrompt;
 
-  /// Label for recoveryCodeLabel
+  /// Label for recovery code input field
   ///
   /// In en, this message translates to:
   /// **'Recovery code (6 digits)'**
@@ -3423,6 +3423,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Database restored: {active} active, {deleted} in trash.'**
   String restoreProgressDbStats(int active, int deleted);
+
+  /// Button to resend recovery code via email
+  ///
+  /// In en, this message translates to:
+  /// **'Resend code'**
+  String get resendCodeButton;
+
+  /// Message showing how many minutes until recovery code expires
+  ///
+  /// In en, this message translates to:
+  /// **'Code expires in {minutes} minutes'**
+  String codeExpiresIn(int minutes);
+
+  /// Button to go back to the first step of recovery
+  ///
+  /// In en, this message translates to:
+  /// **'Back to start'**
+  String get backToStart;
+
+  /// Label for recovery code
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
+  String get code;
+
+  /// Label for PIN field
+  ///
+  /// In en, this message translates to:
+  /// **'PIN'**
+  String get pin;
+
+  /// Title for entering recovery code
+  ///
+  /// In en, this message translates to:
+  /// **'Enter code'**
+  String get enterCode;
+
+  /// Description for code verification step
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the 6-digit code that was sent to your email.'**
+  String get codeCheckDescription;
+
+  /// Description for setting new PIN
+  ///
+  /// In en, this message translates to:
+  /// **'Define a new secure PIN for your account.'**
+  String get defineNewPin;
+
+  /// Button to send recovery code
+  ///
+  /// In en, this message translates to:
+  /// **'Send code'**
+  String get sendCodeButton;
+
+  /// Button to verify recovery code
+  ///
+  /// In en, this message translates to:
+  /// **'Verify code'**
+  String get verifyCode;
+
+  /// Button to reset PIN
+  ///
+  /// In en, this message translates to:
+  /// **'Reset PIN'**
+  String get resetPin;
 }
 
 class _AppLocalizationsDelegate

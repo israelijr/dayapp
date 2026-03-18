@@ -952,6 +952,33 @@
   "@restoreProgressDbStats": {
     "description": "Progress message showing how many stories were restored",
     "placeholders": { "active": { "type": "int" }, "deleted": { "type": "int" } }
-  }
+  },
+  "resendCodeButton": "Resend code",
+  "@resendCodeButton": { "description": "Button to resend recovery code via email" },
+  "codeExpiresIn": "Code expires in {minutes} minutes",
+  "@codeExpiresIn": {
+    "description": "Message showing how many minutes until recovery code expires",
+    "placeholders": { "minutes": { "type": "int" } }
+  },
+  "backToStart": "Back to start",
+  "@backToStart": { "description": "Button to go back to the first step of recovery" },
+  "code": "Code",
+  "@code": { "description": "Label for recovery code" },
+  "pin": "PIN",
+  "@pin": { "description": "Label for PIN field" },
+  "enterCode": "Enter code",
+  "@enterCode": { "description": "Title for entering recovery code" },
+  "codeCheckDescription": "Enter the 6-digit code that was sent to your email.",
+  "@codeCheckDescription": { "description": "Description for code verification step" },
+  "defineNewPin": "Define a new secure PIN for your account.",
+  "@defineNewPin": { "description": "Description for setting new PIN" },
+  "sendCodeButton": "Send code",
+  "@sendCodeButton": { "description": "Button to send recovery code" },
+  "verifyCode": "Verify code",
+  "@verifyCode": { "description": "Button to verify recovery code" },
+  "resetPin": "Reset PIN",
+  "@resetPin": { "description": "Button to reset PIN" },
+  "recoveryCodeLabel": "Recovery code (6 digits)",
+  "@recoveryCodeLabel": { "description": "Label for recovery code input field" }
  }
 

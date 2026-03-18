@@ -3,47 +3,46 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/auth_provider.dart';
-import '../services/password_recovery_service.dart';
+import '../providers/pin_provider.dart';
 import '../services/pin_recovery_service.dart';
+import '../services/pin_service.dart';
 import '../theme/m3_expressive_theme.dart';
 import '../widgets/custom_text_field.dart';
 
-/// Tela de recuperação de senha por token enviado por e-mail.
+/// Tela de recuperação de PIN por token enviado por e-mail.
 /// Fluxo em etapas:
 /// 1. Informar e-mail cadastrado
 /// 2. Enviar código de recuperação por e-mail
 /// 3. Digitar o código recebido
-/// 4. Definir nova senha
-class PasswordRecoveryScreen extends StatefulWidget {
-  /// Chamado quando o usuário cancela no modo overlay
+/// 4. Definir novo PIN
+class PinRecoveryScreen extends StatefulWidget {
+  /// Chamado quando o usuário cancela no modo overlay (dentro do GlobalLockOverlay)
   final VoidCallback? onCancel;
 
-  /// Chamado quando a senha é redefinida com sucesso no modo overlay
+  /// Chamado quando o PIN é redefinido com sucesso no modo overlay
   final VoidCallback? onSuccess;
 
-  const PasswordRecoveryScreen({this.onCancel, this.onSuccess, super.key});
+  const PinRecoveryScreen({this.onCancel, this.onSuccess, super.key});
 
   @override
-  State<PasswordRecoveryScreen> createState() => _PasswordRecoveryScreenState();
+  State<PinRecoveryScreen> createState() => _PinRecoveryScreenState();
 }
 
-class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
-  final PasswordRecoveryService _recoveryService = PasswordRecoveryService();
-  final PinRecoveryService _pinRecoveryService = PinRecoveryService();
+class _PinRecoveryScreenState extends State<PinRecoveryScreen> {
+  final PinRecoveryService _recoveryService = PinRecoveryService();
+  final PinService _pinService = PinService();
 
   final emailController = TextEditingController();
   final codeController = TextEditingController();
-  final newPasswordController = TextEditingController();
-  final confirmPasswordController = TextEditingController();
+  final newPinController = TextEditingController();
+  final confirmPinController = TextEditingController();
 
   bool loading = false;
-  bool obscureNewPassword = true;
-  bool obscureConfirmPassword = true;
   String? errorMessage;
   String? successMessage;
 
   /// Etapa atual do fluxo de recuperação
-  /// 0 = informar e-mail, 1 = digitar código, 2 = nova senha
+  /// 0 = informar e-mail, 1 = digitar código, 2 = novo PIN
   int currentStep = 0;
 
   @override
@@ -54,10 +53,26 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
 
   /// Carrega o email de recuperação cadastrado (se existir)
   Future<void> _loadRecoveryEmail() async {
-    final email = await _pinRecoveryService.getUserEmail();
-    if (email != null && email.isNotEmpty && mounted) {
-      setState(() {
-        emailController.text = email;
+    final email = await _recoveryService.getUserEmail();
+    if (email == null || email.isEmpty || !mounted) return;
+
+    setState(() {
+      emailController.text = email;
+    });
+
+    // Verifica se já existe um código ativo (enviado pelo LockScreen, por ex.)
+    // Se sim, avança direto para a etapa de digitação sem reenviar
+    final hasActive = await _recoveryService.hasActiveRecoveryCode();
+    if (!mounted) return;
+
+    if (hasActive) {
+      setState(() => currentStep = 1);
+    } else {
+      // Nenhum código ativo: envia um novo automaticamente
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (mounted && currentStep == 0) {
+          _sendRecoveryCode();
+        }
       });
     }
   }
@@ -66,8 +81,8 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
   void dispose() {
     emailController.dispose();
     codeController.dispose();
-    newPasswordController.dispose();
-    confirmPasswordController.dispose();
+    newPinController.dispose();
+    confirmPinController.dispose();
     super.dispose();
   }
 
@@ -162,28 +177,32 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
     }
   }
 
-  /// Etapa 3: Definir nova senha
-  Future<void> _resetPassword() async {
-    final newPassword = newPasswordController.text;
-    final confirmPassword = confirmPasswordController.text;
+  /// Etapa 3: Definir novo PIN
+  Future<void> _resetPin() async {
+    final newPin = newPinController.text.trim();
+    final confirmPin = confirmPinController.text.trim();
 
-    if (newPassword.isEmpty) {
+    if (newPin.isEmpty) {
+      setState(() => errorMessage = AppLocalizations.of(context)!.enterPin);
+      return;
+    }
+
+    // Validações do PIN
+    if (newPin.length < 4 || newPin.length > 8) {
       setState(
-        () => errorMessage = AppLocalizations.of(context)!.enterNewPassword,
+        () => errorMessage = AppLocalizations.of(context)!.pinLengthError,
       );
       return;
     }
 
-    if (newPassword.length < 6) {
-      setState(
-        () => errorMessage = AppLocalizations.of(context)!.passwordMinLength,
-      );
+    if (!RegExp(r'^\d+$').hasMatch(newPin)) {
+      setState(() => errorMessage = AppLocalizations.of(context)!.enterPin);
       return;
     }
 
-    if (newPassword != confirmPassword) {
+    if (newPin != confirmPin) {
       setState(
-        () => errorMessage = AppLocalizations.of(context)!.passwordsDoNotMatch,
+        () => errorMessage = AppLocalizations.of(context)!.pinsDoNotMatch,
       );
       return;
     }
@@ -194,13 +213,10 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
       successMessage = null;
     });
 
-    final email = emailController.text.trim();
-    final auth = Provider.of<AuthProvider>(context, listen: false);
-    final success = await auth.updatePasswordByEmail(email, newPassword);
+    try {
+      // Salva o novo PIN
+      await _pinService.savePin(newPin);
 
-    if (!mounted) return;
-
-    if (success) {
       // Limpa o código de recuperação usado
       await _recoveryService.clearRecoveryCode();
 
@@ -208,10 +224,14 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
 
       setState(() => loading = false);
 
+      // Atualiza o provider para listar PIN como habilitado
+      final pinProvider = Provider.of<PinProvider>(context, listen: false);
+      pinProvider.updatePinEnabled(true);
+
       // Mostra mensagem de sucesso
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations.of(context)!.passwordResetSuccess),
+          content: Text(AppLocalizations.of(context)!.pinChangedSuccess),
           backgroundColor: AppColors.emoticonGreen,
           duration: const Duration(seconds: 3),
         ),
@@ -223,7 +243,7 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
       } else {
         Navigator.of(context).pop();
       }
-    } else {
+    } catch (e) {
       setState(() {
         loading = false;
         errorMessage = AppLocalizations.of(context)!.errorResetPassword;
@@ -250,6 +270,8 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
     if (success) {
       setState(() {
         successMessage = AppLocalizations.of(context)!.resendCodeSuccess;
+        // Limpa o código anterior para o usuário digitar o novo
+        codeController.clear();
       });
     } else {
       setState(() {
@@ -279,7 +301,7 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
           },
         ),
         title: Text(
-          AppLocalizations.of(context)!.forgotPassword,
+          AppLocalizations.of(context)!.recoverPinTitle,
           style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
         ),
       ),
@@ -292,7 +314,7 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
               children: [
                 // Ícone e título
                 Icon(
-                  Icons.lock_reset,
+                  Icons.security,
                   size: 64,
                   color: Theme.of(context).colorScheme.onPrimary,
                 ),
@@ -429,7 +451,7 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
                   TextButton(
                     onPressed: loading ? null : _resendCode,
                     child: Text(
-                      'Reenviar código',
+                      AppLocalizations.of(context)!.resendCodeButton,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onPrimary,
                         decoration: TextDecoration.underline,
@@ -443,7 +465,9 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
                         return Padding(
                           padding: const EdgeInsets.only(top: 4),
                           child: Text(
-                            'Código expira em ${snapshot.data} minutos',
+                            AppLocalizations.of(
+                              context,
+                            )!.codeExpiresIn(snapshot.data!),
                             style: TextStyle(
                               color: Theme.of(
                                 context,
@@ -469,12 +493,12 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
                               errorMessage = null;
                               successMessage = null;
                               codeController.clear();
-                              newPasswordController.clear();
-                              confirmPasswordController.clear();
+                              newPinController.clear();
+                              confirmPinController.clear();
                             });
                           },
                     child: Text(
-                      'Voltar ao início',
+                      AppLocalizations.of(context)!.backToStart,
                       style: TextStyle(
                         color: Theme.of(
                           context,
@@ -497,11 +521,11 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _buildStepDot(0, 'E-mail'),
+        _buildStepDot(0, AppLocalizations.of(context)!.informYourEmail),
         _buildStepLine(0),
-        _buildStepDot(1, 'Código'),
+        _buildStepDot(1, AppLocalizations.of(context)!.code),
         _buildStepLine(1),
-        _buildStepDot(2, 'Senha'),
+        _buildStepDot(2, AppLocalizations.of(context)!.pin),
       ],
     );
   }
@@ -561,6 +585,9 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
                   ).colorScheme.onSurface.withValues(alpha: 0.7),
             fontSize: 11,
           ),
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
       ],
     );
@@ -588,7 +615,7 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
       case 1:
         return _buildCodeStep();
       case 2:
-        return _buildNewPasswordStep();
+        return _buildNewPinStep();
       default:
         return const SizedBox.shrink();
     }
@@ -597,7 +624,7 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
   /// Etapa 0: Campo de e-mail
   Widget _buildEmailStep() {
     return CustomTextField(
-      label: 'Informe seu e-mail cadastrado',
+      label: AppLocalizations.of(context)!.informYourEmail,
       controller: emailController,
       keyboardType: TextInputType.emailAddress,
     );
@@ -619,7 +646,7 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
         const SizedBox(height: 8),
         CustomTextField(
           controller: codeController,
-          label: 'Código de recuperação (6 dígitos)',
+          label: AppLocalizations.of(context)!.recoveryCodeLabel,
           prefixIcon: const Icon(Icons.lock_outline),
           keyboardType: TextInputType.number,
           maxLength: 6,
@@ -635,34 +662,34 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
     );
   }
 
-  /// Etapa 2: Campos de nova senha
-  Widget _buildNewPasswordStep() {
+  /// Etapa 2: Campos de novo PIN
+  Widget _buildNewPinStep() {
     return Column(
       children: [
         CustomTextField(
-          label: 'Nova senha (mínimo 6 caracteres)',
-          controller: newPasswordController,
-          obscureText: obscureNewPassword,
-          suffixIcon: IconButton(
-            icon: Icon(
-              obscureNewPassword ? Icons.visibility_off : Icons.visibility,
-            ),
-            onPressed: () =>
-                setState(() => obscureNewPassword = !obscureNewPassword),
-          ),
+          label: AppLocalizations.of(context)!.newPinLabel,
+          controller: newPinController,
+          keyboardType: TextInputType.number,
+          obscureText: false,
+          maxLength: 8,
         ),
         CustomTextField(
-          label: 'Confirmar nova senha',
-          controller: confirmPasswordController,
-          obscureText: obscureConfirmPassword,
-          suffixIcon: IconButton(
-            icon: Icon(
-              obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
-            ),
-            onPressed: () => setState(
-              () => obscureConfirmPassword = !obscureConfirmPassword,
-            ),
+          label: AppLocalizations.of(context)!.confirmPin,
+          controller: confirmPinController,
+          keyboardType: TextInputType.number,
+          obscureText: false,
+          maxLength: 8,
+        ),
+        const SizedBox(height: 8),
+        Text(
+          AppLocalizations.of(context)!.pinLengthError,
+          style: TextStyle(
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.7),
+            fontSize: 12,
           ),
+          textAlign: TextAlign.center,
         ),
       ],
     );
@@ -672,11 +699,11 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
   String _getStepTitle() {
     switch (currentStep) {
       case 0:
-        return 'Informe seu e-mail';
+        return AppLocalizations.of(context)!.informYourEmail;
       case 1:
-        return 'Digite o código';
+        return AppLocalizations.of(context)!.enterCode;
       case 2:
-        return 'Nova senha';
+        return AppLocalizations.of(context)!.newPinLabel;
       default:
         return '';
     }
@@ -686,11 +713,11 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
   String _getStepSubtitle() {
     switch (currentStep) {
       case 0:
-        return 'Enviaremos um código de recuperação para o e-mail cadastrado na sua conta.';
+        return AppLocalizations.of(context)!.recoverPinDescription;
       case 1:
-        return 'Insira o código de 6 dígitos que foi enviado para o seu e-mail.';
+        return AppLocalizations.of(context)!.codeCheckDescription;
       case 2:
-        return 'Defina uma nova senha segura para sua conta.';
+        return AppLocalizations.of(context)!.defineNewPin;
       default:
         return '';
     }
@@ -700,11 +727,11 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
   String _getStepButtonLabel() {
     switch (currentStep) {
       case 0:
-        return 'Enviar código';
+        return AppLocalizations.of(context)!.sendCodeButton;
       case 1:
-        return 'Verificar código';
+        return AppLocalizations.of(context)!.verifyCode;
       case 2:
-        return 'Redefinir senha';
+        return AppLocalizations.of(context)!.resetPin;
       default:
         return '';
     }
@@ -718,7 +745,7 @@ class _PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
       case 1:
         return _verifyCode;
       case 2:
-        return _resetPassword;
+        return _resetPin;
       default:
         return () {};
     }

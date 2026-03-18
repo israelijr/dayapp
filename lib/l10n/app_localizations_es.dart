@@ -1878,4 +1878,40 @@ class AppLocalizationsEs extends AppLocalizations {
   String restoreProgressDbStats(int active, int deleted) {
     return 'Base de datos restaurada: $active activas, $deleted en la papelera.';
   }
+
+  @override
+  String get resendCodeButton => 'Reenviar código';
+
+  @override
+  String codeExpiresIn(int minutes) {
+    return 'El código expira en $minutes minutos';
+  }
+
+  @override
+  String get backToStart => 'Volver al inicio';
+
+  @override
+  String get code => 'Código';
+
+  @override
+  String get pin => 'PIN';
+
+  @override
+  String get enterCode => 'Ingrese el código';
+
+  @override
+  String get codeCheckDescription =>
+      'Ingrese el código de 6 dígitos que fue enviado a su correo electrónico.';
+
+  @override
+  String get defineNewPin => 'Defina un nuevo PIN seguro para su cuenta.';
+
+  @override
+  String get sendCodeButton => 'Enviar código';
+
+  @override
+  String get verifyCode => 'Verificar código';
+
+  @override
+  String get resetPin => 'Restablecer PIN';
 }

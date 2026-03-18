@@ -1866,6 +1866,42 @@ class AppLocalizationsPt extends AppLocalizations {
   String restoreProgressDbStats(int active, int deleted) {
     return 'Banco restaurado: $active ativas, $deleted na lixeira.';
   }
+
+  @override
+  String get resendCodeButton => 'Reenviar código';
+
+  @override
+  String codeExpiresIn(int minutes) {
+    return 'Código expira em $minutes minutos';
+  }
+
+  @override
+  String get backToStart => 'Voltar ao início';
+
+  @override
+  String get code => 'Código';
+
+  @override
+  String get pin => 'PIN';
+
+  @override
+  String get enterCode => 'Digite o código';
+
+  @override
+  String get codeCheckDescription =>
+      'Insira o código de 6 dígitos que foi enviado para o seu e-mail.';
+
+  @override
+  String get defineNewPin => 'Defina um novo PIN seguro para sua conta.';
+
+  @override
+  String get sendCodeButton => 'Enviar código';
+
+  @override
+  String get verifyCode => 'Verificar código';
+
+  @override
+  String get resetPin => 'Redefinir PIN';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -3730,4 +3766,40 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String restoreProgressDbStats(int active, int deleted) {
     return 'Banco restaurado: $active ativas, $deleted na lixeira.';
   }
+
+  @override
+  String get resendCodeButton => 'Reenviar código';
+
+  @override
+  String codeExpiresIn(int minutes) {
+    return 'Código expira em $minutes minutos';
+  }
+
+  @override
+  String get backToStart => 'Voltar ao início';
+
+  @override
+  String get code => 'Código';
+
+  @override
+  String get pin => 'PIN';
+
+  @override
+  String get enterCode => 'Digite o código';
+
+  @override
+  String get codeCheckDescription =>
+      'Insira o código de 6 dígitos que foi enviado para o seu e-mail.';
+
+  @override
+  String get defineNewPin => 'Defina um novo PIN seguro para sua conta.';
+
+  @override
+  String get sendCodeButton => 'Enviar código';
+
+  @override
+  String get verifyCode => 'Verificar código';
+
+  @override
+  String get resetPin => 'Redefinir PIN';
 }

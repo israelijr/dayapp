@@ -215,12 +215,15 @@ class _LockScreenState extends State<LockScreen> {
     setState(() => _isLoading = false);
 
     if (success) {
-      // Verificar se conseguiu obter o código gerado
+      // Verifica se conseguiu obter o código gerado
       final hasCode = await _recoveryService.hasActiveRecoveryCode();
 
       if (hasCode) {
         _showMessage(loc.checkEmailOrUseCode(email));
-        _showRecoveryCodeDialog();
+        // Ativa modo de recuperação no overlay (GlobalLockOverlay troca para PinRecoveryScreen)
+        if (mounted) {
+          Provider.of<PinProvider>(context, listen: false).startPinRecovery();
+        }
       } else {
         _showMessage(loc.errorGeneratingCode);
       }
@@ -232,196 +235,6 @@ class _LockScreenState extends State<LockScreen> {
   void _showMessage(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message), duration: const Duration(seconds: 3)),
-    );
-  }
-
-  void _showRecoveryCodeDialog() async {
-    final loc = AppLocalizations.of(context)!; // usado dentro do diálogo
-    final codeController = TextEditingController();
-    final newPinController = TextEditingController();
-    final confirmPinController = TextEditingController();
-    bool obscureNewPin = true;
-    bool obscureConfirmPin = true;
-
-    if (!mounted) return;
-
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) => StatefulBuilder(
-        builder: (context, setDialogState) {
-          return AlertDialog(
-            title: Text(AppLocalizations.of(context)!.recoverPinTitle),
-            content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    AppLocalizations.of(context)!.enterRecoveryCodePrompt,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: codeController,
-                    decoration: InputDecoration(
-                      labelText: AppLocalizations.of(
-                        context,
-                      )!.recoveryCodeLabel,
-                      border: const OutlineInputBorder(),
-                      prefixIcon: const Icon(Icons.lock_outline),
-                    ),
-                    keyboardType: TextInputType.number,
-                    maxLength: 6,
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: newPinController,
-                    decoration: InputDecoration(
-                      labelText: '${loc.newPinLabel} (4 a 8 dígitos)',
-                      border: const OutlineInputBorder(),
-                      prefixIcon: const Icon(Icons.pin),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          obscureNewPin
-                              ? Icons.visibility_off
-                              : Icons.visibility,
-                        ),
-                        onPressed: () {
-                          setDialogState(() {
-                            obscureNewPin = !obscureNewPin;
-                          });
-                        },
-                      ),
-                    ),
-                    keyboardType: TextInputType.number,
-                    maxLength: 8,
-                    obscureText: obscureNewPin,
-                  ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: confirmPinController,
-                    decoration: InputDecoration(
-                      labelText: loc.confirmPin,
-                      border: const OutlineInputBorder(),
-                      prefixIcon: const Icon(Icons.pin),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          obscureConfirmPin
-                              ? Icons.visibility_off
-                              : Icons.visibility,
-                        ),
-                        onPressed: () {
-                          setDialogState(() {
-                            obscureConfirmPin = !obscureConfirmPin;
-                          });
-                        },
-                      ),
-                    ),
-                    keyboardType: TextInputType.number,
-                    maxLength: 8,
-                    obscureText: obscureConfirmPin,
-                  ),
-                ],
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(dialogContext).pop(),
-                child: Text(AppLocalizations.of(dialogContext)!.cancel),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  final code = codeController.text.trim();
-                  final newPin = newPinController.text.trim();
-                  final confirmPin = confirmPinController.text.trim();
-
-                  if (code.length != 6) {
-                    ScaffoldMessenger.of(dialogContext).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          AppLocalizations.of(context)!.codeMustBe6,
-                        ),
-                        backgroundColor: Theme.of(
-                          dialogContext,
-                        ).colorScheme.error,
-                      ),
-                    );
-                    return;
-                  }
-
-                  if (newPin.length < 4 || newPin.length > 8) {
-                    ScaffoldMessenger.of(dialogContext).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          AppLocalizations.of(dialogContext)!.pinLengthError,
-                        ),
-                        backgroundColor: Theme.of(
-                          dialogContext,
-                        ).colorScheme.error,
-                      ),
-                    );
-                    return;
-                  }
-
-                  if (newPin != confirmPin) {
-                    ScaffoldMessenger.of(dialogContext).showSnackBar(
-                      SnackBar(
-                        content: const Text('Os PINs não coincidem'),
-                        backgroundColor: Theme.of(
-                          dialogContext,
-                        ).colorScheme.error,
-                      ),
-                    );
-                    return;
-                  }
-
-                  final navigator = Navigator.of(dialogContext);
-                  final messenger = ScaffoldMessenger.of(dialogContext);
-                  final invalidCodeMsg = AppLocalizations.of(
-                    dialogContext,
-                  )!.codeInvalid;
-                  final successMsg = AppLocalizations.of(
-                    dialogContext,
-                  )!.pinConfiguredSuccess;
-                  final errorColor = Theme.of(dialogContext).colorScheme.error;
-                  final pinProvider = Provider.of<PinProvider>(
-                    dialogContext,
-                    listen: false,
-                  );
-
-                  final isValid = await _recoveryService.verifyRecoveryCode(
-                    code,
-                  );
-
-                  if (!mounted) return;
-
-                  if (isValid) {
-                    await pinProvider.enablePin(newPin);
-                    await _recoveryService.clearRecoveryCode();
-
-                    if (!mounted) return;
-                    navigator.pop();
-                    messenger.showSnackBar(
-                      SnackBar(
-                        content: Text(successMsg),
-                        duration: const Duration(seconds: 3),
-                      ),
-                    );
-                  } else {
-                    messenger.showSnackBar(
-                      SnackBar(
-                        content: Text(invalidCodeMsg),
-                        backgroundColor: errorColor,
-                      ),
-                    );
-                  }
-                },
-                child: const Text('Confirmar'),
-              ),
-            ],
-          );
-        },
-      ),
     );
   }
 
@@ -706,6 +519,18 @@ class _LockScreenState extends State<LockScreen> {
               ),
               child: Text(AppLocalizations.of(context)!.unlock),
             ),
+          ),
+          const SizedBox(height: 8),
+          TextButton(
+            onPressed: _isLoading
+                ? null
+                : () {
+                    Provider.of<PinProvider>(
+                      context,
+                      listen: false,
+                    ).startPasswordRecovery();
+                  },
+            child: Text(AppLocalizations.of(context)!.forgotPassword),
           ),
         ],
       ),

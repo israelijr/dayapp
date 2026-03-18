@@ -1,19 +1,21 @@
 import 'dart:math';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'email_service.dart';
 import 'secure_storage_service.dart';
 
 /// Serviço para recuperação de PIN por e-mail
-/// Gera códigos de recuperação e envia por e-mail
+/// Gera códigos de recuperação (tokens) de 6 dígitos e envia via SMTP
 class PinRecoveryService {
   static final PinRecoveryService _instance = PinRecoveryService._internal();
   factory PinRecoveryService() => _instance;
   PinRecoveryService._internal();
 
+  final EmailService _emailService = EmailService();
   final SecureStorageService _secureStorage = SecureStorageService();
 
   static const String _recoveryCodeKey = 'pin_recovery_code';
   static const String _recoveryCodeTimeKey = 'pin_recovery_code_time';
+  static const String _recoveryEmailKey = 'pin_recovery_email';
   static const String _legacyUserEmailKey = 'user_email';
 
   /// Duração de validade do código de recuperação (em minutos)
@@ -56,49 +58,32 @@ class PinRecoveryService {
     return null;
   }
 
-  /// Gera e envia um código de recuperação por e-mail
+  /// Gera e envia um código de recuperação por e-mail via SMTP.
+  /// Retorna true se o código foi gerado e o e-mail enviado com sucesso.
   Future<bool> sendRecoveryCode(String email) async {
     try {
       // Gera o código
       final code = _generateRecoveryCode();
       final now = DateTime.now();
 
-      // Salva o código e o timestamp
+      // Salva o código, o timestamp e o e-mail associado
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_recoveryCodeKey, code);
       await prefs.setString(_recoveryCodeTimeKey, now.toIso8601String());
+      await prefs.setString(_recoveryEmailKey, email);
 
-      // Compõe o e-mail
-      final subject = Uri.encodeComponent(
-        'DayApp - Código de Recuperação de PIN',
-      );
-      final body = Uri.encodeComponent(
-        'Olá,\n\n'
-        'Você solicitou a recuperação do seu PIN no DayApp.\n\n'
-        'Seu código de recuperação é: $code\n\n'
-        'Este código expira em $recoveryCodeValidityMinutes minutos.\n\n'
-        'Se você não solicitou este código, ignore este e-mail.\n\n'
-        'Atenciosamente,\n'
-        'Equipe DayApp',
+      // Envia o e-mail silenciosamente via SMTP
+      final sent = await _emailService.sendRecoveryPinEmail(
+        toEmail: email,
+        recoveryCode: code,
+        validityMinutes: recoveryCodeValidityMinutes,
       );
 
-      // Tenta abrir o cliente de e-mail
-      final emailUri = Uri.parse('mailto:$email?subject=$subject&body=$body');
-
-      try {
-        final launched = await launchUrl(
-          emailUri,
-          mode: LaunchMode.externalApplication,
-        );
-
-        if (launched) {
-          return true;
-        }
-      } catch (e) {
-        // Não conseguiu abrir app de e-mail - usar fallback
+      if (!sent) {
+        // Se falhou ao enviar, limpa o código gerado
+        await clearRecoveryCode();
+        return false;
       }
-
-      // Fallback: retorna true para mostrar o código de forma segura
 
       return true;
     } catch (e) {
@@ -128,13 +113,19 @@ class PinRecoveryService {
     }
   }
 
-  /// Obtém o código de recuperação ativo (para exibição segura quando não há app de e-mail)
+  /// Obtém o código de recuperação ativo (para exibição quando não há app de e-mail)
   Future<String?> getActiveRecoveryCode() async {
     if (await hasActiveRecoveryCode()) {
       final prefs = await SharedPreferences.getInstance();
       return prefs.getString(_recoveryCodeKey);
     }
     return null;
+  }
+
+  /// Obtém o e-mail associado ao código de recuperação ativo
+  Future<String?> getRecoveryEmail() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_recoveryEmailKey);
   }
 
   /// Verifica se o código de recuperação é válido
@@ -175,6 +166,7 @@ class PinRecoveryService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_recoveryCodeKey);
     await prefs.remove(_recoveryCodeTimeKey);
+    await prefs.remove(_recoveryEmailKey);
   }
 
   /// Obtém o tempo restante de validade do código (em minutos)
@@ -186,8 +178,7 @@ class PinRecoveryService {
       if (timeString == null) return null;
 
       final codeTime = DateTime.parse(timeString);
-      final now = DateTime.now();
-      final difference = now.difference(codeTime);
+      final difference = DateTime.now().difference(codeTime);
       final remaining = recoveryCodeValidityMinutes - difference.inMinutes;
 
       return remaining > 0 ? remaining : 0;

@@ -924,5 +924,32 @@
   "@restoreProgressDbStats": {
     "description": "Mensaje de progreso con estadísticas de la BD restaurada",
     "placeholders": { "active": { "type": "int" }, "deleted": { "type": "int" } }
-  }
+  },
+  "resendCodeButton": "Reenviar código",
+  "@resendCodeButton": { "description": "Botón para reenviar código de recuperación por correo electrónico" },
+  "codeExpiresIn": "El código expira en {minutes} minutos",
+  "@codeExpiresIn": {
+    "description": "Mensaje mostrando cuántos minutos hay hasta que expire el código",
+    "placeholders": { "minutes": { "type": "int" } }
+  },
+  "backToStart": "Volver al inicio",
+  "@backToStart": { "description": "Botón para volver al primer paso de la recuperación" },
+  "code": "Código",
+  "@code": { "description": "Etiqueta para código de recuperación" },
+  "pin": "PIN",
+  "@pin": { "description": "Etiqueta para campo PIN" },
+  "enterCode": "Ingrese el código",
+  "@enterCode": { "description": "Título para ingresar código de recuperación" },
+  "codeCheckDescription": "Ingrese el código de 6 dígitos que fue enviado a su correo electrónico.",
+  "@codeCheckDescription": { "description": "Descripción para el paso de verificación de código" },
+  "defineNewPin": "Defina un nuevo PIN seguro para su cuenta.",
+  "@defineNewPin": { "description": "Descripción para establecer nuevo PIN" },
+  "sendCodeButton": "Enviar código",
+  "@sendCodeButton": { "description": "Botón para enviar código de recuperación" },
+  "verifyCode": "Verificar código",
+  "@verifyCode": { "description": "Botón para verificar código de recuperación" },
+  "resetPin": "Restablecer PIN",
+  "@resetPin": { "description": "Botón para restablecer PIN" },
+  "recoveryCodeLabel": "Código de recuperación (6 dígitos)",
+  "@recoveryCodeLabel": { "description": "Etiqueta para campo de código de recuperación" }
  }
