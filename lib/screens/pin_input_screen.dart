@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -178,6 +179,23 @@ class _PinInputScreenState extends State<PinInputScreen>
 
                         // Teclado numérico
                         _buildNumericKeypad(),
+
+                        const SizedBox(height: 24),
+
+                        // Botão "Esqueceu PIN"
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, '/pin_recovery');
+                          },
+                          child: Text(
+                            AppLocalizations.of(context)!.forgotPin,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              decoration: TextDecoration.underline,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
 
                         const Spacer(flex: 1),
                       ],
