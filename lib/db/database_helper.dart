@@ -701,6 +701,51 @@ class DatabaseHelper {
     return null;
   }
 
+  /// Remove histórias da lixeira com data de exclusão igual ou anterior ao
+  /// limite de retenção. Por padrão, remove após 30 dias.
+  Future<int> deleteExpiredTrashStories({
+    int retentionDays = 30,
+    String? userId,
+    DateTime? now,
+  }) async {
+    final db = await database;
+    return deleteExpiredTrashStoriesFromDatabase(
+      db,
+      retentionDays: retentionDays,
+      userId: userId,
+      now: now,
+    );
+  }
+
+  /// Versão estática para facilitar testes unitários com banco em memória.
+  static Future<int> deleteExpiredTrashStoriesFromDatabase(
+    Database db, {
+    int retentionDays = 30,
+    String? userId,
+    DateTime? now,
+  }) async {
+    final currentTime = now ?? DateTime.now();
+    final cutoff = currentTime
+        .subtract(Duration(days: retentionDays))
+        .toIso8601String();
+
+    if (userId != null && userId.isNotEmpty) {
+      return db.delete(
+        'historia',
+        where:
+            'user_id = ? AND excluido = ? AND data_exclusao IS NOT NULL AND data_exclusao <= ?',
+        whereArgs: [userId, 'sim', cutoff],
+      );
+    }
+
+    return db.delete(
+      'historia',
+      where:
+          'excluido = ? AND data_exclusao IS NOT NULL AND data_exclusao <= ?',
+      whereArgs: ['sim', cutoff],
+    );
+  }
+
   /// Close any open database and reset the cached instance so the next call
   /// to `database` will re-open the (possibly replaced) DB file.
   Future<void> resetDatabase() async {

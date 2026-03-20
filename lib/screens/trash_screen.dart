@@ -25,6 +25,10 @@ class _TrashScreenState extends State<TrashScreen> {
   Future<List<Historia>> _fetchDeletedHistorias() async {
     final auth = Provider.of<AuthProvider>(context, listen: false);
     final userId = auth.user?.id ?? '';
+
+    // Garante que itens com mais de 30 dias não apareçam mais na lixeira.
+    await DatabaseHelper().deleteExpiredTrashStories(userId: userId);
+
     final db = await DatabaseHelper().database;
     final result = await db.query(
       'historia',

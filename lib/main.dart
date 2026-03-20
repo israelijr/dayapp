@@ -127,6 +127,11 @@ class _AppLoaderState extends State<AppLoader> {
     final authProvider = AuthProvider();
     await authProvider.tryAutoLogin();
 
+    // Limpa automaticamente histórias expiradas da lixeira (30 dias).
+    await DatabaseHelper().deleteExpiredTrashStories(
+      userId: authProvider.user?.id,
+    );
+
     // Inicializar ThemeProvider
     final themeProvider = ThemeProvider();
     await themeProvider.waitForLoad();
