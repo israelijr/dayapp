@@ -97,7 +97,7 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
       final db = await DatabaseHelper().database;
       final result = await db.query(
         'historia',
-        where: 'user_id = ? AND arquivado IS NULL AND excluido IS NULL',
+        where: 'user_id = ? AND excluido IS NULL',
         whereArgs: [userId],
         orderBy: 'data DESC',
       );
@@ -386,6 +386,11 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
                       ],
                     ),
                   ),
+                  if (historia.arquivado != null)
+                    const Padding(
+                      padding: EdgeInsets.only(right: 4),
+                      child: Icon(Icons.archive_outlined, size: 16),
+                    ),
                   PopupMenuButton<String>(
                     icon: const Icon(Icons.more_vert),
                     onSelected: (value) async {

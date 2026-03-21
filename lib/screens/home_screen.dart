@@ -173,54 +173,51 @@ class _HomeScreenState extends State<HomeScreen> {
                 builder: (context) {
                   const duration = AppDurations.listSwitch;
                   Widget buildToggle(
-                    String asset,
+                    IconData icon,
                     bool active,
                     String tooltip,
                     VoidCallback onTap,
                   ) {
+                    final colorScheme = Theme.of(context).colorScheme;
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 6.0),
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(8),
-                        onTap: () {
-                          onTap();
-                        },
-                        child: AnimatedContainer(
-                          duration: duration,
-                          curve: Curves.easeInOut,
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: active
-                                ? Theme.of(context).colorScheme.secondary
-                                      .withValues(alpha: 0.14)
-                                : const Color(0x00000000),
-                            borderRadius: BorderRadius.circular(8),
-                            border: active
-                                ? Border.all(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.secondary,
-                                    width: 1.2,
-                                  )
-                                : null,
-                            boxShadow: active
-                                ? [
-                                    BoxShadow(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary
-                                          .withValues(alpha: 0.08),
-                                      blurRadius: 6,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ]
-                                : null,
-                          ),
-                          child: AnimatedScale(
+                      child: Tooltip(
+                        message: tooltip,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(8),
+                          onTap: () {
+                            onTap();
+                          },
+                          child: AnimatedContainer(
                             duration: duration,
-                            curve: Curves.easeOutBack,
-                            scale: active ? 1.05 : 1.0,
-                            child: Image.asset(asset, width: 28, height: 28),
+                            curve: Curves.easeInOut,
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: active
+                                  ? colorScheme.secondary.withValues(
+                                      alpha: 0.14,
+                                    )
+                                  : const Color(0x00000000),
+                              borderRadius: BorderRadius.circular(8),
+                              border: active
+                                  ? Border.all(
+                                      color: colorScheme.secondary,
+                                      width: 1.2,
+                                    )
+                                  : null,
+                            ),
+                            child: AnimatedScale(
+                              duration: duration,
+                              curve: Curves.easeOutBack,
+                              scale: active ? 1.05 : 1.0,
+                              child: Icon(
+                                icon,
+                                size: 28,
+                                color: active
+                                    ? colorScheme.secondary
+                                    : colorScheme.onSurfaceVariant,
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -230,7 +227,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   return Row(
                     children: [
                       buildToggle(
-                        'assets/image/card.png',
+                        Icons.view_agenda_rounded,
                         _isCardView,
                         'Ver em cards grandes',
                         () {
@@ -241,7 +238,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                       ),
                       buildToggle(
-                        'assets/image/icone_pequeno.png',
+                        Icons.grid_view_rounded,
                         !_isCardView,
                         'Ver em cards reduzidos',
                         () {
@@ -260,15 +257,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                           child: Tooltip(
                             message: 'Ver calendário',
-                            child: Container(
+                            child: AnimatedContainer(
+                              duration: duration,
+                              curve: Curves.easeInOut,
                               padding: const EdgeInsets.all(6),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: Image.asset(
-                                'assets/image/calendario.png',
-                                width: 28,
-                                height: 28,
+                              child: Icon(
+                                Icons.calendar_month_rounded,
+                                size: 28,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
                               ),
                             ),
                           ),
