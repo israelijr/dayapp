@@ -14,6 +14,7 @@ import '../models/tag.dart';
 import '../providers/auth_provider.dart';
 import '../providers/insight_provider.dart';
 import '../providers/refresh_provider.dart';
+import '../providers/scroll_position_provider.dart';
 import '../services/pdf_export_service.dart';
 import '../theme/animation_durations.dart';
 import '../theme/m3_expressive_theme.dart';
@@ -840,6 +841,8 @@ class _PaginatedHomeContent extends StatefulWidget {
 
 class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
   bool _hasRefreshed = false;
+  // Chave para identificar a posição do scroll desta tela
+  static const String _scrollPositionKey = 'home_list_scroll';
 
   @override
   void initState() {
@@ -847,10 +850,10 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
     // Recarrega dados quando a key muda (RefreshProvider foi atualizado)
     // Usa addPostFrameCallback para evitar setState durante build
     // Só executa uma vez por instância do widget
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!_hasRefreshed) {
         _hasRefreshed = true;
-        widget.onRefresh();
+        await widget.onRefresh();
         // Carrega insights ao abrir a Home
         if (!mounted) return;
         final userId =
@@ -860,8 +863,50 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
           // após qualquer mutação de histórias
           Provider.of<InsightProvider>(context, listen: false).refresh(userId);
         }
+        // Restaura posição do scroll após dados serem carregados
+        if (!mounted) return;
+        _restoreScrollPositionAfterLoad();
       }
     });
+  }
+
+  /// Restaura a posição do scroll após os dados serem carregados
+  /// Aguarda um frame para garantir que o ListView tem clientes
+  void _restoreScrollPositionAfterLoad() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final scrollProvider = Provider.of<ScrollPositionProvider>(
+        context,
+        listen: false,
+      );
+      final savedPosition = scrollProvider.getScrollPosition(
+        _scrollPositionKey,
+      );
+      if (widget.scrollController.hasClients && savedPosition > 0) {
+        widget.scrollController.jumpTo(savedPosition);
+      }
+    });
+  }
+
+  /// Salva a posição do scroll antes de sair da tela
+  void _saveScrollPosition() {
+    if (widget.scrollController.hasClients) {
+      final scrollProvider = Provider.of<ScrollPositionProvider>(
+        context,
+        listen: false,
+      );
+      scrollProvider.saveScrollPosition(
+        _scrollPositionKey,
+        widget.scrollController.offset,
+      );
+    }
+  }
+
+  @override
+  void deactivate() {
+    // Salva a posição quando o widget é removido da widget tree
+    _saveScrollPosition();
+    super.deactivate();
   }
 
   @override

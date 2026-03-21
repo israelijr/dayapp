@@ -19,6 +19,7 @@ import 'providers/insight_provider.dart';
 import 'providers/locale_provider.dart';
 import 'providers/pin_provider.dart';
 import 'providers/refresh_provider.dart';
+import 'providers/scroll_position_provider.dart';
 import 'providers/theme_provider.dart';
 import 'screens/about_screen.dart';
 import 'screens/backup_manager_screen.dart';
@@ -466,6 +467,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         // Provider para insights automáticos do feed da Home
         ChangeNotifierProvider(create: (_) => InsightProvider()),
         ChangeNotifierProvider.value(value: widget.pinProvider),
+        // Provider para manter posição do scroll em listas
+        ChangeNotifierProvider(create: (_) => ScrollPositionProvider()),
       ],
       child: Consumer2<ThemeProvider, LocaleProvider>(
         builder: (context, themeProvider, localeProvider, child) {

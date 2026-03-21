@@ -14,6 +14,7 @@ import '../models/tag.dart';
 import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
 import '../providers/refresh_provider.dart';
+import '../providers/scroll_position_provider.dart';
 import '../services/pdf_export_service.dart';
 import '../theme/animation_durations.dart';
 import '../theme/m3_expressive_theme.dart';
@@ -42,6 +43,58 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
   final _messengerKey = GlobalKey<ScaffoldMessengerState>();
 
   bool _isCardView = true; // true = modo blocos, false = modo ícones
+
+  // Controle de scroll para manter posição da lista
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Restaura posição do scroll ao abrir a tela
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _restoreScrollPosition();
+    });
+  }
+
+  @override
+  void dispose() {
+    // Salva posição do scroll ao sair da tela
+    _saveScrollPosition();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  /// Restaura a posição do scroll para a posição anterior
+  void _restoreScrollPosition() {
+    final scrollProvider = Provider.of<ScrollPositionProvider>(
+      context,
+      listen: false,
+    );
+    final scrollKey = 'group_list_scroll_${widget.grupo.nome}';
+    final savedPosition = scrollProvider.getScrollPosition(scrollKey);
+    if (_scrollController.hasClients && savedPosition > 0) {
+      _scrollController.jumpTo(savedPosition);
+    }
+  }
+
+  /// Salva a posição do scroll antes de sair da tela
+  void _saveScrollPosition() {
+    if (_scrollController.hasClients) {
+      final scrollProvider = Provider.of<ScrollPositionProvider>(
+        context,
+        listen: false,
+      );
+      final scrollKey = 'group_list_scroll_${widget.grupo.nome}';
+      scrollProvider.saveScrollPosition(scrollKey, _scrollController.offset);
+    }
+  }
+
+  @override
+  void deactivate() {
+    // Salva a posição quando o widget é removido da widget tree
+    _saveScrollPosition();
+    super.deactivate();
+  }
 
   // Converte nomes de humor antigos para emojis Unicode
   // Retorna null se já for um emoji (default case)
@@ -914,6 +967,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
                   duration: AppDurations.listSwitch,
                   child: ListView.builder(
                     key: ValueKey<bool>(_isCardView),
+                    controller: _scrollController,
                     padding: const EdgeInsets.symmetric(
                       vertical: 16,
                       horizontal: 12,
