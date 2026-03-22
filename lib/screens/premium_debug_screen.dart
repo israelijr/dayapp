@@ -136,21 +136,31 @@ class PremiumDebugScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               _FeatureRow(
-                label: 'Backup automático',
+                label: l10n.automaticBackup,
                 enabled: premium.canUseAutomaticBackup,
-                plan: 'Premium',
+                plan: l10n.premiumPlan,
               ),
               _FeatureRow(
-                label: 'Ocultar anúncios',
-                enabled: premium.canHideAds,
-                plan: 'Premium',
+                label: l10n.insightMonthlySummary,
+                enabled: premium.canViewAdvancedInsights,
+                plan: l10n.premiumPlan,
+              ),
+              _FeatureRow(
+                label: l10n.theme,
+                enabled: premium.canUsePremiumThemes,
+                plan: l10n.premiumPlan,
+              ),
+              _FeatureRow(
+                label: l10n.exportPdf,
+                enabled: premium.canExportPdf,
+                plan: l10n.premiumPlan,
               ),
               // Adicione novas features aqui conforme forem sendo criadas.
               // Exemplo futuro:
               // _FeatureRow(
-              //   label: 'Insights avançados',
-              //   enabled: premium.canViewInsights,
-              //   plan: 'Premium',
+              //   label: l10n.someFutureFeature,
+              //   enabled: premium.canUseCloudSync,
+              //   plan: l10n.premiumPlan,
               // ),
             ],
           );
@@ -229,13 +239,13 @@ class _FeatureRow extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
-              color: Colors.deepPurple.withValues(alpha: 0.12),
+              color: colorScheme.primary.withValues(alpha: 0.12),
             ),
             child: Text(
               plan,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 11,
-                color: Colors.deepPurple,
+                color: colorScheme.primary,
                 fontWeight: FontWeight.w600,
               ),
             ),

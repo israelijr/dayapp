@@ -44,13 +44,19 @@ class PremiumProvider with ChangeNotifier {
   /// Backup automático no logout com destino persistente.
   bool get canUseAutomaticBackup => _isPremium;
 
-  /// Ocultar anúncios em banner e intersticiais.
-  bool get canHideAds => _isPremium;
+  /// Libera leituras e métricas mais profundas dos dados do usuário.
+  bool get canViewAdvancedInsights => _isPremium;
+
+  /// Libera temas extras além do conjunto padrão gratuito.
+  bool get canUsePremiumThemes => _isPremium;
+
+  /// Libera exportações avançadas em PDF.
+  bool get canExportPdf => _isPremium;
 
   // Futuras features — adicione aqui conforme surgir necessidade:
-  // bool get canViewInsights   => _isPremium;
-  // bool get canUseExtraThemes => _isPremium;
-  // bool get canExportToPdf    => _isPremium;
+  // bool get canUseCloudSync       => _isPremium;
+  // bool get canUseAiAssistance    => _isPremium;
+  // bool get canUnlockStoryPacks   => _isPremium;
 
   // ---------------------------------------------------------------------------
   // Inicialização

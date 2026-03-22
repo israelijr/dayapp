@@ -39,7 +39,6 @@ import 'screens/search_screen.dart';
 import 'screens/settings_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/trash_screen.dart';
-import 'services/ad_service.dart';
 import 'services/engagement_service.dart';
 import 'services/inactivity_service.dart';
 import 'services/notification_service.dart';
@@ -149,9 +148,6 @@ class _AppLoaderState extends State<AppLoader> {
     final localeProvider = LocaleProvider();
     await localeProvider.load();
 
-    // Inicializar Google Mobile Ads (em paralelo com notificações)
-    final adsFuture = AdService().initialize();
-
     // Inicializar notificações
     final notificationsFuture = NotificationService().init((
       String? payload,
@@ -187,7 +183,7 @@ class _AppLoaderState extends State<AppLoader> {
     final engagementFuture = EngagementService().registerAppUsage();
 
     // Aguarda inicializações em paralelo
-    await Future.wait([adsFuture, notificationsFuture, engagementFuture]);
+    await Future.wait([notificationsFuture, engagementFuture]);
 
     return AppInitData(
       authProvider: authProvider,
