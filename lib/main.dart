@@ -483,7 +483,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   Brightness.light,
                 );
             if (lightScheme != null) {
-              lightTheme = ThemeData.from(colorScheme: lightScheme);
+              lightTheme = M3ExpressiveTheme.buildTheme(lightScheme);
             }
 
             final ColorScheme? darkScheme =
@@ -492,7 +492,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   Brightness.dark,
                 );
             if (darkScheme != null) {
-              darkTheme = ThemeData.from(colorScheme: darkScheme);
+              darkTheme = M3ExpressiveTheme.buildTheme(darkScheme);
             }
           }
 

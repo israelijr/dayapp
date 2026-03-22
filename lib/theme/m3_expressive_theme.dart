@@ -6,6 +6,17 @@ class M3ExpressiveTheme {
   // Seed color principal do DayApp (roxo)
   static const Color seedColor = Color(0xFFB388FF);
 
+  static ThemeData buildTheme(ColorScheme colorScheme) {
+    return ThemeData.from(colorScheme: colorScheme).copyWith(
+      appBarTheme: AppBarTheme(
+        backgroundColor: colorScheme.surface,
+        foregroundColor: colorScheme.onSurface,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+      ),
+    );
+  }
+
   /// Retorna o tema claro com estilo M3 Expressive
   static ThemeData getLightTheme() {
     final colorScheme = ColorScheme.fromSeed(
@@ -14,7 +25,7 @@ class M3ExpressiveTheme {
       dynamicSchemeVariant: DynamicSchemeVariant.vibrant,
     );
 
-    return ThemeData.from(colorScheme: colorScheme);
+    return buildTheme(colorScheme);
   }
 
   /// Retorna o tema escuro com estilo M3 Expressive
@@ -25,7 +36,7 @@ class M3ExpressiveTheme {
       dynamicSchemeVariant: DynamicSchemeVariant.vibrant,
     );
 
-    return ThemeData.from(colorScheme: colorScheme);
+    return buildTheme(colorScheme);
   }
 }
 

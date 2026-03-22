@@ -54,6 +54,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   // Estado do backup automático
   bool _autoBackupEnabled = false;
   DateTime? _lastAutoBackupTime;
+  int _localBackupCount = 0;
+  String _localBackupSize = '';
 
   @override
   void initState() {
@@ -199,10 +201,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _loadAutoBackupSettings() async {
     final enabled = await _autoBackupService.isEnabled();
     final lastBackup = await _autoBackupService.getLastBackupTime();
+    final backupFiles = await _autoBackupService.listLocalBackups();
+    int totalBytes = 0;
+    for (final f in backupFiles) {
+      if (await f.exists()) totalBytes += await f.length();
+    }
     setState(() {
       _autoBackupEnabled = enabled;
       _lastAutoBackupTime = lastBackup;
+      _localBackupCount = backupFiles.length;
+      _localBackupSize = _formatBackupSize(totalBytes);
     });
+  }
+
+  /// Formata bytes para string legível (KB / MB)
+  String _formatBackupSize(int bytes) {
+    if (bytes == 0) return '0 B';
+    const suffixes = ['B', 'KB', 'MB', 'GB'];
+    var size = bytes.toDouble();
+    var i = 0;
+    while (size >= 1024 && i < suffixes.length - 1) {
+      size /= 1024;
+      i++;
+    }
+    return '${size.toStringAsFixed(1)} ${suffixes[i]}';
   }
 
   @override
@@ -942,6 +964,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               dense: true,
             ),
+          ListTile(
+            leading: const Icon(Icons.folder_open),
+            title: Text(
+              loc.autoBackupStorageInfo(_localBackupCount, _localBackupSize),
+            ),
+            dense: true,
+            trailing: TextButton(
+              onPressed: () => Navigator.pushNamed(context, '/backup-manager'),
+              child: Text(loc.manageCompleteBackup),
+            ),
+          ),
           ListTile(
             leading: const Icon(Icons.info_outline),
             title: Text(loc.information),

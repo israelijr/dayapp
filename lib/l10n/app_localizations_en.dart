@@ -1949,4 +1949,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get premiumDebugNoSource => 'none';
+
+  @override
+  String get autoBackupPremiumRequired =>
+      'Automatic backups are a Premium feature. Upgrade to access saved backups, restore points and storage management.';
+
+  @override
+  String autoBackupStorageInfo(int count, String size) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count backups · $size',
+      one: '1 backup · $size',
+      zero: 'No backups saved',
+    );
+    return '$_temp0';
+  }
 }

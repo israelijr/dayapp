@@ -1957,6 +1957,22 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get premiumDebugNoSource => 'nenhuma';
+
+  @override
+  String get autoBackupPremiumRequired =>
+      'Backups automáticos são um recurso Premium. Faça upgrade para aceder a backups guardados, pontos de restauro e gestão de armazenamento.';
+
+  @override
+  String autoBackupStorageInfo(int count, String size) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count backups · $size',
+      one: '1 backup · $size',
+      zero: 'Nenhum backup guardado',
+    );
+    return '$_temp0';
+  }
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -3912,4 +3928,20 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get premiumDebugNoSource => 'nenhuma';
+
+  @override
+  String get autoBackupPremiumRequired =>
+      'Backups automáticos são um recurso Premium. Faça upgrade para acessar backups salvos, pontos de restauração e gerenciamento de armazenamento.';
+
+  @override
+  String autoBackupStorageInfo(int count, String size) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count backups · $size',
+      one: '1 backup · $size',
+      zero: 'Nenhum backup salvo',
+    );
+    return '$_temp0';
+  }
 }

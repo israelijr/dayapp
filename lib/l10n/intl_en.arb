@@ -1014,6 +1014,13 @@
   "premiumDebugFeatures": "Features controlled by plan",
   "@premiumDebugFeatures": { "description": "Section title listing features per plan" },
   "premiumDebugNoSource": "none",
-  "@premiumDebugNoSource": { "description": "Shown when no premium source is recorded" }
+  "@premiumDebugNoSource": { "description": "Shown when no premium source is recorded" },
+  "autoBackupPremiumRequired": "Automatic backups are a Premium feature. Upgrade to access saved backups, restore points and storage management.",
+  "@autoBackupPremiumRequired": { "description": "Message shown to Free users in the auto backup section" },
+  "autoBackupStorageInfo": "{count, plural, =0{No backups saved} =1{1 backup · {size}} other{{count} backups · {size}}}",
+  "@autoBackupStorageInfo": {
+    "description": "Backup count and total size shown in settings",
+    "placeholders": { "count": { "type": "int" }, "size": { "type": "String" } }
+  }
 }
 

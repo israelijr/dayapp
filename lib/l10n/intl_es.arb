@@ -986,5 +986,12 @@
   "premiumDebugFeatures": "Funcionalidades controladas por el plan",
   "@premiumDebugFeatures": { "description": "Título de la sección que lista funcionalidades por plan" },
   "premiumDebugNoSource": "ninguna",
-  "@premiumDebugNoSource": { "description": "Mostrado cuando no hay origen de premium registrado" }
+  "@premiumDebugNoSource": { "description": "Mostrado cuando no hay origen de premium registrado" },
+  "autoBackupPremiumRequired": "Los backups automáticos son una función Premium. Actualiza para acceder a backups guardados, puntos de restauración y gestión de almacenamiento.",
+  "@autoBackupPremiumRequired": { "description": "Mensaje mostrado a usuarios Free en la sección de backups automáticos" },
+  "autoBackupStorageInfo": "{count, plural, =0{Sin backups guardados} =1{1 backup · {size}} other{{count} backups · {size}}}",
+  "@autoBackupStorageInfo": {
+    "description": "Cantidad de backups y espacio total mostrado en configuración",
+    "placeholders": { "count": { "type": "int" }, "size": { "type": "String" } }
+  }
 }

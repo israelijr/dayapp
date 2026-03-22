@@ -1,14 +1,16 @@
 import 'dart:io';
 
 import 'package:dayapp/l10n/generated/app_localizations.dart';
-import 'package:intl/intl.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
+import '../providers/premium_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../services/auto_backup_service.dart';
 import '../services/backup_service.dart';
@@ -41,10 +43,12 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
   Future<void> _loadLocalBackups() async {
     try {
       final backups = await _autoBackupService.listLocalBackups();
+      if (!mounted) return;
       setState(() {
         _localBackups = backups;
       });
     } catch (e) {
+      // Silencia erro — lista de backups não crítica para o funcionamento da tela
       debugPrint('Erro ao carregar backups locais: $e');
     }
   }
@@ -134,8 +138,12 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
   /// Compartilha um backup automático
   Future<void> _shareLocalBackup(File backupFile) async {
     try {
-      debugPrint('Compartilhando arquivo: ${backupFile.path}');
-      // TODO: Implementar compartilhamento quando Share.shareXFiles estiver disponível
+      // ignore: deprecated_member_use
+      await Share.shareXFiles(
+        [XFile(backupFile.path)],
+        subject: 'Backup Automático DayApp',
+        text: backupFile.path.split('/').last,
+      );
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -202,7 +210,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: Text(loc.manageBackups), elevation: 0),
+      appBar: AppBar(title: Text(loc.manageBackups)),
       body: kIsWeb
           ? Center(
               child: Padding(
@@ -256,7 +264,9 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                                 children: [
                                   Icon(
                                     Icons.info_outline,
-                                    color: Theme.of(context).primaryColor,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
@@ -377,167 +387,229 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                       const SizedBox(height: 16),
 
                       // Seção de backups automáticos salvos localmente
-                      if (_localBackups.isNotEmpty)
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Card(
+                      Builder(
+                        builder: (context) {
+                          final premium = context.watch<PremiumProvider>();
+                          if (!premium.canUseAutomaticBackup) {
+                            // Banner para usuários Free
+                            return Card(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.surfaceContainerLow,
                               child: Padding(
                                 padding: const EdgeInsets.all(16),
-                                child: Column(
+                                child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Row(
-                                      children: [
-                                        Icon(
-                                          Icons.backup,
-                                          color: Theme.of(context).primaryColor,
-                                        ),
-                                        const SizedBox(width: 8),
-                                        const Expanded(
-                                          child: Text(
-                                            '💾 Backups Automáticos Salvos',
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          '${_localBackups.length} arquivo(s)',
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            color: Theme.of(
-                                              context,
-                                            ).colorScheme.onSurfaceVariant,
-                                          ),
-                                        ),
-                                      ],
+                                    Icon(
+                                      Icons.workspace_premium,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
+                                      size: 28,
                                     ),
-                                    const SizedBox(height: 12),
-                                    ..._localBackups.map(
-                                      (backup) => Padding(
-                                        padding: const EdgeInsets.only(
-                                          bottom: 8.0,
-                                        ),
-                                        child: Card(
-                                          color: Theme.of(
-                                            context,
-                                          ).colorScheme.surfaceContainerLow,
-                                          child: ListTile(
-                                            dense: true,
-                                            leading: const Icon(
-                                              Icons.archive,
-                                              size: 20,
-                                            ),
-                                            title: Text(
-                                              _formatBackupDate(
-                                                backup.path.split('/').last,
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            '✨ Premium',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 15,
+                                              color: Theme.of(
                                                 context,
-                                              ),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                            subtitle: FutureBuilder(
-                                              future: backup.length(),
-                                              builder: (context, snapshot) {
-                                                final bytes =
-                                                    snapshot.data ?? 0;
-                                                return Text(
-                                                  _formatFileSize(bytes),
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .onSurfaceVariant,
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                            trailing: PopupMenuButton(
-                                              itemBuilder: (context) => [
-                                                PopupMenuItem(
-                                                  child: ListTile(
-                                                    dense: true,
-                                                    leading: const Icon(
-                                                      Icons.restore,
-                                                      size: 18,
-                                                    ),
-                                                    title: const Text(
-                                                      'Restaurar',
-                                                      style: TextStyle(
-                                                        fontSize: 13,
-                                                      ),
-                                                    ),
-                                                    onTap: () {
-                                                      Navigator.pop(context);
-                                                      _restoreLocalBackup(
-                                                        backup,
-                                                      );
-                                                    },
-                                                  ),
-                                                ),
-                                                PopupMenuItem(
-                                                  child: ListTile(
-                                                    dense: true,
-                                                    leading: const Icon(
-                                                      Icons.share,
-                                                      size: 18,
-                                                    ),
-                                                    title: const Text(
-                                                      'Compartilhar',
-                                                      style: TextStyle(
-                                                        fontSize: 13,
-                                                      ),
-                                                    ),
-                                                    onTap: () {
-                                                      Navigator.pop(context);
-                                                      _shareLocalBackup(backup);
-                                                    },
-                                                  ),
-                                                ),
-                                                PopupMenuItem(
-                                                  child: ListTile(
-                                                    dense: true,
-                                                    leading: const Icon(
-                                                      Icons.delete,
-                                                      size: 18,
-                                                      color: Colors.red,
-                                                    ),
-                                                    title: const Text(
-                                                      'Deletar',
-                                                      style: TextStyle(
-                                                        fontSize: 13,
-                                                        color: Colors.red,
-                                                      ),
-                                                    ),
-                                                    onTap: () {
-                                                      Navigator.pop(context);
-                                                      _deleteLocalBackup(
-                                                        backup,
-                                                      );
-                                                    },
-                                                  ),
-                                                ),
-                                              ],
+                                              ).colorScheme.primary,
                                             ),
                                           ),
-                                        ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            loc.autoBackupPremiumRequired,
+                                            style: const TextStyle(
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                            ),
-                            const SizedBox(height: 16),
-                          ],
-                        ),
+                            );
+                          }
+                          // Lista de backups (Premium)
+                          if (_localBackups.isEmpty) {
+                            return const SizedBox.shrink();
+                          }
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Card(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons.backup,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.primary,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          const Expanded(
+                                            child: Text(
+                                              '💾 Backups Automáticos Salvos',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            '${_localBackups.length} arquivo(s)',
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              color: Theme.of(
+                                                context,
+                                              ).colorScheme.onSurfaceVariant,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 12),
+                                      ..._localBackups.map(
+                                        (backup) => Padding(
+                                          padding: const EdgeInsets.only(
+                                            bottom: 8.0,
+                                          ),
+                                          child: Card(
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.surfaceContainerLow,
+                                            child: ListTile(
+                                              dense: true,
+                                              leading: const Icon(
+                                                Icons.archive,
+                                                size: 20,
+                                              ),
+                                              title: Text(
+                                                _formatBackupDate(
+                                                  backup.path.split('/').last,
+                                                  context,
+                                                ),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                              subtitle: FutureBuilder(
+                                                future: backup.length(),
+                                                builder: (context, snapshot) {
+                                                  final bytes =
+                                                      snapshot.data ?? 0;
+                                                  return Text(
+                                                    _formatFileSize(bytes),
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .onSurfaceVariant,
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                              trailing: PopupMenuButton(
+                                                itemBuilder: (context) => [
+                                                  PopupMenuItem(
+                                                    child: ListTile(
+                                                      dense: true,
+                                                      leading: const Icon(
+                                                        Icons.restore,
+                                                        size: 18,
+                                                      ),
+                                                      title: const Text(
+                                                        'Restaurar',
+                                                        style: TextStyle(
+                                                          fontSize: 13,
+                                                        ),
+                                                      ),
+                                                      onTap: () {
+                                                        Navigator.pop(context);
+                                                        _restoreLocalBackup(
+                                                          backup,
+                                                        );
+                                                      },
+                                                    ),
+                                                  ),
+                                                  PopupMenuItem(
+                                                    child: ListTile(
+                                                      dense: true,
+                                                      leading: const Icon(
+                                                        Icons.share,
+                                                        size: 18,
+                                                      ),
+                                                      title: const Text(
+                                                        'Compartilhar',
+                                                        style: TextStyle(
+                                                          fontSize: 13,
+                                                        ),
+                                                      ),
+                                                      onTap: () {
+                                                        Navigator.pop(context);
+                                                        _shareLocalBackup(
+                                                          backup,
+                                                        );
+                                                      },
+                                                    ),
+                                                  ),
+                                                  PopupMenuItem(
+                                                    child: ListTile(
+                                                      dense: true,
+                                                      leading: const Icon(
+                                                        Icons.delete,
+                                                        size: 18,
+                                                        color: Colors.red,
+                                                      ),
+                                                      title: const Text(
+                                                        'Deletar',
+                                                        style: TextStyle(
+                                                          fontSize: 13,
+                                                          color: Colors.red,
+                                                        ),
+                                                      ),
+                                                      onTap: () {
+                                                        Navigator.pop(context);
+                                                        _deleteLocalBackup(
+                                                          backup,
+                                                        );
+                                                      },
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                            ],
+                          );
+                        },
+                      ),
 
                       // Mensagem de status (quando não está carregando)
                       if (!_isLoading && _statusMessage.isNotEmpty)

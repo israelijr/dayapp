@@ -3585,6 +3585,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'none'**
   String get premiumDebugNoSource;
+
+  /// Message shown to Free users in the auto backup section
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic backups are a Premium feature. Upgrade to access saved backups, restore points and storage management.'**
+  String get autoBackupPremiumRequired;
+
+  /// Backup count and total size shown in settings
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No backups saved} =1{1 backup · {size}} other{{count} backups · {size}}}'**
+  String autoBackupStorageInfo(int count, String size);
 }
 
 class _AppLocalizationsDelegate
