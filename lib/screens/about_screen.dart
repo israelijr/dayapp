@@ -1,5 +1,4 @@
 import 'package:dayapp/l10n/generated/app_localizations.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
@@ -42,10 +41,8 @@ class _AboutScreenState extends State<AboutScreen> {
   }
 
   /// Contabiliza toques na versão; ao 7.º toque (dentro de 3 s) abre o
-  /// PremiumDebugScreen. Funciona somente em modo debug (kDebugMode).
+  /// PremiumDebugScreen.
   void _handleVersionTap() {
-    if (!kDebugMode) return;
-
     final now = DateTime.now();
     if (_debugLastTap != null &&
         now.difference(_debugLastTap!) > const Duration(seconds: 3)) {

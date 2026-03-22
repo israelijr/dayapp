@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -8,17 +7,11 @@ import '../providers/premium_provider.dart';
 /// Tela oculta para simular Free/Premium durante o desenvolvimento.
 ///
 /// **Acesso:** toque 7 vezes na versão nas Configurações (easter egg).
-///
-/// Esta tela NUNCA aparece em builds de produção — é envolvida por
-/// `assert(kDebugMode)` e a navegação só ocorre quando `kDebugMode == true`.
 class PremiumDebugScreen extends StatelessWidget {
   const PremiumDebugScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Garante que o widget não renderiza nada útil fora de debug.
-    assert(kDebugMode, 'PremiumDebugScreen acessada fora do debug mode');
-
     final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
 
