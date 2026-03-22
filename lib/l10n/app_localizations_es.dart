@@ -689,6 +689,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String get cancel => 'Cancelar';
 
   @override
+  String get restore => 'Restaurar';
+
+  @override
+  String get delete => 'Eliminar';
+
+  @override
+  String get deleted => 'Eliminado';
+
+  @override
   String get performBackup => 'Hacer copia de seguridad';
 
   @override
@@ -1407,6 +1416,10 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get automaticBackupInfo =>
       'Cuando cierre sesión, se creará una copia de seguridad y podrá elegir dónde guardarla (carpeta local, Google Drive, etc).';
+
+  @override
+  String get automaticBackupInfoLocal =>
+      'Al cerrar sesión, una copia de seguridad se guarda automáticamente en su dispositivo. Puede exportarla a almacenamiento en la nube después si es necesario.';
 
   @override
   String get biometricsNotAvailable => 'No disponible en este dispositivo';

@@ -852,7 +852,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
               icon: Image.asset(
                 _isCardView
                     ? 'assets/image/card.png'
-                    : 'assets/image/icone_pequeno.png',
+                    : 'assets/image/icon.png',
                 width: 34,
                 height: 34,
               ),

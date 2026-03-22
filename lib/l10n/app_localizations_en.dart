@@ -678,6 +678,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cancel => 'Cancel';
 
   @override
+  String get restore => 'Restore';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get deleted => 'Deleted';
+
+  @override
   String get performBackup => 'Backup now';
 
   @override
@@ -1392,6 +1401,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get automaticBackupInfo =>
       'When you log out, a backup will be created and you can choose where to save it (local folder, Google Drive, etc).';
+
+  @override
+  String get automaticBackupInfoLocal =>
+      'On logout, a backup is automatically saved locally on your device. You can later export it to cloud storage if needed.';
 
   @override
   String get biometricsNotAvailable => 'Not available on this device';

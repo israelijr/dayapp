@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../db/database_helper.dart';
@@ -306,18 +305,18 @@ class _HomeScreenState extends State<HomeScreen> {
                             profileImage = FileImage(file);
                           } else {
                             profileImage = const AssetImage(
-                              'assets/image/icone_pequeno.png',
+                              'assets/image/icon.png',
                             );
                           }
                         } catch (_) {
                           profileImage = const AssetImage(
-                            'assets/image/icone_pequeno.png',
+                            'assets/image/icon.png',
                           );
                         }
                       }
                     } else {
                       profileImage = const AssetImage(
-                        'assets/image/icone_pequeno.png',
+                        'assets/image/icon.png',
                       );
                     }
 
@@ -413,7 +412,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                 stackTrace,
                                                               ) {
                                                                 return Image.asset(
-                                                                  'assets/image/icone_pequeno.png',
+                                                                  'assets/image/icon.png',
                                                                   fit: BoxFit
                                                                       .contain,
                                                                 );
@@ -430,12 +429,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                     .contain,
                                                               )
                                                             : Image.asset(
-                                                                'assets/image/icone_pequeno.png',
+                                                                'assets/image/icon.png',
                                                                 fit: BoxFit
                                                                     .contain,
                                                               )))
                                                 : Image.asset(
-                                                    'assets/image/icone_pequeno.png',
+                                                    'assets/image/icon.png',
                                                     fit: BoxFit.contain,
                                                   ),
                                           ),
@@ -553,22 +552,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   final configured = await autoBackup.isConfigured();
                   if (configured && mounted) {
                     final zipPath = await _showAutoBackupProgress(autoBackup);
-                    // Abre a tela de compartilhamento para o usuário escolher onde salvar
+                    // Backup automático agora é salvo localmente automaticamente
+                    // Nenhuma ação de compartilhamento necessária
                     if (zipPath != null) {
-                      try {
-                        // Evita bloqueio ao voltar do share sheet
-                        pinProvider.isPickingExternalMedia = true;
-                        // ignore: deprecated_member_use
-                        await Share.shareXFiles(
-                          [XFile(zipPath)],
-                          subject: 'Backup Automático DayApp',
-                          text: 'Backup automático do DayApp',
-                        );
-                      } catch (e) {
-                        // Silencia erro se o usuário cancelar o compartilhamento
-                      } finally {
-                        pinProvider.isPickingExternalMedia = false;
-                      }
+                      debugPrint('Backup automático salvo em: $zipPath');
                     }
                   }
 

@@ -1349,6 +1349,24 @@ abstract class AppLocalizations {
   /// **'Cancel'**
   String get cancel;
 
+  /// No description provided for @restore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get restore;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @deleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted'**
+  String get deleted;
+
   /// Label for performBackup
   ///
   /// In en, this message translates to:
@@ -2596,6 +2614,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'When you log out, a backup will be created and you can choose where to save it (local folder, Google Drive, etc).'**
   String get automaticBackupInfo;
+
+  /// No description provided for @automaticBackupInfoLocal.
+  ///
+  /// In en, this message translates to:
+  /// **'On logout, a backup is automatically saved locally on your device. You can later export it to cloud storage if needed.'**
+  String get automaticBackupInfoLocal;
 
   /// No description provided for @biometricsNotAvailable.
   ///

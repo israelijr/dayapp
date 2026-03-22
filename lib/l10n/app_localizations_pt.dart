@@ -683,6 +683,15 @@ class AppLocalizationsPt extends AppLocalizations {
   String get cancel => 'Cancelar';
 
   @override
+  String get restore => 'Restaurar';
+
+  @override
+  String get delete => 'Deletar';
+
+  @override
+  String get deleted => 'Deletado';
+
+  @override
   String get performBackup => 'Fazer backup';
 
   @override
@@ -1398,6 +1407,10 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get automaticBackupInfo =>
       'Ao fazer logout, um backup será criado e você poderá escolher onde salvar (pasta local, Google Drive, etc).';
+
+  @override
+  String get automaticBackupInfoLocal =>
+      'Ao fazer logout, um backup será salvo automaticamente no dispositivo. Você pode exportá-lo para nuvem depois se necessário.';
 
   @override
   String get biometricsNotAvailable => 'Não disponível neste dispositivo';
@@ -2625,6 +2638,15 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get cancel => 'Cancelar';
 
   @override
+  String get restore => 'Restaurar';
+
+  @override
+  String get delete => 'Deletar';
+
+  @override
+  String get deleted => 'Deletado';
+
+  @override
   String get performBackup => 'Fazer backup';
 
   @override
@@ -3340,6 +3362,10 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get automaticBackupInfo =>
       'Ao fazer logout, um backup será criado e você poderá escolher onde salvar (pasta local, Google Drive, etc).';
+
+  @override
+  String get automaticBackupInfoLocal =>
+      'Ao fazer logout, um backup será salvo automaticamente no dispositivo. Você pode exportá-lo para nuvem depois se necessário.';
 
   @override
   String get biometricsNotAvailable => 'Não disponível neste dispositivo';

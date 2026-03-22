@@ -751,7 +751,7 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
             icon: Image.asset(
               _isCardView
                   ? 'assets/image/card.png'
-                  : 'assets/image/icone_pequeno.png',
+                  : 'assets/image/icon.png',
               width: 34,
               height: 34,
             ),

@@ -945,7 +945,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ListTile(
             leading: const Icon(Icons.info_outline),
             title: Text(loc.information),
-            subtitle: Text(loc.automaticBackupInfo),
+            subtitle: Text(loc.automaticBackupInfoLocal),
             dense: true,
           ),
         ],

@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:dayapp/l10n/generated/app_localizations.dart';
+import 'package:intl/intl.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
@@ -7,6 +10,7 @@ import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
 import '../providers/refresh_provider.dart';
+import '../services/auto_backup_service.dart';
 import '../services/backup_service.dart';
 import '../theme/m3_expressive_theme.dart';
 
@@ -19,10 +23,180 @@ class BackupManagerScreen extends StatefulWidget {
 
 class _BackupManagerScreenState extends State<BackupManagerScreen> {
   final BackupService _backupService = BackupService();
+  final AutoBackupService _autoBackupService = AutoBackupService();
   bool _isLoading = false;
   String _statusMessage = '';
   double? _progressValue;
   bool _statusIsError = false; // nova flag para colorir card de status
+  List<File> _localBackups =
+      []; // lista de backups automáticos salvos localmente
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLocalBackups();
+  }
+
+  /// Carrega a lista de backups automáticos salvos localmente
+  Future<void> _loadLocalBackups() async {
+    try {
+      final backups = await _autoBackupService.listLocalBackups();
+      setState(() {
+        _localBackups = backups;
+      });
+    } catch (e) {
+      debugPrint('Erro ao carregar backups locais: $e');
+    }
+  }
+
+  /// Restaura um backup automático selecionado
+  Future<void> _restoreLocalBackup(File backupFile) async {
+    final loc = AppLocalizations.of(context)!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(loc.restoreConfirmTitle),
+        content: Text(
+          '${loc.restoreConfirmContent}\n\n${backupFile.path.split('/').last}',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(loc.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(loc.restore),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    setState(() {
+      _isLoading = true;
+      _statusMessage = '';
+      _progressValue = null;
+    });
+
+    try {
+      await _backupService.restoreFromZipFile(
+        backupFile.path,
+        onProgress: (msg) {
+          if (mounted) {
+            setState(() {
+              _statusMessage = msg;
+            });
+          }
+        },
+        onProgressValue: (value) {
+          if (mounted) {
+            setState(() {
+              _progressValue = value;
+            });
+          }
+        },
+        l10n: AppLocalizations.of(context),
+      );
+
+      if (mounted) {
+        setState(() {
+          _statusMessage = loc.restoreSuccessContent;
+          _statusIsError = false;
+        });
+        // Faz logout após restauração bem-sucedida
+        await Future.delayed(const Duration(seconds: 2));
+        if (!mounted) return;
+        final auth = Provider.of<AuthProvider>(context, listen: false);
+        final pinProvider = Provider.of<PinProvider>(context, listen: false);
+        await auth.logout();
+        pinProvider.updateUserLoginStatus(false);
+        if (!mounted) return;
+        Navigator.of(context).pushReplacementNamed('/login');
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _statusMessage = 'Erro ao restaurar: ${e.toString()}';
+          _statusIsError = true;
+        });
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  /// Compartilha um backup automático
+  Future<void> _shareLocalBackup(File backupFile) async {
+    try {
+      debugPrint('Compartilhando arquivo: ${backupFile.path}');
+      // TODO: Implementar compartilhamento quando Share.shareXFiles estiver disponível
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao compartilhar: ${e.toString()}'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    }
+  }
+
+  /// Deleta um backup automático
+  Future<void> _deleteLocalBackup(File backupFile) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(AppLocalizations.of(context)!.delete),
+        content: Text(
+          'Tem certeza que deseja deletar este backup?\n\n${backupFile.path.split('/').last}',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(AppLocalizations.of(context)!.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+            child: Text(AppLocalizations.of(context)!.delete),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    try {
+      await backupFile.delete();
+      await _loadLocalBackups();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.deleted),
+            backgroundColor: AppColors.emoticonGreen,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao deletar: ${e.toString()}'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -161,15 +335,14 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                                 style: const TextStyle(fontSize: 13),
                               ),
                               const SizedBox(height: 12),
-                              ElevatedButton.icon(
+                              FilledButton.icon(
                                 onPressed: _isLoading
                                     ? null
                                     : _createAndShareBackup,
                                 icon: const Icon(Icons.share),
                                 label: Text(loc.createAndShareBackup),
-                                style: ElevatedButton.styleFrom(
+                                style: FilledButton.styleFrom(
                                   minimumSize: const Size(double.infinity, 48),
-                                  backgroundColor: AppColors.emoticonGreen,
                                 ),
                               ),
                               const SizedBox(height: 20),
@@ -188,15 +361,12 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                                 style: const TextStyle(fontSize: 13),
                               ),
                               const SizedBox(height: 12),
-                              ElevatedButton.icon(
+                              FilledButton.tonalIcon(
                                 onPressed: _isLoading ? null : _restoreFromFile,
                                 icon: const Icon(Icons.file_upload),
                                 label: Text(loc.restoreFromFile),
-                                style: ElevatedButton.styleFrom(
+                                style: FilledButton.styleFrom(
                                   minimumSize: const Size(double.infinity, 48),
-                                  backgroundColor: Theme.of(
-                                    context,
-                                  ).colorScheme.tertiary,
                                 ),
                               ),
                             ],
@@ -205,6 +375,169 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                       ),
 
                       const SizedBox(height: 16),
+
+                      // Seção de backups automáticos salvos localmente
+                      if (_localBackups.isNotEmpty)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Card(
+                              child: Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.backup,
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        const Expanded(
+                                          child: Text(
+                                            '💾 Backups Automáticos Salvos',
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          '${_localBackups.length} arquivo(s)',
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.onSurfaceVariant,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 12),
+                                    ..._localBackups.map(
+                                      (backup) => Padding(
+                                        padding: const EdgeInsets.only(
+                                          bottom: 8.0,
+                                        ),
+                                        child: Card(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.surfaceContainerLow,
+                                          child: ListTile(
+                                            dense: true,
+                                            leading: const Icon(
+                                              Icons.archive,
+                                              size: 20,
+                                            ),
+                                            title: Text(
+                                              _formatBackupDate(
+                                                backup.path.split('/').last,
+                                                context,
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                            subtitle: FutureBuilder(
+                                              future: backup.length(),
+                                              builder: (context, snapshot) {
+                                                final bytes =
+                                                    snapshot.data ?? 0;
+                                                return Text(
+                                                  _formatFileSize(bytes),
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .onSurfaceVariant,
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                            trailing: PopupMenuButton(
+                                              itemBuilder: (context) => [
+                                                PopupMenuItem(
+                                                  child: ListTile(
+                                                    dense: true,
+                                                    leading: const Icon(
+                                                      Icons.restore,
+                                                      size: 18,
+                                                    ),
+                                                    title: const Text(
+                                                      'Restaurar',
+                                                      style: TextStyle(
+                                                        fontSize: 13,
+                                                      ),
+                                                    ),
+                                                    onTap: () {
+                                                      Navigator.pop(context);
+                                                      _restoreLocalBackup(
+                                                        backup,
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                                PopupMenuItem(
+                                                  child: ListTile(
+                                                    dense: true,
+                                                    leading: const Icon(
+                                                      Icons.share,
+                                                      size: 18,
+                                                    ),
+                                                    title: const Text(
+                                                      'Compartilhar',
+                                                      style: TextStyle(
+                                                        fontSize: 13,
+                                                      ),
+                                                    ),
+                                                    onTap: () {
+                                                      Navigator.pop(context);
+                                                      _shareLocalBackup(backup);
+                                                    },
+                                                  ),
+                                                ),
+                                                PopupMenuItem(
+                                                  child: ListTile(
+                                                    dense: true,
+                                                    leading: const Icon(
+                                                      Icons.delete,
+                                                      size: 18,
+                                                      color: Colors.red,
+                                                    ),
+                                                    title: const Text(
+                                                      'Deletar',
+                                                      style: TextStyle(
+                                                        fontSize: 13,
+                                                        color: Colors.red,
+                                                      ),
+                                                    ),
+                                                    onTap: () {
+                                                      Navigator.pop(context);
+                                                      _deleteLocalBackup(
+                                                        backup,
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+                        ),
 
                       // Mensagem de status (quando não está carregando)
                       if (!_isLoading && _statusMessage.isNotEmpty)
@@ -517,5 +850,43 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
         });
       }
     }
+  }
+
+  /// Extrai e formata a data/hora do nome do arquivo de backup de forma amigável
+  String _formatBackupDate(String filename, BuildContext context) {
+    // Nome esperado: backup_2026-03-22T15-30-00.zip
+    try {
+      final withoutExt = filename.replaceAll('.zip', '');
+      final parts = withoutExt.split('_');
+      if (parts.length < 2) return filename;
+      // Normaliza T e hífens de hora -> `:` para parse
+      final raw = parts.sublist(1).join('_');
+      final iso = raw.replaceFirstMapped(
+        RegExp(r'T(\d{2})-(\d{2})-(\d{2})'),
+        (m) => 'T${m[1]}:${m[2]}:${m[3]}',
+      );
+      final date = DateTime.tryParse(iso);
+      if (date == null) return filename;
+      final locale = Localizations.localeOf(context).toLanguageTag();
+      final dateStr = DateFormat.yMd(locale).format(date);
+      final timeStr = DateFormat.Hm(locale).format(date);
+      return '$dateStr  $timeStr';
+    } catch (_) {
+      return filename;
+    }
+  }
+
+  /// Formata um tamanho de arquivo em bytes para string legível
+  String _formatFileSize(int bytes) {
+    const suffixes = ['B', 'KB', 'MB', 'GB'];
+    var size = bytes.toDouble();
+    var suffixIndex = 0;
+
+    while (size > 1024 && suffixIndex < suffixes.length - 1) {
+      size /= 1024;
+      suffixIndex++;
+    }
+
+    return '${size.toStringAsFixed(2)} ${suffixes[suffixIndex]}';
   }
 }
