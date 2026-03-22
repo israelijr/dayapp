@@ -1902,6 +1902,48 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get resetPin => 'Redefinir PIN';
+
+  @override
+  String get premiumPlan => 'Premium';
+
+  @override
+  String get freePlan => 'Grátis';
+
+  @override
+  String get currentPlan => 'Plano atual';
+
+  @override
+  String get premiumDebugTitle => 'Debug Premium';
+
+  @override
+  String get premiumDebugSubtitle =>
+      'Somente em desenvolvimento — não visível na produção';
+
+  @override
+  String get premiumDebugActivate => 'Ativar Premium (debug)';
+
+  @override
+  String get premiumDebugDeactivate => 'Desativar Premium (voltar para Free)';
+
+  @override
+  String premiumDebugStatus(String plan) {
+    return 'Status: $plan';
+  }
+
+  @override
+  String premiumDebugSource(String source) {
+    return 'Origem: $source';
+  }
+
+  @override
+  String get premiumDebugWarning =>
+      'Esta tela só está disponível em builds debug. Não aparecerá em produção.';
+
+  @override
+  String get premiumDebugFeatures => 'Funcionalidades controladas pelo plano';
+
+  @override
+  String get premiumDebugNoSource => 'nenhuma';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -3802,4 +3844,46 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get resetPin => 'Redefinir PIN';
+
+  @override
+  String get premiumPlan => 'Premium';
+
+  @override
+  String get freePlan => 'Grátis';
+
+  @override
+  String get currentPlan => 'Plano atual';
+
+  @override
+  String get premiumDebugTitle => 'Debug Premium';
+
+  @override
+  String get premiumDebugSubtitle =>
+      'Somente em desenvolvimento — não visível na produção';
+
+  @override
+  String get premiumDebugActivate => 'Ativar Premium (debug)';
+
+  @override
+  String get premiumDebugDeactivate => 'Desativar Premium (voltar para Free)';
+
+  @override
+  String premiumDebugStatus(String plan) {
+    return 'Status: $plan';
+  }
+
+  @override
+  String premiumDebugSource(String source) {
+    return 'Origem: $source';
+  }
+
+  @override
+  String get premiumDebugWarning =>
+      'Esta tela só está disponível em builds debug. Não aparecerá em produção.';
+
+  @override
+  String get premiumDebugFeatures => 'Funcionalidades controladas pelo plano';
+
+  @override
+  String get premiumDebugNoSource => 'nenhuma';
 }

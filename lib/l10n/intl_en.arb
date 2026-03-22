@@ -979,6 +979,37 @@
   "resetPin": "Reset PIN",
   "@resetPin": { "description": "Button to reset PIN" },
   "recoveryCodeLabel": "Recovery code (6 digits)",
-  "@recoveryCodeLabel": { "description": "Label for recovery code input field" }
- }
+  "@recoveryCodeLabel": { "description": "Label for recovery code input field" },
+
+  "premiumPlan": "Premium",
+  "@premiumPlan": { "description": "Label for Premium plan" },
+  "freePlan": "Free",
+  "@freePlan": { "description": "Label for Free plan" },
+  "currentPlan": "Current plan",
+  "@currentPlan": { "description": "Label showing the current plan" },
+  "premiumDebugTitle": "Premium Debug",
+  "@premiumDebugTitle": { "description": "Title of the hidden premium debug screen" },
+  "premiumDebugSubtitle": "Development only — not visible in production",
+  "@premiumDebugSubtitle": { "description": "Subtitle of the hidden premium debug screen" },
+  "premiumDebugActivate": "Activate Premium (debug)",
+  "@premiumDebugActivate": { "description": "Button to activate premium in debug mode" },
+  "premiumDebugDeactivate": "Deactivate Premium (return to Free)",
+  "@premiumDebugDeactivate": { "description": "Button to deactivate premium in debug mode" },
+  "premiumDebugStatus": "Status: {plan}",
+  "@premiumDebugStatus": {
+    "description": "Current premium status line",
+    "placeholders": { "plan": { "type": "String" } }
+  },
+  "premiumDebugSource": "Source: {source}",
+  "@premiumDebugSource": {
+    "description": "Source that activated premium",
+    "placeholders": { "source": { "type": "String" } }
+  },
+  "premiumDebugWarning": "This screen is only available in debug builds. It will not appear in production.",
+  "@premiumDebugWarning": { "description": "Warning shown on the debug premium screen" },
+  "premiumDebugFeatures": "Features controlled by plan",
+  "@premiumDebugFeatures": { "description": "Section title listing features per plan" },
+  "premiumDebugNoSource": "none",
+  "@premiumDebugNoSource": { "description": "Shown when no premium source is recorded" }
+}
 

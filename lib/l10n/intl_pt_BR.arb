@@ -982,5 +982,36 @@
   "resetPin": "Redefinir PIN",
   "@resetPin": { "description": "Botão para redefinir PIN" },
   "recoveryCodeLabel": "Código de recuperação (6 dígitos)",
-  "@recoveryCodeLabel": { "description": "Rótulo para campo de código de recuperação" }
- }
+  "@recoveryCodeLabel": { "description": "Rótulo para campo de código de recuperação" },
+
+  "premiumPlan": "Premium",
+  "@premiumPlan": { "description": "Rótulo do plano Premium" },
+  "freePlan": "Grátis",
+  "@freePlan": { "description": "Rótulo do plano Free" },
+  "currentPlan": "Plano atual",
+  "@currentPlan": { "description": "Rótulo exibindo o plano atual" },
+  "premiumDebugTitle": "Debug Premium",
+  "@premiumDebugTitle": { "description": "Título da tela de debug do Premium" },
+  "premiumDebugSubtitle": "Somente em desenvolvimento — não visível na produção",
+  "@premiumDebugSubtitle": { "description": "Subtítulo da tela de debug do Premium" },
+  "premiumDebugActivate": "Ativar Premium (debug)",
+  "@premiumDebugActivate": { "description": "Botão para ativar premium em modo debug" },
+  "premiumDebugDeactivate": "Desativar Premium (voltar para Free)",
+  "@premiumDebugDeactivate": { "description": "Botão para desativar premium em modo debug" },
+  "premiumDebugStatus": "Status: {plan}",
+  "@premiumDebugStatus": {
+    "description": "Linha de status premium atual",
+    "placeholders": { "plan": { "type": "String" } }
+  },
+  "premiumDebugSource": "Origem: {source}",
+  "@premiumDebugSource": {
+    "description": "Origem que ativou o premium",
+    "placeholders": { "source": { "type": "String" } }
+  },
+  "premiumDebugWarning": "Esta tela só está disponível em builds debug. Não aparecerá em produção.",
+  "@premiumDebugWarning": { "description": "Aviso exibido na tela de debug do premium" },
+  "premiumDebugFeatures": "Funcionalidades controladas pelo plano",
+  "@premiumDebugFeatures": { "description": "Título da seção que lista funcionalidades por plano" },
+  "premiumDebugNoSource": "nenhuma",
+  "@premiumDebugNoSource": { "description": "Exibido quando não há origem de premium registrada" }
+}

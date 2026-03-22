@@ -1,10 +1,12 @@
 import 'package:dayapp/l10n/generated/app_localizations.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../providers/pin_provider.dart';
+import 'premium_debug_screen.dart';
 
 class AboutScreen extends StatefulWidget {
   const AboutScreen({super.key});
@@ -16,6 +18,10 @@ class AboutScreen extends StatefulWidget {
 class _AboutScreenState extends State<AboutScreen> {
   String _version = '1.0.0';
   String _buildNumber = '1';
+
+  // Contador para easter egg (7 toques na versão = abre PremiumDebugScreen)
+  int _debugTapCount = 0;
+  DateTime? _debugLastTap;
 
   @override
   void initState() {
@@ -32,6 +38,36 @@ class _AboutScreenState extends State<AboutScreen> {
       });
     } catch (e) {
       // Mantém valores padrão em caso de erro
+    }
+  }
+
+  /// Contabiliza toques na versão; ao 7.º toque (dentro de 3 s) abre o
+  /// PremiumDebugScreen. Funciona somente em modo debug (kDebugMode).
+  void _handleVersionTap() {
+    if (!kDebugMode) return;
+
+    final now = DateTime.now();
+    if (_debugLastTap != null &&
+        now.difference(_debugLastTap!) > const Duration(seconds: 3)) {
+      _debugTapCount = 0;
+    }
+    _debugLastTap = now;
+    _debugTapCount++;
+
+    if (_debugTapCount >= 7) {
+      _debugTapCount = 0;
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const PremiumDebugScreen()),
+      );
+    } else {
+      final restantes = 7 - _debugTapCount;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('$restantes toques para o modo debug'),
+          duration: const Duration(milliseconds: 800),
+        ),
+      );
     }
   }
 
@@ -368,13 +404,17 @@ class _AboutScreenState extends State<AboutScreen> {
               ),
             ),
             const SizedBox(height: 8),
-            Text(
-              l10n.aboutScreenVersionShort(_version),
-              style: TextStyle(
-                fontSize: 14,
-                color: Theme.of(
-                  context,
-                ).textTheme.bodySmall?.color?.withValues(alpha: 0.6),
+            // Easter egg: 7 toques abrem a tela de debug do Premium (somente em debug)
+            GestureDetector(
+              onTap: _handleVersionTap,
+              child: Text(
+                l10n.aboutScreenVersionShort(_version),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.color?.withValues(alpha: 0.6),
+                ),
               ),
             ),
           ],

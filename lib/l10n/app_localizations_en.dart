@@ -1894,4 +1894,46 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get resetPin => 'Reset PIN';
+
+  @override
+  String get premiumPlan => 'Premium';
+
+  @override
+  String get freePlan => 'Free';
+
+  @override
+  String get currentPlan => 'Current plan';
+
+  @override
+  String get premiumDebugTitle => 'Premium Debug';
+
+  @override
+  String get premiumDebugSubtitle =>
+      'Development only — not visible in production';
+
+  @override
+  String get premiumDebugActivate => 'Activate Premium (debug)';
+
+  @override
+  String get premiumDebugDeactivate => 'Deactivate Premium (return to Free)';
+
+  @override
+  String premiumDebugStatus(String plan) {
+    return 'Status: $plan';
+  }
+
+  @override
+  String premiumDebugSource(String source) {
+    return 'Source: $source';
+  }
+
+  @override
+  String get premiumDebugWarning =>
+      'This screen is only available in debug builds. It will not appear in production.';
+
+  @override
+  String get premiumDebugFeatures => 'Features controlled by plan';
+
+  @override
+  String get premiumDebugNoSource => 'none';
 }

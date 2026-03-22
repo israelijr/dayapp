@@ -951,5 +951,36 @@
   "resetPin": "Restablecer PIN",
   "@resetPin": { "description": "Botón para restablecer PIN" },
   "recoveryCodeLabel": "Código de recuperación (6 dígitos)",
-  "@recoveryCodeLabel": { "description": "Etiqueta para campo de código de recuperación" }
- }
+  "@recoveryCodeLabel": { "description": "Etiqueta para campo de código de recuperación" },
+
+  "premiumPlan": "Premium",
+  "@premiumPlan": { "description": "Etiqueta del plan Premium" },
+  "freePlan": "Gratis",
+  "@freePlan": { "description": "Etiqueta del plan Free" },
+  "currentPlan": "Plan actual",
+  "@currentPlan": { "description": "Etiqueta que muestra el plan actual" },
+  "premiumDebugTitle": "Debug Premium",
+  "@premiumDebugTitle": { "description": "Título de la pantalla de debug del Premium" },
+  "premiumDebugSubtitle": "Solo en desarrollo — no visible en producción",
+  "@premiumDebugSubtitle": { "description": "Subtítulo de la pantalla de debug del Premium" },
+  "premiumDebugActivate": "Activar Premium (debug)",
+  "@premiumDebugActivate": { "description": "Botón para activar premium en modo debug" },
+  "premiumDebugDeactivate": "Desactivar Premium (volver a Free)",
+  "@premiumDebugDeactivate": { "description": "Botón para desactivar premium en modo debug" },
+  "premiumDebugStatus": "Estado: {plan}",
+  "@premiumDebugStatus": {
+    "description": "Línea de estado premium actual",
+    "placeholders": { "plan": { "type": "String" } }
+  },
+  "premiumDebugSource": "Origen: {source}",
+  "@premiumDebugSource": {
+    "description": "Origen que activó el premium",
+    "placeholders": { "source": { "type": "String" } }
+  },
+  "premiumDebugWarning": "Esta pantalla solo está disponible en builds de debug. No aparecerá en producción.",
+  "@premiumDebugWarning": { "description": "Advertencia mostrada en la pantalla de debug premium" },
+  "premiumDebugFeatures": "Funcionalidades controladas por el plan",
+  "@premiumDebugFeatures": { "description": "Título de la sección que lista funcionalidades por plan" },
+  "premiumDebugNoSource": "ninguna",
+  "@premiumDebugNoSource": { "description": "Mostrado cuando no hay origen de premium registrado" }
+}

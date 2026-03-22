@@ -3489,6 +3489,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reset PIN'**
   String get resetPin;
+
+  /// Label for Premium plan
+  ///
+  /// In en, this message translates to:
+  /// **'Premium'**
+  String get premiumPlan;
+
+  /// Label for Free plan
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get freePlan;
+
+  /// Label showing the current plan
+  ///
+  /// In en, this message translates to:
+  /// **'Current plan'**
+  String get currentPlan;
+
+  /// Title of the hidden premium debug screen
+  ///
+  /// In en, this message translates to:
+  /// **'Premium Debug'**
+  String get premiumDebugTitle;
+
+  /// Subtitle of the hidden premium debug screen
+  ///
+  /// In en, this message translates to:
+  /// **'Development only — not visible in production'**
+  String get premiumDebugSubtitle;
+
+  /// Button to activate premium in debug mode
+  ///
+  /// In en, this message translates to:
+  /// **'Activate Premium (debug)'**
+  String get premiumDebugActivate;
+
+  /// Button to deactivate premium in debug mode
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate Premium (return to Free)'**
+  String get premiumDebugDeactivate;
+
+  /// Current premium status line
+  ///
+  /// In en, this message translates to:
+  /// **'Status: {plan}'**
+  String premiumDebugStatus(String plan);
+
+  /// Source that activated premium
+  ///
+  /// In en, this message translates to:
+  /// **'Source: {source}'**
+  String premiumDebugSource(String source);
+
+  /// Warning shown on the debug premium screen
+  ///
+  /// In en, this message translates to:
+  /// **'This screen is only available in debug builds. It will not appear in production.'**
+  String get premiumDebugWarning;
+
+  /// Section title listing features per plan
+  ///
+  /// In en, this message translates to:
+  /// **'Features controlled by plan'**
+  String get premiumDebugFeatures;
+
+  /// Shown when no premium source is recorded
+  ///
+  /// In en, this message translates to:
+  /// **'none'**
+  String get premiumDebugNoSource;
 }
 
 class _AppLocalizationsDelegate
