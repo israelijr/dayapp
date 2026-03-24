@@ -370,6 +370,40 @@
   "backupZipExplanation": "Generates a ZIP file that you can save to OneDrive, Google Drive, email or any other location.",
   "restoreSectionTitle": "Restore Backup",
   "restoreSectionDescription": "Select a backup file (ZIP) previously created to restore all your data.",
+  "autoBackupsSavedTitle": "Saved Automatic Backups",
+  "autoBackupsSavedCount": "{count} file(s)",
+  "@autoBackupsSavedCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "autoBackupShareSubject": "DayApp Automatic Backup",
+  "autoBackupSavedLocal": "Backup saved locally!",
+  "@autoBackupSavedLocal": {
+    "description": "Message shown when automatic backup is saved in local storage"
+  },
+  "backupShareSubject": "DayApp Backup",
+  "@backupShareSubject": {
+    "description": "Subject used when sharing a manual backup file"
+  },
+  "backupDeleteConfirm": "Are you sure you want to delete this backup?\n\n{fileName}",
+  "@backupDeleteConfirm": {
+    "placeholders": {
+      "fileName": {"type": "String"}
+    }
+  },
+  "backupShareError": "Error sharing backup: {message}",
+  "@backupShareError": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  },
+  "backupDeleteError": "Error deleting backup: {message}",
+  "@backupDeleteError": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  },
   "processing": "Processing...",
   "pleaseWait": "Please wait...",
   "backupStarting": "Starting backup...",

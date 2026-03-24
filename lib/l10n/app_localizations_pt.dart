@@ -899,6 +899,38 @@ class AppLocalizationsPt extends AppLocalizations {
       'Selecione um arquivo de backup (ZIP) anteriormente criado para restaurar todos os seus dados.';
 
   @override
+  String get autoBackupsSavedTitle => 'Backups Automáticos Salvos';
+
+  @override
+  String autoBackupsSavedCount(int count) {
+    return '$count arquivo(s)';
+  }
+
+  @override
+  String get autoBackupShareSubject => 'Backup Automático DayApp';
+
+  @override
+  String get autoBackupSavedLocal => 'Backup salvo localmente!';
+
+  @override
+  String get backupShareSubject => 'Backup DayApp';
+
+  @override
+  String backupDeleteConfirm(String fileName) {
+    return 'Tem certeza que deseja deletar este backup?\n\n$fileName';
+  }
+
+  @override
+  String backupShareError(String message) {
+    return 'Erro ao compartilhar backup: $message';
+  }
+
+  @override
+  String backupDeleteError(String message) {
+    return 'Erro ao deletar backup: $message';
+  }
+
+  @override
   String get processing => 'Processando...';
 
   @override
@@ -2868,6 +2900,38 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get restoreSectionDescription =>
       'Selecione um arquivo de backup (ZIP) anteriormente criado para restaurar todos os seus dados.';
+
+  @override
+  String get autoBackupsSavedTitle => 'Backups Automáticos Salvos';
+
+  @override
+  String autoBackupsSavedCount(int count) {
+    return '$count arquivo(s)';
+  }
+
+  @override
+  String get autoBackupShareSubject => 'Backup Automático DayApp';
+
+  @override
+  String get autoBackupSavedLocal => 'Backup salvo localmente!';
+
+  @override
+  String get backupShareSubject => 'Backup DayApp';
+
+  @override
+  String backupDeleteConfirm(String fileName) {
+    return 'Tem certeza que deseja deletar este backup?\n\n$fileName';
+  }
+
+  @override
+  String backupShareError(String message) {
+    return 'Erro ao compartilhar backup: $message';
+  }
+
+  @override
+  String backupDeleteError(String message) {
+    return 'Erro ao deletar backup: $message';
+  }
 
   @override
   String get processing => 'Processando...';

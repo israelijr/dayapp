@@ -1763,6 +1763,54 @@ abstract class AppLocalizations {
   /// **'Select a backup file (ZIP) previously created to restore all your data.'**
   String get restoreSectionDescription;
 
+  /// No description provided for @autoBackupsSavedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved Automatic Backups'**
+  String get autoBackupsSavedTitle;
+
+  /// No description provided for @autoBackupsSavedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} file(s)'**
+  String autoBackupsSavedCount(int count);
+
+  /// No description provided for @autoBackupShareSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'DayApp Automatic Backup'**
+  String get autoBackupShareSubject;
+
+  /// Message shown when automatic backup is saved in local storage
+  ///
+  /// In en, this message translates to:
+  /// **'Backup saved locally!'**
+  String get autoBackupSavedLocal;
+
+  /// Subject used when sharing a manual backup file
+  ///
+  /// In en, this message translates to:
+  /// **'DayApp Backup'**
+  String get backupShareSubject;
+
+  /// No description provided for @backupDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this backup?\n\n{fileName}'**
+  String backupDeleteConfirm(String fileName);
+
+  /// No description provided for @backupShareError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error sharing backup: {message}'**
+  String backupShareError(String message);
+
+  /// No description provided for @backupDeleteError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error deleting backup: {message}'**
+  String backupDeleteError(String message);
+
   /// No description provided for @processing.
   ///
   /// In en, this message translates to:

@@ -319,6 +319,40 @@
   "backupZipExplanation": "Gera um arquivo ZIP que você pode salvar no OneDrive, Google Drive, email ou qualquer outro local.",
   "restoreSectionTitle": "Restaurar Backup",
   "restoreSectionDescription": "Selecione um arquivo de backup (ZIP) anteriormente criado para restaurar todos os seus dados.",
+  "autoBackupsSavedTitle": "Backups Automáticos Salvos",
+  "autoBackupsSavedCount": "{count} arquivo(s)",
+  "@autoBackupsSavedCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "autoBackupShareSubject": "Backup Automático DayApp",
+  "autoBackupSavedLocal": "Backup salvo localmente!",
+  "@autoBackupSavedLocal": {
+    "description": "Mensagem exibida quando o backup automático é salvo no armazenamento local"
+  },
+  "backupShareSubject": "Backup DayApp",
+  "@backupShareSubject": {
+    "description": "Assunto usado ao compartilhar um arquivo de backup manual"
+  },
+  "backupDeleteConfirm": "Tem certeza que deseja deletar este backup?\n\n{fileName}",
+  "@backupDeleteConfirm": {
+    "placeholders": {
+      "fileName": {"type": "String"}
+    }
+  },
+  "backupShareError": "Erro ao compartilhar backup: {message}",
+  "@backupShareError": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  },
+  "backupDeleteError": "Erro ao deletar backup: {message}",
+  "@backupDeleteError": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  },
   "processing": "Processando...",
   "pleaseWait": "Por favor, aguarde...",
   "backupStarting": "Iniciando backup...",

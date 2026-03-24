@@ -315,9 +315,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         }
                       }
                     } else {
-                      profileImage = const AssetImage(
-                        'assets/image/icon.png',
-                      );
+                      profileImage = const AssetImage('assets/image/icon.png');
                     }
 
                     return Row(
@@ -611,12 +609,14 @@ class _HomeScreenState extends State<HomeScreen> {
   /// Exibe dialog de progresso durante o backup automático ao fazer logout.
   /// Retorna o caminho do ZIP criado, ou null em caso de erro/cancelamento.
   Future<String?> _showAutoBackupProgress(AutoBackupService autoBackup) async {
+    final l10n = AppLocalizations.of(context)!;
     // Controlador para atualizar o texto de progresso
-    final progressNotifier = ValueNotifier<String>('Iniciando backup...');
+    final progressNotifier = ValueNotifier<String>(l10n.backupStarting);
     String? resultPath;
 
     // Inicia o backup antes de abrir o dialog
     final backupFuture = autoBackup.executeBackup(
+      l10n: l10n,
       onProgress: (message) {
         progressNotifier.value = message;
       },
@@ -642,8 +642,8 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 const CircularProgressIndicator(),
                 const SizedBox(height: 20),
-                const Text(
-                  'Backup Automático',
+                Text(
+                  l10n.automaticBackup,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),

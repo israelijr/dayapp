@@ -905,6 +905,38 @@ class AppLocalizationsEs extends AppLocalizations {
       'Selecciona un archivo de copia de seguridad (ZIP) creado previamente para restaurar todos tus datos.';
 
   @override
+  String get autoBackupsSavedTitle => 'Copias automáticas guardadas';
+
+  @override
+  String autoBackupsSavedCount(int count) {
+    return '$count archivo(s)';
+  }
+
+  @override
+  String get autoBackupShareSubject => 'Copia automática de DayApp';
+
+  @override
+  String get autoBackupSavedLocal => '¡Copia de seguridad guardada localmente!';
+
+  @override
+  String get backupShareSubject => 'Copia de seguridad de DayApp';
+
+  @override
+  String backupDeleteConfirm(String fileName) {
+    return '¿Seguro que quieres eliminar esta copia de seguridad?\n\n$fileName';
+  }
+
+  @override
+  String backupShareError(String message) {
+    return 'Error al compartir la copia de seguridad: $message';
+  }
+
+  @override
+  String backupDeleteError(String message) {
+    return 'Error al eliminar la copia de seguridad: $message';
+  }
+
+  @override
   String get processing => 'Procesando...';
 
   @override

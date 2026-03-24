@@ -30,6 +30,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
   String _statusMessage = '';
   double? _progressValue;
   bool _statusIsError = false; // nova flag para colorir card de status
+  bool _statusIsSuccess = false;
   List<File> _localBackups =
       []; // lista de backups automáticos salvos localmente
 
@@ -82,6 +83,8 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
       _isLoading = true;
       _statusMessage = '';
       _progressValue = null;
+      _statusIsError = false;
+      _statusIsSuccess = false;
     });
 
     try {
@@ -101,13 +104,14 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
             });
           }
         },
-        l10n: AppLocalizations.of(context),
+        l10n: loc,
       );
 
       if (mounted) {
         setState(() {
           _statusMessage = loc.restoreSuccessContent;
           _statusIsError = false;
+          _statusIsSuccess = true;
         });
         // Faz logout após restauração bem-sucedida
         await Future.delayed(const Duration(seconds: 2));
@@ -122,8 +126,9 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _statusMessage = 'Erro ao restaurar: ${e.toString()}';
+          _statusMessage = loc.restoreError(e.toString());
           _statusIsError = true;
+          _statusIsSuccess = false;
         });
       }
     } finally {
@@ -137,18 +142,19 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
 
   /// Compartilha um backup automático
   Future<void> _shareLocalBackup(File backupFile) async {
+    final loc = AppLocalizations.of(context)!;
     try {
       // ignore: deprecated_member_use
       await Share.shareXFiles(
         [XFile(backupFile.path)],
-        subject: 'Backup Automático DayApp',
+        subject: loc.autoBackupShareSubject,
         text: backupFile.path.split('/').last,
       );
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erro ao compartilhar: ${e.toString()}'),
+            content: Text(loc.backupShareError(e.toString())),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -158,24 +164,23 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
 
   /// Deleta um backup automático
   Future<void> _deleteLocalBackup(File backupFile) async {
+    final loc = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.delete),
-        content: Text(
-          'Tem certeza que deseja deletar este backup?\n\n${backupFile.path.split('/').last}',
-        ),
+        title: Text(loc.delete),
+        content: Text(loc.backupDeleteConfirm(backupFile.path.split('/').last)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text(AppLocalizations.of(context)!.cancel),
+            child: Text(loc.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
             style: FilledButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.error,
             ),
-            child: Text(AppLocalizations.of(context)!.delete),
+            child: Text(loc.delete),
           ),
         ],
       ),
@@ -189,7 +194,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(AppLocalizations.of(context)!.deleted),
+            content: Text(loc.deleted),
             backgroundColor: AppColors.emoticonGreen,
           ),
         );
@@ -198,7 +203,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erro ao deletar: ${e.toString()}'),
+            content: Text(loc.backupDeleteError(e.toString())),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -415,7 +420,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            '✨ Premium',
+                                            '✨ ${loc.premiumPlan}',
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 15,
@@ -462,9 +467,9 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                                             ).colorScheme.primary,
                                           ),
                                           const SizedBox(width: 8),
-                                          const Expanded(
+                                          Expanded(
                                             child: Text(
-                                              '💾 Backups Automáticos Salvos',
+                                              '💾 ${loc.autoBackupsSavedTitle}',
                                               style: TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold,
@@ -474,7 +479,9 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                                           ),
                                           const SizedBox(width: 8),
                                           Text(
-                                            '${_localBackups.length} arquivo(s)',
+                                            loc.autoBackupsSavedCount(
+                                              _localBackups.length,
+                                            ),
                                             style: TextStyle(
                                               fontSize: 13,
                                               color: Theme.of(
@@ -537,8 +544,8 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                                                         Icons.restore,
                                                         size: 18,
                                                       ),
-                                                      title: const Text(
-                                                        'Restaurar',
+                                                      title: Text(
+                                                        loc.restore,
                                                         style: TextStyle(
                                                           fontSize: 13,
                                                         ),
@@ -558,8 +565,8 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                                                         Icons.share,
                                                         size: 18,
                                                       ),
-                                                      title: const Text(
-                                                        'Compartilhar',
+                                                      title: Text(
+                                                        loc.share,
                                                         style: TextStyle(
                                                           fontSize: 13,
                                                         ),
@@ -580,8 +587,8 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                                                         size: 18,
                                                         color: Colors.red,
                                                       ),
-                                                      title: const Text(
-                                                        'Deletar',
+                                                      title: Text(
+                                                        loc.delete,
                                                         style: TextStyle(
                                                           fontSize: 13,
                                                           color: Colors.red,
@@ -624,8 +631,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                             child: Row(
                               children: [
                                 Icon(
-                                  (_statusMessage.contains('sucesso') ||
-                                          _statusMessage.contains('criado'))
+                                  _statusIsSuccess
                                       ? Icons.check_circle
                                       : Icons.error,
                                   color: _statusIsError
@@ -732,6 +738,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
       _statusMessage = loc.backupStarting;
       _progressValue = null;
       _statusIsError = false;
+      _statusIsSuccess = false;
     });
 
     try {
@@ -757,6 +764,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
           _statusMessage = loc.backupCreatedSuccess;
           _progressValue = null;
           _statusIsError = false;
+          _statusIsSuccess = true;
         });
       }
 
@@ -776,6 +784,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
           _statusMessage = loc.backupError(e.toString());
           _progressValue = null;
           _statusIsError = true;
+          _statusIsSuccess = false;
         });
       }
     }
@@ -846,6 +855,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
         _statusMessage = loc.restoreStarting;
         _progressValue = null;
         _statusIsError = false;
+        _statusIsSuccess = false;
       });
 
       // Aguardar o próximo frame para garantir que o setState foi processado
@@ -883,6 +893,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
         _statusMessage = loc.restoreSuccess;
         _progressValue = null;
         _statusIsError = false;
+        _statusIsSuccess = true;
       });
 
       // Mostrar diálogo de sucesso
@@ -919,6 +930,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
           _statusMessage = loc.restoreError(e.toString());
           _progressValue = null;
           _statusIsError = true;
+          _statusIsSuccess = false;
         });
       }
     }

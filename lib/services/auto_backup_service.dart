@@ -5,6 +5,7 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../l10n/generated/app_localizations.dart';
 import 'backup_service.dart';
 
 /// Serviço de backup automático ao fazer logout
@@ -129,15 +130,19 @@ class AutoBackupService {
   /// A retenção de backups antigos é aplicada automaticamente (mantém últimos 5).
   /// Chama [onProgress] para atualizar a UI.
   /// Retorna o caminho do ZIP local ou null em caso de erro.
-  Future<String?> executeBackup({void Function(String)? onProgress}) async {
+  Future<String?> executeBackup({
+    required AppLocalizations l10n,
+    void Function(String)? onProgress,
+  }) async {
     try {
       final enabled = await isEnabled();
       if (!enabled) return null;
 
-      onProgress?.call('Criando backup...');
+      onProgress?.call(l10n.backupStarting);
 
       // Cria backup no temp
       final tempZipPath = await _backupService.createBackupZipFile(
+        l10n: l10n,
         onProgress: onProgress,
       );
 
@@ -158,11 +163,11 @@ class AutoBackupService {
       // Aplica retenção (remove backups antigos)
       await _applyRetention();
 
-      onProgress?.call('Backup salvo localmente!');
+      onProgress?.call(l10n.autoBackupSavedLocal);
       return savedFile.path;
     } catch (e) {
       debugPrint('Erro no backup automático: $e');
-      onProgress?.call('Erro ao criar backup: $e');
+      onProgress?.call(l10n.backupError(e.toString()));
       return null;
     }
   }

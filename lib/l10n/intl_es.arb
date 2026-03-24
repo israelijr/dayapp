@@ -345,6 +345,40 @@
   "backupZipExplanation": "Genera un archivo ZIP que puedes guardar en OneDrive, Google Drive, correo electrónico o cualquier otra ubicación.",
   "restoreSectionTitle": "Restaurar copia de seguridad",
   "restoreSectionDescription": "Selecciona un archivo de copia de seguridad (ZIP) creado previamente para restaurar todos tus datos.",
+  "autoBackupsSavedTitle": "Copias automáticas guardadas",
+  "autoBackupsSavedCount": "{count} archivo(s)",
+  "@autoBackupsSavedCount": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "autoBackupShareSubject": "Copia automática de DayApp",
+  "autoBackupSavedLocal": "¡Copia de seguridad guardada localmente!",
+  "@autoBackupSavedLocal": {
+    "description": "Mensaje mostrado cuando la copia automática se guarda en el almacenamiento local"
+  },
+  "backupShareSubject": "Copia de seguridad de DayApp",
+  "@backupShareSubject": {
+    "description": "Asunto usado al compartir un archivo de copia manual"
+  },
+  "backupDeleteConfirm": "¿Seguro que quieres eliminar esta copia de seguridad?\n\n{fileName}",
+  "@backupDeleteConfirm": {
+    "placeholders": {
+      "fileName": {"type": "String"}
+    }
+  },
+  "backupShareError": "Error al compartir la copia de seguridad: {message}",
+  "@backupShareError": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  },
+  "backupDeleteError": "Error al eliminar la copia de seguridad: {message}",
+  "@backupDeleteError": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  },
   "processing": "Procesando...",
   "pleaseWait": "Por favor espera...",
   "backupStarting": "Iniciando copia de seguridad...",

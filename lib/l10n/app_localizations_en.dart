@@ -894,6 +894,38 @@ class AppLocalizationsEn extends AppLocalizations {
       'Select a backup file (ZIP) previously created to restore all your data.';
 
   @override
+  String get autoBackupsSavedTitle => 'Saved Automatic Backups';
+
+  @override
+  String autoBackupsSavedCount(int count) {
+    return '$count file(s)';
+  }
+
+  @override
+  String get autoBackupShareSubject => 'DayApp Automatic Backup';
+
+  @override
+  String get autoBackupSavedLocal => 'Backup saved locally!';
+
+  @override
+  String get backupShareSubject => 'DayApp Backup';
+
+  @override
+  String backupDeleteConfirm(String fileName) {
+    return 'Are you sure you want to delete this backup?\n\n$fileName';
+  }
+
+  @override
+  String backupShareError(String message) {
+    return 'Error sharing backup: $message';
+  }
+
+  @override
+  String backupDeleteError(String message) {
+    return 'Error deleting backup: $message';
+  }
+
+  @override
   String get processing => 'Processing...';
 
   @override
