@@ -5,7 +5,7 @@ import '../db/tag_helper.dart';
 import '../models/historia.dart';
 import '../models/tag.dart';
 
-class CompactHistoriaCard extends StatelessWidget {
+class CompactHistoriaCard extends StatefulWidget {
   final Historia historia;
   final String localeName;
   final Widget? trailing;
@@ -22,6 +22,35 @@ class CompactHistoriaCard extends StatelessWidget {
     this.showMood = true,
     super.key,
   });
+
+  @override
+  State<CompactHistoriaCard> createState() => _CompactHistoriaCardState();
+}
+
+class _CompactHistoriaCardState extends State<CompactHistoriaCard> {
+  List<Tag> _tags = const [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTags();
+  }
+
+  @override
+  void didUpdateWidget(CompactHistoriaCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Recarrega tags apenas se a história mudou
+    if (oldWidget.historia.id != widget.historia.id) {
+      _loadTags();
+    }
+  }
+
+  Future<void> _loadTags() async {
+    final id = widget.historia.id;
+    if (id == null) return;
+    final result = await TagHelper().getTagsByHistoria(id);
+    if (mounted) setState(() => _tags = result);
+  }
 
   String? _convertLegacyEmoticon(String emoticon) {
     switch (emoticon) {
@@ -50,8 +79,54 @@ class CompactHistoriaCard extends StatelessWidget {
     }
   }
 
+  Widget _buildTags(BuildContext context, ColorScheme colorScheme) {
+    final historia = widget.historia;
+    final legacyTag = historia.tag;
+    final tagNames = _tags.isNotEmpty
+        ? _tags.map((t) => t.nome).toList(growable: false)
+        : (legacyTag != null && legacyTag.isNotEmpty
+              ? <String>[legacyTag]
+              : const <String>[]);
+
+    if (tagNames.isEmpty) return const SizedBox.shrink();
+
+    return Wrap(
+      spacing: 4,
+      runSpacing: 4,
+      children: tagNames
+          .map(
+            (name) => Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? colorScheme.primaryContainer
+                    : colorScheme.primaryContainer.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                name,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? colorScheme.onPrimaryContainer
+                      : colorScheme.primary,
+                ),
+              ),
+            ),
+          )
+          .toList(growable: false),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final historia = widget.historia;
+    final localeName = widget.localeName;
+    final trailing = widget.trailing;
+    final onTap = widget.onTap;
+    final margin = widget.margin;
+    final showMood = widget.showMood;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Card(
@@ -133,60 +208,7 @@ class CompactHistoriaCard extends StatelessWidget {
                     ),
                     if (historia.id != null) ...[
                       const SizedBox(height: 6),
-                      FutureBuilder<List<Tag>>(
-                        future: TagHelper().getTagsByHistoria(historia.id!),
-                        builder: (context, snapshot) {
-                          final newTags = snapshot.data ?? const <Tag>[];
-                          final legacyTag = historia.tag;
-                          final tagNames = newTags.isNotEmpty
-                              ? newTags
-                                    .map((tag) => tag.nome)
-                                    .toList(growable: false)
-                              : (legacyTag != null && legacyTag.isNotEmpty
-                                    ? <String>[legacyTag]
-                                    : const <String>[]);
-
-                          if (tagNames.isEmpty) {
-                            return const SizedBox.shrink();
-                          }
-
-                          return Wrap(
-                            spacing: 4,
-                            runSpacing: 4,
-                            children: tagNames
-                                .map(
-                                  (name) => Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 4,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color:
-                                          Theme.of(context).brightness ==
-                                              Brightness.dark
-                                          ? colorScheme.primaryContainer
-                                          : colorScheme.primaryContainer
-                                                .withValues(alpha: 0.12),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Text(
-                                      name,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color:
-                                            Theme.of(context).brightness ==
-                                                Brightness.dark
-                                            ? colorScheme.onPrimaryContainer
-                                            : colorScheme.primary,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                                .toList(growable: false),
-                          );
-                        },
-                      ),
+                      _buildTags(context, colorScheme),
                     ],
                   ],
                 ),
@@ -195,7 +217,7 @@ class CompactHistoriaCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 48),
-                  child: trailing!,
+                  child: trailing,
                 ),
               ],
             ],

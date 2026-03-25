@@ -47,7 +47,20 @@ void main() {
     });
 
     test(
-      'validateCapituloConfig: retorna erro se newChapter com < 3 entradas',
+      'validateCapituloConfig: retorna erro se newChapter com < 2 entradas relacionadas',
+      () {
+        final result = service.validateCapituloConfig(
+          modo: CapituloVinculoModo.newChapter,
+          l10n: mockL10n,
+          novoCapituloTitulo: 'Meu Capítulo',
+          novoCapituloEntradasCount: 1,
+        );
+        expect(result, equals('At least 2 related entries are required'));
+      },
+    );
+
+    test(
+      'validateCapituloConfig: passa se newChapter com 2 entradas relacionadas',
       () {
         final result = service.validateCapituloConfig(
           modo: CapituloVinculoModo.newChapter,
@@ -55,7 +68,7 @@ void main() {
           novoCapituloTitulo: 'Meu Capítulo',
           novoCapituloEntradasCount: 2,
         );
-        expect(result, equals('At least 3 related entries are required'));
+        expect(result, isNull);
       },
     );
 
@@ -89,7 +102,7 @@ class _MockAppLocalizations implements AppLocalizations {
   String get chapterTitleRequired => 'Chapter title is required';
   @override
   String get chapterMinimumRelatedWithCurrent =>
-      'At least 3 related entries are required';
+      'At least 2 related entries are required';
 
   @override
   Never noSuchMethod(Invocation invocation) => throw UnimplementedError();

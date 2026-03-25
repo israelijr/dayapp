@@ -1095,7 +1095,7 @@
   "@chapterDescription": { "description": "Rótulo do campo de descrição do capítulo" },
   "chapterSelectEntries": "Selecione histórias relacionadas (título + data)",
   "@chapterSelectEntries": { "description": "Rótulo da seleção de histórias para compor capítulo" },
-  "chapterMinimumEntries": "Mínimo: 4 histórias por capítulo.",
+  "chapterMinimumEntries": "Mínimo: 3 histórias por capítulo.",
   "@chapterMinimumEntries": { "description": "Mensagem de validação para mínimo de histórias" },
   "chapterPeriod": "Período: {start} - {end}",
   "@chapterPeriod": {
@@ -1171,7 +1171,7 @@
   "@chapterSelectExistingRequired": { "description": "Mensagem de validação quando não seleciona capítulo existente" },
   "chapterTitleRequired": "O título do capítulo é obrigatório.",
   "@chapterTitleRequired": { "description": "Mensagem de validação quando título do capítulo está vazio" },
-  "chapterMinimumRelatedWithCurrent": "Selecione ao menos 3 histórias relacionadas. Com a história atual, o mínimo é 4.",
+  "chapterMinimumRelatedWithCurrent": "Selecione ao menos 2 histórias relacionadas. Com a história atual, o mínimo é 3.",
   "@chapterMinimumRelatedWithCurrent": { "description": "Texto de ajuda/validação para mínimo de histórias relacionadas no fluxo de criar/editar" },
   "chapterLinkSummaryNone": "Sem vínculo com capítulos.",
   "@chapterLinkSummaryNone": { "description": "Resumo quando não há vínculo configurado" },

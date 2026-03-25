@@ -2058,7 +2058,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chapterSelectEntries => 'Select related stories (title + date)';
 
   @override
-  String get chapterMinimumEntries => 'Minimum: 4 stories per chapter.';
+  String get chapterMinimumEntries => 'Minimum: 3 stories per chapter.';
 
   @override
   String chapterPeriod(String start, String end) {
@@ -2166,7 +2166,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chapterMinimumRelatedWithCurrent =>
-      'Select at least 3 related stories. With the current one, the minimum is 4.';
+      'Select at least 2 related stories. With the current one, the minimum is 3.';
 
   @override
   String get chapterLinkSummaryNone => 'Not linked to any chapter.';

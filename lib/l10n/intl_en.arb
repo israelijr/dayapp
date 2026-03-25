@@ -1092,7 +1092,7 @@
   "@chapterDescription": { "description": "Label for chapter description field" },
   "chapterSelectEntries": "Select related stories (title + date)",
   "@chapterSelectEntries": { "description": "Label for selecting stories to compose a chapter" },
-  "chapterMinimumEntries": "Minimum: 4 stories per chapter.",
+  "chapterMinimumEntries": "Minimum: 3 stories per chapter.",
   "@chapterMinimumEntries": { "description": "Validation message for minimum stories in a chapter" },
   "chapterPeriod": "Period: {start} - {end}",
   "@chapterPeriod": {
@@ -1168,7 +1168,7 @@
   "@chapterSelectExistingRequired": { "description": "Validation message when existing chapter is not selected" },
   "chapterTitleRequired": "Chapter title is required.",
   "@chapterTitleRequired": { "description": "Validation message when chapter title is empty" },
-  "chapterMinimumRelatedWithCurrent": "Select at least 3 related stories. With the current one, the minimum is 4.",
+  "chapterMinimumRelatedWithCurrent": "Select at least 2 related stories. With the current one, the minimum is 3.",
   "@chapterMinimumRelatedWithCurrent": { "description": "Validation/help text for minimum related stories when creating chapter from create/edit flow" },
   "chapterLinkSummaryNone": "Not linked to any chapter.",
   "@chapterLinkSummaryNone": { "description": "Summary text when no chapter linking is configured" },

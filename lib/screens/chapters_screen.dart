@@ -210,7 +210,7 @@ class _ChaptersScreenState extends State<ChaptersScreen> {
             .toList()
           ..sort((a, b) => a.data.compareTo(b.data));
 
-    if (selectedEntries.length < 4) {
+    if (selectedEntries.length < 3) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -896,7 +896,7 @@ class _CreateCapituloDialogState extends State<_CreateCapituloDialog> {
                   );
                   return;
                 }
-                if (selected.length < 4) {
+                if (selected.length < 3) {
                   _showChapterValidationMessage(
                     context,
                     l10n.chapterMinimumEntries,
@@ -1115,7 +1115,7 @@ class _EditCapituloDialogState extends State<_EditCapituloDialog> {
                   );
                   return;
                 }
-                if (widget.draftEntradaIds.length < 4) {
+                if (widget.draftEntradaIds.length < 3) {
                   _showChapterValidationMessage(
                     context,
                     l10n.chapterMinimumEntries,
@@ -1231,7 +1231,7 @@ class _ChapterDetailsScreenState extends State<_ChapterDetailsScreen> {
             .toList()
           ..sort((a, b) => a.data.compareTo(b.data));
 
-    if (selectedEntries.length < 4) {
+    if (selectedEntries.length < 3) {
       if (!mounted) return;
       _showChapterValidationMessage(
         context,

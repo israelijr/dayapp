@@ -5,9 +5,9 @@ import '../models/historia.dart';
 import 'word_insight_analyzer.dart';
 
 class CapituloSugestaoService {
-  static const int _minEntradasPorCapitulo = 4;
+  static const int _minEntradasPorCapitulo = 3;
   static const int _maxDiasEntreEntradas = 30;
-  static const double _similaridadeMinima = 0.32;
+  static const double _similaridadeMinima = 0.15;
 
   final CapituloHelper _capituloHelper;
   final WordInsightAnalyzer _analyzer;

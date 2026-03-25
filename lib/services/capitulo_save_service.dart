@@ -49,8 +49,8 @@ class CapituloSaveService {
     }
 
     // Na criação, a entrada atual entra automaticamente no capítulo.
-    // Portanto, precisamos de mínimo 3 entradas relacionadas (+ 1 atual = 4 total)
-    if ((novoCapituloEntradasCount ?? 0) < 3) {
+    // Portanto, precisamos de mínimo 2 entradas relacionadas (+ 1 atual = 3 total)
+    if ((novoCapituloEntradasCount ?? 0) < 2) {
       return l10n.chapterMinimumRelatedWithCurrent;
     }
 

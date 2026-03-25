@@ -2080,7 +2080,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Selecciona historias relacionadas (título + fecha)';
 
   @override
-  String get chapterMinimumEntries => 'Mínimo: 4 historias por capítulo.';
+  String get chapterMinimumEntries => 'Mínimo: 3 historias por capítulo.';
 
   @override
   String chapterPeriod(String start, String end) {
@@ -2183,7 +2183,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get chapterMinimumRelatedWithCurrent =>
-      'Selecciona al menos 3 historias relacionadas. Con la historia actual, el mínimo es 4.';
+      'Selecciona al menos 2 historias relacionadas. Con la historia actual, el mínimo es 3.';
 
   @override
   String get chapterLinkSummaryNone => 'Sin vínculo con capítulos.';

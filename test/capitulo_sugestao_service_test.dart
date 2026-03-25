@@ -50,7 +50,7 @@ Historia _entry({
 void main() {
   group('CapituloSugestaoService', () {
     test(
-      'retorna vazio quando houver menos de 4 entradas candidatas',
+      'retorna vazio quando houver menos de 3 entradas candidatas',
       () async {
         final helper = FakeCapituloHelper(
           entradas: [
@@ -66,12 +66,6 @@ void main() {
               titulo: 'Entrada 2',
               tag: 'trabalho',
             ),
-            _entry(
-              id: 3,
-              data: DateTime(2026, 1, 3),
-              titulo: 'Entrada 3',
-              tag: 'trabalho',
-            ),
           ],
         );
 
@@ -81,6 +75,37 @@ void main() {
         expect(sugestoes, isEmpty);
       },
     );
+
+    test('gera sugestao com exatamente 3 entradas (minimo atual)', () async {
+      final helper = FakeCapituloHelper(
+        entradas: [
+          _entry(
+            id: 1,
+            data: DateTime(2026, 1, 1),
+            titulo: 'Entrada 1',
+            tag: 'trabalho',
+          ),
+          _entry(
+            id: 2,
+            data: DateTime(2026, 1, 2),
+            titulo: 'Entrada 2',
+            tag: 'trabalho',
+          ),
+          _entry(
+            id: 3,
+            data: DateTime(2026, 1, 3),
+            titulo: 'Entrada 3',
+            tag: 'trabalho',
+          ),
+        ],
+      );
+
+      final service = CapituloSugestaoService(capituloHelper: helper);
+      final sugestoes = await service.sugerirCapitulos('u1');
+
+      expect(sugestoes.length, 1);
+      expect(sugestoes.first.entradaIds, [1, 2, 3]);
+    });
 
     test('gera sugestao com 4 entradas e usa top tag no titulo', () async {
       final helper = FakeCapituloHelper(
@@ -146,7 +171,7 @@ void main() {
     });
 
     test(
-      'desconsidera entradas ja vinculadas e pode ficar abaixo do minimo',
+      'desconsidera entradas ja vinculadas e fica abaixo do minimo',
       () async {
         final helper = FakeCapituloHelper(
           entradas: [
@@ -175,7 +200,8 @@ void main() {
               tag: 'familia',
             ),
           ],
-          vinculadas: {24},
+          // Remove 2 entradas para ficar com apenas 2 candidatas < mínimo de 3
+          vinculadas: {23, 24},
         );
 
         final service = CapituloSugestaoService(capituloHelper: helper);
@@ -186,7 +212,7 @@ void main() {
     );
 
     test(
-      'nao agrupa quando intervalo entre entradas passa de 30 dias',
+      'nao agrupa quando todos os intervalos consecutivos passam de 30 dias',
       () async {
         final helper = FakeCapituloHelper(
           entradas: [
@@ -198,19 +224,19 @@ void main() {
             ),
             _entry(
               id: 32,
-              data: DateTime(2026, 1, 10),
+              data: DateTime(2026, 2, 5), // 35 dias depois
               titulo: 'E2',
               tag: 'carreira',
             ),
             _entry(
               id: 33,
-              data: DateTime(2026, 1, 20),
+              data: DateTime(2026, 3, 20), // 43 dias depois
               titulo: 'E3',
               tag: 'carreira',
             ),
             _entry(
               id: 34,
-              data: DateTime(2026, 3, 5),
+              data: DateTime(2026, 5, 1), // 42 dias depois
               titulo: 'E4',
               tag: 'carreira',
             ),
@@ -220,7 +246,48 @@ void main() {
         final service = CapituloSugestaoService(capituloHelper: helper);
         final sugestoes = await service.sugerirCapitulos('u1');
 
+        // Cada par consecutivo quebra a cadeia → grupos de 1 entrada → nenhum grupo de 3
         expect(sugestoes, isEmpty);
+      },
+    );
+
+    test(
+      'quebra cadeia no intervalo longo e agrupa apenas as primeiras 3 entradas',
+      () async {
+        final helper = FakeCapituloHelper(
+          entradas: [
+            _entry(
+              id: 35,
+              data: DateTime(2026, 1, 1),
+              titulo: 'E1',
+              tag: 'carreira',
+            ),
+            _entry(
+              id: 36,
+              data: DateTime(2026, 1, 10), // 9 dias
+              titulo: 'E2',
+              tag: 'carreira',
+            ),
+            _entry(
+              id: 37,
+              data: DateTime(2026, 1, 20), // 10 dias
+              titulo: 'E3',
+              tag: 'carreira',
+            ),
+            _entry(
+              id: 38,
+              data: DateTime(2026, 3, 5), // 44 dias → quebra
+              titulo: 'E4',
+              tag: 'carreira',
+            ),
+          ],
+        );
+
+        final service = CapituloSugestaoService(capituloHelper: helper);
+        final sugestoes = await service.sugerirCapitulos('u1');
+
+        expect(sugestoes.length, 1);
+        expect(sugestoes.first.entradaIds, [35, 36, 37]);
       },
     );
 

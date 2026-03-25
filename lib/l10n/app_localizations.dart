@@ -3757,7 +3757,7 @@ abstract class AppLocalizations {
   /// Validation message for minimum stories in a chapter
   ///
   /// In en, this message translates to:
-  /// **'Minimum: 4 stories per chapter.'**
+  /// **'Minimum: 3 stories per chapter.'**
   String get chapterMinimumEntries;
 
   /// Period label for chapter
@@ -3931,7 +3931,7 @@ abstract class AppLocalizations {
   /// Validation/help text for minimum related stories when creating chapter from create/edit flow
   ///
   /// In en, this message translates to:
-  /// **'Select at least 3 related stories. With the current one, the minimum is 4.'**
+  /// **'Select at least 2 related stories. With the current one, the minimum is 3.'**
   String get chapterMinimumRelatedWithCurrent;
 
   /// Summary text when no chapter linking is configured
