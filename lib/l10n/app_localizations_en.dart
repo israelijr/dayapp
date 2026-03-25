@@ -2104,6 +2104,21 @@ class AppLocalizationsEn extends AppLocalizations {
       'No chapters matched the current filters.';
 
   @override
+  String get chapterSortLabel => 'Sort by';
+
+  @override
+  String get chapterSortNewest => 'Newest period';
+
+  @override
+  String get chapterSortOldest => 'Oldest period';
+
+  @override
+  String get chapterSortTitle => 'Title';
+
+  @override
+  String get chapterSortStories => 'Most stories';
+
+  @override
   String chapterEntriesAndMood(int count, String mood) {
     return '$count stories - avg mood $mood';
   }

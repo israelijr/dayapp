@@ -3826,6 +3826,36 @@ abstract class AppLocalizations {
   /// **'No chapters matched the current filters.'**
   String get chapterNoSearchResults;
 
+  /// Label for chapter sort selector
+  ///
+  /// In en, this message translates to:
+  /// **'Sort by'**
+  String get chapterSortLabel;
+
+  /// Option to sort chapters by newest period
+  ///
+  /// In en, this message translates to:
+  /// **'Newest period'**
+  String get chapterSortNewest;
+
+  /// Option to sort chapters by oldest period
+  ///
+  /// In en, this message translates to:
+  /// **'Oldest period'**
+  String get chapterSortOldest;
+
+  /// Option to sort chapters by title
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get chapterSortTitle;
+
+  /// Option to sort chapters by story count
+  ///
+  /// In en, this message translates to:
+  /// **'Most stories'**
+  String get chapterSortStories;
+
   /// Short chapter list subtitle
   ///
   /// In en, this message translates to:

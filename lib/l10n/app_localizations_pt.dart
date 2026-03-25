@@ -2114,6 +2114,21 @@ class AppLocalizationsPt extends AppLocalizations {
       'Nenhum capítulo encontrado com os filtros atuais.';
 
   @override
+  String get chapterSortLabel => 'Ordenar por';
+
+  @override
+  String get chapterSortNewest => 'Período mais recente';
+
+  @override
+  String get chapterSortOldest => 'Período mais antigo';
+
+  @override
+  String get chapterSortTitle => 'Título';
+
+  @override
+  String get chapterSortStories => 'Mais histórias';
+
+  @override
   String chapterEntriesAndMood(int count, String mood) {
     return '$count histórias - humor médio $mood';
   }
@@ -4292,6 +4307,21 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get chapterNoSearchResults =>
       'Nenhum capítulo encontrado com os filtros atuais.';
+
+  @override
+  String get chapterSortLabel => 'Ordenar por';
+
+  @override
+  String get chapterSortNewest => 'Período mais recente';
+
+  @override
+  String get chapterSortOldest => 'Período mais antigo';
+
+  @override
+  String get chapterSortTitle => 'Título';
+
+  @override
+  String get chapterSortStories => 'Mais histórias';
 
   @override
   String chapterEntriesAndMood(int count, String mood) {

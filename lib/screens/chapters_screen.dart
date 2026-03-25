@@ -4,16 +4,16 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../db/capitulo_helper.dart';
+import '../helpers/chapter_filter_helper.dart';
 import '../models/capitulo.dart';
 import '../models/capitulo_sugestao.dart';
 import '../models/historia.dart';
 import '../providers/auth_provider.dart';
 import '../providers/premium_provider.dart';
 import '../providers/refresh_provider.dart';
+import '../screens/edit_historia_screen.dart';
 import '../services/capitulo_sugestao_service.dart';
 import '../widgets/compact_historia_card.dart';
-
-enum _ChapterOriginFilter { all, automatic, manual }
 
 class ChaptersScreen extends StatefulWidget {
   const ChaptersScreen({super.key});
@@ -30,12 +30,22 @@ class _ChaptersScreenState extends State<ChaptersScreen> {
   List<CapituloResumo> _capitulos = const [];
   List<CapituloSugestao> _sugestoes = const [];
   String _chapterSearchQuery = '';
-  _ChapterOriginFilter _chapterOriginFilter = _ChapterOriginFilter.all;
+  ChapterOriginFilter _chapterOriginFilter = ChapterOriginFilter.all;
+  ChapterSortOption _chapterSortOption = ChapterSortOption.newestPeriod;
+
+  bool _showSearch = false;
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _loadData();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadData() async {
@@ -423,7 +433,7 @@ class _ChaptersScreenState extends State<ChaptersScreen> {
                     child: Icon(
                       capitulo.criadoAutomaticamente
                           ? Icons.auto_awesome
-                          : Icons.edit_note,
+                          : Icons.bookmark_outline,
                       color: capitulo.criadoAutomaticamente
                           ? colorScheme.onTertiaryContainer
                           : colorScheme.onPrimaryContainer,
@@ -464,31 +474,15 @@ class _ChaptersScreenState extends State<ChaptersScreen> {
                 ),
               ],
               const SizedBox(height: 12),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
+              Row(
                 children: [
                   _buildMetaChip(
                     context: context,
                     icon: Icons.menu_book_outlined,
                     label: l10n.chapterEntriesCount(resumo.totalEntradas),
                   ),
-                  _buildMetaChip(
-                    context: context,
-                    icon: Icons.favorite_border,
-                    label: l10n.chapterAverageMood(
-                      resumo.humorMedio.toStringAsFixed(1),
-                    ),
-                  ),
-                  _buildMetaChip(
-                    context: context,
-                    icon: capitulo.criadoAutomaticamente
-                        ? Icons.bolt_outlined
-                        : Icons.tune,
-                    label: capitulo.criadoAutomaticamente
-                        ? l10n.chapterCreateFromSuggestion
-                        : l10n.chapterCreateManual,
-                  ),
+                  const SizedBox(width: 8),
+                  _buildMoodBar(context, resumo.humorMedio),
                 ],
               ),
               if (resumo.topTags.isNotEmpty) ...[
@@ -509,39 +503,173 @@ class _ChaptersScreenState extends State<ChaptersScreen> {
   }
 
   bool _matchesChapterFilter(CapituloResumo resumo) {
-    final query = _chapterSearchQuery.trim().toLowerCase();
-    final descricao = resumo.capitulo.descricao?.toLowerCase() ?? '';
-    final titulo = resumo.capitulo.titulo.toLowerCase();
-    final tags = resumo.topTags.join(' ').toLowerCase();
+    return matchesChapterFilter(
+      resumo,
+      _chapterSearchQuery,
+      _chapterOriginFilter,
+    );
+  }
 
-    final matchesText =
-        query.isEmpty ||
-        titulo.contains(query) ||
-        descricao.contains(query) ||
-        tags.contains(query);
+  // Menu compacto de ordenação e filtro por origem no AppBar
+  Widget _buildSortMenu(BuildContext context, AppLocalizations l10n) {
+    String sortLabel(ChapterSortOption opt) => switch (opt) {
+      ChapterSortOption.newestPeriod => l10n.chapterSortNewest,
+      ChapterSortOption.oldestPeriod => l10n.chapterSortOldest,
+      ChapterSortOption.title => l10n.chapterSortTitle,
+      ChapterSortOption.stories => l10n.chapterSortStories,
+    };
 
-    if (!matchesText) return false;
+    String filterLabel(ChapterOriginFilter f) => switch (f) {
+      ChapterOriginFilter.all => l10n.chapterFilterAll,
+      ChapterOriginFilter.automatic => l10n.chapterFilterAutomatic,
+      ChapterOriginFilter.manual => l10n.chapterFilterManual,
+    };
 
-    switch (_chapterOriginFilter) {
-      case _ChapterOriginFilter.all:
-        return true;
-      case _ChapterOriginFilter.automatic:
-        return resumo.capitulo.criadoAutomaticamente;
-      case _ChapterOriginFilter.manual:
-        return !resumo.capitulo.criadoAutomaticamente;
+    final colorScheme = Theme.of(context).colorScheme;
+    final hasActiveFilter = _chapterOriginFilter != ChapterOriginFilter.all;
+
+    return PopupMenuButton<Object>(
+      tooltip: l10n.chapterSortLabel,
+      icon: Badge(
+        isLabelVisible: hasActiveFilter,
+        backgroundColor: colorScheme.primary,
+        child: const Icon(Icons.sort),
+      ),
+      onSelected: (value) {
+        if (value is ChapterSortOption) {
+          setState(() => _chapterSortOption = value);
+        } else if (value is ChapterOriginFilter) {
+          setState(() => _chapterOriginFilter = value);
+        }
+      },
+      itemBuilder: (ctx) => [
+        PopupMenuItem(
+          enabled: false,
+          child: Text(
+            l10n.chapterSortLabel,
+            style: Theme.of(ctx).textTheme.labelSmall?.copyWith(
+              color: colorScheme.primary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        ...ChapterSortOption.values.map(
+          (opt) => CheckedPopupMenuItem<Object>(
+            value: opt,
+            checked: _chapterSortOption == opt,
+            child: Text(sortLabel(opt)),
+          ),
+        ),
+        const PopupMenuDivider(),
+        PopupMenuItem(
+          enabled: false,
+          child: Text(
+            l10n.chapterFilterAll,
+            style: Theme.of(ctx).textTheme.labelSmall?.copyWith(
+              color: colorScheme.primary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        ...ChapterOriginFilter.values.map(
+          (f) => CheckedPopupMenuItem<Object>(
+            value: f,
+            checked: _chapterOriginFilter == f,
+            child: Text(filterLabel(f)),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // Barra visual de humor médio (escala 1-5)
+  Widget _buildMoodBar(BuildContext context, double mood) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final fraction = ((mood - 1) / 4).clamp(0.0, 1.0);
+
+    final Color barColor;
+    if (fraction < 0.33) {
+      barColor = colorScheme.error;
+    } else if (fraction < 0.66) {
+      barColor = colorScheme.tertiary;
+    } else {
+      barColor = colorScheme.primary;
     }
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          Icons.favorite_border,
+          size: 14,
+          color: colorScheme.onSurfaceVariant,
+        ),
+        const SizedBox(width: 6),
+        SizedBox(
+          width: 56,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(3),
+            child: LinearProgressIndicator(
+              value: fraction,
+              minHeight: 7,
+              backgroundColor: colorScheme.surfaceContainerHighest,
+              valueColor: AlwaysStoppedAnimation<Color>(barColor),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final premium = context.watch<PremiumProvider>();
-    final capitulosFiltrados = _capitulos
-        .where(_matchesChapterFilter)
-        .toList(growable: false);
+    final capitulosFiltrados = sortCapitulos(
+      _capitulos.where(_matchesChapterFilter).toList(growable: false),
+      _chapterSortOption,
+    );
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.chaptersTitle)),
+      appBar: AppBar(
+        title: _showSearch
+            ? TextField(
+                controller: _searchController,
+                autofocus: true,
+                decoration: InputDecoration(
+                  hintText: l10n.searchHintText,
+                  border: InputBorder.none,
+                ),
+                onChanged: (v) => setState(() => _chapterSearchQuery = v),
+              )
+            : Text(l10n.chaptersTitle),
+        actions: [
+          if (_showSearch)
+            IconButton(
+              icon: const Icon(Icons.close),
+              tooltip: l10n.cancel,
+              onPressed: () {
+                setState(() {
+                  _showSearch = false;
+                  _chapterSearchQuery = '';
+                  _searchController.clear();
+                });
+              },
+            )
+          else
+            IconButton(
+              icon: const Icon(Icons.search),
+              tooltip: l10n.search,
+              onPressed: () => setState(() => _showSearch = true),
+            ),
+          _buildSortMenu(context, l10n),
+          IconButton(
+            icon: const Icon(Icons.add),
+            tooltip: l10n.chapterCreateManual,
+            onPressed: _criarCapituloManual,
+          ),
+        ],
+      ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : RefreshIndicator(
@@ -570,95 +698,15 @@ class _ChaptersScreenState extends State<ChaptersScreen> {
                     if (_sugestoes.isNotEmpty) ...[
                       Text(
                         l10n.chapterSuggestions,
-                        style: Theme.of(context).textTheme.titleLarge,
+                        style: Theme.of(context).textTheme.titleMedium,
                       ),
                       const SizedBox(height: 8),
                       ..._sugestoes.map(
                         (sugestao) => _buildSuggestionCard(context, sugestao),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
                     ],
                   ],
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          l10n.chaptersTitle,
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                      ),
-                      FilledButton.tonalIcon(
-                        onPressed: _criarCapituloManual,
-                        icon: const Icon(Icons.add),
-                        label: Text(l10n.chapterCreateManual),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  TextField(
-                    decoration: InputDecoration(
-                      labelText: l10n.search,
-                      hintText: l10n.searchHintText,
-                      prefixIcon: const Icon(Icons.search),
-                      suffixIcon: _chapterSearchQuery.isEmpty
-                          ? null
-                          : IconButton(
-                              tooltip: l10n.clearSearchTooltip,
-                              onPressed: () {
-                                setState(() {
-                                  _chapterSearchQuery = '';
-                                });
-                              },
-                              icon: const Icon(Icons.close),
-                            ),
-                      border: const OutlineInputBorder(),
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        _chapterSearchQuery = value;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      ChoiceChip(
-                        label: Text(l10n.chapterFilterAll),
-                        selected:
-                            _chapterOriginFilter == _ChapterOriginFilter.all,
-                        onSelected: (_) {
-                          setState(() {
-                            _chapterOriginFilter = _ChapterOriginFilter.all;
-                          });
-                        },
-                      ),
-                      ChoiceChip(
-                        label: Text(l10n.chapterFilterAutomatic),
-                        selected:
-                            _chapterOriginFilter ==
-                            _ChapterOriginFilter.automatic,
-                        onSelected: (_) {
-                          setState(() {
-                            _chapterOriginFilter =
-                                _ChapterOriginFilter.automatic;
-                          });
-                        },
-                      ),
-                      ChoiceChip(
-                        label: Text(l10n.chapterFilterManual),
-                        selected:
-                            _chapterOriginFilter == _ChapterOriginFilter.manual,
-                        onSelected: (_) {
-                          setState(() {
-                            _chapterOriginFilter = _ChapterOriginFilter.manual;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
                   if (_capitulos.isEmpty)
                     Padding(
                       padding: const EdgeInsets.only(top: 8),
@@ -1252,6 +1300,16 @@ class _ChapterDetailsScreenState extends State<_ChapterDetailsScreen> {
     Navigator.of(context).pop(_didChange);
   }
 
+  Future<void> _abrirHistoria(Historia historia) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => EditHistoriaScreen(historia: historia)),
+    );
+
+    if (!mounted) return;
+    // Recarrega o capítulo pois o título/humor da história pode ter mudado
+    await _loadChapterData();
+  }
+
   Widget _buildHeaderTag(BuildContext context, String tag) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
@@ -1369,6 +1427,7 @@ class _ChapterDetailsScreenState extends State<_ChapterDetailsScreen> {
                       (entrada) => CompactHistoriaCard(
                         historia: entrada,
                         localeName: l10n.localeName,
+                        onTap: () => _abrirHistoria(entrada),
                       ),
                     ),
                 ],

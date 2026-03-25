@@ -2126,6 +2126,21 @@ class AppLocalizationsEs extends AppLocalizations {
       'Ningún capítulo coincide con los filtros actuales.';
 
   @override
+  String get chapterSortLabel => 'Ordenar por';
+
+  @override
+  String get chapterSortNewest => 'Período más reciente';
+
+  @override
+  String get chapterSortOldest => 'Período más antiguo';
+
+  @override
+  String get chapterSortTitle => 'Título';
+
+  @override
+  String get chapterSortStories => 'Más historias';
+
+  @override
   String chapterEntriesAndMood(int count, String mood) {
     return '$count historias - ánimo promedio $mood';
   }
