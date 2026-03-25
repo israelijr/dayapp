@@ -2053,6 +2053,17 @@ class AppLocalizationsEs extends AppLocalizations {
   String get chapterUpdated => 'Capítulo actualizado con éxito.';
 
   @override
+  String get chapterDeleteConfirmTitle => 'Eliminar capítulo';
+
+  @override
+  String chapterDeleteConfirmMessage(String title) {
+    return '¿Eliminar el capítulo “$title”? Las historias vinculadas no serán eliminadas.';
+  }
+
+  @override
+  String get chapterDeleted => 'Capítulo eliminado con éxito.';
+
+  @override
   String get chapterCreateManual => 'Crear capítulo manualmente';
 
   @override
@@ -2100,6 +2111,19 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get chapterNoItems =>
       'Aún no hay capítulos. Empieza con una sugerencia automática o crea uno manualmente.';
+
+  @override
+  String get chapterFilterAll => 'Todos';
+
+  @override
+  String get chapterFilterAutomatic => 'Automáticos';
+
+  @override
+  String get chapterFilterManual => 'Manuales';
+
+  @override
+  String get chapterNoSearchResults =>
+      'Ningún capítulo coincide con los filtros actuales.';
 
   @override
   String chapterEntriesAndMood(int count, String mood) {

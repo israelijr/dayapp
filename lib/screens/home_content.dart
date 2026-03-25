@@ -19,6 +19,7 @@ import '../providers/scroll_position_provider.dart';
 import '../services/pdf_export_service.dart';
 import '../theme/animation_durations.dart';
 import '../theme/m3_expressive_theme.dart';
+import '../widgets/compact_historia_card.dart';
 import '../widgets/historia_media_widgets.dart';
 import '../widgets/insight_card.dart';
 import '../widgets/rich_text_viewer_widget.dart';
@@ -461,49 +462,52 @@ class _HomeContentState extends State<HomeContent> {
                     const SizedBox(height: 12),
                     // Data
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            if (historia.emoticon != null &&
-                                historia.emoticon!.isNotEmpty)
-                              Builder(
-                                builder: (context) {
-                                  final convertedEmoji = _convertLegacyEmoticon(
-                                    historia.emoticon!,
-                                  );
-                                  final displayEmoji =
-                                      convertedEmoji ?? historia.emoticon!;
-                                  return Text(
-                                    displayEmoji,
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      height: 1,
-                                    ),
-                                  );
-                                },
-                              ),
-                            if (historia.emoticon != null &&
-                                historia.emoticon!.isNotEmpty)
-                              const SizedBox(width: 6),
-                            SizedBox(
-                              width: 140,
-                              child: Text(
-                                DateFormat(
-                                  'dd/MM/yyyy HH:mm',
-                                  'pt_BR',
-                                ).format(historia.data),
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Theme.of(
-                                    context,
-                                  ).textTheme.bodySmall?.color,
+                        Expanded(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (historia.emoticon != null &&
+                                  historia.emoticon!.isNotEmpty)
+                                Builder(
+                                  builder: (context) {
+                                    final convertedEmoji =
+                                        _convertLegacyEmoticon(
+                                          historia.emoticon!,
+                                        );
+                                    final displayEmoji =
+                                        convertedEmoji ?? historia.emoticon!;
+                                    return Text(
+                                      displayEmoji,
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        height: 1,
+                                      ),
+                                    );
+                                  },
                                 ),
-                                overflow: TextOverflow.ellipsis,
+                              if (historia.emoticon != null &&
+                                  historia.emoticon!.isNotEmpty)
+                                const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  DateFormat(
+                                    'dd/MM/yyyy HH:mm',
+                                    'pt_BR',
+                                  ).format(historia.data),
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Theme.of(
+                                      context,
+                                    ).textTheme.bodySmall?.color,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
+                        const SizedBox(width: 8),
                         PopupMenuButton<String>(
                           icon: Icon(
                             Icons.more_horiz,
@@ -672,122 +676,71 @@ class _HomeContentState extends State<HomeContent> {
       onDismissed: (direction) {
         // Já tratado no confirmDismiss
       },
-      child: Card(
-        margin: const EdgeInsets.only(bottom: 12),
-        elevation: 1,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: ListTile(
-          leading: Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Center(
-              child: Builder(
-                builder: (context) {
-                  if (historia.emoticon != null &&
-                      historia.emoticon!.isNotEmpty) {
-                    final converted = _convertLegacyEmoticon(
-                      historia.emoticon!,
-                    );
-                    final display = converted ?? historia.emoticon!;
-                    return Text(
-                      display,
-                      style: const TextStyle(fontSize: 20, height: 1),
-                    );
-                  }
-                  return Icon(
-                    Icons.image,
-                    color: Theme.of(context).iconTheme.color,
-                    size: 26,
+      child: CompactHistoriaCard(
+        historia: historia,
+        localeName: AppLocalizations.of(context)!.localeName,
+        trailing: PopupMenuButton<String>(
+          icon: Icon(
+            Icons.more_horiz,
+            color: Theme.of(context).iconTheme.color,
+          ),
+          onSelected: (value) async {
+            if (value == 'edit') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => EditHistoriaScreen(historia: historia),
+                ),
+              ).then((updated) {
+                if (!mounted) return;
+                if (updated == true) {
+                  final refreshProvider = Provider.of<RefreshProvider>(
+                    context,
+                    listen: false,
                   );
-                },
-              ),
-            ),
-          ),
-          title: Text(
-            historia.titulo,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: Theme.of(context).textTheme.titleMedium?.color,
-            ),
-          ),
-          subtitle: Text(
-            DateFormat('dd/MM/yyyy', 'pt_BR').format(historia.data),
-            style: TextStyle(
-              fontSize: 12,
-              color: Theme.of(context).textTheme.bodySmall?.color,
-            ),
-          ),
-          trailing: PopupMenuButton<String>(
-            icon: Icon(
-              Icons.more_horiz,
-              color: Theme.of(context).iconTheme.color,
-            ),
-            onSelected: (value) async {
-              if (value == 'edit') {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => EditHistoriaScreen(historia: historia),
-                  ),
-                ).then((updated) {
-                  if (!mounted) return;
-                  if (updated == true) {
-                    final refreshProvider = Provider.of<RefreshProvider>(
-                      context,
-                      listen: false,
-                    );
-                    refreshProvider.refresh();
-                  }
-                });
-              } else if (value == 'delete') {
-                await _deleteHistoria(historia);
-              } else if (value == 'export') {
-                // Exporta história salva
-                await _exportHistoria(historia);
-              }
-            },
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                value: 'edit',
-                child: Text(AppLocalizations.of(context)!.edit),
-              ),
-              PopupMenuItem(
-                value: 'export',
-                child: Text(AppLocalizations.of(context)!.exportPdf),
-              ),
-              PopupMenuItem(
-                value: 'delete',
-                child: Text(AppLocalizations.of(context)!.deleteLabel),
-              ),
-            ],
-          ),
-          onTap: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  content: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    child: SingleChildScrollView(
-                      child: _buildCardView(historia),
-                    ),
-                  ),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: Text(AppLocalizations.of(context)!.close),
-                    ),
-                  ],
-                );
-              },
-            );
+                  refreshProvider.refresh();
+                }
+              });
+            } else if (value == 'delete') {
+              await _deleteHistoria(historia);
+            } else if (value == 'export') {
+              await _exportHistoria(historia);
+            }
           },
+          itemBuilder: (context) => [
+            PopupMenuItem(
+              value: 'edit',
+              child: Text(AppLocalizations.of(context)!.edit),
+            ),
+            PopupMenuItem(
+              value: 'export',
+              child: Text(AppLocalizations.of(context)!.exportPdf),
+            ),
+            PopupMenuItem(
+              value: 'delete',
+              child: Text(AppLocalizations.of(context)!.deleteLabel),
+            ),
+          ],
         ),
+        onTap: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                content: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  child: SingleChildScrollView(child: _buildCardView(historia)),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text(AppLocalizations.of(context)!.close),
+                  ),
+                ],
+              );
+            },
+          );
+        },
       ),
     );
   }

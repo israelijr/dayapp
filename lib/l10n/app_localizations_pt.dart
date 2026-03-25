@@ -2041,6 +2041,17 @@ class AppLocalizationsPt extends AppLocalizations {
   String get chapterUpdated => 'Capítulo atualizado com sucesso.';
 
   @override
+  String get chapterDeleteConfirmTitle => 'Excluir capítulo';
+
+  @override
+  String chapterDeleteConfirmMessage(String title) {
+    return 'Deseja excluir o capítulo “$title”? As histórias vinculadas não serão excluídas.';
+  }
+
+  @override
+  String get chapterDeleted => 'Capítulo excluído com sucesso.';
+
+  @override
   String get chapterCreateManual => 'Criar capítulo manualmente';
 
   @override
@@ -2088,6 +2099,19 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get chapterNoItems =>
       'Ainda não há capítulos. Comece por uma sugestão automática ou crie manualmente.';
+
+  @override
+  String get chapterFilterAll => 'Todos';
+
+  @override
+  String get chapterFilterAutomatic => 'Automáticos';
+
+  @override
+  String get chapterFilterManual => 'Manuais';
+
+  @override
+  String get chapterNoSearchResults =>
+      'Nenhum capítulo encontrado com os filtros atuais.';
 
   @override
   String chapterEntriesAndMood(int count, String mood) {
@@ -4197,6 +4221,17 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get chapterUpdated => 'Capítulo atualizado com sucesso.';
 
   @override
+  String get chapterDeleteConfirmTitle => 'Excluir capítulo';
+
+  @override
+  String chapterDeleteConfirmMessage(String title) {
+    return 'Deseja excluir o capítulo “$title”? As histórias vinculadas não serão excluídas.';
+  }
+
+  @override
+  String get chapterDeleted => 'Capítulo excluído com sucesso.';
+
+  @override
   String get chapterCreateManual => 'Criar capítulo manualmente';
 
   @override
@@ -4244,6 +4279,19 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get chapterNoItems =>
       'Ainda não há capítulos. Comece por uma sugestão automática ou crie manualmente.';
+
+  @override
+  String get chapterFilterAll => 'Todos';
+
+  @override
+  String get chapterFilterAutomatic => 'Automáticos';
+
+  @override
+  String get chapterFilterManual => 'Manuais';
+
+  @override
+  String get chapterNoSearchResults =>
+      'Nenhum capítulo encontrado com os filtros atuais.';
 
   @override
   String chapterEntriesAndMood(int count, String mood) {

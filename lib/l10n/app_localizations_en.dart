@@ -2032,6 +2032,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chapterUpdated => 'Chapter updated successfully.';
 
   @override
+  String get chapterDeleteConfirmTitle => 'Delete chapter';
+
+  @override
+  String chapterDeleteConfirmMessage(String title) {
+    return 'Delete chapter “$title”? The linked stories will not be deleted.';
+  }
+
+  @override
+  String get chapterDeleted => 'Chapter deleted successfully.';
+
+  @override
   String get chapterCreateManual => 'Create chapter manually';
 
   @override
@@ -2078,6 +2089,19 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get chapterNoItems =>
       'No chapters yet. Start with an automatic suggestion or create one manually.';
+
+  @override
+  String get chapterFilterAll => 'All';
+
+  @override
+  String get chapterFilterAutomatic => 'Automatic';
+
+  @override
+  String get chapterFilterManual => 'Manual';
+
+  @override
+  String get chapterNoSearchResults =>
+      'No chapters matched the current filters.';
 
   @override
   String chapterEntriesAndMood(int count, String mood) {

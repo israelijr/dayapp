@@ -3706,6 +3706,24 @@ abstract class AppLocalizations {
   /// **'Chapter updated successfully.'**
   String get chapterUpdated;
 
+  /// Title of chapter deletion confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Delete chapter'**
+  String get chapterDeleteConfirmTitle;
+
+  /// Message for chapter deletion confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Delete chapter “{title}”? The linked stories will not be deleted.'**
+  String chapterDeleteConfirmMessage(String title);
+
+  /// Success message after deleting chapter
+  ///
+  /// In en, this message translates to:
+  /// **'Chapter deleted successfully.'**
+  String get chapterDeleted;
+
   /// Button to create chapter manually
   ///
   /// In en, this message translates to:
@@ -3783,6 +3801,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No chapters yet. Start with an automatic suggestion or create one manually.'**
   String get chapterNoItems;
+
+  /// Filter to show all chapters
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get chapterFilterAll;
+
+  /// Filter to show only automatic chapters
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic'**
+  String get chapterFilterAutomatic;
+
+  /// Filter to show only manual chapters
+  ///
+  /// In en, this message translates to:
+  /// **'Manual'**
+  String get chapterFilterManual;
+
+  /// Empty state when search or filter finds no chapters
+  ///
+  /// In en, this message translates to:
+  /// **'No chapters matched the current filters.'**
+  String get chapterNoSearchResults;
 
   /// Short chapter list subtitle
   ///
