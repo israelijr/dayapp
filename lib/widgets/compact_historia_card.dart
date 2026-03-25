@@ -11,6 +11,7 @@ class CompactHistoriaCard extends StatelessWidget {
   final Widget? trailing;
   final VoidCallback? onTap;
   final EdgeInsetsGeometry margin;
+  final bool showMood;
 
   const CompactHistoriaCard({
     required this.historia,
@@ -18,6 +19,7 @@ class CompactHistoriaCard extends StatelessWidget {
     this.trailing,
     this.onTap,
     this.margin = const EdgeInsets.only(bottom: 12),
+    this.showMood = true,
     super.key,
   });
 
@@ -111,15 +113,23 @@ class CompactHistoriaCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 6),
-                    Text(
-                      DateFormat(
-                        'dd/MM/yyyy',
-                        localeName,
-                      ).format(historia.data),
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Theme.of(context).textTheme.bodySmall?.color,
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          DateFormat(
+                            'dd/MM/yyyy',
+                            localeName,
+                          ).format(historia.data),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Theme.of(context).textTheme.bodySmall?.color,
+                          ),
+                        ),
+                        if (showMood) ...[
+                          const SizedBox(width: 8),
+                          _MoodDot(mood: historia.humor),
+                        ],
+                      ],
                     ),
                     if (historia.id != null) ...[
                       const SizedBox(height: 6),
@@ -192,6 +202,33 @@ class CompactHistoriaCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Bolinha colorida indicando o humor da história (escala 1-5).
+class _MoodDot extends StatelessWidget {
+  final int mood;
+  const _MoodDot({required this.mood});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final fraction = ((mood - 1) / 4).clamp(0.0, 1.0);
+
+    final Color color;
+    if (fraction < 0.33) {
+      color = colorScheme.error;
+    } else if (fraction < 0.66) {
+      color = colorScheme.tertiary;
+    } else {
+      color = colorScheme.primary;
+    }
+
+    return Container(
+      width: 8,
+      height: 8,
+      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
     );
   }
 }

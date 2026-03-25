@@ -15,6 +15,76 @@ import '../screens/edit_historia_screen.dart';
 import '../services/capitulo_sugestao_service.dart';
 import '../widgets/compact_historia_card.dart';
 
+// ---------------------------------------------------------------------------
+// Helpers visuais compartilhados entre as telas de capítulos
+// ---------------------------------------------------------------------------
+
+Widget _buildMetaChip({
+  required BuildContext context,
+  required IconData icon,
+  required String label,
+}) {
+  final colorScheme = Theme.of(context).colorScheme;
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+    decoration: BoxDecoration(
+      color: colorScheme.secondaryContainer,
+      borderRadius: BorderRadius.circular(999),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 16, color: colorScheme.onSecondaryContainer),
+        const SizedBox(width: 6),
+        Text(
+          label,
+          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+            color: colorScheme.onSecondaryContainer,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _buildMoodBar(BuildContext context, double mood) {
+  final colorScheme = Theme.of(context).colorScheme;
+  final fraction = ((mood - 1) / 4).clamp(0.0, 1.0);
+
+  final Color barColor;
+  if (fraction < 0.33) {
+    barColor = colorScheme.error;
+  } else if (fraction < 0.66) {
+    barColor = colorScheme.tertiary;
+  } else {
+    barColor = colorScheme.primary;
+  }
+
+  return Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Icon(
+        Icons.favorite_border,
+        size: 14,
+        color: colorScheme.onSurfaceVariant,
+      ),
+      const SizedBox(width: 6),
+      SizedBox(
+        width: 56,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(3),
+          child: LinearProgressIndicator(
+            value: fraction,
+            minHeight: 7,
+            backgroundColor: colorScheme.surfaceContainerHighest,
+            valueColor: AlwaysStoppedAnimation<Color>(barColor),
+          ),
+        ),
+      ),
+    ],
+  );
+}
+
 class ChaptersScreen extends StatefulWidget {
   const ChaptersScreen({super.key});
 
@@ -188,35 +258,6 @@ class _ChaptersScreenState extends State<ChaptersScreen> {
     }
   }
 
-  Widget _buildMetaChip({
-    required BuildContext context,
-    required IconData icon,
-    required String label,
-  }) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: colorScheme.secondaryContainer,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 16, color: colorScheme.onSecondaryContainer),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: colorScheme.onSecondaryContainer,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildTagChip(BuildContext context, String tag) {
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -355,26 +396,32 @@ class _ChaptersScreenState extends State<ChaptersScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
-                  children: sugestao.entradas
-                      .take(3)
-                      .map(
-                        (entrada) => ListTile(
-                          dense: true,
-                          leading: const Icon(Icons.auto_stories_outlined),
-                          title: Text(
-                            entrada.titulo,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          subtitle: Text(
-                            DateFormat(
-                              'dd/MM/yyyy',
-                              l10n.localeName,
-                            ).format(entrada.data),
+                  children: [
+                    ...sugestao.entradas
+                        .take(3)
+                        .map(
+                          (entrada) => CompactHistoriaCard(
+                            historia: entrada,
+                            localeName: l10n.localeName,
+                            margin: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            showMood: false,
                           ),
                         ),
-                      )
-                      .toList(growable: false),
+                    if (sugestao.entradas.length > 3)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+                        child: Text(
+                          l10n.chapterSuggestionMoreStories(
+                            sugestao.entradas.length - 3,
+                          ),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(color: colorScheme.onSurfaceVariant),
+                        ),
+                      ),
+                  ],
                 ),
               ),
             ],
@@ -576,45 +623,6 @@ class _ChaptersScreenState extends State<ChaptersScreen> {
             value: f,
             checked: _chapterOriginFilter == f,
             child: Text(filterLabel(f)),
-          ),
-        ),
-      ],
-    );
-  }
-
-  // Barra visual de humor médio (escala 1-5)
-  Widget _buildMoodBar(BuildContext context, double mood) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final fraction = ((mood - 1) / 4).clamp(0.0, 1.0);
-
-    final Color barColor;
-    if (fraction < 0.33) {
-      barColor = colorScheme.error;
-    } else if (fraction < 0.66) {
-      barColor = colorScheme.tertiary;
-    } else {
-      barColor = colorScheme.primary;
-    }
-
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(
-          Icons.favorite_border,
-          size: 14,
-          color: colorScheme.onSurfaceVariant,
-        ),
-        const SizedBox(width: 6),
-        SizedBox(
-          width: 56,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(3),
-            child: LinearProgressIndicator(
-              value: fraction,
-              minHeight: 7,
-              backgroundColor: colorScheme.surfaceContainerHighest,
-              valueColor: AlwaysStoppedAnimation<Color>(barColor),
-            ),
           ),
         ),
       ],
@@ -1375,22 +1383,65 @@ class _ChapterDetailsScreenState extends State<_ChapterDetailsScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            capitulo.titulo,
-                            style: Theme.of(context).textTheme.titleLarge,
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: capitulo.criadoAutomaticamente
+                                      ? colorScheme.tertiaryContainer
+                                      : colorScheme.primaryContainer,
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                                child: Icon(
+                                  capitulo.criadoAutomaticamente
+                                      ? Icons.auto_awesome
+                                      : Icons.bookmark_outline,
+                                  color: capitulo.criadoAutomaticamente
+                                      ? colorScheme.onTertiaryContainer
+                                      : colorScheme.onPrimaryContainer,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      capitulo.titulo,
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.titleLarge,
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      periodo,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(
+                                            color: colorScheme.onSurfaceVariant,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            periodo,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            l10n.chapterEntriesAndMood(
-                              _resumo.totalEntradas,
-                              _resumo.humorMedio.toStringAsFixed(1),
-                            ),
-                            style: Theme.of(context).textTheme.bodyMedium,
+                          const SizedBox(height: 14),
+                          Row(
+                            children: [
+                              _buildMetaChip(
+                                context: context,
+                                icon: Icons.menu_book_outlined,
+                                label: l10n.chapterEntriesCount(
+                                  _resumo.totalEntradas,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              _buildMoodBar(context, _resumo.humorMedio),
+                            ],
                           ),
                           if (capitulo.descricao != null &&
                               capitulo.descricao!.trim().isNotEmpty) ...[

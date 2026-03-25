@@ -3796,6 +3796,12 @@ abstract class AppLocalizations {
   /// **'Ignore'**
   String get chapterIgnoreLabel;
 
+  /// Footer of suggestion preview indicating how many stories were omitted
+  ///
+  /// In en, this message translates to:
+  /// **'and {count} more stor{count, plural, =1{y} other{ies}}'**
+  String chapterSuggestionMoreStories(int count);
+
   /// Empty state text for chapters list
   ///
   /// In en, this message translates to:

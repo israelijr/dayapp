@@ -1118,6 +1118,11 @@
   "@chapterCreateFromSuggestion": { "description": "Button to accept suggestion and create chapter" },
   "chapterIgnoreLabel": "Ignore",
   "@chapterIgnoreLabel": { "description": "Button to ignore chapter suggestion" },
+  "chapterSuggestionMoreStories": "and {count} more stor{count, plural, =1{y} other{ies}}",
+  "@chapterSuggestionMoreStories": {
+    "description": "Footer of suggestion preview indicating how many stories were omitted",
+    "placeholders": { "count": { "type": "int" } }
+  },
   "chapterNoItems": "No chapters yet. Start with an automatic suggestion or create one manually.",
   "@chapterNoItems": { "description": "Empty state text for chapters list" },
   "chapterFilterAll": "All",

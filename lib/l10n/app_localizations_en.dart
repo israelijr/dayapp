@@ -2087,6 +2087,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chapterIgnoreLabel => 'Ignore';
 
   @override
+  String chapterSuggestionMoreStories(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ies',
+      one: 'y',
+    );
+    return 'and $count more stor$_temp0';
+  }
+
+  @override
   String get chapterNoItems =>
       'No chapters yet. Start with an automatic suggestion or create one manually.';
 

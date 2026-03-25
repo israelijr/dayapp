@@ -2097,6 +2097,11 @@ class AppLocalizationsPt extends AppLocalizations {
   String get chapterIgnoreLabel => 'Ignorar';
 
   @override
+  String chapterSuggestionMoreStories(int count) {
+    return 'e mais $count história(s)';
+  }
+
+  @override
   String get chapterNoItems =>
       'Ainda não há capítulos. Comece por uma sugestão automática ou crie manualmente.';
 
@@ -4290,6 +4295,11 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get chapterIgnoreLabel => 'Ignorar';
+
+  @override
+  String chapterSuggestionMoreStories(int count) {
+    return 'e mais $count história(s)';
+  }
 
   @override
   String get chapterNoItems =>

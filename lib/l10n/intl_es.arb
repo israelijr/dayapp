@@ -1090,6 +1090,11 @@
   "@chapterCreateFromSuggestion": { "description": "Botón para aceptar sugerencia y crear capítulo" },
   "chapterIgnoreLabel": "Ignorar",
   "@chapterIgnoreLabel": { "description": "Botón para ignorar sugerencia de capítulo" },
+  "chapterSuggestionMoreStories": "y {count} historia(s) más",
+  "@chapterSuggestionMoreStories": {
+    "description": "Pie del preview de sugerencia indicando cuántas historias fueron omitidas",
+    "placeholders": { "count": { "type": "int" } }
+  },
   "chapterNoItems": "Aún no hay capítulos. Empieza con una sugerencia automática o crea uno manualmente.",
   "@chapterNoItems": { "description": "Texto de estado vacío en la lista de capítulos" },
   "chapterFilterAll": "Todos",
