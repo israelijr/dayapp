@@ -70,9 +70,9 @@ class BackupService {
   /// Cria um arquivo ZIP com backup completo e permite compartilhar
   /// (para OneDrive, Google Drive, etc)
   Future<String> createBackupZipFile({
+    required AppLocalizations l10n,
     void Function(String)? onProgress,
     void Function(double?)? onProgressValue,
-    required AppLocalizations l10n,
   }) async {
     try {
       onProgressValue?.call(0.0);
@@ -421,9 +421,9 @@ Versão: 2.0.0
 
   /// Compartilha o arquivo de backup (para salvar no OneDrive, Google Drive, etc)
   Future<void> shareBackupFile({
+    required AppLocalizations l10n,
     void Function(String)? onProgress,
     void Function(double?)? onProgressValue,
-    required AppLocalizations l10n,
   }) async {
     try {
       final zipPath = await createBackupZipFile(
@@ -452,9 +452,9 @@ Versão: 2.0.0
   /// Restaura backup de um arquivo ZIP
   Future<void> restoreFromZipFile(
     String zipFilePath, {
+    required AppLocalizations l10n,
     void Function(String)? onProgress,
     void Function(double?)? onProgressValue,
-    required AppLocalizations l10n,
   }) async {
     try {
       onProgressValue?.call(0.0);

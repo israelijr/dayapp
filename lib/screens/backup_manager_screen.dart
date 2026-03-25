@@ -470,7 +470,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                                           Expanded(
                                             child: Text(
                                               '💾 ${loc.autoBackupsSavedTitle}',
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold,
                                               ),
@@ -546,7 +546,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                                                       ),
                                                       title: Text(
                                                         loc.restore,
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                           fontSize: 13,
                                                         ),
                                                       ),
@@ -567,7 +567,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                                                       ),
                                                       title: Text(
                                                         loc.share,
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                           fontSize: 13,
                                                         ),
                                                       ),
@@ -589,7 +589,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                                                       ),
                                                       title: Text(
                                                         loc.delete,
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                           fontSize: 13,
                                                           color: Colors.red,
                                                         ),

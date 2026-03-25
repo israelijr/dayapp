@@ -25,6 +25,7 @@ import 'providers/theme_provider.dart';
 import 'screens/about_screen.dart';
 import 'screens/backup_manager_screen.dart';
 import 'screens/calendar_view_screen.dart';
+import 'screens/chapters_screen.dart';
 import 'screens/create_account_complement_screen.dart';
 import 'screens/create_account_screen.dart';
 import 'screens/create_historia_screen.dart';
@@ -540,6 +541,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               '/settings': (context) => const SettingsScreen(),
               '/help': (context) => const HelpScreen(),
               '/calendar': (context) => const CalendarViewScreen(),
+              '/chapters': (context) => const ChaptersScreen(),
               '/about': (context) => const AboutScreen(),
               '/backup-manager': (context) => const BackupManagerScreen(),
               '/trash': (context) => const TrashScreen(),

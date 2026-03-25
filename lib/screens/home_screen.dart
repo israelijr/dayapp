@@ -16,6 +16,8 @@ import 'groups_screen.dart';
 import 'home_content.dart';
 import 'search_screen.dart';
 
+enum _HomeHeaderMenuAction { viewLarge, viewCompact, toggleChapterCard }
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -26,6 +28,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   bool _isCardView = true;
+  bool _showChapterShortcutCard = true;
 
   // ScaffoldMessenger local — snackbars ficam escopados à HomeScreen e
   // são descartados automaticamente ao navegar para outra rota (ex: logout).
@@ -34,11 +37,13 @@ class _HomeScreenState extends State<HomeScreen> {
   // apenas uma vez por inicialização do app.
   static bool _backupSuggestionShown = false;
   static const String _prefKeyIsCardView = 'home_isCardView';
+  static const String _prefKeyShowChapterCard = 'home_show_chapter_card';
 
   @override
   void initState() {
     super.initState();
     _loadLayoutPreference();
+    _loadChapterCardPreference();
     // Executar a checagem de histórias não salvas apenas na primeira
     // construção após o carregamento do app.
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -137,6 +142,29 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Future<void> _loadChapterCardPreference() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final val = prefs.getBool(_prefKeyShowChapterCard);
+      if (val != null) {
+        setState(() {
+          _showChapterShortcutCard = val;
+        });
+      }
+    } catch (_) {
+      // ignore errors and keep default
+    }
+  }
+
+  Future<void> _saveChapterCardPreference(bool value) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(_prefKeyShowChapterCard, value);
+    } catch (_) {
+      // ignore
+    }
+  }
+
   // screens list is built dynamically in the body to reflect current view mode
 
   void _onItemTapped(int index) {
@@ -147,6 +175,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final isCompactHeader = MediaQuery.sizeOf(context).width < 390;
+
     return ScaffoldMessenger(
       key: _messengerKey,
       child: Scaffold(
@@ -155,19 +186,77 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               Image.asset('assets/icon/icon.png', width: 32, height: 32),
               const SizedBox(width: 12),
-              Text(
-                _selectedIndex == 0
-                    ? AppLocalizations.of(context)!.appTitle
-                    : _selectedIndex == 1
-                    ? AppLocalizations.of(context)!.manageGroups
-                    : AppLocalizations.of(context)!.search,
-                style: const TextStyle(fontWeight: FontWeight.bold),
+              Flexible(
+                child: Text(
+                  _selectedIndex == 0
+                      ? l10n.appTitle
+                      : _selectedIndex == 1
+                      ? l10n.manageGroups
+                      : l10n.search,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
               ),
             ],
           ),
           actions: [
             // Só mostra os botões de visualização na aba Home
-            if (_selectedIndex == 0)
+            if (_selectedIndex == 0 && isCompactHeader) ...[
+              IconButton(
+                tooltip: l10n.homeHeaderOpenCalendarTooltip,
+                onPressed: () => Navigator.pushNamed(context, '/calendar'),
+                icon: const Icon(Icons.calendar_month_rounded),
+              ),
+              IconButton(
+                tooltip: l10n.chaptersTitle,
+                onPressed: () => Navigator.pushNamed(context, '/chapters'),
+                icon: const Icon(Icons.auto_stories_outlined),
+              ),
+              PopupMenuButton<_HomeHeaderMenuAction>(
+                tooltip: l10n.moreOptions,
+                onSelected: (action) {
+                  switch (action) {
+                    case _HomeHeaderMenuAction.viewLarge:
+                      setState(() {
+                        _isCardView = true;
+                      });
+                      _saveLayoutPreference(true);
+                      break;
+                    case _HomeHeaderMenuAction.viewCompact:
+                      setState(() {
+                        _isCardView = false;
+                      });
+                      _saveLayoutPreference(false);
+                      break;
+                    case _HomeHeaderMenuAction.toggleChapterCard:
+                      setState(() {
+                        _showChapterShortcutCard = !_showChapterShortcutCard;
+                      });
+                      _saveChapterCardPreference(_showChapterShortcutCard);
+                      break;
+                  }
+                },
+                itemBuilder: (context) => [
+                  CheckedPopupMenuItem<_HomeHeaderMenuAction>(
+                    value: _HomeHeaderMenuAction.viewLarge,
+                    checked: _isCardView,
+                    child: Text(l10n.homeHeaderLargeCards),
+                  ),
+                  CheckedPopupMenuItem<_HomeHeaderMenuAction>(
+                    value: _HomeHeaderMenuAction.viewCompact,
+                    checked: !_isCardView,
+                    child: Text(l10n.homeHeaderCompactCards),
+                  ),
+                  const PopupMenuDivider(),
+                  CheckedPopupMenuItem<_HomeHeaderMenuAction>(
+                    value: _HomeHeaderMenuAction.toggleChapterCard,
+                    checked: _showChapterShortcutCard,
+                    child: Text(l10n.chapterShortcutToggle),
+                  ),
+                ],
+              ),
+            ] else if (_selectedIndex == 0)
               Builder(
                 builder: (context) {
                   const duration = AppDurations.listSwitch;
@@ -228,7 +317,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       buildToggle(
                         Icons.view_agenda_rounded,
                         _isCardView,
-                        'Ver em cards grandes',
+                        l10n.homeHeaderLargeCards,
                         () {
                           setState(() {
                             _isCardView = true;
@@ -239,7 +328,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       buildToggle(
                         Icons.grid_view_rounded,
                         !_isCardView,
-                        'Ver em cards reduzidos',
+                        l10n.homeHeaderCompactCards,
                         () {
                           setState(() {
                             _isCardView = false;
@@ -255,7 +344,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Navigator.pushNamed(context, '/calendar');
                           },
                           child: Tooltip(
-                            message: 'Ver calendário',
+                            message: l10n.homeHeaderOpenCalendarTooltip,
                             child: AnimatedContainer(
                               duration: duration,
                               curve: Curves.easeInOut,
@@ -269,6 +358,82 @@ class _HomeScreenState extends State<HomeScreen> {
                                 color: Theme.of(
                                   context,
                                 ).colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 6.0),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(8),
+                          onTap: () {
+                            Navigator.pushNamed(context, '/chapters');
+                          },
+                          child: Tooltip(
+                            message: l10n.chaptersTitle,
+                            child: AnimatedContainer(
+                              duration: duration,
+                              curve: Curves.easeInOut,
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Icon(
+                                Icons.auto_stories_outlined,
+                                size: 28,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 6.0),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(8),
+                          onTap: () {
+                            setState(() {
+                              _showChapterShortcutCard =
+                                  !_showChapterShortcutCard;
+                            });
+                            _saveChapterCardPreference(
+                              _showChapterShortcutCard,
+                            );
+                          },
+                          child: Tooltip(
+                            message: l10n.chapterShortcutToggle,
+                            child: AnimatedContainer(
+                              duration: duration,
+                              curve: Curves.easeInOut,
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: _showChapterShortcutCard
+                                    ? Theme.of(context).colorScheme.secondary
+                                          .withValues(alpha: 0.14)
+                                    : const Color(0x00000000),
+                                borderRadius: BorderRadius.circular(8),
+                                border: _showChapterShortcutCard
+                                    ? Border.all(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.secondary,
+                                        width: 1.2,
+                                      )
+                                    : null,
+                              ),
+                              child: Icon(
+                                _showChapterShortcutCard
+                                    ? Icons.toggle_on_outlined
+                                    : Icons.toggle_off_outlined,
+                                size: 28,
+                                color: _showChapterShortcutCard
+                                    ? Theme.of(context).colorScheme.secondary
+                                    : Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
                               ),
                             ),
                           ),
@@ -567,7 +732,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         body: _selectedIndex == 0
-            ? HomeContent(isCardView: _isCardView)
+            ? HomeContent(
+                isCardView: _isCardView,
+                showChapterShortcutCard: _showChapterShortcutCard,
+              )
             : _selectedIndex == 1
             ? const GroupsScreen()
             : const SearchScreen(),
@@ -644,7 +812,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 20),
                 Text(
                   l10n.automaticBackup,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 ValueListenableBuilder<String>(

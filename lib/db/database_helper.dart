@@ -28,7 +28,7 @@ class DatabaseHelper {
       final path = p.join(dbPath, 'dayapp.db');
       return await openDatabase(
         path,
-        version: 16,
+        version: 17,
         onCreate: _onCreate,
         onUpgrade: _onUpgrade,
       );
@@ -159,6 +159,55 @@ class DatabaseHelper {
       );
       await db.execute(
         'CREATE INDEX idx_historia_tags_tag ON historia_tags(tag_id);',
+      );
+
+      // Tabelas de capítulos (v17)
+      await db.execute('''
+        CREATE TABLE capitulos (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          user_id TEXT NOT NULL,
+          titulo TEXT NOT NULL,
+          descricao TEXT,
+          data_inicio TIMESTAMP NOT NULL,
+          data_fim TIMESTAMP NOT NULL,
+          score_confianca REAL,
+          criado_automaticamente INTEGER DEFAULT 0,
+          data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          data_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        );
+      ''');
+      await db.execute('''
+        CREATE TABLE capitulo_entradas (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          capitulo_id INTEGER NOT NULL,
+          entrada_id INTEGER NOT NULL,
+          UNIQUE(capitulo_id, entrada_id),
+          FOREIGN KEY (capitulo_id) REFERENCES capitulos(id) ON DELETE CASCADE,
+          FOREIGN KEY (entrada_id) REFERENCES historia(id) ON DELETE CASCADE
+        );
+      ''');
+      await db.execute('''
+        CREATE TABLE capitulo_sugestoes_ignoradas (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          user_id TEXT NOT NULL,
+          fingerprint TEXT NOT NULL,
+          data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          UNIQUE(user_id, fingerprint),
+          FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        );
+      ''');
+      await db.execute(
+        'CREATE INDEX idx_capitulos_user_data ON capitulos(user_id, data_inicio, data_fim);',
+      );
+      await db.execute(
+        'CREATE INDEX idx_capitulo_entradas_capitulo ON capitulo_entradas(capitulo_id);',
+      );
+      await db.execute(
+        'CREATE INDEX idx_capitulo_entradas_entrada ON capitulo_entradas(entrada_id);',
+      );
+      await db.execute(
+        'CREATE INDEX idx_capitulo_sugestoes_user ON capitulo_sugestoes_ignoradas(user_id);',
       );
     } catch (e) {
       rethrow;
@@ -430,6 +479,60 @@ class DatabaseHelper {
       } catch (e) {
         // Migração não crítica; ignora erro para não bloquear o app
         debugPrint('Erro migrando valores de humor (v16): \$e');
+      }
+    }
+    if (oldVersion < 17) {
+      // Estrutura de capítulos e relação N×N com entradas.
+      try {
+        await db.execute('''
+          CREATE TABLE IF NOT EXISTS capitulos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id TEXT NOT NULL,
+            titulo TEXT NOT NULL,
+            descricao TEXT,
+            data_inicio TIMESTAMP NOT NULL,
+            data_fim TIMESTAMP NOT NULL,
+            score_confianca REAL,
+            criado_automaticamente INTEGER DEFAULT 0,
+            data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            data_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+          );
+        ''');
+        await db.execute('''
+          CREATE TABLE IF NOT EXISTS capitulo_entradas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            capitulo_id INTEGER NOT NULL,
+            entrada_id INTEGER NOT NULL,
+            UNIQUE(capitulo_id, entrada_id),
+            FOREIGN KEY (capitulo_id) REFERENCES capitulos(id) ON DELETE CASCADE,
+            FOREIGN KEY (entrada_id) REFERENCES historia(id) ON DELETE CASCADE
+          );
+        ''');
+        await db.execute('''
+          CREATE TABLE IF NOT EXISTS capitulo_sugestoes_ignoradas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id TEXT NOT NULL,
+            fingerprint TEXT NOT NULL,
+            data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE(user_id, fingerprint),
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+          );
+        ''');
+        await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_capitulos_user_data ON capitulos(user_id, data_inicio, data_fim);',
+        );
+        await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_capitulo_entradas_capitulo ON capitulo_entradas(capitulo_id);',
+        );
+        await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_capitulo_entradas_entrada ON capitulo_entradas(entrada_id);',
+        );
+        await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_capitulo_sugestoes_user ON capitulo_sugestoes_ignoradas(user_id);',
+        );
+      } catch (e) {
+        debugPrint('Erro criando tabelas de capítulos: $e');
       }
     }
   }

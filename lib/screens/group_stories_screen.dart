@@ -849,12 +849,10 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
           ),
           actions: [
             IconButton(
-              icon: Image.asset(
+              icon: Icon(
                 _isCardView
-                    ? 'assets/image/card.png'
-                    : 'assets/image/icon.png',
-                width: 34,
-                height: 34,
+                    ? Icons.grid_view_rounded
+                    : Icons.view_agenda_rounded,
               ),
               onPressed: () {
                 setState(() {
@@ -890,7 +888,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
                   color: Theme.of(context).primaryColor,
                 ),
                 child: Text(
-                  'Menu',
+                  AppLocalizations.of(context)!.menu,
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onPrimary,
                     fontSize: 24,
@@ -899,9 +897,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
               ),
               ListTile(
                 leading: const Icon(Icons.person),
-                title: Text(
-                  AppLocalizations.of(context)?.editProfile ?? 'Editar Perfil',
-                ),
+                title: Text(AppLocalizations.of(context)!.editProfile),
                 onTap: () {
                   Navigator.push(
                     context,
@@ -913,16 +909,14 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
               ),
               ListTile(
                 leading: const Icon(Icons.settings),
-                title: Text(
-                  AppLocalizations.of(context)?.settings ?? 'Configurações',
-                ),
+                title: Text(AppLocalizations.of(context)!.settings),
                 onTap: () {
                   Navigator.pushNamed(context, '/settings');
                 },
               ),
               ListTile(
                 leading: const Icon(Icons.logout),
-                title: Text(AppLocalizations.of(context)?.logout ?? 'Sair'),
+                title: Text(AppLocalizations.of(context)!.logout),
                 onTap: () async {
                   final auth = Provider.of<AuthProvider>(
                     context,

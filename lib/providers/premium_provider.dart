@@ -53,6 +53,9 @@ class PremiumProvider with ChangeNotifier {
   /// Libera exportações avançadas em PDF.
   bool get canExportPdf => _isPremium;
 
+  /// Libera a experiência de capítulos e sugestões automáticas.
+  bool get canUseChapters => _isPremium;
+
   // Futuras features — adicione aqui conforme surgir necessidade:
   // bool get canUseCloudSync       => _isPremium;
   // bool get canUseAiAssistance    => _isPremium;

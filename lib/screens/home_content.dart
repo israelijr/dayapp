@@ -13,6 +13,7 @@ import '../models/insight.dart';
 import '../models/tag.dart';
 import '../providers/auth_provider.dart';
 import '../providers/insight_provider.dart';
+import '../providers/premium_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../providers/scroll_position_provider.dart';
 import '../services/pdf_export_service.dart';
@@ -28,7 +29,12 @@ import 'search_screen.dart';
 
 class HomeContent extends StatefulWidget {
   final bool isCardView;
-  const HomeContent({required this.isCardView, super.key});
+  final bool showChapterShortcutCard;
+  const HomeContent({
+    required this.isCardView,
+    required this.showChapterShortcutCard,
+    super.key,
+  });
 
   @override
   State<HomeContent> createState() => _HomeContentState();
@@ -796,6 +802,7 @@ class _HomeContentState extends State<HomeContent> {
         return _PaginatedHomeContent(
           key: ValueKey(refreshProvider.refreshCounter),
           isCardView: _isCardView,
+          showChapterShortcutCard: widget.showChapterShortcutCard,
           historias: _historias,
           isInitialLoading: _isInitialLoading,
           isLoadingMore: _isLoadingMore,
@@ -813,6 +820,7 @@ class _HomeContentState extends State<HomeContent> {
 /// Widget interno para conteúdo paginado
 class _PaginatedHomeContent extends StatefulWidget {
   final bool isCardView;
+  final bool showChapterShortcutCard;
   final List<Historia> historias;
   final bool isInitialLoading;
   final bool isLoadingMore;
@@ -824,6 +832,7 @@ class _PaginatedHomeContent extends StatefulWidget {
 
   const _PaginatedHomeContent({
     required this.isCardView,
+    required this.showChapterShortcutCard,
     required this.historias,
     required this.isInitialLoading,
     required this.isLoadingMore,
@@ -938,6 +947,33 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
           builder: (context, insightProvider, _) {
             final insights = insightProvider.insights;
             final storiesCount = widget.historias.length;
+            final extraChapterCard = widget.showChapterShortcutCard ? 1 : 0;
+
+            Widget chapterShortcutCard() {
+              final l10n = AppLocalizations.of(context)!;
+              final premium = context.watch<PremiumProvider>();
+              return Card(
+                margin: const EdgeInsets.only(bottom: 16),
+                child: ListTile(
+                  leading: Icon(
+                    premium.canUseChapters
+                        ? Icons.auto_stories_rounded
+                        : Icons.workspace_premium,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  title: Text(l10n.chaptersHomeCardTitle),
+                  subtitle: Text(
+                    premium.canUseChapters
+                        ? l10n.chaptersHomeCardSubtitle
+                        : l10n.chaptersPremiumRequired,
+                  ),
+                  trailing: FilledButton.tonal(
+                    onPressed: () => Navigator.pushNamed(context, '/chapters'),
+                    child: Text(l10n.chapterOpenLabel),
+                  ),
+                ),
+              );
+            }
 
             // Estado vazio: mantém feedback visual e permite mostrar insights
             // mesmo quando não há histórias visíveis na Home.
@@ -946,6 +982,7 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
                 return ListView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   children: [
+                    if (widget.showChapterShortcutCard) chapterShortcutCard(),
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.7,
                       child: Center(
@@ -993,9 +1030,14 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
                   vertical: 16,
                   horizontal: 12,
                 ),
-                itemCount: insights.length,
+                itemCount: insights.length + extraChapterCard,
                 itemBuilder: (context, index) {
-                  final insight = insights[index];
+                  if (widget.showChapterShortcutCard && index == 0) {
+                    return chapterShortcutCard();
+                  }
+
+                  final normalizedIndex = index - extraChapterCard;
+                  final insight = insights[normalizedIndex];
                   return InsightCard(
                     insight: insight,
                     onSeeStories: (query) {
@@ -1036,10 +1078,15 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
               key: ValueKey<bool>(widget.isCardView),
               controller: widget.scrollController,
               padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-              itemCount: totalItems,
+              itemCount: totalItems + extraChapterCard,
               itemBuilder: (context, index) {
-                final int block = index ~/ blockSize;
-                final int posInBlock = index % blockSize;
+                if (widget.showChapterShortcutCard && index == 0) {
+                  return chapterShortcutCard();
+                }
+
+                final normalizedIndex = index - extraChapterCard;
+                final int block = normalizedIndex ~/ blockSize;
+                final int posInBlock = normalizedIndex % blockSize;
 
                 // Dentro de um bloco que terá insight no final
                 if (block < insightsInserted) {
@@ -1072,7 +1119,8 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
                 }
 
                 // Itens após a área intercalada: insights restantes + loading.
-                final int postInterleavedIndex = index - interleavedItemsCount;
+                final int postInterleavedIndex =
+                    normalizedIndex - interleavedItemsCount;
 
                 if (postInterleavedIndex >= 0) {
                   if (postInterleavedIndex < trailingInsightsCount) {
@@ -1111,7 +1159,7 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
                 // Histórias restantes que não entraram em blocos completos.
                 final storyIndex =
                     insightsInserted * insightInterval +
-                    (index - insightsInserted * blockSize);
+                    (normalizedIndex - insightsInserted * blockSize);
                 final historia = widget.historias[storyIndex];
                 return widget.isCardView
                     ? widget.buildCardView(historia)

@@ -3645,6 +3645,240 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =0{No backups saved} =1{1 backup · {size}} other{{count} backups · {size}}}'**
   String autoBackupStorageInfo(int count, String size);
+
+  /// Title for chapters screen and quick access
+  ///
+  /// In en, this message translates to:
+  /// **'Chapters'**
+  String get chaptersTitle;
+
+  /// Tooltip for toggling chapter shortcut card visibility
+  ///
+  /// In en, this message translates to:
+  /// **'Show/hide chapters card on Home'**
+  String get chapterShortcutToggle;
+
+  /// Title of chapters shortcut card shown on Home
+  ///
+  /// In en, this message translates to:
+  /// **'Your life by chapters'**
+  String get chaptersHomeCardTitle;
+
+  /// Subtitle of chapters shortcut card on Home
+  ///
+  /// In en, this message translates to:
+  /// **'Review your stories grouped by phase with smart suggestions.'**
+  String get chaptersHomeCardSubtitle;
+
+  /// Message shown when chapters feature is locked for Free users
+  ///
+  /// In en, this message translates to:
+  /// **'Chapters and automatic suggestions are Premium features.'**
+  String get chaptersPremiumRequired;
+
+  /// Section title for automatic chapter suggestions
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested chapters'**
+  String get chapterSuggestions;
+
+  /// Success message after creating a chapter
+  ///
+  /// In en, this message translates to:
+  /// **'Chapter created successfully.'**
+  String get chapterCreated;
+
+  /// Button to create chapter manually
+  ///
+  /// In en, this message translates to:
+  /// **'Create chapter manually'**
+  String get chapterCreateManual;
+
+  /// Label for chapter title field
+  ///
+  /// In en, this message translates to:
+  /// **'Chapter title'**
+  String get chapterTitle;
+
+  /// Hint for chapter title field
+  ///
+  /// In en, this message translates to:
+  /// **'Ex: Job change'**
+  String get chapterTitleHint;
+
+  /// Label for chapter description field
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get chapterDescription;
+
+  /// Label for selecting stories to compose a chapter
+  ///
+  /// In en, this message translates to:
+  /// **'Select related stories (title + date)'**
+  String get chapterSelectEntries;
+
+  /// Validation message for minimum stories in a chapter
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum: 4 stories per chapter.'**
+  String get chapterMinimumEntries;
+
+  /// Period label for chapter
+  ///
+  /// In en, this message translates to:
+  /// **'Period: {start} - {end}'**
+  String chapterPeriod(String start, String end);
+
+  /// Count of stories in chapter
+  ///
+  /// In en, this message translates to:
+  /// **'Stories: {count}'**
+  String chapterEntriesCount(int count);
+
+  /// Average mood metric in chapter
+  ///
+  /// In en, this message translates to:
+  /// **'Average mood: {mood}'**
+  String chapterAverageMood(String mood);
+
+  /// Top tags listed in chapter summary
+  ///
+  /// In en, this message translates to:
+  /// **'Top tags: {tags}'**
+  String chapterTopTags(String tags);
+
+  /// Button to accept suggestion and create chapter
+  ///
+  /// In en, this message translates to:
+  /// **'Create chapter'**
+  String get chapterCreateFromSuggestion;
+
+  /// Button to ignore chapter suggestion
+  ///
+  /// In en, this message translates to:
+  /// **'Ignore'**
+  String get chapterIgnoreLabel;
+
+  /// Empty state text for chapters list
+  ///
+  /// In en, this message translates to:
+  /// **'No chapters yet. Start with an automatic suggestion or create one manually.'**
+  String get chapterNoItems;
+
+  /// Short chapter list subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'{count} stories - avg mood {mood}'**
+  String chapterEntriesAndMood(int count, String mood);
+
+  /// Button label to open chapters screen
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get chapterOpenLabel;
+
+  /// Section title for linking a story to chapters
+  ///
+  /// In en, this message translates to:
+  /// **'Chapters'**
+  String get chapterLinkSectionTitle;
+
+  /// Button label to configure chapter linking
+  ///
+  /// In en, this message translates to:
+  /// **'Configure'**
+  String get chapterLinkConfigure;
+
+  /// Dialog title for chapter linking in create/edit story
+  ///
+  /// In en, this message translates to:
+  /// **'Add this story to chapters'**
+  String get chapterLinkDialogTitle;
+
+  /// Option to not link story to any chapter
+  ///
+  /// In en, this message translates to:
+  /// **'Do not add'**
+  String get chapterLinkModeNone;
+
+  /// Option to link story to an existing chapter
+  ///
+  /// In en, this message translates to:
+  /// **'Add to existing chapter'**
+  String get chapterLinkModeExisting;
+
+  /// Option to create a new chapter while saving story
+  ///
+  /// In en, this message translates to:
+  /// **'Create new chapter'**
+  String get chapterLinkModeNew;
+
+  /// Label for existing chapter dropdown
+  ///
+  /// In en, this message translates to:
+  /// **'Select chapter'**
+  String get chapterSelectExistingLabel;
+
+  /// Validation message when existing chapter is not selected
+  ///
+  /// In en, this message translates to:
+  /// **'Select an existing chapter.'**
+  String get chapterSelectExistingRequired;
+
+  /// Validation message when chapter title is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Chapter title is required.'**
+  String get chapterTitleRequired;
+
+  /// Validation/help text for minimum related stories when creating chapter from create/edit flow
+  ///
+  /// In en, this message translates to:
+  /// **'Select at least 3 related stories. With the current one, the minimum is 4.'**
+  String get chapterMinimumRelatedWithCurrent;
+
+  /// Summary text when no chapter linking is configured
+  ///
+  /// In en, this message translates to:
+  /// **'Not linked to any chapter.'**
+  String get chapterLinkSummaryNone;
+
+  /// Summary text when linking to existing chapter is configured
+  ///
+  /// In en, this message translates to:
+  /// **'Will be added to an existing chapter when saving.'**
+  String get chapterLinkSummaryExisting;
+
+  /// Summary text when creating new chapter from create/edit flow
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{New chapter with 1 story} other{New chapter with {count} stories}}'**
+  String chapterLinkSummaryNew(int count);
+
+  /// Generic label for overflow menu with additional options
+  ///
+  /// In en, this message translates to:
+  /// **'More options'**
+  String get moreOptions;
+
+  /// Tooltip/label to display stories in large cards on Home
+  ///
+  /// In en, this message translates to:
+  /// **'View in large cards'**
+  String get homeHeaderLargeCards;
+
+  /// Tooltip/label to display stories in compact cards on Home
+  ///
+  /// In en, this message translates to:
+  /// **'View in compact cards'**
+  String get homeHeaderCompactCards;
+
+  /// Tooltip for calendar button in Home header
+  ///
+  /// In en, this message translates to:
+  /// **'Open calendar'**
+  String get homeHeaderOpenCalendarTooltip;
 }
 
 class _AppLocalizationsDelegate

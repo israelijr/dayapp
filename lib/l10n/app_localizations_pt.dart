@@ -2005,6 +2005,149 @@ class AppLocalizationsPt extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get chaptersTitle => 'Capítulos';
+
+  @override
+  String get chapterShortcutToggle =>
+      'Mostrar/ocultar card de capítulos na Home';
+
+  @override
+  String get chaptersHomeCardTitle => 'A sua vida por capítulos';
+
+  @override
+  String get chaptersHomeCardSubtitle =>
+      'Reveja as suas histórias por fase com sugestões inteligentes.';
+
+  @override
+  String get chaptersPremiumRequired =>
+      'Capítulos e sugestões automáticas são funcionalidades Premium.';
+
+  @override
+  String get chapterSuggestions => 'Capítulos sugeridos';
+
+  @override
+  String get chapterCreated => 'Capítulo criado com sucesso.';
+
+  @override
+  String get chapterCreateManual => 'Criar capítulo manualmente';
+
+  @override
+  String get chapterTitle => 'Título do capítulo';
+
+  @override
+  String get chapterTitleHint => 'Ex: Mudança de emprego';
+
+  @override
+  String get chapterDescription => 'Descrição';
+
+  @override
+  String get chapterSelectEntries =>
+      'Selecione histórias relacionadas (título + data)';
+
+  @override
+  String get chapterMinimumEntries => 'Mínimo: 4 histórias por capítulo.';
+
+  @override
+  String chapterPeriod(String start, String end) {
+    return 'Período: $start - $end';
+  }
+
+  @override
+  String chapterEntriesCount(int count) {
+    return 'Histórias: $count';
+  }
+
+  @override
+  String chapterAverageMood(String mood) {
+    return 'Humor médio: $mood';
+  }
+
+  @override
+  String chapterTopTags(String tags) {
+    return 'Tags principais: $tags';
+  }
+
+  @override
+  String get chapterCreateFromSuggestion => 'Criar capítulo';
+
+  @override
+  String get chapterIgnoreLabel => 'Ignorar';
+
+  @override
+  String get chapterNoItems =>
+      'Ainda não há capítulos. Comece por uma sugestão automática ou crie manualmente.';
+
+  @override
+  String chapterEntriesAndMood(int count, String mood) {
+    return '$count histórias - humor médio $mood';
+  }
+
+  @override
+  String get chapterOpenLabel => 'Abrir';
+
+  @override
+  String get chapterLinkSectionTitle => 'Capítulos';
+
+  @override
+  String get chapterLinkConfigure => 'Configurar';
+
+  @override
+  String get chapterLinkDialogTitle => 'Adicionar esta história aos capítulos';
+
+  @override
+  String get chapterLinkModeNone => 'Não adicionar';
+
+  @override
+  String get chapterLinkModeExisting => 'Adicionar a capítulo existente';
+
+  @override
+  String get chapterLinkModeNew => 'Criar novo capítulo';
+
+  @override
+  String get chapterSelectExistingLabel => 'Selecionar capítulo';
+
+  @override
+  String get chapterSelectExistingRequired =>
+      'Selecione um capítulo existente.';
+
+  @override
+  String get chapterTitleRequired => 'O título do capítulo é obrigatório.';
+
+  @override
+  String get chapterMinimumRelatedWithCurrent =>
+      'Selecione ao menos 3 histórias relacionadas. Com a história atual, o mínimo é 4.';
+
+  @override
+  String get chapterLinkSummaryNone => 'Sem vínculo com capítulos.';
+
+  @override
+  String get chapterLinkSummaryExisting =>
+      'Será adicionada a um capítulo existente ao salvar.';
+
+  @override
+  String chapterLinkSummaryNew(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Novo capítulo com $count histórias',
+      one: 'Novo capítulo com 1 história',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get moreOptions => 'Mais opções';
+
+  @override
+  String get homeHeaderLargeCards => 'Ver em cards grandes';
+
+  @override
+  String get homeHeaderCompactCards => 'Ver em cards reduzidos';
+
+  @override
+  String get homeHeaderOpenCalendarTooltip => 'Ver calendário';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -4008,4 +4151,147 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
     );
     return '$_temp0';
   }
+
+  @override
+  String get chaptersTitle => 'Capítulos';
+
+  @override
+  String get chapterShortcutToggle =>
+      'Mostrar/ocultar card de capítulos na Home';
+
+  @override
+  String get chaptersHomeCardTitle => 'Sua vida por capítulos';
+
+  @override
+  String get chaptersHomeCardSubtitle =>
+      'Reveja suas histórias por fase com sugestões inteligentes.';
+
+  @override
+  String get chaptersPremiumRequired =>
+      'Capítulos e sugestões automáticas são recursos Premium.';
+
+  @override
+  String get chapterSuggestions => 'Capítulos sugeridos';
+
+  @override
+  String get chapterCreated => 'Capítulo criado com sucesso.';
+
+  @override
+  String get chapterCreateManual => 'Criar capítulo manualmente';
+
+  @override
+  String get chapterTitle => 'Título do capítulo';
+
+  @override
+  String get chapterTitleHint => 'Ex: Mudança de emprego';
+
+  @override
+  String get chapterDescription => 'Descrição';
+
+  @override
+  String get chapterSelectEntries =>
+      'Selecione histórias relacionadas (título + data)';
+
+  @override
+  String get chapterMinimumEntries => 'Mínimo: 4 histórias por capítulo.';
+
+  @override
+  String chapterPeriod(String start, String end) {
+    return 'Período: $start - $end';
+  }
+
+  @override
+  String chapterEntriesCount(int count) {
+    return 'Histórias: $count';
+  }
+
+  @override
+  String chapterAverageMood(String mood) {
+    return 'Humor médio: $mood';
+  }
+
+  @override
+  String chapterTopTags(String tags) {
+    return 'Tags principais: $tags';
+  }
+
+  @override
+  String get chapterCreateFromSuggestion => 'Criar capítulo';
+
+  @override
+  String get chapterIgnoreLabel => 'Ignorar';
+
+  @override
+  String get chapterNoItems =>
+      'Ainda não há capítulos. Comece por uma sugestão automática ou crie manualmente.';
+
+  @override
+  String chapterEntriesAndMood(int count, String mood) {
+    return '$count histórias - humor médio $mood';
+  }
+
+  @override
+  String get chapterOpenLabel => 'Abrir';
+
+  @override
+  String get chapterLinkSectionTitle => 'Capítulos';
+
+  @override
+  String get chapterLinkConfigure => 'Configurar';
+
+  @override
+  String get chapterLinkDialogTitle => 'Adicionar esta história aos capítulos';
+
+  @override
+  String get chapterLinkModeNone => 'Não adicionar';
+
+  @override
+  String get chapterLinkModeExisting => 'Adicionar a capítulo existente';
+
+  @override
+  String get chapterLinkModeNew => 'Criar novo capítulo';
+
+  @override
+  String get chapterSelectExistingLabel => 'Selecionar capítulo';
+
+  @override
+  String get chapterSelectExistingRequired =>
+      'Selecione um capítulo existente.';
+
+  @override
+  String get chapterTitleRequired => 'O título do capítulo é obrigatório.';
+
+  @override
+  String get chapterMinimumRelatedWithCurrent =>
+      'Selecione ao menos 3 histórias relacionadas. Com a história atual, o mínimo é 4.';
+
+  @override
+  String get chapterLinkSummaryNone => 'Sem vínculo com capítulos.';
+
+  @override
+  String get chapterLinkSummaryExisting =>
+      'Será adicionada a um capítulo existente ao salvar.';
+
+  @override
+  String chapterLinkSummaryNew(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Novo capítulo com $count histórias',
+      one: 'Novo capítulo com 1 história',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get moreOptions => 'Mais opções';
+
+  @override
+  String get homeHeaderLargeCards => 'Ver em cards grandes';
+
+  @override
+  String get homeHeaderCompactCards => 'Ver em cards reduzidos';
+
+  @override
+  String get homeHeaderOpenCalendarTooltip => 'Ver calendário';
 }
