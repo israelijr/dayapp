@@ -2031,6 +2031,16 @@ class AppLocalizationsPt extends AppLocalizations {
   String get chapterCreated => 'Capítulo criado com sucesso.';
 
   @override
+  String get chapterEditTitle => 'Editar capítulo';
+
+  @override
+  String get chapterDescriptionHint =>
+      'Digite uma descrição para este capítulo (opcional)';
+
+  @override
+  String get chapterUpdated => 'Capítulo atualizado com sucesso.';
+
+  @override
   String get chapterCreateManual => 'Criar capítulo manualmente';
 
   @override
@@ -4175,6 +4185,16 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get chapterCreated => 'Capítulo criado com sucesso.';
+
+  @override
+  String get chapterEditTitle => 'Editar capítulo';
+
+  @override
+  String get chapterDescriptionHint =>
+      'Digite uma descrição para este capítulo (opcional)';
+
+  @override
+  String get chapterUpdated => 'Capítulo atualizado com sucesso.';
 
   @override
   String get chapterCreateManual => 'Criar capítulo manualmente';

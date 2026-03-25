@@ -686,12 +686,31 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
     int? draftCapituloId = _capituloSelecionadoId;
     var draftNovoTitulo = _novoCapituloTitulo;
     final draftRelacionadas = <int>{..._novoCapituloEntradasRelacionadas};
+    var draftBuscaEntradas = '';
 
     final confirmado = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
         return StatefulBuilder(
           builder: (context, setDialogState) {
+            final buscaNormalizada = draftBuscaEntradas.trim().toLowerCase();
+            final entradasFiltradas = entradas
+                .where((entrada) {
+                  if (buscaNormalizada.isEmpty) {
+                    return true;
+                  }
+
+                  final tituloNormalizado = entrada.titulo.toLowerCase();
+                  final dataFormatada = DateFormat(
+                    'dd/MM/yyyy',
+                    l10n.localeName,
+                  ).format(entrada.data).toLowerCase();
+
+                  return tituloNormalizado.contains(buscaNormalizada) ||
+                      dataFormatada.contains(buscaNormalizada);
+                })
+                .toList(growable: false);
+
             return AlertDialog(
               title: Text(l10n.chapterLinkDialogTitle),
               content: SizedBox(
@@ -776,6 +795,19 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
                         const SizedBox(height: 8),
+                        TextField(
+                          decoration: InputDecoration(
+                            labelText: l10n.search,
+                            hintText: l10n.searchHintText,
+                            prefixIcon: const Icon(Icons.search),
+                          ),
+                          onChanged: (value) {
+                            setDialogState(() {
+                              draftBuscaEntradas = value;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 8),
                         Container(
                           constraints: const BoxConstraints(maxHeight: 260),
                           decoration: BoxDecoration(
@@ -788,9 +820,9 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                           ),
                           child: ListView.builder(
                             shrinkWrap: true,
-                            itemCount: entradas.length,
+                            itemCount: entradasFiltradas.length,
                             itemBuilder: (context, index) {
-                              final entrada = entradas[index];
+                              final entrada = entradasFiltradas[index];
                               final entradaId = entrada.id;
                               if (entradaId == null) {
                                 return const SizedBox.shrink();
@@ -821,6 +853,17 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                             },
                           ),
                         ),
+                        if (entradasFiltradas.isEmpty) ...[
+                          const SizedBox(height: 8),
+                          Text(
+                            l10n.noStoriesHere,
+                            style: TextStyle(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
                         const SizedBox(height: 6),
                         Text(
                           l10n.chapterMinimumRelatedWithCurrent,

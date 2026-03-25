@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../db/capitulo_helper.dart';
 import '../models/capitulo.dart';
 import '../models/capitulo_sugestao.dart';
+import '../models/historia.dart';
 import '../providers/auth_provider.dart';
 import '../providers/premium_provider.dart';
 import '../providers/refresh_provider.dart';
@@ -273,6 +274,79 @@ class _ChaptersScreenState extends State<ChaptersScreen> {
     await _loadData();
   }
 
+  Future<void> _abrirEdicaoCapitulo(CapituloResumo resumo) async {
+    final auth = Provider.of<AuthProvider>(context, listen: false);
+    final userId = auth.user?.id;
+    if (userId == null) return;
+
+    final entradasAtuais = await _capituloHelper.getEntradasByCapitulo(
+      resumo.capitulo.id!,
+    );
+    final todasEntradas = await _capituloHelper.listEntradasElegiveis(userId);
+    if (!mounted) return;
+
+    final draftEntradaIds = <int>{
+      for (final e in entradasAtuais)
+        if (e.id != null) e.id!,
+    };
+
+    final resultado = await showDialog<_EditCapituloResult?>(
+      context: context,
+      builder: (dialogContext) {
+        return _EditCapituloDialog(
+          capitulo: resumo.capitulo,
+          todasEntradas: todasEntradas,
+          draftEntradaIds: draftEntradaIds,
+        );
+      },
+    );
+
+    if (resultado == null) return;
+    if (!mounted) return;
+
+    // Validar e preparar histórias selecionadas
+    final selectedEntries =
+        todasEntradas
+            .where(
+              (entry) => entry.id != null && draftEntradaIds.contains(entry.id),
+            )
+            .toList()
+          ..sort((a, b) => a.data.compareTo(b.data));
+
+    if (selectedEntries.length < 4) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.chapterMinimumEntries),
+        ),
+      );
+      return;
+    }
+
+    final capituloAtualizado = Capitulo(
+      id: resumo.capitulo.id,
+      userId: userId,
+      titulo: resultado.titulo,
+      descricao: resultado.descricao,
+      dataInicio: selectedEntries.first.data,
+      dataFim: selectedEntries.last.data,
+      criadoAutomaticamente: resumo.capitulo.criadoAutomaticamente,
+    );
+
+    await _capituloHelper.updateCapituloWithEntradas(
+      capituloAtualizado,
+      selectedEntries.map((entry) => entry.id!).toList(growable: false),
+    );
+
+    if (!mounted) return;
+    Provider.of<RefreshProvider>(context, listen: false).refresh();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(AppLocalizations.of(context)!.chapterUpdated)),
+    );
+
+    await _loadData();
+  }
+
   Future<void> _abrirDetalhesCapitulo(CapituloResumo resumo) async {
     final l10n = AppLocalizations.of(context)!;
     final entradas = await _capituloHelper.getEntradasByCapitulo(
@@ -344,6 +418,13 @@ class _ChaptersScreenState extends State<ChaptersScreen> {
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text(l10n.close),
+            ),
+            FilledButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _abrirEdicaoCapitulo(resumo);
+              },
+              child: Text(l10n.edit),
             ),
           ],
         );
@@ -499,6 +580,222 @@ class _ChaptersScreenState extends State<ChaptersScreen> {
                 ],
               ),
             ),
+    );
+  }
+}
+
+// Classe auxiliar para retornar dados editados do dialog
+class _EditCapituloResult {
+  final String titulo;
+  final String? descricao;
+
+  _EditCapituloResult({required this.titulo, required this.descricao});
+}
+
+// Dialog interno para edição de capítulo
+class _EditCapituloDialog extends StatefulWidget {
+  final Capitulo capitulo;
+  final List<Historia> todasEntradas;
+  final Set<int> draftEntradaIds;
+
+  const _EditCapituloDialog({
+    required this.capitulo,
+    required this.todasEntradas,
+    required this.draftEntradaIds,
+  });
+
+  @override
+  State<_EditCapituloDialog> createState() => _EditCapituloDialogState();
+}
+
+class _EditCapituloDialogState extends State<_EditCapituloDialog> {
+  late TextEditingController titleController;
+  late TextEditingController descController;
+  var _buscaEntradas = '';
+
+  @override
+  void initState() {
+    super.initState();
+    titleController = TextEditingController(text: widget.capitulo.titulo);
+    descController = TextEditingController(
+      text: widget.capitulo.descricao ?? '',
+    );
+  }
+
+  @override
+  void dispose() {
+    titleController.dispose();
+    descController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return StatefulBuilder(
+      builder: (context, setDialogState) {
+        final buscaNormalizada = _buscaEntradas.trim().toLowerCase();
+        final entradasFiltradas = widget.todasEntradas
+            .where((entrada) {
+              if (buscaNormalizada.isEmpty) return true;
+
+              final tituloNormalizado = entrada.titulo.toLowerCase();
+              final dataFormatada = DateFormat(
+                'dd/MM/yyyy',
+                l10n.localeName,
+              ).format(entrada.data).toLowerCase();
+
+              return tituloNormalizado.contains(buscaNormalizada) ||
+                  dataFormatada.contains(buscaNormalizada);
+            })
+            .toList(growable: false);
+
+        return AlertDialog(
+          title: Text(l10n.chapterEditTitle),
+          content: SizedBox(
+            width: 600,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.chapterTitle,
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
+                  const SizedBox(height: 6),
+                  TextField(
+                    controller: titleController,
+                    decoration: InputDecoration(
+                      hintText: l10n.chapterTitleHint,
+                      border: const OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    l10n.chapterDescription,
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
+                  const SizedBox(height: 6),
+                  TextField(
+                    controller: descController,
+                    minLines: 2,
+                    maxLines: 3,
+                    decoration: InputDecoration(
+                      hintText: l10n.chapterDescriptionHint,
+                      border: const OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    l10n.chapterSelectEntries,
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
+                  const SizedBox(height: 6),
+                  TextField(
+                    decoration: InputDecoration(
+                      labelText: l10n.search,
+                      hintText: l10n.searchHintText,
+                      prefixIcon: const Icon(Icons.search),
+                      border: const OutlineInputBorder(),
+                    ),
+                    onChanged: (value) {
+                      setDialogState(() {
+                        _buscaEntradas = value;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    constraints: const BoxConstraints(maxHeight: 250),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.outlineVariant,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: entradasFiltradas.length,
+                      itemBuilder: (context, index) {
+                        final entrada = entradasFiltradas[index];
+                        final entradaId = entrada.id;
+                        if (entradaId == null) {
+                          return const SizedBox.shrink();
+                        }
+
+                        final isSelected = widget.draftEntradaIds.contains(
+                          entradaId,
+                        );
+                        return CheckboxListTile(
+                          value: isSelected,
+                          onChanged: (value) {
+                            setDialogState(() {
+                              if (value == true) {
+                                widget.draftEntradaIds.add(entradaId);
+                              } else {
+                                widget.draftEntradaIds.remove(entradaId);
+                              }
+                            });
+                          },
+                          title: Text(entrada.titulo),
+                          subtitle: Text(
+                            DateFormat(
+                              'dd/MM/yyyy',
+                              l10n.localeName,
+                            ).format(entrada.data),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  if (entradasFiltradas.isEmpty) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      l10n.noStoriesHere,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 8),
+                  Text(
+                    l10n.chapterMinimumEntries,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(null),
+              child: Text(l10n.cancel),
+            ),
+            FilledButton(
+              onPressed: () {
+                if (titleController.text.trim().isEmpty ||
+                    widget.draftEntradaIds.length < 4) {
+                  return;
+                }
+                Navigator.of(context).pop(
+                  _EditCapituloResult(
+                    titulo: titleController.text.trim(),
+                    descricao: descController.text.trim().isEmpty
+                        ? null
+                        : descController.text.trim(),
+                  ),
+                );
+              },
+              child: Text(l10n.save),
+            ),
+          ],
+        );
+      },
     );
   }
 }

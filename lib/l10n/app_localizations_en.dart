@@ -2022,6 +2022,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chapterCreated => 'Chapter created successfully.';
 
   @override
+  String get chapterEditTitle => 'Edit chapter';
+
+  @override
+  String get chapterDescriptionHint =>
+      'Enter a description for this chapter (optional)';
+
+  @override
+  String get chapterUpdated => 'Chapter updated successfully.';
+
+  @override
   String get chapterCreateManual => 'Create chapter manually';
 
   @override

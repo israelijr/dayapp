@@ -3688,6 +3688,24 @@ abstract class AppLocalizations {
   /// **'Chapter created successfully.'**
   String get chapterCreated;
 
+  /// Title of chapter edit dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Edit chapter'**
+  String get chapterEditTitle;
+
+  /// Placeholder for chapter description field
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a description for this chapter (optional)'**
+  String get chapterDescriptionHint;
+
+  /// Success message after updating chapter
+  ///
+  /// In en, this message translates to:
+  /// **'Chapter updated successfully.'**
+  String get chapterUpdated;
+
   /// Button to create chapter manually
   ///
   /// In en, this message translates to:
