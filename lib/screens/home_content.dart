@@ -928,195 +928,204 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
               );
             }
 
-            // Estado vazio: mantém feedback visual e permite mostrar insights
-            // mesmo quando não há histórias visíveis na Home.
-            if (storiesCount == 0) {
-              if (insights.isEmpty) {
-                return ListView(
-                  physics: const AlwaysScrollableScrollPhysics(),
+            // userId necessário para o callback de dispensa
+            final userId =
+                Provider.of<AuthProvider>(context, listen: false).user?.id ??
+                '';
+            final devMode = insightProvider.devMode;
+            final hasDevBanner = devMode && insights.isNotEmpty;
+            final extraDevBanner = hasDevBanner ? 1 : 0;
+            final headerCount =
+                extraChapterCard + extraDevBanner + insights.length;
+
+            Widget devModeBanner() {
+              final colorScheme = Theme.of(context).colorScheme;
+              final l10n = AppLocalizations.of(context)!;
+              return Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: colorScheme.tertiary.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: colorScheme.tertiary.withValues(alpha: 0.35),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (widget.showChapterShortcutCard) chapterShortcutCard(),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.7,
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/image/home_vazia.png',
-                              width: 250,
-                              height: 250,
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              AppLocalizations.of(context)!.noStoriesHere,
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              AppLocalizations.of(
-                                context,
-                              )!.storiesGroupedOrArchived,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                          ],
-                        ),
+                    Icon(
+                      Icons.developer_mode,
+                      size: 14,
+                      color: colorScheme.tertiary,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      l10n.insightDevModeActive,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: colorScheme.tertiary,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
-                );
-              }
-
-              return ListView.builder(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.symmetric(
-                  vertical: 16,
-                  horizontal: 12,
                 ),
-                itemCount: insights.length + extraChapterCard,
-                itemBuilder: (context, index) {
-                  if (widget.showChapterShortcutCard && index == 0) {
-                    return chapterShortcutCard();
-                  }
+              );
+            }
 
-                  final normalizedIndex = index - extraChapterCard;
-                  final insight = insights[normalizedIndex];
-                  return InsightCard(
-                    insight: insight,
-                    onSeeStories: (query) {
-                      final searchType = insight.type == InsightType.positiveTag
-                          ? SearchType.tag
-                          : SearchType.text;
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => SearchScreen(
-                            initialQuery: query,
-                            initialSearchType: searchType,
-                          ),
-                        ),
-                      );
-                    },
+            /// Constrói um InsightCard com todos os callbacks configurados.
+            Widget buildInsightCard(Insight insight) {
+              return InsightCard(
+                insight: insight,
+                onDismiss: () =>
+                    insightProvider.dismissInsight(userId, insight.type),
+                onPremiumCTA: () =>
+                    Navigator.of(context).pushNamed('/settings'),
+                onSeeStories: (query) {
+                  final searchType = insight.type == InsightType.positiveTag
+                      ? SearchType.tag
+                      : SearchType.text;
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => SearchScreen(
+                        initialQuery: query,
+                        initialSearchType: searchType,
+                      ),
+                    ),
                   );
                 },
               );
             }
 
-            // Um insight a cada 5 histórias; máximo definido pelo InsightService
-            const int insightInterval = 5;
-            const int blockSize =
-                insightInterval + 1; // bloco: 5 histórias + 1 insight
-            final int insightsInserted = (storiesCount ~/ insightInterval)
-                .clamp(0, insights.length);
-            // Exibe todos os insights restantes ao final da lista para evitar
-            // ocultar cards quando houver poucas histórias visíveis.
-            final int trailingInsightsCount =
-                insights.length - insightsInserted;
-            final int interleavedItemsCount = storiesCount + insightsInserted;
-            final int totalItems =
-                interleavedItemsCount +
-                trailingInsightsCount +
-                (widget.hasMoreData ? 1 : 0);
+            // Estado verdadeiramente vazio: sem histórias e sem insights.
+            if (storiesCount == 0 && insights.isEmpty) {
+              return ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: [
+                  if (widget.showChapterShortcutCard) chapterShortcutCard(),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.7,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/image/home_vazia.png',
+                            width: 250,
+                            height: 250,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            AppLocalizations.of(context)!.noStoriesHere,
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            AppLocalizations.of(
+                              context,
+                            )!.storiesGroupedOrArchived,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }
+
+            // Lista unificada: capítulo + insights (topo) + histórias (corpo).
+            final totalBodyItems = storiesCount == 0
+                ? 1 // placeholder de lista vazia
+                : storiesCount + (widget.hasMoreData ? 1 : 0);
+            final totalItems = headerCount + totalBodyItems;
 
             return ListView.builder(
               key: ValueKey<bool>(widget.isCardView),
-              controller: widget.scrollController,
+              controller: storiesCount > 0 ? widget.scrollController : null,
+              physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-              itemCount: totalItems + extraChapterCard,
+              itemCount: totalItems,
               itemBuilder: (context, index) {
+                // Card de capítulos
                 if (widget.showChapterShortcutCard && index == 0) {
                   return chapterShortcutCard();
                 }
 
-                final normalizedIndex = index - extraChapterCard;
-                final int block = normalizedIndex ~/ blockSize;
-                final int posInBlock = normalizedIndex % blockSize;
+                // Banner de modo desenvolvimento
+                if (hasDevBanner && index == extraChapterCard) {
+                  return devModeBanner();
+                }
 
-                // Dentro de um bloco que terá insight no final
-                if (block < insightsInserted) {
-                  if (posInBlock == insightInterval) {
-                    // Posição do InsightCard
-                    return InsightCard(
-                      insight: insights[block],
-                      onSeeStories: (query) {
-                        final searchType =
-                            insights[block].type == InsightType.positiveTag
-                            ? SearchType.tag
-                            : SearchType.text;
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => SearchScreen(
-                              initialQuery: query,
-                              initialSearchType: searchType,
+                // Cards de insights no topo (abaixo do card de capítulos)
+                if (index < headerCount) {
+                  final insightIndex =
+                      index - extraChapterCard - extraDevBanner;
+                  return buildInsightCard(insights[insightIndex]);
+                }
+
+                // Índice no corpo (histórias / mensagem vazia)
+                final bodyIndex = index - headerCount;
+
+                // Mensagem de lista vazia quando há insights mas não há histórias
+                if (storiesCount == 0) {
+                  return SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.45,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/image/home_vazia.png',
+                            width: 180,
+                            height: 180,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            AppLocalizations.of(context)!.noStoriesHere,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                             ),
                           ),
-                        );
-                      },
-                    );
-                  }
-                  // História dentro do bloco
-                  final storyIndex = block * insightInterval + posInBlock;
-                  final historia = widget.historias[storyIndex];
+                        ],
+                      ),
+                    ),
+                  );
+                }
+
+                // Histórias
+                if (bodyIndex < storiesCount) {
+                  final historia = widget.historias[bodyIndex];
                   return widget.isCardView
                       ? widget.buildCardView(historia)
                       : widget.buildIconView(historia);
                 }
 
-                // Itens após a área intercalada: insights restantes + loading.
-                final int postInterleavedIndex =
-                    normalizedIndex - interleavedItemsCount;
-
-                if (postInterleavedIndex >= 0) {
-                  if (postInterleavedIndex < trailingInsightsCount) {
-                    final insight =
-                        insights[insightsInserted + postInterleavedIndex];
-                    return InsightCard(
-                      insight: insight,
-                      onSeeStories: (query) {
-                        final searchType =
-                            insight.type == InsightType.positiveTag
-                            ? SearchType.tag
-                            : SearchType.text;
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => SearchScreen(
-                              initialQuery: query,
-                              initialSearchType: searchType,
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  }
-
-                  // Indicador de carregamento no final.
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: Center(
-                      child: widget.isLoadingMore
-                          ? const CircularProgressIndicator()
-                          : const SizedBox.shrink(),
-                    ),
-                  );
-                }
-
-                // Histórias restantes que não entraram em blocos completos.
-                final storyIndex =
-                    insightsInserted * insightInterval +
-                    (normalizedIndex - insightsInserted * blockSize);
-                final historia = widget.historias[storyIndex];
-                return widget.isCardView
-                    ? widget.buildCardView(historia)
-                    : widget.buildIconView(historia);
+                // Indicador de carregamento de mais dados
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Center(
+                    child: widget.isLoadingMore
+                        ? const CircularProgressIndicator()
+                        : const SizedBox.shrink(),
+                  ),
+                );
               },
             );
           },

@@ -23,7 +23,7 @@ class InsightService {
   static const double _trendThreshold = 0.4;
 
   /// Máximo de insights exibidos simultaneamente.
-  static final int _maxInsights = InsightType.values.length;
+  static const int _maxInsights = 20;
 
   final DatabaseHelper _db = DatabaseHelper();
   final WordInsightAnalyzer _wordInsightAnalyzer = const WordInsightAnalyzer();
@@ -129,20 +129,29 @@ class InsightService {
     final bestWeekdayFuture = calculateBestWeekday(userId);
     final monthlySummaryFuture = calculateMonthlySummary(userId);
     final wordAnalysisFuture = analyzeWordAssociations(userId);
+    final storyBalanceFuture = calculateStoryBalance(userId);
+    final writingTimeFuture = calculateWritingTime(userId);
+    final energyChartFuture = calculateEnergyChart(userId);
 
     final trendInsight = await trendFuture;
     final positiveTagInsight = await positiveTagFuture;
     final bestWeekdayInsight = await bestWeekdayFuture;
     final monthlySummaryInsight = await monthlySummaryFuture;
     final wordInsights = createWordInsights(await wordAnalysisFuture);
+    final storyBalanceInsight = await storyBalanceFuture;
+    final writingTimeInsight = await writingTimeFuture;
+    final energyChartInsight = await energyChartFuture;
 
-    // Aplica prioridade: tendência > palavras > tag > dia > resumo mensal.
+    // Prioridade: tendência > equilíbrio > horário > palavras > tag > dia > resumo > energia
     final ordered = <Insight>[];
     if (trendInsight != null) ordered.add(trendInsight);
+    if (storyBalanceInsight != null) ordered.add(storyBalanceInsight);
+    if (writingTimeInsight != null) ordered.add(writingTimeInsight);
     ordered.addAll(wordInsights);
     if (positiveTagInsight != null) ordered.add(positiveTagInsight);
     if (bestWeekdayInsight != null) ordered.add(bestWeekdayInsight);
     if (monthlySummaryInsight != null) ordered.add(monthlySummaryInsight);
+    if (energyChartInsight != null) ordered.add(energyChartInsight);
 
     // Limita ao máximo configurado
     return ordered.take(_maxInsights).toList();
@@ -350,6 +359,175 @@ class InsightService {
         'humor_medio': humorMedio,
         'energia_media': energiaMedia,
         if (topTag != null) 'top_tag': topTag,
+      },
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Cálculo: Equilíbrio de Histórias (últimos 10 dias) — FREE
+  // ---------------------------------------------------------------------------
+
+  /// Compara histórias positivas (humor >= 4) vs difíceis (humor <= 2) nos últimos 10 dias.
+  /// Retorna null se não houver dominância clara ou dados insuficientes.
+  Future<Insight?> calculateStoryBalance(String userId) async {
+    final db = await _db.database;
+    final rows = await db.rawQuery(
+      '''
+      SELECT
+        SUM(CASE WHEN humor >= 4 THEN 1 ELSE 0 END) AS positive,
+        SUM(CASE WHEN humor <= 2 THEN 1 ELSE 0 END) AS difficult,
+        COUNT(*) AS total
+      FROM historia
+      WHERE user_id = ?
+        AND excluido IS NULL
+        AND date(data) >= date('now', '-9 day')
+      ''',
+      [userId],
+    );
+
+    if (rows.isEmpty) return null;
+    final positive = (rows.first['positive'] as int?) ?? 0;
+    final difficult = (rows.first['difficult'] as int?) ?? 0;
+    final total = (rows.first['total'] as int?) ?? 0;
+
+    if (total < _minTotalHistorias) return null;
+    if (positive < _minGroupHistorias && difficult < _minGroupHistorias) {
+      return null;
+    }
+
+    // Exige dominância clara (50% mais do lado dominante)
+    final larger = positive > difficult ? positive : difficult;
+    final smaller = positive > difficult ? difficult : positive;
+    if (smaller > 0 && larger < smaller * 1.5) return null;
+
+    final isPositive = positive >= difficult;
+    return Insight(
+      type: InsightType.storyBalance,
+      icon: isPositive ? '🌟' : '⛈️',
+      title: 'insightStoryBalanceTitle',
+      description: isPositive
+          ? 'insightStoryBalancePositive'
+          : 'insightStoryBalanceDifficult',
+      metadata: {
+        'balance': isPositive ? 'positive' : 'difficult',
+        'positive_count': positive,
+        'difficult_count': difficult,
+      },
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Cálculo: Horário de Escrita (esta semana) — FREE
+  // ---------------------------------------------------------------------------
+
+  /// Identifica o período do dia com mais histórias escritas nos últimos 7 dias.
+  /// Períodos: manhã (5–11h), tarde (12–17h), noite (18‣4h).
+  /// Retorna null se não houver dados suficientes.
+  Future<Insight?> calculateWritingTime(String userId) async {
+    final db = await _db.database;
+    final rows = await db.rawQuery(
+      '''
+      SELECT
+        CASE
+          WHEN CAST(strftime('%H', data) AS INTEGER) BETWEEN 5 AND 11 THEN 'morning'
+          WHEN CAST(strftime('%H', data) AS INTEGER) BETWEEN 12 AND 17 THEN 'afternoon'
+          ELSE 'night'
+        END AS period,
+        COUNT(*) AS total
+      FROM historia
+      WHERE user_id = ?
+        AND excluido IS NULL
+        AND date(data) >= date('now', '-6 day')
+      GROUP BY period
+      ORDER BY total DESC
+      LIMIT 1
+      ''',
+      [userId],
+    );
+
+    if (rows.isEmpty) return null;
+    final total = (rows.first['total'] as int?) ?? 0;
+    if (total < _minGroupHistorias) return null;
+
+    final period = rows.first['period'] as String? ?? 'night';
+    final icon = switch (period) {
+      'morning' => '🌅',
+      'afternoon' => '☀️',
+      _ => '🌙',
+    };
+
+    return Insight(
+      type: InsightType.writingTime,
+      icon: icon,
+      title: 'insightWritingTimeTitle',
+      description: period,
+      metadata: {'period': period, 'count': total},
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Cálculo: Gráfico de Energia — 7 dias (PREMIUM)
+  // ---------------------------------------------------------------------------
+
+  /// Coleta a energia média por dia nos últimos 7 dias e retorna um insight
+  /// com os dados para renderizar o gráfico de barras.
+  /// Retorna null se houver menos de 3 dias com registro.
+  Future<Insight?> calculateEnergyChart(String userId) async {
+    final db = await _db.database;
+    final rows = await db.rawQuery(
+      '''
+      SELECT
+        date(data)           AS day,
+        strftime('%w', data) AS weekday_idx,
+        AVG(energia)         AS avg_energy
+      FROM historia
+      WHERE user_id = ?
+        AND excluido IS NULL
+        AND data >= date('now', '-6 day')
+      GROUP BY date(data)
+      ORDER BY date(data) ASC
+      ''',
+      [userId],
+    );
+
+    // Monta mapa dia → energia média
+    final energyByDay = <String, double>{};
+    for (final row in rows) {
+      final day = row['day'] as String?;
+      if (day != null) {
+        energyByDay[day] = (row['avg_energy'] as num?)?.toDouble() ?? 0.0;
+      }
+    }
+
+    // Preenche os 7 dias (do mais antigo ao mais recente)
+    final now = DateTime.now();
+    final energyData = <int>[];
+    final weekdayIdxs = <int>[];
+
+    for (var i = 6; i >= 0; i--) {
+      final day = now.subtract(Duration(days: i));
+      final dayStr =
+          '${day.year}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}';
+      energyData.add(energyByDay[dayStr]?.round() ?? 0);
+      // Converte Dart weekday (1=Seg..7=Dom) para SQLite (0=Dom..6=Sáb)
+      weekdayIdxs.add(day.weekday % 7);
+    }
+
+    final daysWithData = energyData.where((e) => e > 0).length;
+    if (daysWithData < 3) return null;
+
+    final avgEnergy =
+        energyData.where((e) => e > 0).reduce((a, b) => a + b) / daysWithData;
+
+    return Insight(
+      type: InsightType.energyChart,
+      icon: '⚡',
+      title: 'insightEnergyChartTitle',
+      description: 'insightEnergyChartSubtitle',
+      metadata: {
+        'energy_data': energyData,
+        'weekday_indices': weekdayIdxs,
+        'avg_energy': avgEnergy,
       },
     );
   }

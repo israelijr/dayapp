@@ -1798,6 +1798,50 @@ class AppLocalizationsEn extends AppLocalizations {
   String get weekdaySaturday => 'Saturday';
 
   @override
+  String get insightDismiss => 'Dismiss';
+
+  @override
+  String get insightStoryBalanceTitle => 'Story Balance';
+
+  @override
+  String get insightStoryBalancePositive =>
+      'You recorded more positive stories in the last 10 days. Keep it up!';
+
+  @override
+  String get insightStoryBalanceDifficult =>
+      'You recorded more difficult stories in the last 10 days. Take care of yourself!';
+
+  @override
+  String get insightWritingTimeTitle => 'Writing Time';
+
+  @override
+  String get insightWritingTimeMorning =>
+      'You wrote more in the morning this week.';
+
+  @override
+  String get insightWritingTimeAfternoon =>
+      'You wrote more in the afternoon this week.';
+
+  @override
+  String get insightWritingTimeNight => 'You wrote more at night this week.';
+
+  @override
+  String get insightEnergyChartTitle => 'Energy — Last 7 Days';
+
+  @override
+  String get insightEnergyChartSubtitle => 'Your energy trend this week';
+
+  @override
+  String get insightPremiumRequired =>
+      'This is a Premium feature. Upgrade to unlock this insight.';
+
+  @override
+  String get insightPremiumCTA => 'Upgrade';
+
+  @override
+  String get insightDevModeActive => 'Dev mode: all insights visible';
+
+  @override
   String get backupProgressCreating => 'Creating backup file...';
 
   @override

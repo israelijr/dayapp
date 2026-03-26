@@ -1804,6 +1804,52 @@ class AppLocalizationsPt extends AppLocalizations {
   String get weekdaySaturday => 'Sábado';
 
   @override
+  String get insightDismiss => 'Dispensar';
+
+  @override
+  String get insightStoryBalanceTitle => 'Equilíbrio de Histórias';
+
+  @override
+  String get insightStoryBalancePositive =>
+      'Você registrou mais histórias positivas nos últimos 10 dias. Continue assim!';
+
+  @override
+  String get insightStoryBalanceDifficult =>
+      'Você registrou mais histórias difíceis nos últimos 10 dias. Cuide-se!';
+
+  @override
+  String get insightWritingTimeTitle => 'Horário de Escrita';
+
+  @override
+  String get insightWritingTimeMorning =>
+      'Você escreveu mais durante a manhã nesta semana.';
+
+  @override
+  String get insightWritingTimeAfternoon =>
+      'Você escreveu mais durante a tarde nesta semana.';
+
+  @override
+  String get insightWritingTimeNight =>
+      'Você escreveu mais durante a noite nesta semana.';
+
+  @override
+  String get insightEnergyChartTitle => 'Energia — 7 Dias';
+
+  @override
+  String get insightEnergyChartSubtitle =>
+      'Sua evolução de energia essa semana';
+
+  @override
+  String get insightPremiumRequired =>
+      'Recurso Premium. Faça upgrade para desbloquear este insight.';
+
+  @override
+  String get insightPremiumCTA => 'Ver Premium';
+
+  @override
+  String get insightDevModeActive => 'Modo dev: todos os insights visíveis';
+
+  @override
   String get backupProgressCreating => 'Criando arquivo de backup...';
 
   @override
@@ -4002,6 +4048,52 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get weekdaySaturday => 'Sábado';
+
+  @override
+  String get insightDismiss => 'Dispensar';
+
+  @override
+  String get insightStoryBalanceTitle => 'Equilíbrio de Histórias';
+
+  @override
+  String get insightStoryBalancePositive =>
+      'Você registrou mais histórias positivas nos últimos 10 dias. Continue assim!';
+
+  @override
+  String get insightStoryBalanceDifficult =>
+      'Você registrou mais histórias difíceis nos últimos 10 dias. Cuide-se!';
+
+  @override
+  String get insightWritingTimeTitle => 'Horário de Escrita';
+
+  @override
+  String get insightWritingTimeMorning =>
+      'Você escreveu mais durante a manhã nesta semana.';
+
+  @override
+  String get insightWritingTimeAfternoon =>
+      'Você escreveu mais durante a tarde nesta semana.';
+
+  @override
+  String get insightWritingTimeNight =>
+      'Você escreveu mais durante a noite nesta semana.';
+
+  @override
+  String get insightEnergyChartTitle => 'Energia — 7 Dias';
+
+  @override
+  String get insightEnergyChartSubtitle =>
+      'Sua evolução de energia essa semana';
+
+  @override
+  String get insightPremiumRequired =>
+      'Recurso Premium. Faça upgrade para desbloquear este insight.';
+
+  @override
+  String get insightPremiumCTA => 'Ver Premium';
+
+  @override
+  String get insightDevModeActive => 'Modo dev: todos os insights visíveis';
 
   @override
   String get backupProgressCreating => 'Criando arquivo de backup...';

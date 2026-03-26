@@ -3322,6 +3322,84 @@ abstract class AppLocalizations {
   /// **'Saturday'**
   String get weekdaySaturday;
 
+  /// Tooltip and label for the X button to dismiss an insight
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss'**
+  String get insightDismiss;
+
+  /// Title of the story balance insight
+  ///
+  /// In en, this message translates to:
+  /// **'Story Balance'**
+  String get insightStoryBalanceTitle;
+
+  /// Insight description when positive stories prevail
+  ///
+  /// In en, this message translates to:
+  /// **'You recorded more positive stories in the last 10 days. Keep it up!'**
+  String get insightStoryBalancePositive;
+
+  /// Insight description when difficult stories prevail
+  ///
+  /// In en, this message translates to:
+  /// **'You recorded more difficult stories in the last 10 days. Take care of yourself!'**
+  String get insightStoryBalanceDifficult;
+
+  /// Title of the writing time-of-day insight
+  ///
+  /// In en, this message translates to:
+  /// **'Writing Time'**
+  String get insightWritingTimeTitle;
+
+  /// Insight: user writes more in the morning
+  ///
+  /// In en, this message translates to:
+  /// **'You wrote more in the morning this week.'**
+  String get insightWritingTimeMorning;
+
+  /// Insight: user writes more in the afternoon
+  ///
+  /// In en, this message translates to:
+  /// **'You wrote more in the afternoon this week.'**
+  String get insightWritingTimeAfternoon;
+
+  /// Insight: user writes more at night
+  ///
+  /// In en, this message translates to:
+  /// **'You wrote more at night this week.'**
+  String get insightWritingTimeNight;
+
+  /// Title of the weekly energy chart insight (Premium)
+  ///
+  /// In en, this message translates to:
+  /// **'Energy — Last 7 Days'**
+  String get insightEnergyChartTitle;
+
+  /// Subtitle of the energy chart insight card
+  ///
+  /// In en, this message translates to:
+  /// **'Your energy trend this week'**
+  String get insightEnergyChartSubtitle;
+
+  /// Message shown on locked Premium insights
+  ///
+  /// In en, this message translates to:
+  /// **'This is a Premium feature. Upgrade to unlock this insight.'**
+  String get insightPremiumRequired;
+
+  /// CTA button to see Premium plans
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade'**
+  String get insightPremiumCTA;
+
+  /// Banner shown in development mode when all insights are forced visible
+  ///
+  /// In en, this message translates to:
+  /// **'Dev mode: all insights visible'**
+  String get insightDevModeActive;
+
   /// Progress message: creating backup file
   ///
   /// In en, this message translates to:
