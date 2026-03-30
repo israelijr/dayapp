@@ -4,8 +4,10 @@
 
 Este diretório contém arquivos sensíveis que **NUNCA** devem ser commitados no Git:
 
-- `upload-keystore.jks` - Arquivo da keystore
+- `app/upload-keystore.jks` - Arquivo da keystore ativa (usada no build de release)
 - `key.properties` - Senhas e configurações da keystore
+
+Observação: existe também um arquivo de backup legado (`upload-keystore.backup-2026-03-26.jks`) mantido apenas para recuperação manual.
 
 Estes arquivos já estão no `.gitignore` do projeto.
 
@@ -28,7 +30,7 @@ storeFile=upload-keystore.jks
 
 ### Informações da Keystore
 
-- **Arquivo**: `upload-keystore.jks`
+- **Arquivo ativo**: `app/upload-keystore.jks`
 - **Alias**: `upload`
 - **Algoritmo**: RSA 2048 bits
 - **Validade**: 10.000 dias (~27 anos)
