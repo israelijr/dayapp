@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import '../db/database_helper.dart';
 import '../providers/locale_provider.dart';
 import '../providers/pin_provider.dart';
+import '../providers/premium_provider.dart';
 import '../providers/theme_provider.dart';
 import '../services/auto_backup_service.dart';
 import '../services/biometric_service.dart';
@@ -401,18 +402,48 @@ class _SettingsScreenState extends State<SettingsScreen> {
     required String label,
     required bool selected,
     required VoidCallback onTap,
+    bool locked = false,
   }) {
     final colorScheme = Theme.of(context).colorScheme;
 
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-      leading: Icon(icon),
-      title: Text(label),
+      leading: Icon(
+        icon,
+        color: locked ? colorScheme.onSurface.withValues(alpha: 0.38) : null,
+      ),
+      title: Text(
+        label,
+        style: locked
+            ? TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.38))
+            : null,
+      ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      selected: selected,
+      selected: selected && !locked,
       selectedTileColor: colorScheme.secondaryContainer.withValues(alpha: 0.7),
-      trailing: selected ? Icon(Icons.check, color: colorScheme.primary) : null,
-      onTap: onTap,
+      trailing: locked
+          ? Icon(
+              Icons.lock_outline,
+              color: colorScheme.onSurface.withValues(alpha: 0.38),
+            )
+          : selected
+          ? Icon(Icons.check, color: colorScheme.primary)
+          : null,
+      onTap: locked
+          ? () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    AppLocalizations.of(context)!.themePremiumRequired,
+                  ),
+                  action: SnackBarAction(
+                    label: AppLocalizations.of(context)!.premiumPlan,
+                    onPressed: () => Navigator.pushNamed(context, '/premium'),
+                  ),
+                ),
+              );
+            }
+          : onTap,
     );
   }
 
@@ -714,11 +745,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (dialogContext) {
-        return Consumer<ThemeProvider>(
-          builder: (context, currentThemeProvider, child) {
+        return Consumer2<ThemeProvider, PremiumProvider>(
+          builder: (context, currentThemeProvider, premium, child) {
             final loc = AppLocalizations.of(context)!;
             final isSystemSelected =
                 currentThemeProvider.themeMode == ThemeMode.system;
+            final canUsePremiumThemes = premium.canUsePremiumThemes;
 
             return AlertDialog(
               title: Text(loc.themeAndScheme),
@@ -803,6 +835,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             !isSystemSelected &&
                             currentThemeProvider.selectedSchemeKey ==
                                 CustomColorSchemes.relvaFamilyKey,
+                        locked: !canUsePremiumThemes,
                         onTap: () {
                           _selectThemeOption(
                             context,
@@ -824,6 +857,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             !isSystemSelected &&
                             currentThemeProvider.selectedSchemeKey ==
                                 CustomColorSchemes.outonoFamilyKey,
+                        locked: !canUsePremiumThemes,
                         onTap: () {
                           _selectThemeOption(
                             context,
@@ -845,6 +879,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             !isSystemSelected &&
                             currentThemeProvider.selectedSchemeKey ==
                                 CustomColorSchemes.ceuFamilyKey,
+                        locked: !canUsePremiumThemes,
                         onTap: () {
                           _selectThemeOption(
                             context,
@@ -866,6 +901,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             !isSystemSelected &&
                             currentThemeProvider.selectedSchemeKey ==
                                 CustomColorSchemes.confortFamilyKey,
+                        locked: !canUsePremiumThemes,
                         onTap: () {
                           _selectThemeOption(
                             context,
@@ -887,6 +923,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             !isSystemSelected &&
                             currentThemeProvider.selectedSchemeKey ==
                                 CustomColorSchemes.sunsetFamilyKey,
+                        locked: !canUsePremiumThemes,
                         onTap: () {
                           _selectThemeOption(
                             context,

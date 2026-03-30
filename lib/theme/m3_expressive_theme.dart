@@ -13,7 +13,9 @@ class M3ExpressiveTheme {
     return ThemeData.from(colorScheme: colorScheme).copyWith(
       appBarTheme: AppBarTheme(
         backgroundColor: colorScheme.surface,
-        foregroundColor: colorScheme.onSurface,
+        // foregroundColor define a cor do título via defaults do AppBar,
+        // sem alterar a fonte (tamanho/peso são preservados naturalmente).
+        foregroundColor: colorScheme.primary,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
       ),
@@ -28,7 +30,13 @@ class M3ExpressiveTheme {
       dynamicSchemeVariant: DynamicSchemeVariant.vibrant,
     );
 
-    return buildTheme(colorScheme);
+    final base = buildTheme(colorScheme);
+    // M3 Expressive claro: cor específica de branding (roxo escuro)
+    return base.copyWith(
+      appBarTheme: base.appBarTheme.copyWith(
+        foregroundColor: AppColors.primaryVariant,
+      ),
+    );
   }
 
   /// Retorna o tema escuro com estilo M3 Expressive
@@ -39,7 +47,13 @@ class M3ExpressiveTheme {
       dynamicSchemeVariant: DynamicSchemeVariant.vibrant,
     );
 
-    return buildTheme(colorScheme);
+    final base = buildTheme(colorScheme);
+    // M3 Expressive escuro: lilás claro para contraste sobre fundo escuro
+    return base.copyWith(
+      appBarTheme: base.appBarTheme.copyWith(
+        foregroundColor: AppColors.lilacLight,
+      ),
+    );
   }
 }
 

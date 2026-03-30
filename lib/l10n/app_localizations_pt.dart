@@ -269,7 +269,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get mediaLabel => 'Mídias';
 
   @override
-  String get manageGroups => 'Gerenciar Grupos';
+  String get manageGroups => 'Minhas Histórias';
 
   @override
   String get trash => 'Lixeira';
@@ -1026,7 +1026,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get helpCreateGroupDesc =>
-      'Acesse \"Gerenciar Grupos\" no menu lateral para criar novos grupos com cores personalizadas.';
+      'Acesse \"Minhas Histórias\" no menu lateral para criar novos grupos com cores personalizadas.';
 
   @override
   String get helpEditGroupTitle => 'Editar Grupo';
@@ -2071,6 +2071,10 @@ class AppLocalizationsPt extends AppLocalizations {
       'Capítulos e sugestões automáticas são funcionalidades Premium.';
 
   @override
+  String get themePremiumRequired =>
+      'Temas personalizados são uma funcionalidade Premium.';
+
+  @override
   String get chapterSuggestions => 'Capítulos sugeridos';
 
   @override
@@ -2515,7 +2519,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get mediaLabel => 'Mídias';
 
   @override
-  String get manageGroups => 'Gerenciar Grupos';
+  String get manageGroups => 'Minhas Histórias';
 
   @override
   String get trash => 'Lixeira';
@@ -3272,7 +3276,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get helpCreateGroupDesc =>
-      'Acesse \"Gerenciar Grupos\" no menu lateral para criar novos grupos com cores personalizadas.';
+      'Acesse \"Minhas Histórias\" no menu lateral para criar novos grupos com cores personalizadas.';
 
   @override
   String get helpEditGroupTitle => 'Editar Grupo';
@@ -4315,6 +4319,10 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get chaptersPremiumRequired =>
       'Capítulos e sugestões automáticas são recursos Premium.';
+
+  @override
+  String get themePremiumRequired =>
+      'Temas personalizados são um recurso Premium.';
 
   @override
   String get chapterSuggestions => 'Capítulos sugeridos';

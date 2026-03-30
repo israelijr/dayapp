@@ -3754,6 +3754,12 @@ abstract class AppLocalizations {
   /// **'Chapters and automatic suggestions are Premium features.'**
   String get chaptersPremiumRequired;
 
+  /// Message shown when a premium theme is selected by a Free user
+  ///
+  /// In en, this message translates to:
+  /// **'Custom themes are a Premium feature.'**
+  String get themePremiumRequired;
+
   /// Section title for automatic chapter suggestions
   ///
   /// In en, this message translates to:

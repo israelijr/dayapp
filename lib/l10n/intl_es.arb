@@ -1064,6 +1064,8 @@
   "@chaptersHomeCardSubtitle": { "description": "Subtítulo de la tarjeta de capítulos en Inicio" },
   "chaptersPremiumRequired": "Capítulos y sugerencias automáticas son funciones Premium.",
   "@chaptersPremiumRequired": { "description": "Mensaje mostrado cuando capítulos está bloqueado para usuarios Free" },
+  "themePremiumRequired": "Los temas personalizados son una función Premium.",
+  "@themePremiumRequired": { "description": "Mensaje mostrado al seleccionar tema premium siendo usuario Free" },
   "chapterSuggestions": "Capítulos sugeridos",
   "@chapterSuggestions": { "description": "Título de la sección de sugerencias automáticas" },
   "chapterCreated": "Capítulo creado con éxito.",

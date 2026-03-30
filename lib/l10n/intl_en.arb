@@ -1092,6 +1092,8 @@
   "@chaptersHomeCardSubtitle": { "description": "Subtitle of chapters shortcut card on Home" },
   "chaptersPremiumRequired": "Chapters and automatic suggestions are Premium features.",
   "@chaptersPremiumRequired": { "description": "Message shown when chapters feature is locked for Free users" },
+  "themePremiumRequired": "Custom themes are a Premium feature.",
+  "@themePremiumRequired": { "description": "Message shown when a premium theme is selected by a Free user" },
   "chapterSuggestions": "Suggested chapters",
   "@chapterSuggestions": { "description": "Section title for automatic chapter suggestions" },
   "chapterCreated": "Chapter created successfully.",

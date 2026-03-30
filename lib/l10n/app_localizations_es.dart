@@ -2083,6 +2083,10 @@ class AppLocalizationsEs extends AppLocalizations {
       'Capítulos y sugerencias automáticas son funciones Premium.';
 
   @override
+  String get themePremiumRequired =>
+      'Los temas personalizados son una función Premium.';
+
+  @override
   String get chapterSuggestions => 'Capítulos sugeridos';
 
   @override
