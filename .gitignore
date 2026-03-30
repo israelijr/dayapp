@@ -91,6 +91,5 @@ PUBLICIDADE_README.md
 Versão Prêmium.md
 
 # Pastas do mkdocs
-*/dayapp_docs
-*/dayapp_docs/*
-*/dayapp_docs/**/* 
+dayapp_docs/
+**/dayapp_docs/
