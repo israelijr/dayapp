@@ -231,9 +231,10 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                     const SizedBox(height: 16),
                     Text(
                       loc.backupNotAvailableWeb,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
+                        color: AppColors.labelColor(context),
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -276,9 +277,10 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                                   const SizedBox(width: 8),
                                   Text(
                                     loc.backupInfoTitle,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
+                                      color: AppColors.labelColor(context),
                                     ),
                                   ),
                                 ],
@@ -286,7 +288,10 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                               const SizedBox(height: 12),
                               Text(
                                 loc.backupInfoDetails,
-                                style: const TextStyle(fontSize: 14),
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: AppColors.labelColor(context),
+                                ),
                               ),
                             ],
                           ),
@@ -317,9 +322,12 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                                       children: [
                                         Text(
                                           loc.backupComplete,
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
+                                            color: AppColors.labelColor(
+                                              context,
+                                            ),
                                           ),
                                         ),
                                         Text(
@@ -339,15 +347,19 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                               const SizedBox(height: 16),
                               Text(
                                 '📦 ${loc.backupComplete}',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
+                                  color: AppColors.labelColor(context),
                                 ),
                               ),
                               const SizedBox(height: 8),
                               Text(
                                 loc.backupZipExplanation,
-                                style: const TextStyle(fontSize: 13),
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: AppColors.labelColor(context),
+                                ),
                               ),
                               const SizedBox(height: 12),
                               FilledButton.icon(
@@ -365,15 +377,19 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                               const SizedBox(height: 12),
                               Text(
                                 '📥 ${loc.restoreSectionTitle}:',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
+                                  color: AppColors.labelColor(context),
                                 ),
                               ),
                               const SizedBox(height: 8),
                               Text(
                                 loc.restoreSectionDescription,
-                                style: const TextStyle(fontSize: 13),
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: AppColors.labelColor(context),
+                                ),
                               ),
                               const SizedBox(height: 12),
                               FilledButton.tonalIcon(
@@ -432,8 +448,11 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                                           const SizedBox(height: 4),
                                           Text(
                                             loc.autoBackupPremiumRequired,
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                               fontSize: 13,
+                                              color: AppColors.labelColor(
+                                                context,
+                                              ),
                                             ),
                                           ),
                                         ],
@@ -470,9 +489,12 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                                           Expanded(
                                             child: Text(
                                               '💾 ${loc.autoBackupsSavedTitle}',
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold,
+                                                color: AppColors.labelColor(
+                                                  context,
+                                                ),
                                               ),
                                               overflow: TextOverflow.ellipsis,
                                             ),

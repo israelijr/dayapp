@@ -60,7 +60,11 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
               widget.allowMultiple
                   ? AppLocalizations.of(context)!.imagePickerTitleMultiple
                   : AppLocalizations.of(context)!.imagePickerTitleSingle,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: AppColors.labelColor(context),
+              ),
             ),
             const SizedBox(height: 24),
             if (_isLoading)
@@ -78,7 +82,10 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
                         context,
                       )!.imagePickerChooseOptionSingle,
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 14),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: AppColors.labelColor(context),
+                ),
               ),
               const SizedBox(height: 24),
               ElevatedButton.icon(

@@ -35,9 +35,9 @@ class HelpScreen extends StatelessWidget {
             '',
             Icons.navigation,
             children: [
-              _buildHelpItem(loc.home, loc.helpHomeItemDesc),
-              _buildHelpItem(loc.groups, loc.helpGroupsNavDesc),
-              _buildHelpItem(loc.search, loc.helpSearchItemDesc),
+              _buildHelpItem(context, loc.home, loc.helpHomeItemDesc),
+              _buildHelpItem(context, loc.groups, loc.helpGroupsNavDesc),
+              _buildHelpItem(context, loc.search, loc.helpSearchItemDesc),
             ],
           ),
 
@@ -50,10 +50,14 @@ class HelpScreen extends StatelessWidget {
             '',
             Icons.create,
             children: [
-              _buildHelpItem(loc.newStory, loc.helpNewStoryDesc),
-              _buildHelpItem(loc.helpTextEditorTitle, loc.helpTextEditorDesc),
-              _buildHelpItem(loc.mediaLabel, loc.helpMediaDesc),
-              _buildHelpItem(loc.groups, loc.helpGroupsAssocDesc),
+              _buildHelpItem(context, loc.newStory, loc.helpNewStoryDesc),
+              _buildHelpItem(
+                context,
+                loc.helpTextEditorTitle,
+                loc.helpTextEditorDesc,
+              ),
+              _buildHelpItem(context, loc.mediaLabel, loc.helpMediaDesc),
+              _buildHelpItem(context, loc.groups, loc.helpGroupsAssocDesc),
             ],
           ),
 
@@ -76,9 +80,21 @@ class HelpScreen extends StatelessWidget {
             '',
             Icons.group,
             children: [
-              _buildHelpItem(loc.helpCreateGroupTitle, loc.helpCreateGroupDesc),
-              _buildHelpItem(loc.helpEditGroupTitle, loc.helpEditGroupDesc),
-              _buildHelpItem(loc.helpGroupsAssocDesc, loc.helpGroupsAssocDesc),
+              _buildHelpItem(
+                context,
+                loc.helpCreateGroupTitle,
+                loc.helpCreateGroupDesc,
+              ),
+              _buildHelpItem(
+                context,
+                loc.helpEditGroupTitle,
+                loc.helpEditGroupDesc,
+              ),
+              _buildHelpItem(
+                context,
+                loc.helpGroupsAssocDesc,
+                loc.helpGroupsAssocDesc,
+              ),
             ],
           ),
 
@@ -92,26 +108,46 @@ class HelpScreen extends StatelessWidget {
             Icons.security,
             children: [
               _buildHelpItem(
+                context,
                 loc.helpAutomaticBackupTitle,
                 loc.helpAutomaticBackupDesc,
               ),
               _buildHelpItem(
+                context,
                 loc.helpManualBackupTitle,
                 loc.helpManualBackupDesc,
               ),
-              _buildHelpItem(loc.helpRestoreTitle, loc.helpRestoreDesc),
-              _buildHelpItem(loc.helpPinSecurityTitle, loc.helpPinSecurityDesc),
-              _buildHelpItem(loc.biometrics, loc.helpBiometricsDesc),
               _buildHelpItem(
+                context,
+                loc.helpRestoreTitle,
+                loc.helpRestoreDesc,
+              ),
+              _buildHelpItem(
+                context,
+                loc.helpPinSecurityTitle,
+                loc.helpPinSecurityDesc,
+              ),
+              _buildHelpItem(context, loc.biometrics, loc.helpBiometricsDesc),
+              _buildHelpItem(
+                context,
                 loc.helpPasswordUnlockTitle,
                 loc.helpPasswordUnlockDesc,
               ),
-              _buildHelpItem(loc.backgroundLock, loc.helpBackgroundLockDesc),
               _buildHelpItem(
+                context,
+                loc.backgroundLock,
+                loc.helpBackgroundLockDesc,
+              ),
+              _buildHelpItem(
+                context,
                 loc.helpLockExceptionsTitle,
                 loc.helpLockExceptionsDesc,
               ),
-              _buildHelpItem(loc.helpPinRecoveryTitle, loc.helpPinRecoveryDesc),
+              _buildHelpItem(
+                context,
+                loc.helpPinRecoveryTitle,
+                loc.helpPinRecoveryDesc,
+              ),
             ],
           ),
 
@@ -124,16 +160,19 @@ class HelpScreen extends StatelessWidget {
             '',
             Icons.settings,
             children: [
-              _buildHelpItem(loc.theme, loc.helpThemeDesc),
+              _buildHelpItem(context, loc.theme, loc.helpThemeDesc),
               _buildHelpItem(
+                context,
                 loc.notifications,
                 loc.helpNotificationsSettingsDesc,
               ),
               _buildHelpItem(
+                context,
                 loc.backgroundLock,
                 loc.helpBackgroundLockSettingsDesc,
               ),
               _buildHelpItem(
+                context,
                 loc.helpBackupSettingTitle,
                 loc.helpBackupSettingDesc,
               ),
@@ -160,12 +199,25 @@ class HelpScreen extends StatelessWidget {
             Icons.lightbulb,
             children: [
               _buildHelpItem(
+                context,
                 loc.helpOrganizationTipTitle,
                 loc.helpOrganizationTipDesc,
               ),
-              _buildHelpItem(loc.helpSearchTipTitle, loc.helpSearchTipDesc),
-              _buildHelpItem(loc.helpBackupTipTitle, loc.helpBackupTipDesc),
-              _buildHelpItem(loc.helpPrivacyTipTitle, loc.helpPrivacyTipDesc),
+              _buildHelpItem(
+                context,
+                loc.helpSearchTipTitle,
+                loc.helpSearchTipDesc,
+              ),
+              _buildHelpItem(
+                context,
+                loc.helpBackupTipTitle,
+                loc.helpBackupTipDesc,
+              ),
+              _buildHelpItem(
+                context,
+                loc.helpPrivacyTipTitle,
+                loc.helpPrivacyTipDesc,
+              ),
             ],
           ),
 
@@ -205,9 +257,10 @@ class HelpScreen extends StatelessWidget {
                 Expanded(
                   child: Text(
                     title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
+                      color: AppColors.labelColor(context),
                     ),
                   ),
                 ),
@@ -232,7 +285,11 @@ class HelpScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHelpItem(String title, String description) {
+  Widget _buildHelpItem(
+    BuildContext context,
+    String title,
+    String description,
+  ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Column(
@@ -240,12 +297,19 @@ class HelpScreen extends StatelessWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: AppColors.labelColor(context),
+            ),
           ),
           const SizedBox(height: 4),
           Text(
             description,
-            style: TextStyle(fontSize: 14, color: AppColors.neutralGrey),
+            style: TextStyle(
+              fontSize: 14,
+              color: AppColors.labelColor(context),
+            ),
           ),
         ],
       ),

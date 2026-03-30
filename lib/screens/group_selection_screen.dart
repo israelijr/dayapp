@@ -7,6 +7,7 @@ import '../models/grupo.dart';
 import '../providers/auth_provider.dart';
 import '../services/emoji_service.dart';
 import '../widgets/custom_text_field.dart';
+import '../theme/m3_expressive_theme.dart';
 import '../widgets/emoji_selection_modal.dart';
 
 class GroupSelectionScreen extends StatefulWidget {
@@ -99,9 +100,10 @@ class _GroupSelectionScreenState extends State<GroupSelectionScreen> {
               children: [
                 Text(
                   AppLocalizations.of(context)!.existingGroups,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
+                    color: AppColors.labelColor(context),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -137,9 +139,10 @@ class _GroupSelectionScreenState extends State<GroupSelectionScreen> {
                 const SizedBox(height: 16),
                 Text(
                   AppLocalizations.of(context)!.createNewGroup,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
+                    color: AppColors.labelColor(context),
                   ),
                 ),
                 const SizedBox(height: 16),

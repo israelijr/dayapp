@@ -23,6 +23,7 @@ import '../services/capitulo_save_service.dart';
 import '../services/emoji_service.dart';
 import '../services/pdf_export_service.dart';
 import '../theme/animation_durations.dart';
+import '../theme/m3_expressive_theme.dart';
 import '../widgets/audio_recorder_widget.dart';
 import '../widgets/compact_audio_icon.dart';
 import '../widgets/compact_video_icon.dart';
@@ -926,6 +927,9 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
     final dateFormat = DateFormat.yMd(loc.localeName).add_Hm();
     final theme = Theme.of(context);
 
+    // Determina a cor de destaque para textos conforme o tema ativo
+    final Color labelColor = AppColors.labelColor(context);
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (bool didPop, dynamic result) async {
@@ -972,7 +976,10 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(loc.newStory),
+          title: Text(
+            loc.newStory,
+            style: TextStyle(color: labelColor, fontWeight: FontWeight.bold),
+          ),
           actions: [
             IconButton(
               icon: const Icon(Icons.picture_as_pdf),
@@ -993,7 +1000,10 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                 onPressed: _saveHistoria,
                 child: Text(
                   loc.save,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: labelColor,
+                  ),
                 ),
               ),
           ],
@@ -1012,7 +1022,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                         Text(
                           dateFormat.format(selectedDate),
                           style: theme.textTheme.labelLarge?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
+                            color: labelColor,
                           ),
                         ),
                         IconButton(
@@ -1059,9 +1069,10 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                     // Rich Text Description
                     Text(
                       loc.descriptionLabel,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
+                        color: labelColor,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -1108,6 +1119,13 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                               leading: const Icon(Icons.workspace_premium),
                               title: Text(loc.chaptersTitle),
                               subtitle: Text(loc.chaptersPremiumRequired),
+                              titleTextStyle: theme.textTheme.bodyLarge
+                                  ?.copyWith(
+                                    color: labelColor,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                              subtitleTextStyle: theme.textTheme.bodyMedium
+                                  ?.copyWith(color: labelColor),
                             ),
                           );
                         }
@@ -1117,6 +1135,12 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                             leading: const Icon(Icons.auto_stories_outlined),
                             title: Text(loc.chapterLinkSectionTitle),
                             subtitle: Text(_resumoVinculoCapitulo(loc)),
+                            titleTextStyle: theme.textTheme.bodyLarge?.copyWith(
+                              color: labelColor,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            subtitleTextStyle: theme.textTheme.bodyMedium
+                                ?.copyWith(color: labelColor),
                             trailing: TextButton(
                               onPressed: _abrirConfiguracaoCapitulo,
                               child: Text(loc.chapterLinkConfigure),
@@ -1128,7 +1152,12 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                     const SizedBox(height: 16),
 
                     // Humor (como você se sentiu)
-                    Text(loc.moodQuestion, style: theme.textTheme.titleSmall),
+                    Text(
+                      loc.moodQuestion,
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        color: labelColor,
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     MoodSelector(
                       value: _selectedMood,
@@ -1140,7 +1169,12 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
 
                     // Energia
                     const SizedBox(height: 16),
-                    Text(loc.energyQuestion, style: theme.textTheme.titleSmall),
+                    Text(
+                      loc.energyQuestion,
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        color: labelColor,
+                      ),
+                    ),
                     const SizedBox(height: 8),
                     EnergySelector(
                       value: _selectedEnergy,
@@ -1155,7 +1189,9 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                     if (fotos.isNotEmpty) ...[
                       Text(
                         loc.photosSection,
-                        style: theme.textTheme.titleSmall,
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          color: labelColor,
+                        ),
                       ),
                       const SizedBox(height: 8),
                       SizedBox(
@@ -1199,7 +1235,9 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                     if (audios.isNotEmpty) ...[
                       Text(
                         loc.audiosSection,
-                        style: theme.textTheme.titleSmall,
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          color: labelColor,
+                        ),
                       ),
                       const SizedBox(height: 8),
                       Wrap(
@@ -1219,7 +1257,9 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                     if (videos.isNotEmpty) ...[
                       Text(
                         loc.videosSection,
-                        style: theme.textTheme.titleSmall,
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          color: labelColor,
+                        ),
                       ),
                       const SizedBox(height: 8),
                       Wrap(

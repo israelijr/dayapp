@@ -55,7 +55,11 @@ class _VideoRecorderWidgetState extends State<VideoRecorderWidget> {
               widget.allowMultiple
                   ? AppLocalizations.of(context)!.videoPickerTitleMultiple
                   : AppLocalizations.of(context)!.videoPickerTitleSingle,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: AppColors.labelColor(context),
+              ),
             ),
             const SizedBox(height: 24),
             if (_isLoading)
@@ -73,7 +77,10 @@ class _VideoRecorderWidgetState extends State<VideoRecorderWidget> {
                         context,
                       )!.videoPickerChooseOptionSingle,
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 14),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: AppColors.labelColor(context),
+                ),
               ),
               const SizedBox(height: 24),
               ElevatedButton.icon(

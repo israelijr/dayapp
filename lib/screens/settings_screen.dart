@@ -426,7 +426,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Text(
             loc.security,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: AppColors.labelColor(context),
+            ),
           ),
         ),
 
@@ -922,7 +926,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Text(
             loc.backup,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: AppColors.labelColor(context),
+            ),
           ),
         ),
         ListTile(
@@ -939,7 +947,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Text(
             loc.automaticBackup,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: AppColors.labelColor(context),
+            ),
           ),
         ),
         SwitchListTile(
@@ -1119,7 +1131,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
           return AlertDialog(
             title: Text(
               loc.backgroundLock,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: AppColors.labelColor(context),
+              ),
             ),
             content: SingleChildScrollView(
               child: Column(
@@ -1131,9 +1147,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   // Atalhos rápidos
                   Text(
                     loc.backgroundLockSuggestions,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
+                      color: AppColors.labelColor(context),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -1202,7 +1219,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
       builder: (dialogBuilderContext) => AlertDialog(
         title: Text(
           AppLocalizations.of(context)!.informYourEmail,
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: AppColors.labelColor(context),
+          ),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -1270,7 +1291,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Text(
             loc.notifications,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: AppColors.labelColor(context),
+            ),
           ),
         ),
         ListTile(

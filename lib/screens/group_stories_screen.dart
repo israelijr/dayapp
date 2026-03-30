@@ -954,6 +954,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
                             context,
                           )?.noStoriesInGroup(widget.grupo.nome) ??
                           'Nenhuma história no grupo "${widget.grupo.nome}".',
+                      style: TextStyle(color: AppColors.labelColor(context)),
                     ),
                   );
                 }

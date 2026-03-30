@@ -366,9 +366,10 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
                       children: [
                         Text(
                           historia.titulo,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
+                            color: AppColors.labelColor(context),
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -510,9 +511,10 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
                 children: [
                   Text(
                     historia.titulo,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
+                      color: AppColors.labelColor(context),
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -535,9 +537,13 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
 
         // Descrição
         if (historia.descricao != null && historia.descricao!.isNotEmpty) ...[
-          const Text(
+          Text(
             'Descrição:',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: AppColors.labelColor(context),
+            ),
           ),
           const SizedBox(height: 8),
           RichTextViewerWidget(jsonContent: historia.descricao),

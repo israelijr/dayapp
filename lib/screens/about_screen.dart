@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../providers/pin_provider.dart';
+import '../theme/m3_expressive_theme.dart';
 import 'premium_debug_screen.dart';
 
 class AboutScreen extends StatefulWidget {
@@ -259,9 +260,10 @@ class _AboutScreenState extends State<AboutScreen> {
                 Expanded(
                   child: Text(
                     l10n.aboutScreenContactSupportTitle,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
+                      color: AppColors.labelColor(context),
                     ),
                   ),
                 ),
@@ -310,12 +312,13 @@ class _AboutScreenState extends State<AboutScreen> {
                     size: 20,
                   ),
                   const SizedBox(width: 12),
-                  const Text(
+                  Text(
                     'israelijr.app@gmail.com',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                       decoration: TextDecoration.underline,
+                      color: AppColors.labelColor(context),
                     ),
                   ),
                 ],
@@ -440,9 +443,10 @@ class _AboutScreenState extends State<AboutScreen> {
                 Expanded(
                   child: Text(
                     title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
+                      color: AppColors.labelColor(context),
                     ),
                   ),
                 ),
@@ -473,9 +477,13 @@ class _AboutScreenState extends State<AboutScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             '• ',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: AppColors.labelColor(context),
+            ),
           ),
           Expanded(
             child: Column(
@@ -483,9 +491,10 @@ class _AboutScreenState extends State<AboutScreen> {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
+                    color: AppColors.labelColor(context),
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -520,9 +529,10 @@ class _AboutScreenState extends State<AboutScreen> {
               const SizedBox(width: 8),
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
+                  color: AppColors.labelColor(context),
                 ),
               ),
             ],

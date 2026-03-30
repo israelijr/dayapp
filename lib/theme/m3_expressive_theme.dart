@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/theme_provider.dart';
 
 /// Tema Material Design 3 Expressive para o DayApp
 /// Versão enxuta: expõe `getLightTheme` e `getDarkTheme`.
@@ -94,4 +97,18 @@ class AppColors {
   static Color get emoticonPurple => _app.emoticonPurple;
   static Color get emoticonBlue2 => _app.emoticonBlue2;
   static Color get neutralGrey => _app.neutralGrey;
+
+  /// Retorna a cor adequada para textos de label conforme o tema ativo.
+  /// - CustomColorSchemes: usa [ColorScheme.primary]
+  /// - M3Expressive claro: [AppColors.primaryVariant]
+  /// - M3Expressive escuro: [AppColors.lilacLight]
+  static Color labelColor(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    final isCustomScheme = themeProvider.selectedSchemeKey != null;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    return isCustomScheme
+        ? theme.colorScheme.primary
+        : (isDark ? AppColors.lilacLight : AppColors.primaryVariant);
+  }
 }

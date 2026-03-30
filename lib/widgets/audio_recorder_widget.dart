@@ -74,7 +74,11 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
               widget.allowMultiple
                   ? AppLocalizations.of(context)!.audioPickerTitleMultiple
                   : AppLocalizations.of(context)!.audioPickerTitleSingle,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: AppColors.labelColor(context),
+              ),
             ),
             const SizedBox(height: 24),
             if (_isLoading)
@@ -92,7 +96,10 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
                         context,
                       )!.audioPickerChooseOptionSingle,
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 14),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: AppColors.labelColor(context),
+                ),
               ),
               const SizedBox(height: 24),
               ElevatedButton.icon(
@@ -170,7 +177,11 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
                         ? AppLocalizations.of(context)!.recordingPaused
                         : AppLocalizations.of(context)!.recording)
                   : AppLocalizations.of(context)!.readyToRecord,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: AppColors.labelColor(context),
+              ),
             ),
             const SizedBox(height: 16),
             Text(

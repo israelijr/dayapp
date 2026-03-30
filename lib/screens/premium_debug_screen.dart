@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../l10n/generated/app_localizations.dart';
 import '../providers/premium_provider.dart';
+import '../theme/m3_expressive_theme.dart';
 
 /// Tela oculta para simular Free/Premium durante o desenvolvimento.
 ///
@@ -46,7 +47,10 @@ class PremiumDebugScreen extends StatelessWidget {
                       Expanded(
                         child: Text(
                           l10n.premiumDebugWarning,
-                          style: const TextStyle(fontSize: 13),
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: AppColors.labelColor(context),
+                          ),
                         ),
                       ),
                     ],
@@ -77,7 +81,10 @@ class PremiumDebugScreen extends StatelessWidget {
                         l10n.premiumDebugStatus(
                           premium.isPremium ? l10n.premiumPlan : l10n.freePlan,
                         ),
-                        style: const TextStyle(fontSize: 14),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: AppColors.labelColor(context),
+                        ),
                       ),
                       Text(
                         l10n.premiumDebugSource(
@@ -227,7 +234,15 @@ class _FeatureRow extends StatelessWidget {
             color: enabled ? Colors.green : colorScheme.error,
           ),
           const SizedBox(width: 8),
-          Expanded(child: Text(label, style: const TextStyle(fontSize: 14))),
+          Expanded(
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 14,
+                color: AppColors.labelColor(context),
+              ),
+            ),
+          ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             decoration: BoxDecoration(

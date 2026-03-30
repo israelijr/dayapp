@@ -46,7 +46,7 @@ class CustomColorSchemes {
     secondaryContainer: const Color(0xFF394B3B),
     tertiaryContainer: const Color(0xFF204D55),
     errorContainer: const Color(0xFF24D055),
-    surfaceContainerHighest: const Color(0xFF93000A),
+    surfaceContainerHighest: const Color.fromARGB(255, 61, 58, 58),
     surface: const Color(0xFF101510),
     inverseSurface: const Color(0xFFDFE4DC),
   );

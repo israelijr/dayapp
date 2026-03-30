@@ -337,9 +337,10 @@ class _TrashScreenState extends State<TrashScreen> {
                       children: [
                         Text(
                           historia.titulo,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
+                            color: AppColors.labelColor(context),
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -411,7 +412,10 @@ class _TrashScreenState extends State<TrashScreen> {
           children: [
             ListTile(
               leading: Icon(Icons.restore, color: AppColors.emoticonGreen),
-              title: const Text('Restaurar'),
+              title: Text(
+                'Restaurar',
+                style: TextStyle(color: AppColors.labelColor(context)),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 _restoreHistoria(historia);
@@ -419,7 +423,10 @@ class _TrashScreenState extends State<TrashScreen> {
             ),
             ListTile(
               leading: Icon(Icons.delete_forever, color: AppColors.emoticonRed),
-              title: const Text('Excluir permanentemente'),
+              title: Text(
+                'Excluir permanentemente',
+                style: TextStyle(color: AppColors.labelColor(context)),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 _permanentlyDeleteHistoria(historia);

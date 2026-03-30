@@ -4,6 +4,8 @@ import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:printing/printing.dart';
 
+import '../theme/m3_expressive_theme.dart';
+
 /// Tela que mostra um preview do PDF gerado e fornece ações: Compartilhar, Salvar, Fechar.
 class PdfPreviewScreen extends StatefulWidget {
   final Uint8List? initialPdfBytes;
@@ -123,7 +125,12 @@ class _PdfPreviewScreenState extends State<PdfPreviewScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : (_pdfBytes == null
-                ? const Center(child: Text('Nenhum PDF disponível'))
+                ? Center(
+                    child: Text(
+                      'Nenhum PDF disponível',
+                      style: TextStyle(color: AppColors.labelColor(context)),
+                    ),
+                  )
                 : PdfPreview(
                     build: (format) async => _pdfBytes!,
                     scrollViewDecoration: BoxDecoration(

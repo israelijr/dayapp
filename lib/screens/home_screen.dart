@@ -10,6 +10,7 @@ import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
 import '../services/auto_backup_service.dart';
 import '../theme/animation_durations.dart';
+import '../theme/m3_expressive_theme.dart';
 import 'edit_profile_screen.dart';
 import 'groups_maintenance_screen.dart';
 import 'groups_screen.dart';
@@ -812,9 +813,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 20),
                 Text(
                   l10n.automaticBackup,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
+                    color: AppColors.labelColor(context),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -824,7 +826,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     return Text(
                       message,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 13),
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                     );
                   },
                 ),

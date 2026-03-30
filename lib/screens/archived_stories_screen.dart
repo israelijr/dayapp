@@ -836,6 +836,7 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
                   child: Text(
                     AppLocalizations.of(context)?.noArchivedStories ??
                         'Nenhuma história arquivada.',
+                    style: TextStyle(color: AppColors.labelColor(context)),
                   ),
                 );
               }

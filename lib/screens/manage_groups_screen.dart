@@ -6,6 +6,7 @@ import '../db/database_helper.dart';
 import '../db/grupo_helper.dart';
 import '../models/grupo.dart';
 import '../providers/auth_provider.dart';
+import '../theme/m3_expressive_theme.dart';
 
 class ManageGroupsScreen extends StatefulWidget {
   const ManageGroupsScreen({super.key});
@@ -96,7 +97,10 @@ class _ManageGroupsScreenState extends State<ManageGroupsScreen> {
           final grupos = snapshot.data ?? [];
           if (grupos.isEmpty) {
             return Center(
-              child: Text(AppLocalizations.of(context)!.noGroupsFound),
+              child: Text(
+                AppLocalizations.of(context)!.noGroupsFound,
+                style: TextStyle(color: AppColors.labelColor(context)),
+              ),
             );
           }
           return ListView.builder(
