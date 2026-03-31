@@ -120,6 +120,22 @@ class BackupService {
           )
           .toList();
 
+      // Coletar fotos de capítulos (diretório separado do photos)
+      final appDocDir = await getApplicationDocumentsDirectory();
+      final chapterPhotosDir = Directory(
+        path.join(appDocDir.path, 'chapter_photos'),
+      );
+      final chapterPhotoFiles = (await chapterPhotosDir.exists())
+          ? chapterPhotosDir
+                .listSync()
+                .whereType<File>()
+                .where(
+                  (file) =>
+                      file.path.endsWith('.jpg') || file.path.endsWith('.png'),
+                )
+                .toList()
+          : <File>[];
+
       Future<int> calculateFilesTotalBytes(List<File> files) async {
         var totalBytes = 0;
         for (final file in files) {
@@ -134,6 +150,9 @@ class BackupService {
       final videosBytes = await calculateFilesTotalBytes(videoFiles);
       final photosBytes = await calculateFilesTotalBytes(photoFiles);
       final audiosBytes = await calculateFilesTotalBytes(audioFiles);
+      final chapterPhotosBytes = await calculateFilesTotalBytes(
+        chapterPhotoFiles,
+      );
 
       // Marcar histórias como já salvas em backup antes de copiar o arquivo
       try {
@@ -162,7 +181,12 @@ Versão: 2.0.0
       final metadataPreview = buildMetadataContent();
       final metadataBytes = utf8.encode(metadataPreview).length;
 
-      final copyWorkBytes = dbBytes + videosBytes + photosBytes + audiosBytes;
+      final copyWorkBytes =
+          dbBytes +
+          videosBytes +
+          photosBytes +
+          audiosBytes +
+          chapterPhotosBytes;
       final compressionWorkBytes = copyWorkBytes + metadataBytes;
       final totalWorkBytes = copyWorkBytes + compressionWorkBytes;
       var completedWorkBytes = 0;
@@ -235,7 +259,28 @@ Versão: 2.0.0
         }
       }
 
-      // 4. Copiar áudios
+      // 4. Copiar fotos de capítulos
+      if (chapterPhotoFiles.isNotEmpty) {
+        final chapterPhotosBackupDir = Directory(
+          path.join(backupDir.path, 'chapter_photos'),
+        );
+        await chapterPhotosBackupDir.create();
+
+        for (final chapterPhotoFile in chapterPhotoFiles) {
+          final fileName = path.basename(chapterPhotoFile.path);
+          final destFile = File(
+            path.join(chapterPhotosBackupDir.path, fileName),
+          );
+          await chapterPhotoFile.copy(destFile.path);
+
+          if (await chapterPhotoFile.exists()) {
+            completedWorkBytes += await chapterPhotoFile.length();
+            reportOverallProgress();
+          }
+        }
+      }
+
+      // 5. Copiar áudios
       onProgress?.call(l10n.backupProgressCopyingAudios);
       if (audioFiles.isNotEmpty) {
         final audiosBackupDir = Directory(path.join(backupDir.path, 'audios'));
@@ -292,6 +337,10 @@ Versão: 2.0.0
         },
         {
           'folder': 'photos',
+          'extensions': ['.jpg', '.png'],
+        },
+        {
+          'folder': 'chapter_photos',
           'extensions': ['.jpg', '.png'],
         },
         {
@@ -573,6 +622,18 @@ Versão: 2.0.0
               .toList()) ??
           <File>[];
 
+      final chapterPhotosRestoreDir = findDirectory(
+        extractDir,
+        'chapter_photos',
+      );
+      final restoredChapterPhotos =
+          (chapterPhotosRestoreDir
+              ?.listSync()
+              .whereType<File>()
+              .where((f) => f.path.endsWith('.jpg') || f.path.endsWith('.png'))
+              .toList()) ??
+          <File>[];
+
       final dbPath = await getDatabasesPath();
       final currentDb = File(path.join(dbPath, 'dayapp.db'));
 
@@ -591,13 +652,17 @@ Versão: 2.0.0
       final restoredAudiosBytes = await calculateFilesTotalBytes(
         restoredAudios,
       );
+      final restoredChapterPhotosBytes = await calculateFilesTotalBytes(
+        restoredChapterPhotos,
+      );
 
       final restoreCopyWorkBytes =
           currentDbBytes +
           restoredDbBytes +
           restoredVideosBytes +
           restoredPhotosBytes +
-          restoredAudiosBytes;
+          restoredAudiosBytes +
+          restoredChapterPhotosBytes;
       final totalWorkBytes = extractTotalBytes + restoreCopyWorkBytes;
       var completedWorkBytes = extractTotalBytes;
 
@@ -855,7 +920,42 @@ Versão: 2.0.0
         }
       }
 
-      // 5. Restaurar áudios
+      // 5. Restaurar fotos de capítulos
+      if (chapterPhotosRestoreDir != null &&
+          await chapterPhotosRestoreDir.exists()) {
+        final appDocDir = await getApplicationDocumentsDirectory();
+        final chapterPhotosDestDir = Directory(
+          path.join(appDocDir.path, 'chapter_photos'),
+        );
+
+        // Limpar fotos de capítulos atuais
+        if (await chapterPhotosDestDir.exists()) {
+          final currentChapterPhotos = chapterPhotosDestDir.listSync();
+          for (final file in currentChapterPhotos) {
+            if (file is File) {
+              await file.delete();
+            }
+          }
+        } else {
+          await chapterPhotosDestDir.create(recursive: true);
+        }
+
+        for (final chapterPhotoFile in restoredChapterPhotos) {
+          final fileName = path.basename(chapterPhotoFile.path);
+          final destFile = File(path.join(chapterPhotosDestDir.path, fileName));
+          await chapterPhotoFile.copy(destFile.path);
+
+          if (await chapterPhotoFile.exists()) {
+            completedWorkBytes += await chapterPhotoFile.length();
+            reportOverallProgress(
+              completedWorkBytes: completedWorkBytes,
+              totalWorkBytes: totalWorkBytes,
+            );
+          }
+        }
+      }
+
+      // 6. Restaurar áudios
       onProgress?.call(l10n.restoreProgressRestoringAudios);
 
       if (audiosRestoreDir != null && await audiosRestoreDir.exists()) {
