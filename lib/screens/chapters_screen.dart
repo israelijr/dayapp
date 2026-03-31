@@ -189,14 +189,25 @@ class _ChaptersScreenState extends State<ChaptersScreen> {
     final userId = auth.user?.id;
     if (userId == null) return;
 
-    final entradas = await _capituloHelper.listEntradasElegiveis(userId);
+    final entradasComTags = await _capituloHelper.listEntradasElegiveisComTags(
+      userId,
+    );
     if (!mounted) return;
 
-    final resultado = await showDialog<_CreateCapituloResult?>(
-      context: context,
-      builder: (dialogContext) {
-        return _CreateCapituloDialog(entradas: entradas);
-      },
+    final entradas = entradasComTags.map((e) => e.historia).toList();
+    final tagNomesPorId = {
+      for (final e in entradasComTags)
+        if (e.historia.id != null) e.historia.id!: e.tagNomes,
+    };
+
+    final resultado = await Navigator.of(context).push<_CreateCapituloResult?>(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (_) => _CreateCapituloPage(
+          entradas: entradas,
+          tagNomesPorId: tagNomesPorId,
+        ),
+      ),
     );
 
     if (resultado == null) return;
@@ -671,12 +682,12 @@ class _ChaptersScreenState extends State<ChaptersScreen> {
               onPressed: () => setState(() => _showSearch = true),
             ),
           _buildSortMenu(context, l10n),
-          IconButton(
-            icon: const Icon(Icons.add),
-            tooltip: l10n.chapterCreateManual,
-            onPressed: _criarCapituloManual,
-          ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _criarCapituloManual,
+        icon: const Icon(Icons.add),
+        label: Text(l10n.chapterCreateManual),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -750,8 +761,13 @@ class _ChaptersScreenState extends State<ChaptersScreen> {
 class _EditCapituloResult {
   final String titulo;
   final String? descricao;
+  final Set<int> entradaIds;
 
-  _EditCapituloResult({required this.titulo, required this.descricao});
+  _EditCapituloResult({
+    required this.titulo,
+    required this.descricao,
+    required this.entradaIds,
+  });
 }
 
 class _CreateCapituloResult {
@@ -766,16 +782,22 @@ class _CreateCapituloResult {
   });
 }
 
-class _CreateCapituloDialog extends StatefulWidget {
+// Tela de criação de capítulo (substitui o AlertDialog para evitar
+// rebuild de TextField causado por viewInsets no Android)
+class _CreateCapituloPage extends StatefulWidget {
   final List<Historia> entradas;
+  final Map<int, String> tagNomesPorId;
 
-  const _CreateCapituloDialog({required this.entradas});
+  const _CreateCapituloPage({
+    required this.entradas,
+    required this.tagNomesPorId,
+  });
 
   @override
-  State<_CreateCapituloDialog> createState() => _CreateCapituloDialogState();
+  State<_CreateCapituloPage> createState() => _CreateCapituloPageState();
 }
 
-class _CreateCapituloDialogState extends State<_CreateCapituloDialog> {
+class _CreateCapituloPageState extends State<_CreateCapituloPage> {
   late final TextEditingController titleController;
   late final TextEditingController descriptionController;
   final Set<int> selected = <int>{};
@@ -794,154 +816,108 @@ class _CreateCapituloDialogState extends State<_CreateCapituloDialog> {
     super.dispose();
   }
 
+  void _save(AppLocalizations l10n) {
+    if (titleController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.chapterTitleRequired)));
+      return;
+    }
+    if (selected.length < 3) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.chapterMinimumEntries)));
+      return;
+    }
+    Navigator.of(context).pop(
+      _CreateCapituloResult(
+        titulo: titleController.text.trim(),
+        descricao: descriptionController.text.trim().isEmpty
+            ? null
+            : descriptionController.text.trim(),
+        entradaIds: {...selected},
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return StatefulBuilder(
-      builder: (context, setDialogState) {
-        return AlertDialog(
-          title: Text(l10n.chapterCreateManual),
-          content: SizedBox(
-            width: 580,
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    controller: titleController,
-                    decoration: InputDecoration(
-                      labelText: l10n.chapterTitle,
-                      hintText: l10n.chapterTitleHint,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: descriptionController,
-                    minLines: 2,
-                    maxLines: 3,
-                    decoration: InputDecoration(
-                      labelText: l10n.chapterDescription,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    l10n.chapterSelectEntries,
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    constraints: const BoxConstraints(maxHeight: 280),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Theme.of(context).colorScheme.outlineVariant,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: widget.entradas.length,
-                      itemBuilder: (context, index) {
-                        final entry = widget.entradas[index];
-                        final id = entry.id;
-                        if (id == null) return const SizedBox.shrink();
-                        final checked = selected.contains(id);
-
-                        return CheckboxListTile(
-                          value: checked,
-                          onChanged: (value) {
-                            setDialogState(() {
-                              if (value == true) {
-                                selected.add(id);
-                              } else {
-                                selected.remove(id);
-                              }
-                            });
-                          },
-                          title: Text(entry.titulo),
-                          subtitle: Text(
-                            DateFormat(
-                              'dd/MM/yyyy',
-                              l10n.localeName,
-                            ).format(entry.data),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    l10n.chapterMinimumEntries,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l10n.chapterCreateManual),
+        actions: [
+          TextButton(onPressed: () => _save(l10n), child: Text(l10n.save)),
+        ],
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: titleController,
+              textCapitalization: TextCapitalization.sentences,
+              autofocus: true,
+              decoration: InputDecoration(
+                labelText: l10n.chapterTitle,
+                hintText: l10n.chapterTitleHint,
+                border: const OutlineInputBorder(),
               ),
             ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(l10n.cancel),
+            const SizedBox(height: 12),
+            TextField(
+              controller: descriptionController,
+              textCapitalization: TextCapitalization.sentences,
+              minLines: 2,
+              maxLines: 3,
+              decoration: InputDecoration(
+                labelText: l10n.chapterDescription,
+                border: const OutlineInputBorder(),
+              ),
             ),
-            FilledButton(
-              onPressed: () {
-                if (titleController.text.trim().isEmpty) {
-                  _showChapterValidationMessage(
-                    context,
-                    l10n.chapterTitleRequired,
-                  );
-                  return;
-                }
-                if (selected.length < 3) {
-                  _showChapterValidationMessage(
-                    context,
-                    l10n.chapterMinimumEntries,
-                  );
-                  return;
-                }
-                Navigator.of(context).pop(
-                  _CreateCapituloResult(
-                    titulo: titleController.text.trim(),
-                    descricao: descriptionController.text.trim().isEmpty
-                        ? null
-                        : descriptionController.text.trim(),
-                    entradaIds: {...selected},
-                  ),
-                );
-              },
-              child: Text(l10n.save),
+            const SizedBox(height: 16),
+            Text(
+              l10n.chapterSelectEntries,
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+            const SizedBox(height: 8),
+            _EntradasChecklist(
+              entradas: widget.entradas,
+              tagNomesPorId: widget.tagNomesPorId,
+              selected: selected,
             ),
           ],
-        );
-      },
+        ),
+      ),
     );
   }
 }
 
-// Dialog interno para edição de capítulo
-class _EditCapituloDialog extends StatefulWidget {
+// Tela de edição de capítulo (substitui o AlertDialog para evitar
+// rebuild de TextField causado por viewInsets no Android)
+class _EditCapituloPage extends StatefulWidget {
   final Capitulo capitulo;
   final List<Historia> todasEntradas;
-  final Set<int> draftEntradaIds;
+  final Map<int, String> tagNomesPorId;
+  final Set<int> initialEntradaIds;
 
-  const _EditCapituloDialog({
+  const _EditCapituloPage({
     required this.capitulo,
     required this.todasEntradas,
-    required this.draftEntradaIds,
+    required this.tagNomesPorId,
+    required this.initialEntradaIds,
   });
 
   @override
-  State<_EditCapituloDialog> createState() => _EditCapituloDialogState();
+  State<_EditCapituloPage> createState() => _EditCapituloPageState();
 }
 
-class _EditCapituloDialogState extends State<_EditCapituloDialog> {
+class _EditCapituloPageState extends State<_EditCapituloPage> {
   late TextEditingController titleController;
   late TextEditingController descController;
-  var _buscaEntradas = '';
+  late final Set<int> selectedIds;
 
   @override
   void initState() {
@@ -950,6 +926,7 @@ class _EditCapituloDialogState extends State<_EditCapituloDialog> {
     descController = TextEditingController(
       text: widget.capitulo.descricao ?? '',
     );
+    selectedIds = {...widget.initialEntradaIds};
   }
 
   @override
@@ -959,189 +936,221 @@ class _EditCapituloDialogState extends State<_EditCapituloDialog> {
     super.dispose();
   }
 
+  void _save(AppLocalizations l10n) {
+    if (titleController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.chapterTitleRequired)));
+      return;
+    }
+    if (selectedIds.length < 3) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.chapterMinimumEntries)));
+      return;
+    }
+    Navigator.of(context).pop(
+      _EditCapituloResult(
+        titulo: titleController.text.trim(),
+        descricao: descController.text.trim().isEmpty
+            ? null
+            : descController.text.trim(),
+        entradaIds: {...selectedIds},
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return StatefulBuilder(
-      builder: (context, setDialogState) {
-        final buscaNormalizada = _buscaEntradas.trim().toLowerCase();
-        final entradasFiltradas = widget.todasEntradas
-            .where((entrada) {
-              if (buscaNormalizada.isEmpty) return true;
-
-              final tituloNormalizado = entrada.titulo.toLowerCase();
-              final dataFormatada = DateFormat(
-                'dd/MM/yyyy',
-                l10n.localeName,
-              ).format(entrada.data).toLowerCase();
-
-              return tituloNormalizado.contains(buscaNormalizada) ||
-                  dataFormatada.contains(buscaNormalizada);
-            })
-            .toList(growable: false);
-
-        return AlertDialog(
-          title: Text(l10n.chapterEditTitle),
-          content: SizedBox(
-            width: 600,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    l10n.chapterTitle,
-                    style: Theme.of(context).textTheme.labelMedium,
-                  ),
-                  const SizedBox(height: 6),
-                  TextField(
-                    controller: titleController,
-                    decoration: InputDecoration(
-                      hintText: l10n.chapterTitleHint,
-                      border: const OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    l10n.chapterDescription,
-                    style: Theme.of(context).textTheme.labelMedium,
-                  ),
-                  const SizedBox(height: 6),
-                  TextField(
-                    controller: descController,
-                    minLines: 2,
-                    maxLines: 3,
-                    decoration: InputDecoration(
-                      hintText: l10n.chapterDescriptionHint,
-                      border: const OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    l10n.chapterSelectEntries,
-                    style: Theme.of(context).textTheme.labelMedium,
-                  ),
-                  const SizedBox(height: 6),
-                  TextField(
-                    decoration: InputDecoration(
-                      labelText: l10n.search,
-                      hintText: l10n.searchHintText,
-                      prefixIcon: const Icon(Icons.search),
-                      border: const OutlineInputBorder(),
-                    ),
-                    onChanged: (value) {
-                      setDialogState(() {
-                        _buscaEntradas = value;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    constraints: const BoxConstraints(maxHeight: 250),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Theme.of(context).colorScheme.outlineVariant,
-                      ),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: entradasFiltradas.length,
-                      itemBuilder: (context, index) {
-                        final entrada = entradasFiltradas[index];
-                        final entradaId = entrada.id;
-                        if (entradaId == null) {
-                          return const SizedBox.shrink();
-                        }
-
-                        final isSelected = widget.draftEntradaIds.contains(
-                          entradaId,
-                        );
-                        return CheckboxListTile(
-                          value: isSelected,
-                          onChanged: (value) {
-                            setDialogState(() {
-                              if (value == true) {
-                                widget.draftEntradaIds.add(entradaId);
-                              } else {
-                                widget.draftEntradaIds.remove(entradaId);
-                              }
-                            });
-                          },
-                          title: Text(entrada.titulo),
-                          subtitle: Text(
-                            DateFormat(
-                              'dd/MM/yyyy',
-                              l10n.localeName,
-                            ).format(entrada.data),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  if (entradasFiltradas.isEmpty) ...[
-                    const SizedBox(height: 8),
-                    Text(
-                      l10n.noStoriesHere,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                  const SizedBox(height: 8),
-                  Text(
-                    l10n.chapterMinimumEntries,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l10n.chapterEditTitle),
+        actions: [
+          TextButton(onPressed: () => _save(l10n), child: Text(l10n.save)),
+        ],
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.chapterTitle,
+              style: Theme.of(context).textTheme.labelMedium,
+            ),
+            const SizedBox(height: 6),
+            TextField(
+              controller: titleController,
+              textCapitalization: TextCapitalization.sentences,
+              decoration: InputDecoration(
+                hintText: l10n.chapterTitleHint,
+                border: const OutlineInputBorder(),
               ),
             ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(null),
-              child: Text(l10n.cancel),
+            const SizedBox(height: 16),
+            Text(
+              l10n.chapterDescription,
+              style: Theme.of(context).textTheme.labelMedium,
             ),
-            FilledButton(
-              onPressed: () {
-                if (titleController.text.trim().isEmpty) {
-                  _showChapterValidationMessage(
-                    context,
-                    l10n.chapterTitleRequired,
-                  );
-                  return;
-                }
-                if (widget.draftEntradaIds.length < 3) {
-                  _showChapterValidationMessage(
-                    context,
-                    l10n.chapterMinimumEntries,
-                  );
-                  return;
-                }
-                Navigator.of(context).pop(
-                  _EditCapituloResult(
-                    titulo: titleController.text.trim(),
-                    descricao: descController.text.trim().isEmpty
-                        ? null
-                        : descController.text.trim(),
-                  ),
-                );
-              },
-              child: Text(l10n.save),
+            const SizedBox(height: 6),
+            TextField(
+              controller: descController,
+              textCapitalization: TextCapitalization.sentences,
+              minLines: 2,
+              maxLines: 3,
+              decoration: InputDecoration(
+                hintText: l10n.chapterDescriptionHint,
+                border: const OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              l10n.chapterSelectEntries,
+              style: Theme.of(context).textTheme.labelMedium,
+            ),
+            const SizedBox(height: 6),
+            _EntradasChecklist(
+              entradas: widget.todasEntradas,
+              tagNomesPorId: widget.tagNomesPorId,
+              selected: selectedIds,
             ),
           ],
-        );
-      },
+        ),
+      ),
     );
   }
 }
 
 void _showChapterValidationMessage(BuildContext context, String message) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+}
+
+// Widget isolado para busca + checkboxes de entradas.
+// Ao marcar um checkbox ou digitar na busca, apenas este widget é reconstruído,
+// evitando que os TextFields de título/descrição percam o foco no Android.
+class _EntradasChecklist extends StatefulWidget {
+  final List<Historia> entradas;
+  final Map<int, String> tagNomesPorId;
+
+  /// Set mutável compartilhado — o pai lê as seleções na hora de salvar.
+  final Set<int> selected;
+
+  const _EntradasChecklist({
+    required this.entradas,
+    required this.tagNomesPorId,
+    required this.selected,
+  });
+
+  @override
+  State<_EntradasChecklist> createState() => _EntradasChecklistState();
+}
+
+class _EntradasChecklistState extends State<_EntradasChecklist> {
+  final TextEditingController _searchController = TextEditingController();
+  var _busca = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final buscaNorm = _busca.trim().toLowerCase();
+    final filtradas = widget.entradas
+        .where((entrada) {
+          if (buscaNorm.isEmpty) return true;
+          final titulo = entrada.titulo.toLowerCase();
+          final data = DateFormat(
+            'dd/MM/yyyy',
+            l10n.localeName,
+          ).format(entrada.data).toLowerCase();
+          final assunto = (entrada.assunto ?? '').toLowerCase();
+          final tagLegada = (entrada.tag ?? '').toLowerCase();
+          final tagNomes = entrada.id != null
+              ? (widget.tagNomesPorId[entrada.id!] ?? '').toLowerCase()
+              : '';
+          return titulo.contains(buscaNorm) ||
+              data.contains(buscaNorm) ||
+              assunto.contains(buscaNorm) ||
+              tagLegada.contains(buscaNorm) ||
+              tagNomes.contains(buscaNorm);
+        })
+        .toList(growable: false);
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextField(
+          controller: _searchController,
+          decoration: InputDecoration(
+            labelText: l10n.search,
+            hintText: l10n.searchHintText,
+            prefixIcon: const Icon(Icons.search),
+            border: const OutlineInputBorder(),
+          ),
+          onChanged: (v) => setState(() => _busca = v),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          constraints: const BoxConstraints(maxHeight: 250),
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outlineVariant,
+            ),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: filtradas.length,
+            itemBuilder: (context, index) {
+              final entry = filtradas[index];
+              final id = entry.id;
+              if (id == null) return const SizedBox.shrink();
+              return CheckboxListTile(
+                value: widget.selected.contains(id),
+                onChanged: (value) {
+                  setState(() {
+                    if (value == true) {
+                      widget.selected.add(id);
+                    } else {
+                      widget.selected.remove(id);
+                    }
+                  });
+                },
+                title: Text(entry.titulo),
+                subtitle: Text(
+                  DateFormat('dd/MM/yyyy', l10n.localeName).format(entry.data),
+                ),
+              );
+            },
+          ),
+        ),
+        if (filtradas.isEmpty) ...[
+          const SizedBox(height: 8),
+          Text(
+            l10n.noStoriesHere,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+        const SizedBox(height: 8),
+        Text(
+          l10n.chapterMinimumEntries,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            fontSize: 12,
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 class _ChapterDetailsScreen extends StatefulWidget {
@@ -1200,25 +1209,31 @@ class _ChapterDetailsScreenState extends State<_ChapterDetailsScreen> {
     final userId = _resumo.capitulo.userId;
     if (userId.isEmpty) return;
 
-    final todasEntradas = await widget.capituloHelper.listEntradasElegiveis(
-      userId,
-    );
+    final entradasComTags = await widget.capituloHelper
+        .listEntradasElegiveisComTags(userId);
     if (!mounted) return;
+
+    final todasEntradas = entradasComTags.map((e) => e.historia).toList();
+    final tagNomesPorId = {
+      for (final e in entradasComTags)
+        if (e.historia.id != null) e.historia.id!: e.tagNomes,
+    };
 
     final draftEntradaIds = <int>{
       for (final e in _entradas)
         if (e.id != null) e.id!,
     };
 
-    final resultado = await showDialog<_EditCapituloResult?>(
-      context: context,
-      builder: (dialogContext) {
-        return _EditCapituloDialog(
+    final resultado = await Navigator.of(context).push<_EditCapituloResult?>(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (_) => _EditCapituloPage(
           capitulo: _resumo.capitulo,
           todasEntradas: todasEntradas,
-          draftEntradaIds: draftEntradaIds,
-        );
-      },
+          tagNomesPorId: tagNomesPorId,
+          initialEntradaIds: draftEntradaIds,
+        ),
+      ),
     );
 
     if (resultado == null) return;
@@ -1226,7 +1241,8 @@ class _ChapterDetailsScreenState extends State<_ChapterDetailsScreen> {
     final selectedEntries =
         todasEntradas
             .where(
-              (entry) => entry.id != null && draftEntradaIds.contains(entry.id),
+              (entry) =>
+                  entry.id != null && resultado.entradaIds.contains(entry.id),
             )
             .toList()
           ..sort((a, b) => a.data.compareTo(b.data));
