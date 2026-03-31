@@ -1000,6 +1000,27 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
                         insightProvider.tierFilter = selected.first;
                       },
                     ),
+                    const SizedBox(height: 6),
+                    // Botão de acesso rápido ao histórico
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton.icon(
+                        style: TextButton.styleFrom(
+                          foregroundColor: colorScheme.tertiary,
+                          textStyle: const TextStyle(fontSize: 11),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          visualDensity: VisualDensity.compact,
+                        ),
+                        icon: const Icon(Icons.history, size: 14),
+                        label: Text(l10n.insightHistoryTitle),
+                        onPressed: () =>
+                            Navigator.of(context).pushNamed('/insight-history'),
+                      ),
+                    ),
                   ],
                 ),
               );

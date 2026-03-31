@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/insight.dart';
+import '../services/insight_history_service.dart';
 import '../services/insight_service.dart';
 
 /// Filtro de tier para exibição dos insights (disponível em modo de desenvolvimento).
@@ -33,6 +34,7 @@ enum InsightTierFilter {
 ///   - filtro de tier: exibe apenas Free, apenas Premium ou todos
 class InsightProvider with ChangeNotifier {
   final InsightService _service = InsightService();
+  final InsightHistoryService _historyService = InsightHistoryService();
 
   /// Insights após filtro de ciclo de vida, antes do filtro de tier.
   List<Insight> _lifecycleFiltered = [];
@@ -172,6 +174,8 @@ class InsightProvider with ChangeNotifier {
           await prefs.remove(key);
         }
         visible.add(insight);
+        // Registra no histórico (ignora falha — não crítico)
+        _saveToHistory(userId, insight);
       }
       return visible;
     }
@@ -195,6 +199,7 @@ class InsightProvider with ChangeNotifier {
           await prefs.remove(dismissedKey);
           await prefs.setInt(shownKey, now.millisecondsSinceEpoch);
           visible.add(insight);
+          _saveToHistory(userId, insight);
         }
         // Else: ainda em cooldown → não exibe
       } else {
@@ -204,6 +209,7 @@ class InsightProvider with ChangeNotifier {
           // Primeira exibição: registra timestamp
           await prefs.setInt(shownKey, now.millisecondsSinceEpoch);
           visible.add(insight);
+          _saveToHistory(userId, insight);
         } else {
           final shownAt = DateTime.fromMillisecondsSinceEpoch(shownMs);
           if (now.difference(shownAt) < _visibilityDuration) {
@@ -255,4 +261,17 @@ class InsightProvider with ChangeNotifier {
       '${date.year}-'
       '${date.month.toString().padLeft(2, '0')}-'
       '${date.day.toString().padLeft(2, '0')}';
+
+  /// Grava insight no histórico de forma assíncrona e silenciosa.
+  void _saveToHistory(String userId, Insight insight) {
+    _historyService.saveInsight(userId, insight, DateTime.now()).catchError((
+      _,
+    ) {
+      // Histórico não é crítico — falha silenciosa
+    });
+  }
+
+  /// Expõe o serviço de histórico para que o provider de histórico possa
+  /// reutilizá-lo sem instanciar uma segunda conexão.
+  InsightHistoryService get historyService => _historyService;
 }

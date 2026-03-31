@@ -1218,6 +1218,24 @@
   "homeHeaderCompactCards": "View in compact cards",
   "@homeHeaderCompactCards": { "description": "Tooltip/label to display stories in compact cards on Home" },
   "homeHeaderOpenCalendarTooltip": "Open calendar",
-  "@homeHeaderOpenCalendarTooltip": { "description": "Tooltip for calendar button in Home header" }
+  "@homeHeaderOpenCalendarTooltip": { "description": "Tooltip for calendar button in Home header" },
+  "insightHistoryTitle": "Insight History",
+  "@insightHistoryTitle": { "description": "Title of the insight history screen" },
+  "insightHistoryEmpty": "No insights recorded yet.",
+  "@insightHistoryEmpty": { "description": "Empty state message on insight history screen" },
+  "insightHistoryClearAll": "Clear history",
+  "@insightHistoryClearAll": { "description": "Button to clear all insight history" },
+  "insightHistoryClearConfirm": "Clear all insight history? This action cannot be undone.",
+  "@insightHistoryClearConfirm": { "description": "Confirmation dialog body for clearing insight history" },
+  "insightHistorySeenOn": "Seen on {date}",
+  "@insightHistorySeenOn": { "description": "Label showing when an insight was seen", "placeholders": { "date": { "type": "String" } } },
+  "insightHistoryFilterAll": "All",
+  "@insightHistoryFilterAll": { "description": "Filter chip label: show all insight types" },
+  "insightHistoryFilterFree": "Free",
+  "@insightHistoryFilterFree": { "description": "Filter chip label: show only free tier insights" },
+  "insightHistoryFilterPremium": "Premium",
+  "@insightHistoryFilterPremium": { "description": "Filter chip label: show only premium insights" },
+  "insightHistorySearch": "Search insights",
+  "@insightHistorySearch": { "description": "Hint text for the search field on insight history screen" }
 }
 

@@ -663,7 +663,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.delete),
+                leading: const Icon(Icons.history_outlined),
+                title: Text(AppLocalizations.of(context)!.insightHistoryTitle),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/insight-history');
+                },
+              ),
+              ListTile(
                 title: Text(AppLocalizations.of(context)!.trash),
                 onTap: () {
                   Navigator.pop(context);

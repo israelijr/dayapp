@@ -4071,6 +4071,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open calendar'**
   String get homeHeaderOpenCalendarTooltip;
+
+  /// Title of the insight history screen
+  ///
+  /// In en, this message translates to:
+  /// **'Insight History'**
+  String get insightHistoryTitle;
+
+  /// Empty state message on insight history screen
+  ///
+  /// In en, this message translates to:
+  /// **'No insights recorded yet.'**
+  String get insightHistoryEmpty;
+
+  /// Button to clear all insight history
+  ///
+  /// In en, this message translates to:
+  /// **'Clear history'**
+  String get insightHistoryClearAll;
+
+  /// Confirmation dialog body for clearing insight history
+  ///
+  /// In en, this message translates to:
+  /// **'Clear all insight history? This action cannot be undone.'**
+  String get insightHistoryClearConfirm;
+
+  /// Label showing when an insight was seen
+  ///
+  /// In en, this message translates to:
+  /// **'Seen on {date}'**
+  String insightHistorySeenOn(String date);
+
+  /// Filter chip label: show all insight types
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get insightHistoryFilterAll;
+
+  /// Filter chip label: show only free tier insights
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get insightHistoryFilterFree;
+
+  /// Filter chip label: show only premium insights
+  ///
+  /// In en, this message translates to:
+  /// **'Premium'**
+  String get insightHistoryFilterPremium;
+
+  /// Hint text for the search field on insight history screen
+  ///
+  /// In en, this message translates to:
+  /// **'Search insights'**
+  String get insightHistorySearch;
 }
 
 class _AppLocalizationsDelegate

@@ -28,7 +28,7 @@ class DatabaseHelper {
       final path = p.join(dbPath, 'dayapp.db');
       return await openDatabase(
         path,
-        version: 17,
+        version: 18,
         onCreate: _onCreate,
         onUpgrade: _onUpgrade,
       );
@@ -208,6 +208,28 @@ class DatabaseHelper {
       );
       await db.execute(
         'CREATE INDEX idx_capitulo_sugestoes_user ON capitulo_sugestoes_ignoradas(user_id);',
+      );
+
+      // Histórico de insights (v18)
+      await db.execute('''
+        CREATE TABLE insight_history (
+          id          INTEGER PRIMARY KEY AUTOINCREMENT,
+          user_id     TEXT    NOT NULL,
+          type        TEXT    NOT NULL,
+          title       TEXT    NOT NULL,
+          description TEXT    NOT NULL,
+          icon        TEXT    NOT NULL,
+          metadata    TEXT,
+          seen_at     INTEGER NOT NULL,
+          is_premium  INTEGER NOT NULL DEFAULT 0,
+          FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        );
+      ''');
+      await db.execute(
+        'CREATE INDEX idx_insight_history_user_seen ON insight_history(user_id, seen_at DESC);',
+      );
+      await db.execute(
+        'CREATE UNIQUE INDEX idx_insight_history_user_type ON insight_history(user_id, type);',
       );
     } catch (e) {
       rethrow;
@@ -533,6 +555,33 @@ class DatabaseHelper {
         );
       } catch (e) {
         debugPrint('Erro criando tabelas de capítulos: $e');
+      }
+    }
+    if (oldVersion < 18) {
+      // Histórico de insights exibidos ao usuário.
+      try {
+        await db.execute('''
+          CREATE TABLE IF NOT EXISTS insight_history (
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id     TEXT    NOT NULL,
+            type        TEXT    NOT NULL,
+            title       TEXT    NOT NULL,
+            description TEXT    NOT NULL,
+            icon        TEXT    NOT NULL,
+            metadata    TEXT,
+            seen_at     INTEGER NOT NULL,
+            is_premium  INTEGER NOT NULL DEFAULT 0,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+          );
+        ''');
+        await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_insight_history_user_seen ON insight_history(user_id, seen_at DESC);',
+        );
+        await db.execute(
+          'CREATE UNIQUE INDEX IF NOT EXISTS idx_insight_history_user_type ON insight_history(user_id, type);',
+        );
+      } catch (e) {
+        debugPrint('Erro criando tabela insight_history (v18): $e');
       }
     }
   }

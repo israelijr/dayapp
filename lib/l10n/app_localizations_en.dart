@@ -2250,4 +2250,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeHeaderOpenCalendarTooltip => 'Open calendar';
+
+  @override
+  String get insightHistoryTitle => 'Insight History';
+
+  @override
+  String get insightHistoryEmpty => 'No insights recorded yet.';
+
+  @override
+  String get insightHistoryClearAll => 'Clear history';
+
+  @override
+  String get insightHistoryClearConfirm =>
+      'Clear all insight history? This action cannot be undone.';
+
+  @override
+  String insightHistorySeenOn(String date) {
+    return 'Seen on $date';
+  }
+
+  @override
+  String get insightHistoryFilterAll => 'All';
+
+  @override
+  String get insightHistoryFilterFree => 'Free';
+
+  @override
+  String get insightHistoryFilterPremium => 'Premium';
+
+  @override
+  String get insightHistorySearch => 'Search insights';
 }

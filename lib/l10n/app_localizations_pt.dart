@@ -2258,6 +2258,36 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get homeHeaderOpenCalendarTooltip => 'Ver calendário';
+
+  @override
+  String get insightHistoryTitle => 'Histórico de Insights';
+
+  @override
+  String get insightHistoryEmpty => 'Nenhum insight registrado ainda.';
+
+  @override
+  String get insightHistoryClearAll => 'Limpar histórico';
+
+  @override
+  String get insightHistoryClearConfirm =>
+      'Limpar todo o histórico de insights? Esta ação não pode ser desfeita.';
+
+  @override
+  String insightHistorySeenOn(String date) {
+    return 'Visto em $date';
+  }
+
+  @override
+  String get insightHistoryFilterAll => 'Todos';
+
+  @override
+  String get insightHistoryFilterFree => 'Free';
+
+  @override
+  String get insightHistoryFilterPremium => 'Premium';
+
+  @override
+  String get insightHistorySearch => 'Buscar insights';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -4514,4 +4544,34 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get homeHeaderOpenCalendarTooltip => 'Ver calendário';
+
+  @override
+  String get insightHistoryTitle => 'Histórico de Insights';
+
+  @override
+  String get insightHistoryEmpty => 'Nenhum insight registrado ainda.';
+
+  @override
+  String get insightHistoryClearAll => 'Limpar histórico';
+
+  @override
+  String get insightHistoryClearConfirm =>
+      'Limpar todo o histórico de insights? Esta ação não pode ser desfeita.';
+
+  @override
+  String insightHistorySeenOn(String date) {
+    return 'Visto em $date';
+  }
+
+  @override
+  String get insightHistoryFilterAll => 'Todos';
+
+  @override
+  String get insightHistoryFilterFree => 'Free';
+
+  @override
+  String get insightHistoryFilterPremium => 'Premium';
+
+  @override
+  String get insightHistorySearch => 'Buscar insights';
 }

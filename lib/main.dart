@@ -38,6 +38,7 @@ import 'screens/password_recovery_screen.dart';
 import 'screens/pin_recovery_screen.dart';
 import 'screens/search_screen.dart';
 import 'screens/settings_screen.dart';
+import 'screens/insight_history_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/trash_screen.dart';
 import 'services/engagement_service.dart';
@@ -546,6 +547,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
               '/backup-manager': (context) => const BackupManagerScreen(),
               '/trash': (context) => const TrashScreen(),
               '/search': (context) => const SearchScreen(),
+              '/insight-history': (context) => const InsightHistoryScreen(),
             },
           );
         },
