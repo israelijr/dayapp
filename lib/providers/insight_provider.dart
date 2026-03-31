@@ -4,39 +4,80 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/insight.dart';
 import '../services/insight_service.dart';
 
+/// Filtro de tier para exibição dos insights (disponível em modo de desenvolvimento).
+enum InsightTierFilter {
+  all,
+  freeOnly,
+  premiumOnly;
+
+  String get label {
+    switch (this) {
+      case InsightTierFilter.all:
+        return 'Todos';
+      case InsightTierFilter.freeOnly:
+        return 'Free';
+      case InsightTierFilter.premiumOnly:
+        return 'Premium';
+    }
+  }
+}
+
 /// Provider que expõe os insights gerados para a Home.
 ///
 /// Gerencia:
 /// - carregamento e cache de insights
 /// - ciclo de vida: expiração automática (1 dia) e cooldown (15 dias) após dispensa
 /// - dispensa manual pelo usuário
-/// - modo desenvolvimento (devMode via kDebugMode): exibe todos os insights sem filtro
+/// - modo desenvolvimento (devMode via kDebugMode):
+///   - dispensa por dia: insights dispensados reaparecem no dia seguinte
+///   - filtro de tier: exibe apenas Free, apenas Premium ou todos
 class InsightProvider with ChangeNotifier {
   final InsightService _service = InsightService();
 
-  List<Insight> _insights = [];
+  /// Insights após filtro de ciclo de vida, antes do filtro de tier.
+  List<Insight> _lifecycleFiltered = [];
   bool _isLoading = false;
   String? _lastUserId;
+
+  /// Filtro de tier ativo (apenas relevante em devMode).
+  InsightTierFilter _tierFilter = InsightTierFilter.all;
 
   // Prefixos de chaves no SharedPreferences
   static const String _shownAtPrefix = 'insight_shown_';
   static const String _dismissedAtPrefix = 'insight_dismissed_';
 
+  /// Prefixo para dispensas diárias em dev mode.
+  static const String _devDismissedPrefix = 'insight_dev_dismissed_';
+
   /// Duração que um insight permanece visível antes de desaparecer automaticamente.
-  /// 1 dia para testes; altere para Duration(days: 2) na produção.
   static const Duration _visibilityDuration = Duration(days: 1);
 
   /// Período de cooldown após dispensa para o insight reaparecer.
   static const Duration _cooldownDuration = Duration(days: 15);
 
-  /// Em modo debug (kDebugMode), todos os insights são exibidos sem verificação de tempo.
+  /// Em modo debug (kDebugMode), aplica regras simplificadas de ciclo de vida.
   bool get devMode => kDebugMode;
 
-  /// Lista de insights disponíveis (já filtrados para exibição).
-  List<Insight> get insights => List.unmodifiable(_insights);
+  /// Lista de insights disponíveis (filtrados por ciclo de vida e, em dev, por tier).
+  List<Insight> get insights {
+    final result = devMode
+        ? _applyTierFilter(_lifecycleFiltered)
+        : _lifecycleFiltered;
+    return List.unmodifiable(result);
+  }
 
   /// Indica se há um carregamento em andamento.
   bool get isLoading => _isLoading;
+
+  /// Filtro de tier atual (somente relevante em devMode).
+  InsightTierFilter get tierFilter => _tierFilter;
+
+  /// Altera o filtro de tier e atualiza a lista exibida imediatamente.
+  set tierFilter(InsightTierFilter value) {
+    if (_tierFilter == value) return;
+    _tierFilter = value;
+    notifyListeners();
+  }
 
   // ---------------------------------------------------------------------------
   // API Pública
@@ -51,10 +92,10 @@ class InsightProvider with ChangeNotifier {
 
     try {
       final all = await _service.getInsights(userId);
-      _insights = await _applyLifecycle(userId, all);
+      _lifecycleFiltered = await _applyLifecycle(userId, all);
     } catch (e) {
       // Insights não são críticos — falha silenciosa
-      _insights = [];
+      _lifecycleFiltered = [];
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -68,25 +109,37 @@ class InsightProvider with ChangeNotifier {
 
     try {
       final all = await _service.getInsights(userId, forceRefresh: true);
-      _insights = await _applyLifecycle(userId, all);
+      _lifecycleFiltered = await _applyLifecycle(userId, all);
     } catch (e) {
-      _insights = [];
+      _lifecycleFiltered = [];
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  /// Dispensa manualmente um insight (registra timestamp de dispensa).
-  /// O insight não reaparece por [_cooldownDuration] (15 dias).
+  /// Dispensa manualmente um insight.
+  ///
+  /// - Em devMode: persiste a data (YYYY-MM-DD); o insight reaparece no dia seguinte.
+  /// - Em produção: cooldown de [_cooldownDuration] (15 dias).
   Future<void> dismissInsight(String userId, InsightType type) async {
     // Remove da lista local imediatamente para feedback instantâneo
-    _insights = _insights.where((i) => i.type != type).toList();
+    _lifecycleFiltered = _lifecycleFiltered
+        .where((i) => i.type != type)
+        .toList();
     notifyListeners();
 
-    if (devMode) return; // Em dev mode não persiste dispensa
-
     final prefs = await SharedPreferences.getInstance();
+
+    if (devMode) {
+      // Dev: persiste apenas a data; no dia seguinte o registro é ignorado
+      await prefs.setString(
+        _devDismissedKey(userId, type),
+        _dateString(DateTime.now()),
+      );
+      return;
+    }
+
     await prefs.setInt(
       _dismissedKey(userId, type),
       DateTime.now().millisecondsSinceEpoch,
@@ -102,9 +155,28 @@ class InsightProvider with ChangeNotifier {
     String userId,
     List<Insight> allInsights,
   ) async {
-    // Em modo de desenvolvimento: exibe tudo, sem verificação de tempo.
-    if (devMode) return allInsights;
+    if (devMode) {
+      // Dev: oculta apenas os dispensados hoje; no dia seguinte reaparecem
+      final prefs = await SharedPreferences.getInstance();
+      final today = _dateString(DateTime.now());
+      final visible = <Insight>[];
 
+      for (final insight in allInsights) {
+        final key = _devDismissedKey(userId, insight.type);
+        final dismissedDate = prefs.getString(key);
+        if (dismissedDate == today) {
+          continue; // dispensado hoje — não exibir
+        }
+        // Dispensado em dia anterior: limpa o registro e reexibe
+        if (dismissedDate != null) {
+          await prefs.remove(key);
+        }
+        visible.add(insight);
+      }
+      return visible;
+    }
+
+    // Produção: ciclo de vida completo (expiração + cooldown)
     final prefs = await SharedPreferences.getInstance();
     final now = DateTime.now();
     final visible = <Insight>[];
@@ -153,6 +225,18 @@ class InsightProvider with ChangeNotifier {
     return visible;
   }
 
+  /// Filtra insights pelo tier selecionado.
+  List<Insight> _applyTierFilter(List<Insight> insights) {
+    switch (_tierFilter) {
+      case InsightTierFilter.freeOnly:
+        return insights.where((i) => !i.isPremium).toList();
+      case InsightTierFilter.premiumOnly:
+        return insights.where((i) => i.isPremium).toList();
+      case InsightTierFilter.all:
+        return insights;
+    }
+  }
+
   // ---------------------------------------------------------------------------
   // Helpers de chave para SharedPreferences
   // ---------------------------------------------------------------------------
@@ -162,4 +246,13 @@ class InsightProvider with ChangeNotifier {
 
   String _dismissedKey(String userId, InsightType type) =>
       '$_dismissedAtPrefix${userId}_${type.value}';
+
+  String _devDismissedKey(String userId, InsightType type) =>
+      '$_devDismissedPrefix${userId}_${type.value}';
+
+  /// Formata uma data como string YYYY-MM-DD para comparação de calendário.
+  String _dateString(DateTime date) =>
+      '${date.year}-'
+      '${date.month.toString().padLeft(2, '0')}-'
+      '${date.day.toString().padLeft(2, '0')}';
 }

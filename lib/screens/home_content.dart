@@ -933,7 +933,7 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
                 Provider.of<AuthProvider>(context, listen: false).user?.id ??
                 '';
             final devMode = insightProvider.devMode;
-            final hasDevBanner = devMode && insights.isNotEmpty;
+            final hasDevBanner = devMode;
             final extraDevBanner = hasDevBanner ? 1 : 0;
             final headerCount =
                 extraChapterCard + extraDevBanner + insights.length;
@@ -941,11 +941,12 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
             Widget devModeBanner() {
               final colorScheme = Theme.of(context).colorScheme;
               final l10n = AppLocalizations.of(context)!;
+              final currentFilter = insightProvider.tierFilter;
               return Container(
                 margin: const EdgeInsets.only(bottom: 8),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
-                  vertical: 6,
+                  vertical: 8,
                 ),
                 decoration: BoxDecoration(
                   color: colorScheme.tertiary.withValues(alpha: 0.12),
@@ -954,22 +955,50 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
                     color: colorScheme.tertiary.withValues(alpha: 0.35),
                   ),
                 ),
-                child: Row(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      Icons.developer_mode,
-                      size: 14,
-                      color: colorScheme.tertiary,
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.developer_mode,
+                          size: 14,
+                          color: colorScheme.tertiary,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          l10n.insightDevModeActive,
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: colorScheme.tertiary,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 6),
-                    Text(
-                      l10n.insightDevModeActive,
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: colorScheme.tertiary,
-                        fontWeight: FontWeight.w500,
+                    const SizedBox(height: 8),
+                    // Controle de filtro por tier (Free / Premium / Todos)
+                    SegmentedButton<InsightTierFilter>(
+                      style: SegmentedButton.styleFrom(
+                        textStyle: const TextStyle(fontSize: 11),
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        visualDensity: VisualDensity.compact,
                       ),
+                      segments: InsightTierFilter.values
+                          .map(
+                            (f) => ButtonSegment<InsightTierFilter>(
+                              value: f,
+                              label: Text(f.label),
+                            ),
+                          )
+                          .toList(),
+                      selected: {currentFilter},
+                      onSelectionChanged: (selected) {
+                        insightProvider.tierFilter = selected.first;
+                      },
                     ),
                   ],
                 ),
