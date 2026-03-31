@@ -1,19 +1,30 @@
+import 'dart:io';
+
+import 'package:animations/animations.dart';
 import 'package:dayapp/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:sqflite/sqflite.dart';
 
 import '../db/capitulo_helper.dart';
+import '../db/database_helper.dart';
 import '../helpers/chapter_filter_helper.dart';
+import '../helpers/rich_text_helper.dart';
 import '../models/capitulo.dart';
 import '../models/capitulo_sugestao.dart';
 import '../models/historia.dart';
 import '../providers/auth_provider.dart';
 import '../providers/premium_provider.dart';
 import '../providers/refresh_provider.dart';
-import '../screens/edit_historia_screen.dart';
 import '../services/capitulo_sugestao_service.dart';
 import '../widgets/compact_historia_card.dart';
+import '../widgets/historia_media_widgets.dart';
+import '../widgets/rich_text_viewer_widget.dart';
 
 // ---------------------------------------------------------------------------
 // Helpers visuais compartilhados entre as telas de capítulos
@@ -238,6 +249,7 @@ class _ChaptersScreenState extends State<ChaptersScreen> {
       dataInicio: selectedEntries.first.data,
       dataFim: selectedEntries.last.data,
       criadoAutomaticamente: false,
+      fotoPath: resultado.fotoPath,
     );
 
     await _capituloHelper.insertCapituloWithEntradas(
@@ -252,21 +264,6 @@ class _ChaptersScreenState extends State<ChaptersScreen> {
     );
 
     await _loadData();
-  }
-
-  Future<void> _abrirDetalhesCapitulo(CapituloResumo resumo) async {
-    final alterado = await Navigator.of(context).push<bool>(
-      MaterialPageRoute(
-        builder: (_) => _ChapterDetailsScreen(
-          resumoInicial: resumo,
-          capituloHelper: _capituloHelper,
-        ),
-      ),
-    );
-
-    if (alterado == true) {
-      await _loadData();
-    }
   }
 
   Widget _buildTagChip(BuildContext context, String tag) {
@@ -464,98 +461,118 @@ class _ChaptersScreenState extends State<ChaptersScreen> {
     final capitulo = resumo.capitulo;
     final descricao = capitulo.descricao?.trim();
     final periodo = l10n.chapterPeriod(
-      DateFormat('dd/MM/yyyy', l10n.localeName).format(capitulo.dataInicio),
-      DateFormat('dd/MM/yyyy', l10n.localeName).format(capitulo.dataFim),
+      DateFormat('dd/MM/yy', l10n.localeName).format(capitulo.dataInicio),
+      DateFormat('dd/MM/yy', l10n.localeName).format(capitulo.dataFim),
     );
 
     return Card(
       clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () => _abrirDetalhesCapitulo(resumo),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+      child: OpenContainer<bool>(
+        transitionType: ContainerTransitionType.fadeThrough,
+        transitionDuration: const Duration(milliseconds: 400),
+        closedElevation: 0,
+        closedColor: colorScheme.surface,
+        openColor: colorScheme.surface,
+        openElevation: 0,
+        closedBuilder: (ctx, openContainer) => InkWell(
+          onTap: openContainer,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Título
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        capitulo.titulo,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Icon(
+                      Icons.chevron_right,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                // Imagem do capítulo (entre título e datas)
+                if (capitulo.fotoPath != null &&
+                    File(capitulo.fotoPath!).existsSync())
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.file(
+                      File(capitulo.fotoPath!),
+                      width: double.infinity,
+                      height: 160,
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                else
                   Container(
-                    padding: const EdgeInsets.all(10),
+                    width: double.infinity,
+                    height: 100,
                     decoration: BoxDecoration(
                       color: capitulo.criadoAutomaticamente
                           ? colorScheme.tertiaryContainer
                           : colorScheme.primaryContainer,
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(
-                      capitulo.criadoAutomaticamente
-                          ? Icons.auto_awesome
-                          : Icons.bookmark_outline,
-                      color: capitulo.criadoAutomaticamente
-                          ? colorScheme.onTertiaryContainer
-                          : colorScheme.onPrimaryContainer,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          capitulo.titulo,
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          periodo,
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(color: colorScheme.onSurfaceVariant),
-                        ),
-                      ],
+                    child: Center(
+                      child: Icon(
+                        capitulo.criadoAutomaticamente
+                            ? Icons.auto_awesome
+                            : Icons.bookmark_outline,
+                        size: 40,
+                        color: capitulo.criadoAutomaticamente
+                            ? colorScheme.onTertiaryContainer
+                            : colorScheme.onPrimaryContainer,
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  Icon(
-                    Icons.chevron_right,
-                    color: colorScheme.onSurfaceVariant,
-                  ),
-                ],
-              ),
-              if (descricao != null && descricao.isNotEmpty) ...[
-                const SizedBox(height: 12),
+                const SizedBox(height: 10),
+                // Datas
                 Text(
-                  descricao,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              ],
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  _buildMetaChip(
-                    context: context,
-                    icon: Icons.menu_book_outlined,
-                    label: l10n.chapterEntriesCount(resumo.totalEntradas),
+                  periodo,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w500,
                   ),
-                  const SizedBox(width: 8),
-                  _buildMoodBar(context, resumo.humorMedio),
+                ),
+                if (descricao != null && descricao.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    descricao,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
                 ],
-              ),
-              if (resumo.topTags.isNotEmpty) ...[
-                const SizedBox(height: 12),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: resumo.topTags
-                      .map((tag) => _buildTagChip(context, tag))
-                      .toList(growable: false),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    _buildMetaChip(
+                      context: context,
+                      icon: Icons.menu_book_outlined,
+                      label: l10n.chapterEntriesCount(resumo.totalEntradas),
+                    ),
+                    const SizedBox(width: 8),
+                    _buildMoodBar(context, resumo.humorMedio),
+                  ],
                 ),
               ],
-            ],
+            ),
           ),
         ),
+        openBuilder: (ctx, _) => _ChapterDetailsScreen(
+          resumoInicial: resumo,
+          capituloHelper: _capituloHelper,
+        ),
+        onClosed: (changed) {
+          if (changed == true) _loadData();
+        },
       ),
     );
   }
@@ -762,11 +779,13 @@ class _EditCapituloResult {
   final String titulo;
   final String? descricao;
   final Set<int> entradaIds;
+  final String? fotoPath;
 
   _EditCapituloResult({
     required this.titulo,
     required this.descricao,
     required this.entradaIds,
+    this.fotoPath,
   });
 }
 
@@ -774,11 +793,13 @@ class _CreateCapituloResult {
   final String titulo;
   final String? descricao;
   final Set<int> entradaIds;
+  final String? fotoPath;
 
   _CreateCapituloResult({
     required this.titulo,
     required this.descricao,
     required this.entradaIds,
+    this.fotoPath,
   });
 }
 
@@ -801,6 +822,7 @@ class _CreateCapituloPageState extends State<_CreateCapituloPage> {
   late final TextEditingController titleController;
   late final TextEditingController descriptionController;
   final Set<int> selected = <int>{};
+  String? _fotoPath;
 
   @override
   void initState() {
@@ -814,6 +836,74 @@ class _CreateCapituloPageState extends State<_CreateCapituloPage> {
     titleController.dispose();
     descriptionController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickPhoto(ImageSource source) async {
+    final picker = ImagePicker();
+    final xFile = await picker.pickImage(
+      source: source,
+      maxWidth: 1200,
+      maxHeight: 800,
+      imageQuality: 85,
+    );
+    if (xFile == null) return;
+
+    // Comprime e salva no diretório de documentos
+    final appDir = await getApplicationDocumentsDirectory();
+    final photosDir = Directory(p.join(appDir.path, 'chapter_photos'));
+    if (!await photosDir.exists()) await photosDir.create(recursive: true);
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final destPath = p.join(photosDir.path, 'chapter_$timestamp.jpg');
+
+    final compressed = await FlutterImageCompress.compressAndGetFile(
+      xFile.path,
+      destPath,
+      quality: 80,
+      minWidth: 800,
+      minHeight: 600,
+    );
+
+    if (compressed != null && mounted) {
+      setState(() => _fotoPath = compressed.path);
+    }
+  }
+
+  void _showPhotoOptions(BuildContext context, AppLocalizations l10n) {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_camera_outlined),
+              title: Text(l10n.imagePickerTakePhoto),
+              onTap: () {
+                Navigator.of(ctx).pop();
+                _pickPhoto(ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library_outlined),
+              title: Text(l10n.imagePickerGallerySingle),
+              onTap: () {
+                Navigator.of(ctx).pop();
+                _pickPhoto(ImageSource.gallery);
+              },
+            ),
+            if (_fotoPath != null)
+              ListTile(
+                leading: const Icon(Icons.delete_outline),
+                title: Text(l10n.chapterRemovePhoto),
+                onTap: () {
+                  Navigator.of(ctx).pop();
+                  setState(() => _fotoPath = null);
+                },
+              ),
+          ],
+        ),
+      ),
+    );
   }
 
   void _save(AppLocalizations l10n) {
@@ -836,6 +926,7 @@ class _CreateCapituloPageState extends State<_CreateCapituloPage> {
             ? null
             : descriptionController.text.trim(),
         entradaIds: {...selected},
+        fotoPath: _fotoPath,
       ),
     );
   }
@@ -843,6 +934,7 @@ class _CreateCapituloPageState extends State<_CreateCapituloPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
@@ -856,6 +948,64 @@ class _CreateCapituloPageState extends State<_CreateCapituloPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Foto do capítulo
+            Text(
+              l10n.chapterPhoto,
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+            const SizedBox(height: 8),
+            GestureDetector(
+              onTap: () => _showPhotoOptions(context, l10n),
+              child: Container(
+                width: double.infinity,
+                height: 160,
+                decoration: BoxDecoration(
+                  color: colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: colorScheme.outlineVariant),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: _fotoPath != null
+                    ? Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          Image.file(File(_fotoPath!), fit: BoxFit.cover),
+                          Positioned(
+                            bottom: 8,
+                            right: 8,
+                            child: FilledButton.tonalIcon(
+                              onPressed: () => _showPhotoOptions(context, l10n),
+                              icon: const Icon(Icons.edit, size: 16),
+                              label: Text(l10n.chapterChangePhoto),
+                              style: FilledButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    : Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.add_photo_alternate_outlined,
+                            size: 40,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            l10n.chapterAddPhoto,
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(color: colorScheme.onSurfaceVariant),
+                          ),
+                        ],
+                      ),
+              ),
+            ),
+            const SizedBox(height: 16),
             TextField(
               controller: titleController,
               textCapitalization: TextCapitalization.sentences,
@@ -918,6 +1068,7 @@ class _EditCapituloPageState extends State<_EditCapituloPage> {
   late TextEditingController titleController;
   late TextEditingController descController;
   late final Set<int> selectedIds;
+  String? _fotoPath;
 
   @override
   void initState() {
@@ -927,6 +1078,7 @@ class _EditCapituloPageState extends State<_EditCapituloPage> {
       text: widget.capitulo.descricao ?? '',
     );
     selectedIds = {...widget.initialEntradaIds};
+    _fotoPath = widget.capitulo.fotoPath;
   }
 
   @override
@@ -934,6 +1086,73 @@ class _EditCapituloPageState extends State<_EditCapituloPage> {
     titleController.dispose();
     descController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickPhoto(ImageSource source) async {
+    final picker = ImagePicker();
+    final xFile = await picker.pickImage(
+      source: source,
+      maxWidth: 1200,
+      maxHeight: 800,
+      imageQuality: 85,
+    );
+    if (xFile == null) return;
+
+    final appDir = await getApplicationDocumentsDirectory();
+    final photosDir = Directory(p.join(appDir.path, 'chapter_photos'));
+    if (!await photosDir.exists()) await photosDir.create(recursive: true);
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final destPath = p.join(photosDir.path, 'chapter_$timestamp.jpg');
+
+    final compressed = await FlutterImageCompress.compressAndGetFile(
+      xFile.path,
+      destPath,
+      quality: 80,
+      minWidth: 800,
+      minHeight: 600,
+    );
+
+    if (compressed != null && mounted) {
+      setState(() => _fotoPath = compressed.path);
+    }
+  }
+
+  void _showPhotoOptions(BuildContext context, AppLocalizations l10n) {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_camera_outlined),
+              title: Text(l10n.imagePickerTakePhoto),
+              onTap: () {
+                Navigator.of(ctx).pop();
+                _pickPhoto(ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library_outlined),
+              title: Text(l10n.imagePickerGallerySingle),
+              onTap: () {
+                Navigator.of(ctx).pop();
+                _pickPhoto(ImageSource.gallery);
+              },
+            ),
+            if (_fotoPath != null)
+              ListTile(
+                leading: const Icon(Icons.delete_outline),
+                title: Text(l10n.chapterRemovePhoto),
+                onTap: () {
+                  Navigator.of(ctx).pop();
+                  setState(() => _fotoPath = null);
+                },
+              ),
+          ],
+        ),
+      ),
+    );
   }
 
   void _save(AppLocalizations l10n) {
@@ -956,6 +1175,7 @@ class _EditCapituloPageState extends State<_EditCapituloPage> {
             ? null
             : descController.text.trim(),
         entradaIds: {...selectedIds},
+        fotoPath: _fotoPath,
       ),
     );
   }
@@ -963,6 +1183,7 @@ class _EditCapituloPageState extends State<_EditCapituloPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
@@ -976,6 +1197,64 @@ class _EditCapituloPageState extends State<_EditCapituloPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Foto do capítulo
+            Text(
+              l10n.chapterPhoto,
+              style: Theme.of(context).textTheme.labelMedium,
+            ),
+            const SizedBox(height: 6),
+            GestureDetector(
+              onTap: () => _showPhotoOptions(context, l10n),
+              child: Container(
+                width: double.infinity,
+                height: 160,
+                decoration: BoxDecoration(
+                  color: colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: colorScheme.outlineVariant),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: _fotoPath != null
+                    ? Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          Image.file(File(_fotoPath!), fit: BoxFit.cover),
+                          Positioned(
+                            bottom: 8,
+                            right: 8,
+                            child: FilledButton.tonalIcon(
+                              onPressed: () => _showPhotoOptions(context, l10n),
+                              icon: const Icon(Icons.edit, size: 16),
+                              label: Text(l10n.chapterChangePhoto),
+                              style: FilledButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    : Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.add_photo_alternate_outlined,
+                            size: 40,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            l10n.chapterAddPhoto,
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(color: colorScheme.onSurfaceVariant),
+                          ),
+                        ],
+                      ),
+              ),
+            ),
+            const SizedBox(height: 16),
             Text(
               l10n.chapterTitle,
               style: Theme.of(context).textTheme.labelMedium,
@@ -1264,6 +1543,7 @@ class _ChapterDetailsScreenState extends State<_ChapterDetailsScreen> {
       dataInicio: selectedEntries.first.data,
       dataFim: selectedEntries.last.data,
       criadoAutomaticamente: _resumo.capitulo.criadoAutomaticamente,
+      fotoPath: resultado.fotoPath,
     );
 
     await widget.capituloHelper.updateCapituloWithEntradas(
@@ -1324,29 +1604,82 @@ class _ChapterDetailsScreenState extends State<_ChapterDetailsScreen> {
     Navigator.of(context).pop(_didChange);
   }
 
-  Future<void> _abrirHistoria(Historia historia) async {
-    await Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => EditHistoriaScreen(historia: historia)),
-    );
-
-    if (!mounted) return;
-    // Recarrega o capítulo pois o título/humor da história pode ter mudado
-    await _loadChapterData();
-  }
-
-  Widget _buildHeaderTag(BuildContext context, String tag) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        border: Border.all(color: colorScheme.outlineVariant),
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        '#$tag',
-        style: Theme.of(
-          context,
-        ).textTheme.labelMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+  void _abrirHistoria(Historia historia) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => DraggableScrollableSheet(
+        initialChildSize: 0.75,
+        minChildSize: 0.5,
+        maxChildSize: 0.95,
+        builder: (ctx, scrollController) => Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Column(
+            children: [
+              // Handle do modal
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 12),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              // Conteúdo da história
+              Expanded(
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Fotos
+                      HistoriaFotosGrid(
+                        historiaId: historia.id ?? 0,
+                        height: 200,
+                      ),
+                      // Mídia (áudios e vídeos)
+                      HistoriaMediaRow(
+                        historiaId: historia.id ?? 0,
+                        emoticon: historia.emoticon,
+                      ),
+                      const SizedBox(height: 8),
+                      // Título
+                      Text(
+                        historia.titulo,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      // Data
+                      Text(
+                        DateFormat(
+                          'dd/MM/yyyy',
+                          AppLocalizations.of(context)!.localeName,
+                        ).format(historia.data),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      // Descrição (Rich Text)
+                      if (historia.descricao != null &&
+                          historia.descricao!.isNotEmpty) ...[
+                        const SizedBox(height: 12),
+                        RichTextViewerWidget(jsonContent: historia.descricao),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -1357,8 +1690,8 @@ class _ChapterDetailsScreenState extends State<_ChapterDetailsScreen> {
     final colorScheme = Theme.of(context).colorScheme;
     final capitulo = _resumo.capitulo;
     final periodo = l10n.chapterPeriod(
-      DateFormat('dd/MM/yyyy', l10n.localeName).format(capitulo.dataInicio),
-      DateFormat('dd/MM/yyyy', l10n.localeName).format(capitulo.dataFim),
+      DateFormat('dd/MM/yy', l10n.localeName).format(capitulo.dataInicio),
+      DateFormat('dd/MM/yy', l10n.localeName).format(capitulo.dataFim),
     );
 
     return PopScope(
@@ -1391,114 +1724,358 @@ class _ChapterDetailsScreenState extends State<_ChapterDetailsScreen> {
         body: _isLoading
             ? const Center(child: CircularProgressIndicator())
             : ListView(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.only(bottom: 24),
                 children: [
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
+                  // ---------- Card do cabeçalho ----------
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                    child: Card(
+                      clipBehavior: Clip.antiAlias,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: capitulo.criadoAutomaticamente
-                                      ? colorScheme.tertiaryContainer
-                                      : colorScheme.primaryContainer,
-                                  borderRadius: BorderRadius.circular(14),
-                                ),
+                          // Imagem ou placeholder colorido
+                          if (capitulo.fotoPath != null &&
+                              File(capitulo.fotoPath!).existsSync())
+                            Image.file(
+                              File(capitulo.fotoPath!),
+                              width: double.infinity,
+                              height: 200,
+                              fit: BoxFit.cover,
+                            )
+                          else
+                            Container(
+                              width: double.infinity,
+                              height: 140,
+                              color: capitulo.criadoAutomaticamente
+                                  ? colorScheme.tertiaryContainer
+                                  : colorScheme.primaryContainer,
+                              child: Center(
                                 child: Icon(
                                   capitulo.criadoAutomaticamente
                                       ? Icons.auto_awesome
                                       : Icons.bookmark_outline,
+                                  size: 56,
                                   color: capitulo.criadoAutomaticamente
                                       ? colorScheme.onTertiaryContainer
                                       : colorScheme.onPrimaryContainer,
                                 ),
                               ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                            ),
+                          Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  capitulo.titulo,
+                                  style: Theme.of(context).textTheme.titleLarge,
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  periodo,
+                                  style: Theme.of(context).textTheme.bodySmall
+                                      ?.copyWith(
+                                        color: colorScheme.onSurfaceVariant,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                ),
+                                const SizedBox(height: 12),
+                                Row(
                                   children: [
-                                    Text(
-                                      capitulo.titulo,
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.titleLarge,
+                                    _buildMetaChip(
+                                      context: context,
+                                      icon: Icons.menu_book_outlined,
+                                      label: l10n.chapterEntriesCount(
+                                        _resumo.totalEntradas,
+                                      ),
                                     ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      periodo,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall
-                                          ?.copyWith(
-                                            color: colorScheme.onSurfaceVariant,
-                                          ),
-                                    ),
+                                    const SizedBox(width: 8),
+                                    _buildMoodBar(context, _resumo.humorMedio),
                                   ],
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 14),
-                          Row(
-                            children: [
-                              _buildMetaChip(
-                                context: context,
-                                icon: Icons.menu_book_outlined,
-                                label: l10n.chapterEntriesCount(
-                                  _resumo.totalEntradas,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              _buildMoodBar(context, _resumo.humorMedio),
-                            ],
-                          ),
-                          if (capitulo.descricao != null &&
-                              capitulo.descricao!.trim().isNotEmpty) ...[
-                            const SizedBox(height: 12),
-                            Text(capitulo.descricao!.trim()),
-                          ],
-                          if (_resumo.topTags.isNotEmpty) ...[
-                            const SizedBox(height: 12),
-                            Wrap(
-                              spacing: 8,
-                              runSpacing: 8,
-                              children: _resumo.topTags
-                                  .map((tag) => _buildHeaderTag(context, tag))
-                                  .toList(growable: false),
+                                if (capitulo.descricao != null &&
+                                    capitulo.descricao!.trim().isNotEmpty) ...[
+                                  const SizedBox(height: 12),
+                                  Text(capitulo.descricao!.trim()),
+                                ],
+                              ],
                             ),
-                          ],
+                          ),
                         ],
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  Text(
-                    l10n.chapterEntriesCount(_entradas.length),
-                    style: Theme.of(context).textTheme.titleMedium,
+                  // ---------- Histórias em scroll horizontal ----------
+                  const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      l10n.chapterEntriesCount(_entradas.length),
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
                   ),
                   const SizedBox(height: 12),
                   if (_entradas.isEmpty)
-                    Text(
-                      l10n.noStoriesHere,
-                      style: TextStyle(color: colorScheme.onSurfaceVariant),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        l10n.noStoriesHere,
+                        style: TextStyle(color: colorScheme.onSurfaceVariant),
+                      ),
                     )
                   else
-                    ..._entradas.map(
-                      (entrada) => CompactHistoriaCard(
-                        historia: entrada,
-                        localeName: l10n.localeName,
-                        onTap: () => _abrirHistoria(entrada),
+                    SizedBox(
+                      height: 260,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        itemCount: _entradas.length,
+                        itemBuilder: (context, index) => _StoryHorizontalCard(
+                          historia: _entradas[index],
+                          localeName: l10n.localeName,
+                          onTap: () => _abrirHistoria(_entradas[index]),
+                        ),
                       ),
                     ),
                 ],
               ),
+      ),
+    );
+  }
+}
+
+// Card horizontal para exibição das histórias de um capítulo.
+// Carrega tags e contagem de anexos de forma assíncrona.
+class _StoryHorizontalCard extends StatefulWidget {
+  final Historia historia;
+  final String localeName;
+  final VoidCallback? onTap;
+
+  const _StoryHorizontalCard({
+    required this.historia,
+    required this.localeName,
+    this.onTap,
+  });
+
+  @override
+  State<_StoryHorizontalCard> createState() => _StoryHorizontalCardState();
+}
+
+class _StoryHorizontalCardState extends State<_StoryHorizontalCard> {
+  List<String> _tagNames = const [];
+  int _fotos = 0;
+  int _audios = 0;
+  int _videos = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadExtras();
+  }
+
+  Future<void> _loadExtras() async {
+    final id = widget.historia.id;
+    if (id == null) return;
+
+    final db = await DatabaseHelper().database;
+
+    // Carrega tags
+    final tagRows = await db.rawQuery(
+      '''
+      SELECT t.nome
+      FROM historia_tags ht
+      JOIN tags t ON t.id = ht.tag_id
+      WHERE ht.historia_id = ?
+      ORDER BY t.nome ASC
+      ''',
+      [id],
+    );
+
+    // Conta anexos em queries separadas para simplicidade
+    final fotoCount =
+        Sqflite.firstIntValue(
+          await db.rawQuery(
+            'SELECT COUNT(*) FROM historia_fotos WHERE historia_id = ?',
+            [id],
+          ),
+        ) ??
+        0;
+    final audioCount =
+        Sqflite.firstIntValue(
+          await db.rawQuery(
+            'SELECT COUNT(*) FROM historia_audios WHERE historia_id = ?',
+            [id],
+          ),
+        ) ??
+        0;
+    final videoCount =
+        Sqflite.firstIntValue(
+          await db.rawQuery(
+            'SELECT COUNT(*) FROM historia_videos WHERE historia_id = ?',
+            [id],
+          ),
+        ) ??
+        0;
+
+    // Considera também a tag legada
+    final legacyTag = widget.historia.tag;
+    final tags = tagRows.map((r) => r['nome'] as String).toList();
+    if (tags.isEmpty && legacyTag != null && legacyTag.isNotEmpty) {
+      tags.add(legacyTag);
+    }
+
+    if (mounted) {
+      setState(() {
+        _tagNames = tags;
+        _fotos = fotoCount;
+        _audios = audioCount;
+        _videos = videoCount;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final historia = widget.historia;
+    final colorScheme = Theme.of(context).colorScheme;
+    final descricao = RichTextHelper.jsonToPlainText(historia.descricao).trim();
+    final hasAttachments = _fotos > 0 || _audios > 0 || _videos > 0;
+
+    return GestureDetector(
+      onTap: widget.onTap,
+      child: Container(
+        width: 220,
+        margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainerLow,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: colorScheme.outlineVariant),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Data
+              Text(
+                DateFormat(
+                  'dd/MM/yyyy',
+                  widget.localeName,
+                ).format(historia.data),
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 6),
+              // Título
+              Text(
+                historia.titulo,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+              ),
+              if (descricao.isNotEmpty) ...[
+                const SizedBox(height: 6),
+                Expanded(
+                  child: Text(
+                    descricao,
+                    maxLines: 4,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+              ] else
+                const Spacer(),
+              // Tags
+              if (_tagNames.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 4,
+                  runSpacing: 4,
+                  children: _tagNames
+                      .take(3)
+                      .map(
+                        (tag) => Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 3,
+                          ),
+                          decoration: BoxDecoration(
+                            color: colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            '#$tag',
+                            style: Theme.of(context).textTheme.labelSmall
+                                ?.copyWith(
+                                  color: colorScheme.onPrimaryContainer,
+                                ),
+                          ),
+                        ),
+                      )
+                      .toList(growable: false),
+                ),
+              ],
+              // Anexos
+              if (hasAttachments) ...[
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    if (_fotos > 0) ...[
+                      Icon(
+                        Icons.image_outlined,
+                        size: 14,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                      const SizedBox(width: 2),
+                      Text(
+                        '$_fotos',
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                    ],
+                    if (_audios > 0) ...[
+                      Icon(
+                        Icons.mic_outlined,
+                        size: 14,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                      const SizedBox(width: 2),
+                      Text(
+                        '$_audios',
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                    ],
+                    if (_videos > 0) ...[
+                      Icon(
+                        Icons.videocam_outlined,
+                        size: 14,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                      const SizedBox(width: 2),
+                      Text(
+                        '$_videos',
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ],
+            ],
+          ),
+        ),
       ),
     );
   }

@@ -2120,6 +2120,18 @@ class AppLocalizationsPt extends AppLocalizations {
   String get chapterDescription => 'Descrição';
 
   @override
+  String get chapterPhoto => 'Foto do capítulo';
+
+  @override
+  String get chapterAddPhoto => 'Adicionar foto';
+
+  @override
+  String get chapterChangePhoto => 'Alterar foto';
+
+  @override
+  String get chapterRemovePhoto => 'Remover foto';
+
+  @override
   String get chapterSelectEntries =>
       'Selecione histórias relacionadas (título + data)';
 
@@ -2128,7 +2140,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String chapterPeriod(String start, String end) {
-    return 'Período: $start - $end';
+    return 'Histórias de $start - $end';
   }
 
   @override
@@ -4406,6 +4418,18 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get chapterDescription => 'Descrição';
 
   @override
+  String get chapterPhoto => 'Foto do capítulo';
+
+  @override
+  String get chapterAddPhoto => 'Adicionar foto';
+
+  @override
+  String get chapterChangePhoto => 'Alterar foto';
+
+  @override
+  String get chapterRemovePhoto => 'Remover foto';
+
+  @override
   String get chapterSelectEntries =>
       'Selecione histórias relacionadas (título + data)';
 
@@ -4414,7 +4438,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String chapterPeriod(String start, String end) {
-    return 'Período: $start - $end';
+    return 'Histórias de $start - $end';
   }
 
   @override

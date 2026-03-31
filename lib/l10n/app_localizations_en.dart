@@ -2108,6 +2108,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chapterDescription => 'Description';
 
   @override
+  String get chapterPhoto => 'Chapter photo';
+
+  @override
+  String get chapterAddPhoto => 'Add photo';
+
+  @override
+  String get chapterChangePhoto => 'Change photo';
+
+  @override
+  String get chapterRemovePhoto => 'Remove photo';
+
+  @override
   String get chapterSelectEntries => 'Select related stories (title + date)';
 
   @override
@@ -2115,7 +2127,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String chapterPeriod(String start, String end) {
-    return 'Period: $start - $end';
+    return 'Stories from $start - $end';
   }
 
   @override

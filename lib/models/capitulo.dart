@@ -9,6 +9,7 @@ class Capitulo {
   final bool criadoAutomaticamente;
   final DateTime? dataCriacao;
   final DateTime? dataUpdate;
+  final String? fotoPath;
 
   const Capitulo({
     required this.userId,
@@ -21,6 +22,7 @@ class Capitulo {
     this.criadoAutomaticamente = false,
     this.dataCriacao,
     this.dataUpdate,
+    this.fotoPath,
   });
 
   factory Capitulo.fromMap(Map<String, dynamic> map) {
@@ -39,6 +41,7 @@ class Capitulo {
       dataUpdate: map['data_update'] != null
           ? DateTime.tryParse(map['data_update'] as String)
           : null,
+      fotoPath: map['foto_path'] as String?,
     );
   }
 
@@ -54,6 +57,7 @@ class Capitulo {
       'criado_automaticamente': criadoAutomaticamente ? 1 : 0,
       'data_criacao': dataCriacao?.toIso8601String(),
       'data_update': dataUpdate?.toIso8601String(),
+      'foto_path': fotoPath,
     };
   }
 }

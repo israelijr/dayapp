@@ -3844,6 +3844,30 @@ abstract class AppLocalizations {
   /// **'Description'**
   String get chapterDescription;
 
+  /// Label for chapter photo section
+  ///
+  /// In en, this message translates to:
+  /// **'Chapter photo'**
+  String get chapterPhoto;
+
+  /// Button to add a chapter photo
+  ///
+  /// In en, this message translates to:
+  /// **'Add photo'**
+  String get chapterAddPhoto;
+
+  /// Button to change chapter photo
+  ///
+  /// In en, this message translates to:
+  /// **'Change photo'**
+  String get chapterChangePhoto;
+
+  /// Button to remove chapter photo
+  ///
+  /// In en, this message translates to:
+  /// **'Remove photo'**
+  String get chapterRemovePhoto;
+
   /// Label for selecting stories to compose a chapter
   ///
   /// In en, this message translates to:
@@ -3859,7 +3883,7 @@ abstract class AppLocalizations {
   /// Period label for chapter
   ///
   /// In en, this message translates to:
-  /// **'Period: {start} - {end}'**
+  /// **'Stories from {start} - {end}'**
   String chapterPeriod(String start, String end);
 
   /// Count of stories in chapter

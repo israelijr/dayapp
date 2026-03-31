@@ -28,7 +28,7 @@ class DatabaseHelper {
       final path = p.join(dbPath, 'dayapp.db');
       return await openDatabase(
         path,
-        version: 18,
+        version: 19,
         onCreate: _onCreate,
         onUpgrade: _onUpgrade,
       );
@@ -172,6 +172,7 @@ class DatabaseHelper {
           data_fim TIMESTAMP NOT NULL,
           score_confianca REAL,
           criado_automaticamente INTEGER DEFAULT 0,
+          foto_path TEXT,
           data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           data_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
@@ -582,6 +583,16 @@ class DatabaseHelper {
         );
       } catch (e) {
         debugPrint('Erro criando tabela insight_history (v18): $e');
+      }
+    }
+    if (oldVersion < 19) {
+      // Adiciona coluna de foto ao capítulo.
+      try {
+        await db.execute(
+          'ALTER TABLE capitulos ADD COLUMN foto_path TEXT;',
+        );
+      } catch (e) {
+        debugPrint('Erro adicionando foto_path em capitulos (v19): $e');
       }
     }
   }

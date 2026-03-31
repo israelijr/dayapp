@@ -314,4 +314,38 @@ class CapituloHelper {
 
     return rows.map((row) => Historia.fromMap(row)).toList(growable: false);
   }
+
+  /// Retorna contagens de fotos, áudios e vídeos por historia para um capítulo.
+  /// Chave: historia_id, valor: contagens de anexos.
+  Future<Map<int, ({int fotos, int audios, int videos})>>
+  getAttachmentCountsByCapitulo(int capituloId) async {
+    final db = await DatabaseHelper().database;
+
+    final rows = await db.rawQuery(
+      '''
+      SELECT
+        h.id AS historia_id,
+        COUNT(DISTINCT hf.id) AS fotos,
+        COUNT(DISTINCT ha.id) AS audios,
+        COUNT(DISTINCT hv.id) AS videos
+      FROM capitulo_entradas ce
+      JOIN historia h ON h.id = ce.entrada_id
+      LEFT JOIN historia_fotos hf ON hf.historia_id = h.id
+      LEFT JOIN historia_audios ha ON ha.historia_id = h.id
+      LEFT JOIN historia_videos hv ON hv.historia_id = h.id
+      WHERE ce.capitulo_id = ?
+      GROUP BY h.id
+      ''',
+      [capituloId],
+    );
+
+    return {
+      for (final row in rows)
+        (row['historia_id'] as int): (
+          fotos: (row['fotos'] as int?) ?? 0,
+          audios: (row['audios'] as int?) ?? 0,
+          videos: (row['videos'] as int?) ?? 0,
+        ),
+    };
+  }
 }
