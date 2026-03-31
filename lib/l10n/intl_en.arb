@@ -1047,6 +1047,8 @@
 
   "premiumPlan": "Premium",
   "@premiumPlan": { "description": "Label for Premium plan" },
+  "premiumFeature": "Premium feature",
+  "@premiumFeature": { "description": "Short snackbar message when user taps a locked Premium feature" },
   "freePlan": "Free",
   "@freePlan": { "description": "Label for Free plan" },
   "currentPlan": "Current plan",

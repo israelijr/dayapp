@@ -200,7 +200,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _loadAutoBackupSettings() async {
+    // Captura o provider antes do primeiro await para evitar uso de context em gap assíncrono
+    final premium = Provider.of<PremiumProvider>(context, listen: false);
+    final canUseAutoBackup = premium.canUseAutomaticBackup;
+
     final enabled = await _autoBackupService.isEnabled();
+
+    // Se o usuário é Free e o backup estava ativo (estado residual),
+    // limpa a preferência para evitar exibição de estado inconsistente.
+    if (!canUseAutoBackup && enabled) {
+      await _autoBackupService.setEnabled(false);
+    }
+
+    final effectiveEnabled = canUseAutoBackup && enabled;
     final lastBackup = await _autoBackupService.getLastBackupTime();
     final backupFiles = await _autoBackupService.listLocalBackups();
     int totalBytes = 0;
@@ -208,7 +220,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       if (await f.exists()) totalBytes += await f.length();
     }
     setState(() {
-      _autoBackupEnabled = enabled;
+      _autoBackupEnabled = effectiveEnabled;
       _lastAutoBackupTime = lastBackup;
       _localBackupCount = backupFiles.length;
       _localBackupSize = _formatBackupSize(totalBytes);
@@ -403,6 +415,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     required bool selected,
     required VoidCallback onTap,
     bool locked = false,
+    ScaffoldMessengerState? scaffoldMessenger,
   }) {
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -431,15 +444,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
           : null,
       onTap: locked
           ? () {
-              ScaffoldMessenger.of(context).showSnackBar(
+              final messenger =
+                  scaffoldMessenger ?? ScaffoldMessenger.of(context);
+              messenger.showSnackBar(
                 SnackBar(
-                  content: Text(
-                    AppLocalizations.of(context)!.themePremiumRequired,
-                  ),
-                  action: SnackBarAction(
-                    label: AppLocalizations.of(context)!.premiumPlan,
-                    onPressed: () => Navigator.pushNamed(context, '/premium'),
-                  ),
+                  content: Text(AppLocalizations.of(context)!.premiumFeature),
                 ),
               );
             }
@@ -742,6 +751,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _showThemeDialog(BuildContext context, ThemeProvider themeProvider) {
+    // Captura o ScaffoldMessenger antes de abrir o dialog para evitar
+    // que o SnackBar apareça por trás da janela modal.
+    final messenger = ScaffoldMessenger.of(context);
     showDialog(
       context: context,
       builder: (dialogContext) {
@@ -836,6 +848,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             currentThemeProvider.selectedSchemeKey ==
                                 CustomColorSchemes.relvaFamilyKey,
                         locked: !canUsePremiumThemes,
+                        scaffoldMessenger: messenger,
                         onTap: () {
                           _selectThemeOption(
                             context,
@@ -858,6 +871,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             currentThemeProvider.selectedSchemeKey ==
                                 CustomColorSchemes.outonoFamilyKey,
                         locked: !canUsePremiumThemes,
+                        scaffoldMessenger: messenger,
                         onTap: () {
                           _selectThemeOption(
                             context,
@@ -880,6 +894,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             currentThemeProvider.selectedSchemeKey ==
                                 CustomColorSchemes.ceuFamilyKey,
                         locked: !canUsePremiumThemes,
+                        scaffoldMessenger: messenger,
                         onTap: () {
                           _selectThemeOption(
                             context,
@@ -902,6 +917,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             currentThemeProvider.selectedSchemeKey ==
                                 CustomColorSchemes.confortFamilyKey,
                         locked: !canUsePremiumThemes,
+                        scaffoldMessenger: messenger,
                         onTap: () {
                           _selectThemeOption(
                             context,
@@ -924,6 +940,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             currentThemeProvider.selectedSchemeKey ==
                                 CustomColorSchemes.sunsetFamilyKey,
                         locked: !canUsePremiumThemes,
+                        scaffoldMessenger: messenger,
                         onTap: () {
                           _selectThemeOption(
                             context,
@@ -955,6 +972,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _buildBackupSection(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
+    final premium = Provider.of<PremiumProvider>(context, listen: false);
+    final canUseAutoBackup = premium.canUseAutomaticBackup;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -991,19 +1010,35 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
         ),
-        SwitchListTile(
-          secondary: const Icon(Icons.backup),
-          title: Text(loc.backupOnLogout),
-          subtitle: Text(
-            _autoBackupEnabled ? loc.backupOnLogoutDescription : loc.disabled,
+        if (!canUseAutoBackup)
+          ListTile(
+            leading: const Icon(Icons.backup),
+            title: Text(loc.backupOnLogout),
+            subtitle: Text(loc.disabled),
+            trailing: IconButton(
+              icon: const Icon(Icons.lock_outline),
+              tooltip: loc.premiumFeature,
+              onPressed: () {
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(loc.premiumFeature)));
+              },
+            ),
+          )
+        else
+          SwitchListTile(
+            secondary: const Icon(Icons.backup),
+            title: Text(loc.backupOnLogout),
+            subtitle: Text(
+              _autoBackupEnabled ? loc.backupOnLogoutDescription : loc.disabled,
+            ),
+            value: _autoBackupEnabled,
+            onChanged: (value) async {
+              await _autoBackupService.setEnabled(value);
+              await _loadAutoBackupSettings();
+            },
           ),
-          value: _autoBackupEnabled,
-          onChanged: (value) async {
-            await _autoBackupService.setEnabled(value);
-            await _loadAutoBackupSettings();
-          },
-        ),
-        if (_autoBackupEnabled) ...[
+        if (canUseAutoBackup && _autoBackupEnabled) ...[
           if (_lastAutoBackupTime != null)
             ListTile(
               leading: const Icon(Icons.history),

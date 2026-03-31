@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../db/database_helper.dart';
 import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
+import '../providers/premium_provider.dart';
 import '../services/auto_backup_service.dart';
 import '../theme/animation_durations.dart';
 import '../theme/m3_expressive_theme.dart';
@@ -711,10 +712,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   // Fecha o drawer antes de iniciar o backup
                   navigator.pop();
 
-                  // Executa backup automático ao fazer logout
+                  // Executa backup automático ao fazer logout (somente Premium)
+                  final premium = Provider.of<PremiumProvider>(
+                    context,
+                    listen: false,
+                  );
                   final autoBackup = AutoBackupService();
                   final configured = await autoBackup.isConfigured();
-                  if (configured && mounted) {
+                  if (configured && premium.canUseAutomaticBackup && mounted) {
                     final zipPath = await _showAutoBackupProgress(autoBackup);
                     // Backup automático agora é salvo localmente automaticamente
                     // Nenhuma ação de compartilhamento necessária

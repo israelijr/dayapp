@@ -854,12 +854,9 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
               onPressed: () => Navigator.pop(context, false),
               child: Text(loc.cancel),
             ),
-            ElevatedButton(
+            FilledButton(
               onPressed: () => Navigator.pop(context, true),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.tertiary,
-              ),
-              child: Text(loc.confirm),
+              child: Text(loc.restore),
             ),
           ],
         ),

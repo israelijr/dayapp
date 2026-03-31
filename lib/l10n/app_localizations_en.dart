@@ -1988,6 +1988,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get premiumPlan => 'Premium';
 
   @override
+  String get premiumFeature => 'Premium feature';
+
+  @override
   String get freePlan => 'Free';
 
   @override

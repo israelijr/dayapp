@@ -1998,6 +1998,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get premiumPlan => 'Premium';
 
   @override
+  String get premiumFeature => 'Recurso da versão Premium';
+
+  @override
   String get freePlan => 'Grátis';
 
   @override
@@ -4246,6 +4249,9 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get premiumPlan => 'Premium';
+
+  @override
+  String get premiumFeature => 'Recurso da versão Premium';
 
   @override
   String get freePlan => 'Grátis';

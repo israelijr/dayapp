@@ -6,8 +6,8 @@ import '../db/grupo_helper.dart';
 import '../models/grupo.dart';
 import '../providers/auth_provider.dart';
 import '../services/emoji_service.dart';
-import '../widgets/custom_text_field.dart';
 import '../theme/m3_expressive_theme.dart';
+import '../widgets/custom_text_field.dart';
 import '../widgets/emoji_selection_modal.dart';
 
 class GroupSelectionScreen extends StatefulWidget {

@@ -3646,6 +3646,12 @@ abstract class AppLocalizations {
   /// **'Premium'**
   String get premiumPlan;
 
+  /// Short snackbar message when user taps a locked Premium feature
+  ///
+  /// In en, this message translates to:
+  /// **'Premium feature'**
+  String get premiumFeature;
+
   /// Label for Free plan
   ///
   /// In en, this message translates to:

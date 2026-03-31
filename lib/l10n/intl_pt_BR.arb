@@ -1050,6 +1050,8 @@
 
   "premiumPlan": "Premium",
   "@premiumPlan": { "description": "Rótulo do plano Premium" },
+  "premiumFeature": "Recurso da versão Premium",
+  "@premiumFeature": { "description": "Mensagem curta de snackbar quando o usuário toca em um recurso Premium bloqueado" },
   "freePlan": "Grátis",
   "@freePlan": { "description": "Rótulo do plano Free" },
   "currentPlan": "Plano atual",

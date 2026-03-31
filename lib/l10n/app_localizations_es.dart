@@ -2010,6 +2010,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get premiumPlan => 'Premium';
 
   @override
+  String get premiumFeature => 'Función de la versión Premium';
+
+  @override
   String get freePlan => 'Gratis';
 
   @override

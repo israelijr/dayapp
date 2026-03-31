@@ -1019,6 +1019,8 @@
 
   "premiumPlan": "Premium",
   "@premiumPlan": { "description": "Etiqueta del plan Premium" },
+  "premiumFeature": "Función de la versión Premium",
+  "@premiumFeature": { "description": "Mensaje corto en snackbar cuando el usuario toca un recurso Premium bloqueado" },
   "freePlan": "Gratis",
   "@freePlan": { "description": "Etiqueta del plan Free" },
   "currentPlan": "Plan actual",
