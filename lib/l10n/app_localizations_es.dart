@@ -760,6 +760,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get groups => 'Grupos';
 
   @override
+  String get myStories => 'Mis Historias';
+
+  @override
   String get record => 'registro';
 
   @override

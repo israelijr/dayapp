@@ -750,6 +750,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get groups => 'Groups';
 
   @override
+  String get myStories => 'My Stories';
+
+  @override
   String get record => 'record';
 
   @override

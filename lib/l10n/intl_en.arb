@@ -319,6 +319,8 @@
   "@home": { "description": "Label for home tab", "type": "text" },
   "groups": "Groups",
   "@groups": { "description": "Label for groups tab", "type": "text" },
+  "myStories": "My Stories",
+  "@myStories": { "description": "Title shown on the groups/archived stories screen", "type": "text" },
   "record": "record",
   "records": "records",
   "filterText": "Text",

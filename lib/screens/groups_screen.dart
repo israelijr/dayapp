@@ -74,7 +74,7 @@ class _GroupsScreenState extends State<GroupsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(AppLocalizations.of(context)!.groups)),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.myStories)),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : ListView.builder(

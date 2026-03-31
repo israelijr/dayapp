@@ -1487,6 +1487,12 @@ abstract class AppLocalizations {
   /// **'Groups'**
   String get groups;
 
+  /// Title shown on the groups/archived stories screen
+  ///
+  /// In en, this message translates to:
+  /// **'My Stories'**
+  String get myStories;
+
   /// No description provided for @record.
   ///
   /// In en, this message translates to:

@@ -269,7 +269,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get mediaLabel => 'Mídias';
 
   @override
-  String get manageGroups => 'Minhas Histórias';
+  String get manageGroups => 'Grupos';
 
   @override
   String get trash => 'Lixeira';
@@ -752,6 +752,9 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get groups => 'Grupos';
+
+  @override
+  String get myStories => 'Minhas Histórias';
 
   @override
   String get record => 'registro';
@@ -2522,7 +2525,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get mediaLabel => 'Mídias';
 
   @override
-  String get manageGroups => 'Minhas Histórias';
+  String get manageGroups => 'Grupos';
 
   @override
   String get trash => 'Lixeira';
@@ -3005,6 +3008,9 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get groups => 'Grupos';
+
+  @override
+  String get myStories => 'Minhas Histórias';
 
   @override
   String get record => 'registro';
