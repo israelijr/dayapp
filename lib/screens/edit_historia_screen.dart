@@ -691,7 +691,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
 
     final l10n = AppLocalizations.of(context)!;
     final capitulos = await _capituloHelper.getCapitulosResumoByUser(userId);
-    final entradas = await _capituloHelper.listEntradasElegiveis(userId);
+    final entradas = await _capituloHelper.listEntradasElegiveisComTags(userId);
     if (!mounted) return;
 
     var draftModo = _capituloVinculoModo;
@@ -701,7 +701,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     var draftBuscaEntradas = '';
 
     final entradasDisponiveis = entradas
-        .where((entrada) => entrada.id != widget.historia.id)
+        .where((e) => e.historia.id != widget.historia.id)
         .toList(growable: false);
 
     final confirmado = await showDialog<bool>(
@@ -711,19 +711,23 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
           builder: (context, setDialogState) {
             final buscaNormalizada = draftBuscaEntradas.trim().toLowerCase();
             final entradasFiltradas = entradasDisponiveis
-                .where((entrada) {
+                .where((e) {
                   if (buscaNormalizada.isEmpty) {
                     return true;
                   }
 
-                  final tituloNormalizado = entrada.titulo.toLowerCase();
+                  final tituloNormalizado = e.historia.titulo.toLowerCase();
                   final dataFormatada = DateFormat(
                     'dd/MM/yyyy',
                     l10n.localeName,
-                  ).format(entrada.data).toLowerCase();
+                  ).format(e.historia.data).toLowerCase();
+                  // Inclui busca por tags (novo sistema) para consistência
+                  // com a tela de pesquisa
+                  final tagsNormalizadas = e.tagNomes.toLowerCase();
 
                   return tituloNormalizado.contains(buscaNormalizada) ||
-                      dataFormatada.contains(buscaNormalizada);
+                      dataFormatada.contains(buscaNormalizada) ||
+                      tagsNormalizadas.contains(buscaNormalizada);
                 })
                 .toList(growable: false);
 
@@ -838,7 +842,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                             shrinkWrap: true,
                             itemCount: entradasFiltradas.length,
                             itemBuilder: (context, index) {
-                              final entrada = entradasFiltradas[index];
+                              final entrada = entradasFiltradas[index].historia;
                               final entradaId = entrada.id;
                               if (entradaId == null) {
                                 return const SizedBox.shrink();

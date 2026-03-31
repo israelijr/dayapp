@@ -160,6 +160,44 @@ class CapituloHelper {
     return rows.map((row) => Historia.fromMap(row)).toList(growable: false);
   }
 
+  /// Mesmo que [listEntradasElegiveis], mas inclui os nomes e slugs das tags
+  /// de cada entrada (via LEFT JOIN) para permitir filtragem por tag em memória.
+  ///
+  /// Retorna uma lista de registros com [historia] e [tagNomes] — uma string
+  /// com todos os nomes de tags separados por vírgula (pode ser vazia).
+  Future<List<({Historia historia, String tagNomes})>>
+  listEntradasElegiveisComTags(String userId) async {
+    final db = await DatabaseHelper().database;
+    final rows = await db.rawQuery(
+      '''
+      SELECT
+        h.id, h.user_id, h.assunto, h.titulo, h.data, h.tag, h.grupo,
+        h.arquivado, h.excluido, h.data_exclusao, h.descricao, h.sentimento,
+        h.emoticon, h.data_criacao, h.data_update, h.foto_historia,
+        h.backed_up, h.humor, h.energia,
+        COALESCE(GROUP_CONCAT(DISTINCT LOWER(t.nome)), '') AS tag_nomes,
+        COALESCE(GROUP_CONCAT(DISTINCT t.slug), '') AS tag_slugs
+      FROM historia h
+      LEFT JOIN historia_tags ht ON ht.historia_id = h.id
+      LEFT JOIN tags t ON t.id = ht.tag_id
+      WHERE h.user_id = ? AND h.excluido IS NULL
+      GROUP BY h.id
+      ORDER BY h.data DESC
+      ''',
+      [userId],
+    );
+
+    return rows
+        .map((row) {
+          final tagNomes = row['tag_nomes'] as String? ?? '';
+          final tagSlugs = row['tag_slugs'] as String? ?? '';
+          // Combina nome e slug para cobrir buscas com ou sem acento
+          final tagNomesCompleto = '$tagNomes,$tagSlugs';
+          return (historia: Historia.fromMap(row), tagNomes: tagNomesCompleto);
+        })
+        .toList(growable: false);
+  }
+
   Future<void> ignoreSuggestion({
     required String userId,
     required String fingerprint,
