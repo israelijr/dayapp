@@ -983,22 +983,44 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpHomeItemDesc =>
-      'View your stories as cards or list. Tap a story to view, long press for options.';
+      'View your stories as cards, list or on the calendar.';
+
+  @override
+  String get helpHomeDoubleTapDesc => 'Double tap a story to view it.';
+
+  @override
+  String get helpHomeAttachmentsDesc => 'Tap attachments to view them.';
+
+  @override
+  String get helpHomeSwipeRightDesc =>
+      'Swipe the card right to Archive the story. The story is moved to the Groups / Archived tab.';
+
+  @override
+  String get helpHomeSwipeLeftDesc =>
+      'Swipe the card left to associate it with a Group. The story is moved to the Groups / My Stories tab.';
+
+  @override
+  String get helpHomeCalendarIconDesc =>
+      'Tap the calendar icon to view your stories in that format.';
+
+  @override
+  String get helpHomeChapterIconDesc =>
+      'Tap the Chapter icon to organize your stories into chapters or receive automatic suggestions (Premium) for chapter creation.';
 
   @override
   String get helpGroupsNavDesc =>
-      'Organize your stories into thematic groups. Create custom groups to categorize your memories.';
+      'Organize your stories into thematic groups. Create custom groups to categorize your memories. View your archived stories.';
 
   @override
   String get helpSearchItemDesc =>
-      'Quickly find stories by title, content or date.';
+      'Quickly find stories by title, content, tag or date.';
 
   @override
   String get helpCreatingTitle => 'Creating Stories';
 
   @override
   String get helpNewStoryDesc =>
-      'Tap the floating (+) button to create a new story. Add title, rich text, images, videos and audios.';
+      'Tap the floating button (+ New Story) to create a new story. Add title, text, images, videos and audios.';
 
   @override
   String get helpTextEditorTitle => 'Text Editor';
@@ -1008,8 +1030,12 @@ class AppLocalizationsEn extends AppLocalizations {
       'Use rich formatting: bold, italic, lists, links and more.';
 
   @override
+  String get helpChaptersDesc =>
+      'Organize your story into chapters by joining other stories on the same topic.';
+
+  @override
   String get helpMediaDesc =>
-      'Add photos from the gallery or camera, record videos and audios directly in the app.';
+      'Add photos from the gallery or camera, record videos or audios directly in the app.';
 
   @override
   String get helpGroupsAssocDesc =>
@@ -1024,14 +1050,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpCreateGroupDesc =>
-      'Go to \"Manage Groups\" in the side menu to create new groups with custom colors.';
+      'Go to \"Groups\" in the side menu to create new groups with custom colors and emoticons.';
 
   @override
   String get helpEditGroupTitle => 'Edit Group';
 
   @override
   String get helpEditGroupDesc =>
-      'Long press a group to edit its name, color or delete it.';
+      'Tap a group to edit name, emoticon or delete.';
+
+  @override
+  String get helpGroupsAssocTitle => 'Associate to Groups';
+
+  @override
+  String get helpDeleteGroupTitle => 'Delete Group';
+
+  @override
+  String get helpDeleteGroupDesc =>
+      'Delete a Group without deleting its stories.';
+
+  @override
+  String get helpInsightsTitle => 'Insights';
+
+  @override
+  String get helpInsightsDesc =>
+      'Receive insights based on your stories on the home screen. An interesting and fun way to evaluate your days. Some insights are only available in the Premium version. Access the insights history in the side menu.';
 
   @override
   String get helpBackupSecurityTitle => 'Backup & Security';
@@ -1041,14 +1084,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpAutomaticBackupDesc =>
-      'Configure automatic backup on logout in Settings. A backup will be created and you can choose where to save it.';
+      'Configure automatic backup (Premium) in Settings. The backup will be created when you log out.';
 
   @override
   String get helpManualBackupTitle => 'Manual Backup';
 
   @override
   String get helpManualBackupDesc =>
-      'Go to \"Manage Backup\" in Settings to create a full backup with all media.';
+      'Go to \"Manage Complete Backup\" in Settings to create a full backup with all media.';
 
   @override
   String get helpRestoreTitle => 'Restore';
@@ -1094,11 +1137,12 @@ class AppLocalizationsEn extends AppLocalizations {
       'Forgot your PIN? Use the \"Forgot my PIN\" option on the lock screen. A recovery code will be sent to the registered email.';
 
   @override
-  String get helpThemeDesc => 'Toggle between light, dark or automatic theme.';
+  String get helpThemeDesc =>
+      'Toggle between light, dark, automatic themes and others available in the Premium version.';
 
   @override
   String get helpNotificationsSettingsDesc =>
-      'Set reminders to write in the diary.';
+      'Configure how the app\'s reminder notification will behave when creating stories with future dates.';
 
   @override
   String get helpBackgroundLockSettingsDesc =>

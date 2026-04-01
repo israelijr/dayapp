@@ -1910,19 +1910,55 @@ abstract class AppLocalizations {
   /// No description provided for @helpHomeItemDesc.
   ///
   /// In en, this message translates to:
-  /// **'View your stories as cards or list. Tap a story to view, long press for options.'**
+  /// **'View your stories as cards, list or on the calendar.'**
   String get helpHomeItemDesc;
+
+  /// No description provided for @helpHomeDoubleTapDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Double tap a story to view it.'**
+  String get helpHomeDoubleTapDesc;
+
+  /// No description provided for @helpHomeAttachmentsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap attachments to view them.'**
+  String get helpHomeAttachmentsDesc;
+
+  /// No description provided for @helpHomeSwipeRightDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe the card right to Archive the story. The story is moved to the Groups / Archived tab.'**
+  String get helpHomeSwipeRightDesc;
+
+  /// No description provided for @helpHomeSwipeLeftDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe the card left to associate it with a Group. The story is moved to the Groups / My Stories tab.'**
+  String get helpHomeSwipeLeftDesc;
+
+  /// No description provided for @helpHomeCalendarIconDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the calendar icon to view your stories in that format.'**
+  String get helpHomeCalendarIconDesc;
+
+  /// No description provided for @helpHomeChapterIconDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the Chapter icon to organize your stories into chapters or receive automatic suggestions (Premium) for chapter creation.'**
+  String get helpHomeChapterIconDesc;
 
   /// No description provided for @helpGroupsNavDesc.
   ///
   /// In en, this message translates to:
-  /// **'Organize your stories into thematic groups. Create custom groups to categorize your memories.'**
+  /// **'Organize your stories into thematic groups. Create custom groups to categorize your memories. View your archived stories.'**
   String get helpGroupsNavDesc;
 
   /// No description provided for @helpSearchItemDesc.
   ///
   /// In en, this message translates to:
-  /// **'Quickly find stories by title, content or date.'**
+  /// **'Quickly find stories by title, content, tag or date.'**
   String get helpSearchItemDesc;
 
   /// No description provided for @helpCreatingTitle.
@@ -1934,7 +1970,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpNewStoryDesc.
   ///
   /// In en, this message translates to:
-  /// **'Tap the floating (+) button to create a new story. Add title, rich text, images, videos and audios.'**
+  /// **'Tap the floating button (+ New Story) to create a new story. Add title, text, images, videos and audios.'**
   String get helpNewStoryDesc;
 
   /// No description provided for @helpTextEditorTitle.
@@ -1949,10 +1985,16 @@ abstract class AppLocalizations {
   /// **'Use rich formatting: bold, italic, lists, links and more.'**
   String get helpTextEditorDesc;
 
+  /// No description provided for @helpChaptersDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Organize your story into chapters by joining other stories on the same topic.'**
+  String get helpChaptersDesc;
+
   /// No description provided for @helpMediaDesc.
   ///
   /// In en, this message translates to:
-  /// **'Add photos from the gallery or camera, record videos and audios directly in the app.'**
+  /// **'Add photos from the gallery or camera, record videos or audios directly in the app.'**
   String get helpMediaDesc;
 
   /// No description provided for @helpGroupsAssocDesc.
@@ -1976,7 +2018,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpCreateGroupDesc.
   ///
   /// In en, this message translates to:
-  /// **'Go to \"Manage Groups\" in the side menu to create new groups with custom colors.'**
+  /// **'Go to \"Groups\" in the side menu to create new groups with custom colors and emoticons.'**
   String get helpCreateGroupDesc;
 
   /// No description provided for @helpEditGroupTitle.
@@ -1988,8 +2030,38 @@ abstract class AppLocalizations {
   /// No description provided for @helpEditGroupDesc.
   ///
   /// In en, this message translates to:
-  /// **'Long press a group to edit its name, color or delete it.'**
+  /// **'Tap a group to edit name, emoticon or delete.'**
   String get helpEditGroupDesc;
+
+  /// No description provided for @helpGroupsAssocTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Associate to Groups'**
+  String get helpGroupsAssocTitle;
+
+  /// No description provided for @helpDeleteGroupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Group'**
+  String get helpDeleteGroupTitle;
+
+  /// No description provided for @helpDeleteGroupDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete a Group without deleting its stories.'**
+  String get helpDeleteGroupDesc;
+
+  /// No description provided for @helpInsightsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Insights'**
+  String get helpInsightsTitle;
+
+  /// No description provided for @helpInsightsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive insights based on your stories on the home screen. An interesting and fun way to evaluate your days. Some insights are only available in the Premium version. Access the insights history in the side menu.'**
+  String get helpInsightsDesc;
 
   /// No description provided for @helpBackupSecurityTitle.
   ///
@@ -2006,7 +2078,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpAutomaticBackupDesc.
   ///
   /// In en, this message translates to:
-  /// **'Configure automatic backup on logout in Settings. A backup will be created and you can choose where to save it.'**
+  /// **'Configure automatic backup (Premium) in Settings. The backup will be created when you log out.'**
   String get helpAutomaticBackupDesc;
 
   /// No description provided for @helpManualBackupTitle.
@@ -2018,7 +2090,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpManualBackupDesc.
   ///
   /// In en, this message translates to:
-  /// **'Go to \"Manage Backup\" in Settings to create a full backup with all media.'**
+  /// **'Go to \"Manage Complete Backup\" in Settings to create a full backup with all media.'**
   String get helpManualBackupDesc;
 
   /// No description provided for @helpRestoreTitle.
@@ -2096,13 +2168,13 @@ abstract class AppLocalizations {
   /// No description provided for @helpThemeDesc.
   ///
   /// In en, this message translates to:
-  /// **'Toggle between light, dark or automatic theme.'**
+  /// **'Toggle between light, dark, automatic themes and others available in the Premium version.'**
   String get helpThemeDesc;
 
   /// No description provided for @helpNotificationsSettingsDesc.
   ///
   /// In en, this message translates to:
-  /// **'Set reminders to write in the diary.'**
+  /// **'Configure how the app\'s reminder notification will behave when creating stories with future dates.'**
   String get helpNotificationsSettingsDesc;
 
   /// No description provided for @helpBackgroundLockSettingsDesc.

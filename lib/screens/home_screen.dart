@@ -671,6 +671,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
               ListTile(
+                leading: const Icon(Icons.delete_outline),
                 title: Text(AppLocalizations.of(context)!.trash),
                 onTap: () {
                   Navigator.pop(context);

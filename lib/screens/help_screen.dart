@@ -35,7 +35,21 @@ class HelpScreen extends StatelessWidget {
             '',
             Icons.navigation,
             children: [
-              _buildHelpItem(context, loc.home, loc.helpHomeItemDesc),
+              _buildBulletHelpItem(context, loc.home, [
+                (icon: null, text: loc.helpHomeItemDesc),
+                (icon: null, text: loc.helpHomeDoubleTapDesc),
+                (icon: null, text: loc.helpHomeAttachmentsDesc),
+                (icon: null, text: loc.helpHomeSwipeRightDesc),
+                (icon: null, text: loc.helpHomeSwipeLeftDesc),
+                (
+                  icon: Icons.calendar_month_rounded,
+                  text: loc.helpHomeCalendarIconDesc,
+                ),
+                (
+                  icon: Icons.auto_stories_outlined,
+                  text: loc.helpHomeChapterIconDesc,
+                ),
+              ]),
               _buildHelpItem(context, loc.groups, loc.helpGroupsNavDesc),
               _buildHelpItem(context, loc.search, loc.helpSearchItemDesc),
             ],
@@ -56,8 +70,8 @@ class HelpScreen extends StatelessWidget {
                 loc.helpTextEditorTitle,
                 loc.helpTextEditorDesc,
               ),
+              _buildHelpItem(context, loc.chaptersTitle, loc.helpChaptersDesc),
               _buildHelpItem(context, loc.mediaLabel, loc.helpMediaDesc),
-              _buildHelpItem(context, loc.groups, loc.helpGroupsAssocDesc),
             ],
           ),
 
@@ -92,10 +106,25 @@ class HelpScreen extends StatelessWidget {
               ),
               _buildHelpItem(
                 context,
-                loc.helpGroupsAssocDesc,
+                loc.helpGroupsAssocTitle,
                 loc.helpGroupsAssocDesc,
               ),
+              _buildHelpItem(
+                context,
+                loc.helpDeleteGroupTitle,
+                loc.helpDeleteGroupDesc,
+              ),
             ],
+          ),
+
+          const SizedBox(height: 24),
+
+          // Insights
+          _buildSection(
+            context,
+            loc.helpInsightsTitle,
+            loc.helpInsightsDesc,
+            Icons.lightbulb_outline,
           ),
 
           const SizedBox(height: 24),
@@ -281,6 +310,67 @@ class HelpScreen extends StatelessWidget {
             if (children != null) ...[const SizedBox(height: 16), ...children],
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildBulletHelpItem(
+    BuildContext context,
+    String title,
+    List<({IconData? icon, String text})> bullets,
+  ) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: AppColors.labelColor(context),
+            ),
+          ),
+          const SizedBox(height: 6),
+          ...bullets.map(
+            (bullet) => Padding(
+              padding: const EdgeInsets.only(left: 8, bottom: 4),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (bullet.icon != null) ...[
+                    Icon(bullet.icon, size: 16, color: colorScheme.primary),
+                    const SizedBox(width: 6),
+                  ] else ...[
+                    Padding(
+                      padding: const EdgeInsets.only(top: 6),
+                      child: Container(
+                        width: 5,
+                        height: 5,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                  ],
+                  Expanded(
+                    child: Text(
+                      bullet.text,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: AppColors.labelColor(context),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

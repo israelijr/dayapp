@@ -969,7 +969,16 @@ class _CreateCapituloPageState extends State<_CreateCapituloPage> {
                     ? Stack(
                         fit: StackFit.expand,
                         children: [
-                          Image.file(File(_fotoPath!), fit: BoxFit.cover),
+                          Image.file(
+                            File(_fotoPath!),
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) {
+                              WidgetsBinding.instance.addPostFrameCallback(
+                                (_) => setState(() => _fotoPath = null),
+                              );
+                              return const SizedBox.shrink();
+                            },
+                          ),
                           Positioned(
                             bottom: 8,
                             right: 8,
@@ -1038,6 +1047,7 @@ class _CreateCapituloPageState extends State<_CreateCapituloPage> {
               tagNomesPorId: widget.tagNomesPorId,
               selected: selected,
             ),
+            const SizedBox(height: 32),
           ],
         ),
       ),
@@ -1078,7 +1088,9 @@ class _EditCapituloPageState extends State<_EditCapituloPage> {
       text: widget.capitulo.descricao ?? '',
     );
     selectedIds = {...widget.initialEntradaIds};
-    _fotoPath = widget.capitulo.fotoPath;
+    // Valida se o arquivo ainda existe antes de usar
+    final path = widget.capitulo.fotoPath;
+    _fotoPath = (path != null && File(path).existsSync()) ? path : null;
   }
 
   @override
@@ -1218,7 +1230,16 @@ class _EditCapituloPageState extends State<_EditCapituloPage> {
                     ? Stack(
                         fit: StackFit.expand,
                         children: [
-                          Image.file(File(_fotoPath!), fit: BoxFit.cover),
+                          Image.file(
+                            File(_fotoPath!),
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) {
+                              WidgetsBinding.instance.addPostFrameCallback(
+                                (_) => setState(() => _fotoPath = null),
+                              );
+                              return const SizedBox.shrink();
+                            },
+                          ),
                           Positioned(
                             bottom: 8,
                             right: 8,
@@ -1295,6 +1316,7 @@ class _EditCapituloPageState extends State<_EditCapituloPage> {
               tagNomesPorId: widget.tagNomesPorId,
               selected: selectedIds,
             ),
+            const SizedBox(height: 32),
           ],
         ),
       ),

@@ -994,22 +994,46 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get helpHomeItemDesc =>
-      'Visualiza tus historias como tarjetas o lista. Toca una historia para ver, mantén presionado para opciones.';
+      'Visualiza tus historias en tarjetas, lista o en el calendario.';
+
+  @override
+  String get helpHomeDoubleTapDesc =>
+      'Toca dos veces una historia para visualizarla.';
+
+  @override
+  String get helpHomeAttachmentsDesc =>
+      'Toca los archivos adjuntos para verlos.';
+
+  @override
+  String get helpHomeSwipeRightDesc =>
+      'Desliza la tarjeta a la derecha para Archivar la historia. La historia se mueve a la pestaña Grupos / Archivados.';
+
+  @override
+  String get helpHomeSwipeLeftDesc =>
+      'Desliza la tarjeta a la izquierda para asociarla a un Grupo. La historia se mueve a la pestaña Grupos / Mis Historias.';
+
+  @override
+  String get helpHomeCalendarIconDesc =>
+      'Toca el ícono de calendario para ver tus historias en ese formato.';
+
+  @override
+  String get helpHomeChapterIconDesc =>
+      'Toca el ícono de Capítulo para organizar tus historias en capítulos o recibir sugerencias automáticas (Premium) de creación de capítulos.';
 
   @override
   String get helpGroupsNavDesc =>
-      'Organiza tus historias en grupos temáticos. Crea grupos personalizados para categorizar tus recuerdos.';
+      'Organiza tus historias en grupos temáticos. Crea grupos personalizados para categorizar tus recuerdos. Visualiza tus historias archivadas.';
 
   @override
   String get helpSearchItemDesc =>
-      'Encuentra historias rápidamente por título, contenido o fecha.';
+      'Encuentra historias rápidamente por título, contenido, etiqueta o fecha.';
 
   @override
   String get helpCreatingTitle => 'Creando Historias';
 
   @override
   String get helpNewStoryDesc =>
-      'Toca el botón flotante (+) para crear una nueva historia. Añade título, texto enriquecido, imágenes, vídeos y audios.';
+      'Toca el botón flotante (+ Nueva Historia) para crear una nueva historia. Añade título, texto, imágenes, vídeos y audios.';
 
   @override
   String get helpTextEditorTitle => 'Editor de Texto';
@@ -1019,8 +1043,12 @@ class AppLocalizationsEs extends AppLocalizations {
       'Usa formato enriquecido: negrita, cursiva, listas, enlaces y más.';
 
   @override
+  String get helpChaptersDesc =>
+      'Organiza tu historia en capítulos juntando otras historias sobre el mismo tema.';
+
+  @override
   String get helpMediaDesc =>
-      'Agrega fotos de la galería o cámara, graba vídeos y audios directamente en la aplicación.';
+      'Agrega fotos de la galería o cámara, graba vídeos o audios directamente en la aplicación.';
 
   @override
   String get helpGroupsAssocDesc =>
@@ -1035,14 +1063,31 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get helpCreateGroupDesc =>
-      'Ve a \"Administrar grupos\" en el menú lateral para crear nuevos grupos con colores personalizados.';
+      'Ve a \"Grupos\" en el menú lateral para crear nuevos grupos con colores y emoticons personalizados.';
 
   @override
   String get helpEditGroupTitle => 'Editar Grupo';
 
   @override
   String get helpEditGroupDesc =>
-      'Mantén presionado un grupo para editar su nombre, color o eliminarlo.';
+      'Toca un grupo para editar nombre, emoticon o eliminar.';
+
+  @override
+  String get helpGroupsAssocTitle => 'Asociar a Grupos';
+
+  @override
+  String get helpDeleteGroupTitle => 'Eliminar Grupo';
+
+  @override
+  String get helpDeleteGroupDesc =>
+      'Elimina un Grupo sin que las historias también sean eliminadas.';
+
+  @override
+  String get helpInsightsTitle => 'Insights';
+
+  @override
+  String get helpInsightsDesc =>
+      'Recibe insights basados en tus historias en la pantalla principal. Una manera interesante y divertida de evaluar tus días. Algunos insights solo están disponibles en la versión Premium. Accede al historial de insights en el menú lateral.';
 
   @override
   String get helpBackupSecurityTitle => 'Copia de seguridad y seguridad';
@@ -1052,14 +1097,14 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get helpAutomaticBackupDesc =>
-      'Configura copia de seguridad automática al cerrar sesión en Configuración. Se creará una copia y podrás elegir dónde guardarla.';
+      'Configura copia de seguridad automática (Premium) en Configuración. La copia se creará al cerrar sesión.';
 
   @override
   String get helpManualBackupTitle => 'Copia de seguridad manual';
 
   @override
   String get helpManualBackupDesc =>
-      'Ve a \"Administrar copia de seguridad\" en Configuración para crear una copia completa con todos los medios.';
+      'Ve a \"Administrar copia de seguridad completa\" en Configuración para crear una copia completa con todos los medios.';
 
   @override
   String get helpRestoreTitle => 'Restaurar';
@@ -1105,11 +1150,12 @@ class AppLocalizationsEs extends AppLocalizations {
       '¿Olvidaste tu PIN? Usa la opción \"Olvidé mi PIN\" en la pantalla de bloqueo. Se enviará un código de recuperación al correo registrado.';
 
   @override
-  String get helpThemeDesc => 'Alterna entre tema claro, oscuro o automático.';
+  String get helpThemeDesc =>
+      'Alterna entre temas claro, oscuro, automático y otros disponibles en la versión Premium.';
 
   @override
   String get helpNotificationsSettingsDesc =>
-      'Configura recordatorios para escribir en el diario.';
+      'Configura cómo se comportará la notificación de recordatorio al crear historias con fechas futuras.';
 
   @override
   String get helpBackgroundLockSettingsDesc =>
