@@ -1087,7 +1087,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get helpInsightsDesc =>
-      'Recibe insights basados en tus historias en la pantalla principal. Una manera interesante y divertida de evaluar tus días. Algunos insights solo están disponibles en la versión Premium. Accede al historial de insights en el menú lateral.';
+      'Recibe insights basados en tus historias en la pantalla principal.\nAlgunos insights solo están disponibles en la versión Premium.\nAccede al historial de insights en el menú lateral.';
 
   @override
   String get helpBackupSecurityTitle => 'Copia de seguridad y seguridad';

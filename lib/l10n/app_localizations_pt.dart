@@ -1080,7 +1080,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get helpInsightsDesc =>
-      'Receba insights baseados em suas histórias na tela inicial. Uma maneira interessante e divertida de avaliar seus dias. Alguns insights estão disponíveis apenas na versão Premium. Acesse o histórico de insights no menu lateral.';
+      'Receba insights baseados em suas histórias na tela inicial.\nAlguns insights estão disponíveis apenas na versão Premium.\nAcesse o histórico de insights no menu lateral.';
 
   @override
   String get helpBackupSecurityTitle => 'Backup e Segurança';
@@ -3423,7 +3423,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get helpInsightsDesc =>
-      'Receba insights baseados em suas histórias na tela inicial. Uma maneira interessante e divertida de avaliar seus dias. Alguns insights estão disponíveis apenas na versão Premium. Acesse o histórico de insights no menu lateral.';
+      'Receba insights baseados em suas histórias na tela inicial.\nAlguns insights estão disponíveis apenas na versão Premium.\nAcesse o histórico de insights no menu lateral.';
 
   @override
   String get helpBackupSecurityTitle => 'Backup e Segurança';

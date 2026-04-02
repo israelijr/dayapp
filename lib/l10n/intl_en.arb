@@ -452,7 +452,7 @@
   "helpDeleteGroupTitle": "Delete Group",
   "helpDeleteGroupDesc": "Delete a Group without deleting its stories.",
   "helpInsightsTitle": "Insights",
-  "helpInsightsDesc": "Receive insights based on your stories on the home screen. An interesting and fun way to evaluate your days. Some insights are only available in the Premium version. Access the insights history in the side menu.",
+  "helpInsightsDesc": "Receive insights based on your stories on the home screen.\nSome insights are only available in the Premium version.\nAccess the insights history in the side menu.",
   "helpBackupSecurityTitle": "Backup & Security",
   "helpAutomaticBackupTitle": "Automatic Backup",
   "helpAutomaticBackupDesc": "Configure automatic backup (Premium) in Settings. The backup will be created when you log out.",

@@ -1074,7 +1074,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpInsightsDesc =>
-      'Receive insights based on your stories on the home screen. An interesting and fun way to evaluate your days. Some insights are only available in the Premium version. Access the insights history in the side menu.';
+      'Receive insights based on your stories on the home screen.\nSome insights are only available in the Premium version.\nAccess the insights history in the side menu.';
 
   @override
   String get helpBackupSecurityTitle => 'Backup & Security';

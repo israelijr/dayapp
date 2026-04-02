@@ -6,7 +6,6 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import '../db/capitulo_helper.dart';
 import '../db/database_helper.dart';
 import '../db/historia_audio_helper.dart';
 import '../db/historia_foto_helper.dart';
@@ -20,8 +19,6 @@ import '../models/historia.dart';
 import '../models/tag.dart';
 import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
-import '../providers/premium_provider.dart';
-import '../services/capitulo_save_service.dart';
 import '../services/emoji_service.dart';
 import '../services/pdf_export_service.dart';
 import '../theme/animation_durations.dart';
@@ -89,7 +86,6 @@ class EditHistoriaScreen extends StatefulWidget {
 }
 
 class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
-  final CapituloHelper _capituloHelper = CapituloHelper();
   late TextEditingController titleController;
   late QuillController richTextController;
   late DateTime selectedDate;
@@ -102,19 +98,12 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
   List<int> videoIds = []; // IDs dos vídeos existentes
   String? selectedEmoticon;
   String? selectedEmojiTranslation;
-  bool _isArchived = false;
   int _selectedMood = 3; // padrão: Neutro
   int _selectedEnergy = 2; // padrão: Normal
 
   // Lista de tags selecionadas (carregadas do banco em initState)
   List<Tag> _selectedTags = [];
   List<Tag> _initialTags = [];
-
-  // Configuração opcional de vínculo com capítulos durante o salvamento.
-  CapituloVinculoModo _capituloVinculoModo = CapituloVinculoModo.none;
-  int? _capituloSelecionadoId;
-  String _novoCapituloTitulo = '';
-  Set<int> _novoCapituloEntradasRelacionadas = <int>{};
 
   // Controle de alterações não salvas
   bool _hasUnsavedChanges = false;
@@ -126,7 +115,6 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
   late String _initialDescription;
   late DateTime _initialDate;
   late String? _initialEmoticon;
-  late bool _initialIsArchived;
   late int _initialMood;
   late int _initialEnergy;
 
@@ -164,7 +152,6 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     );
     selectedDate = widget.historia.data;
     selectedEmoticon = widget.historia.emoticon;
-    _isArchived = widget.historia.arquivado == 'sim';
     _selectedMood = widget.historia.humor;
     _selectedEnergy = widget.historia.energia;
 
@@ -173,7 +160,6 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
     _initialDescription = richTextController.document.toPlainText();
     _initialDate = widget.historia.data;
     _initialEmoticon = widget.historia.emoticon;
-    _initialIsArchived = widget.historia.arquivado == 'sim';
     _initialMood = widget.historia.humor;
     _initialEnergy = widget.historia.energia;
 
@@ -278,10 +264,8 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
         tagsChanged ||
         selectedDate != _initialDate ||
         selectedEmoticon != _initialEmoticon ||
-        _isArchived != _initialIsArchived ||
         _selectedMood != _initialMood ||
-        _selectedEnergy != _initialEnergy ||
-        _capituloVinculoModo != CapituloVinculoModo.none;
+        _selectedEnergy != _initialEnergy;
 
     if (hasChanges != _hasUnsavedChanges) {
       setState(() {
@@ -549,15 +533,6 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
   }
 
   Future<bool> _save({bool navigateAfterSave = true}) async {
-    final l10n = AppLocalizations.of(context)!;
-    final capituloValidationMessage = _validateCapituloConfig(l10n);
-    if (capituloValidationMessage != null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(capituloValidationMessage)));
-      return false;
-    }
-
     final db = await DatabaseHelper().database;
     await db.update(
       'historia',
@@ -569,7 +544,7 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
         'emoticon': selectedEmoticon,
         'data': selectedDate.toIso8601String(),
         'data_update': DateTime.now().toIso8601String(),
-        'arquivado': _isArchived ? 'sim' : null,
+        'arquivado': widget.historia.arquivado,
         'backed_up': 0,
         'humor': _selectedMood,
         'energia': _selectedEnergy,
@@ -642,302 +617,10 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
       }
     }
 
-    await _aplicarVinculoDeCapituloAoSalvar();
 
     if (!mounted) return false;
     if (navigateAfterSave) Navigator.pop(context, true);
     return true;
-  }
-
-  String? _validateCapituloConfig(AppLocalizations l10n) {
-    final capituloSaveService = CapituloSaveService();
-    return capituloSaveService.validateCapituloConfig(
-      modo: _capituloVinculoModo,
-      l10n: l10n,
-      capituloId: _capituloSelecionadoId,
-      novoCapituloTitulo: _novoCapituloTitulo,
-      novoCapituloEntradasCount: _novoCapituloEntradasRelacionadas.length,
-    );
-  }
-
-  Future<void> _aplicarVinculoDeCapituloAoSalvar() async {
-    final historiaId = widget.historia.id;
-    if (historiaId == null ||
-        _capituloVinculoModo == CapituloVinculoModo.none) {
-      return;
-    }
-
-    final auth = Provider.of<AuthProvider>(context, listen: false);
-    final userId = auth.user?.id;
-    if (userId == null || userId.isEmpty) return;
-
-    final capituloSaveService = CapituloSaveService();
-    await capituloSaveService.applyCapituloLinkage(
-      modo: _capituloVinculoModo,
-      historiaId: historiaId,
-      userId: userId,
-      capituloId: _capituloSelecionadoId,
-      novoCapituloTitulo: _novoCapituloTitulo,
-      novoCapituloEntradasRelacionadas: _novoCapituloEntradasRelacionadas
-          .toList(),
-      selectedDate: selectedDate,
-    );
-  }
-
-  Future<void> _abrirConfiguracaoCapitulo() async {
-    final auth = Provider.of<AuthProvider>(context, listen: false);
-    final userId = auth.user?.id;
-    if (userId == null || userId.isEmpty) return;
-
-    final l10n = AppLocalizations.of(context)!;
-    final capitulos = await _capituloHelper.getCapitulosResumoByUser(userId);
-    final entradas = await _capituloHelper.listEntradasElegiveisComTags(userId);
-    if (!mounted) return;
-
-    var draftModo = _capituloVinculoModo;
-    int? draftCapituloId = _capituloSelecionadoId;
-    var draftNovoTitulo = _novoCapituloTitulo;
-    final draftRelacionadas = <int>{..._novoCapituloEntradasRelacionadas};
-    var draftBuscaEntradas = '';
-
-    final entradasDisponiveis = entradas
-        .where((e) => e.historia.id != widget.historia.id)
-        .toList(growable: false);
-
-    final confirmado = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) {
-        return StatefulBuilder(
-          builder: (context, setDialogState) {
-            final buscaNormalizada = draftBuscaEntradas.trim().toLowerCase();
-            final entradasFiltradas = entradasDisponiveis
-                .where((e) {
-                  if (buscaNormalizada.isEmpty) {
-                    return true;
-                  }
-
-                  final tituloNormalizado = e.historia.titulo.toLowerCase();
-                  final dataFormatada = DateFormat(
-                    'dd/MM/yyyy',
-                    l10n.localeName,
-                  ).format(e.historia.data).toLowerCase();
-                  // Inclui busca por tags (novo sistema) para consistência
-                  // com a tela de pesquisa
-                  final tagsNormalizadas = e.tagNomes.toLowerCase();
-
-                  return tituloNormalizado.contains(buscaNormalizada) ||
-                      dataFormatada.contains(buscaNormalizada) ||
-                      tagsNormalizadas.contains(buscaNormalizada);
-                })
-                .toList(growable: false);
-
-            return AlertDialog(
-              title: Text(l10n.chapterLinkDialogTitle),
-              content: SizedBox(
-                width: 600,
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children:
-                            [
-                                  (
-                                    mode: CapituloVinculoModo.none,
-                                    label: l10n.chapterLinkModeNone,
-                                  ),
-                                  (
-                                    mode: CapituloVinculoModo.existing,
-                                    label: l10n.chapterLinkModeExisting,
-                                  ),
-                                  (
-                                    mode: CapituloVinculoModo.newChapter,
-                                    label: l10n.chapterLinkModeNew,
-                                  ),
-                                ]
-                                .map((item) {
-                                  return ChoiceChip(
-                                    label: ConstrainedBox(
-                                      constraints: const BoxConstraints(
-                                        maxWidth: 180,
-                                      ),
-                                      child: Text(item.label, softWrap: true),
-                                    ),
-                                    selected: draftModo == item.mode,
-                                    onSelected: (selected) {
-                                      if (!selected) return;
-                                      setDialogState(() {
-                                        draftModo = item.mode;
-                                      });
-                                    },
-                                  );
-                                })
-                                .toList(growable: false),
-                      ),
-                      const SizedBox(height: 14),
-                      if (draftModo == CapituloVinculoModo.existing)
-                        DropdownButtonFormField<int>(
-                          initialValue: draftCapituloId,
-                          decoration: InputDecoration(
-                            labelText: l10n.chapterSelectExistingLabel,
-                          ),
-                          items: capitulos
-                              .map(
-                                (item) => DropdownMenuItem<int>(
-                                  value: item.capitulo.id,
-                                  child: Text(item.capitulo.titulo),
-                                ),
-                              )
-                              .toList(growable: false),
-                          onChanged: (value) {
-                            setDialogState(() {
-                              draftCapituloId = value;
-                            });
-                          },
-                        ),
-                      if (draftModo == CapituloVinculoModo.newChapter) ...[
-                        TextFormField(
-                          initialValue: draftNovoTitulo,
-                          decoration: InputDecoration(
-                            labelText: l10n.chapterTitle,
-                            hintText: l10n.chapterTitleHint,
-                          ),
-                          onChanged: (value) {
-                            draftNovoTitulo = value;
-                          },
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          l10n.chapterSelectEntries,
-                          style: Theme.of(context).textTheme.titleSmall,
-                        ),
-                        const SizedBox(height: 8),
-                        TextField(
-                          decoration: InputDecoration(
-                            labelText: l10n.search,
-                            hintText: l10n.searchHintText,
-                            prefixIcon: const Icon(Icons.search),
-                          ),
-                          onChanged: (value) {
-                            setDialogState(() {
-                              draftBuscaEntradas = value;
-                            });
-                          },
-                        ),
-                        const SizedBox(height: 8),
-                        Container(
-                          constraints: const BoxConstraints(maxHeight: 260),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.outlineVariant,
-                            ),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: entradasFiltradas.length,
-                            itemBuilder: (context, index) {
-                              final entrada = entradasFiltradas[index].historia;
-                              final entradaId = entrada.id;
-                              if (entradaId == null) {
-                                return const SizedBox.shrink();
-                              }
-
-                              final checked = draftRelacionadas.contains(
-                                entradaId,
-                              );
-                              return CheckboxListTile(
-                                value: checked,
-                                onChanged: (value) {
-                                  setDialogState(() {
-                                    if (value == true) {
-                                      draftRelacionadas.add(entradaId);
-                                    } else {
-                                      draftRelacionadas.remove(entradaId);
-                                    }
-                                  });
-                                },
-                                title: Text(entrada.titulo),
-                                subtitle: Text(
-                                  DateFormat(
-                                    'dd/MM/yyyy',
-                                    l10n.localeName,
-                                  ).format(entrada.data),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                        if (entradasFiltradas.isEmpty) ...[
-                          const SizedBox(height: 8),
-                          Text(
-                            l10n.noStoriesHere,
-                            style: TextStyle(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                        ],
-                        const SizedBox(height: 6),
-                        Text(
-                          l10n.chapterMinimumRelatedWithCurrent,
-                          style: TextStyle(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onSurfaceVariant,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(dialogContext).pop(false),
-                  child: Text(l10n.cancel),
-                ),
-                FilledButton(
-                  onPressed: () => Navigator.of(dialogContext).pop(true),
-                  child: Text(l10n.save),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-
-    if (confirmado != true) return;
-
-    setState(() {
-      _capituloVinculoModo = draftModo;
-      _capituloSelecionadoId = draftCapituloId;
-      _novoCapituloTitulo = draftNovoTitulo.trim();
-      _novoCapituloEntradasRelacionadas = draftRelacionadas;
-    });
-    _checkForChanges();
-  }
-
-  String _resumoVinculoCapitulo(AppLocalizations l10n) {
-    if (_capituloVinculoModo == CapituloVinculoModo.none) {
-      return l10n.chapterLinkSummaryNone;
-    }
-
-    if (_capituloVinculoModo == CapituloVinculoModo.existing) {
-      return l10n.chapterLinkSummaryExisting;
-    }
-
-    return l10n.chapterLinkSummaryNew(
-      _novoCapituloEntradasRelacionadas.length + 1,
-    );
   }
 
   void _expandDescriptionEditor() async {
@@ -1258,47 +941,8 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                         );
                       },
                     ),
-                    const SizedBox(height: 12),
-                    Consumer<PremiumProvider>(
-                      builder: (context, premium, _) {
-                        if (!premium.canUseChapters) {
-                          return Card(
-                            child: ListTile(
-                              leading: const Icon(Icons.workspace_premium),
-                              title: Text(loc.chaptersTitle),
-                              subtitle: Text(loc.chaptersPremiumRequired),
-                            ),
-                          );
-                        }
-
-                        return Card(
-                          child: ListTile(
-                            leading: const Icon(Icons.auto_stories_outlined),
-                            title: Text(loc.chapterLinkSectionTitle),
-                            subtitle: Text(_resumoVinculoCapitulo(loc)),
-                            trailing: TextButton(
-                              onPressed: _abrirConfiguracaoCapitulo,
-                              child: Text(loc.chapterLinkConfigure),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
                     const SizedBox(height: 16),
 
-                    // Archive Switch
-                    SwitchListTile(
-                      title: Text(loc.archivedStateLabel),
-                      subtitle: Text(loc.archiveSubtitle),
-                      value: _isArchived,
-                      onChanged: (value) {
-                        setState(() {
-                          _isArchived = value;
-                          _checkForChanges();
-                        });
-                      },
-                      contentPadding: EdgeInsets.zero,
-                    ),
 
                     // Humor (como você se sentiu)
                     const SizedBox(height: 16),

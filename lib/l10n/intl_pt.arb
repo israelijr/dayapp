@@ -400,7 +400,7 @@
   "helpDeleteGroupTitle": "Excluir Grupo",
   "helpDeleteGroupDesc": "Exclua um Grupo sem que as histórias sejam também excluídas.",
   "helpInsightsTitle": "Insights",
-  "helpInsightsDesc": "Receba insights baseados em suas histórias na tela inicial. Uma maneira interessante e divertida de avaliar seus dias. Alguns insights estão disponíveis apenas na versão Premium. Acesse o histórico de insights no menu lateral.",
+  "helpInsightsDesc": "Receba insights baseados em suas histórias na tela inicial.\nAlguns insights estão disponíveis apenas na versão Premium.\nAcesse o histórico de insights no menu lateral.",
   "helpBackupSecurityTitle": "Backup e Segurança",
   "helpAutomaticBackupTitle": "Backup Automático",
   "helpAutomaticBackupDesc": "Configure backup automático (Premium) nas Configurações. O backup será criado quando fizer logout.",

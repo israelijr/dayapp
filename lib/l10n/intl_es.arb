@@ -426,7 +426,7 @@
   "helpDeleteGroupTitle": "Eliminar Grupo",
   "helpDeleteGroupDesc": "Elimina un Grupo sin que las historias también sean eliminadas.",
   "helpInsightsTitle": "Insights",
-  "helpInsightsDesc": "Recibe insights basados en tus historias en la pantalla principal. Una manera interesante y divertida de evaluar tus días. Algunos insights solo están disponibles en la versión Premium. Accede al historial de insights en el menú lateral.",
+  "helpInsightsDesc": "Recibe insights basados en tus historias en la pantalla principal.\nAlgunos insights solo están disponibles en la versión Premium.\nAccede al historial de insights en el menú lateral.",
   "helpBackupSecurityTitle": "Copia de seguridad y seguridad",
   "helpAutomaticBackupTitle": "Copia de seguridad automática",
   "helpAutomaticBackupDesc": "Configura copia de seguridad automática (Premium) en Configuración. La copia se creará al cerrar sesión.",
