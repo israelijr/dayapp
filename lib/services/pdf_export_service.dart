@@ -11,6 +11,105 @@ import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart' as pdf;
 import 'package:pdf/widgets.dart' as pw;
 
+// Regex que detecta sequências de emoji (bases + modificadores opcionais).
+// Consome o variation selector U+FE0F, tons de pele (U+1F3FB-FF) e ZWJ
+// para evitar que os caracteres modificadores "sobrem" no texto normal.
+final _emojiRegex = RegExp(
+  r'(?:'
+  r'[\u{1F1E0}-\u{1F1FF}]{2}|' // Bandeiras
+  r'[\u{1F600}-\u{1F64F}][\u{1F3FB}-\u{1F3FF}]?\u{FE0F}?|' // Faces + pele + VS
+  r'[\u{1F300}-\u{1F5FF}]\u{FE0F}?|' // Símbolos Misc
+  r'[\u{1F680}-\u{1F6FF}]\u{FE0F}?|' // Transporte
+  r'[\u{1F700}-\u{1F7FF}]\u{FE0F}?|' // Alquimia
+  r'[\u{1F800}-\u{1F8FF}]\u{FE0F}?|' // Setas Supl.
+  r'[\u{1F900}-\u{1F9FF}]\u{FE0F}?|' // Símbolos Supl.
+  r'[\u{1FA00}-\u{1FAFF}]\u{FE0F}?|' // Ext-A
+  r'[#*0-9]\u{FE0F}\u{20E3}|' // Keycaps
+  r'[\u{2600}-\u{27BF}]\u{FE0F}?' // Misc BMP + VS opt.
+  r')(?:\u{200D}(?:[\u{1F300}-\u{1FAFF}][\u{1F3FB}-\u{1F3FF}]?\u{FE0F}?|[\u{2600}-\u{27BF}]\u{FE0F}?))*',
+  unicode: true,
+);
+
+/// Pré-renderiza todos os emojis únicos encontrados em [text] e retorna
+/// um [pw.TextSpan] com [pw.TextSpan] e [pw.WidgetSpan] mesclados, de
+/// modo que cada emoji apareça como imagem inline no PDF.
+Future<pw.TextSpan> _buildContentSpans(
+  String text,
+  pw.Font font,
+  double fontSize,
+) async {
+  // Coleta emojis únicos e pré-renderiza cada um para PNG
+  final uniqueEmojis = _emojiRegex
+      .allMatches(text)
+      .map((m) => m.group(0)!)
+      .toSet();
+  final Map<String, Uint8List> cache = {};
+  for (final emoji in uniqueEmojis) {
+    try {
+      cache[emoji] = await _renderEmojiToPng(emoji, fontSize * 1.4);
+    } catch (_) {
+      // Ignora emoji que não puder ser rasterizado
+    }
+  }
+
+  // Monta a lista de spans intercalando texto e imagens inline
+  final List<pw.InlineSpan> spans = [];
+  int lastEnd = 0;
+  for (final match in _emojiRegex.allMatches(text)) {
+    // Segmento de texto antes do emoji
+    if (match.start > lastEnd) {
+      spans.add(
+        pw.TextSpan(
+          text: text.substring(lastEnd, match.start),
+          style: pw.TextStyle(font: font, fontSize: fontSize),
+        ),
+      );
+    }
+    final emojiChar = match.group(0)!;
+    final png = cache[emojiChar];
+    if (png != null) {
+      // Emoji renderizado como imagem inline; baseline alinha o topo da
+      // imagem com o topo do glifo (valor 0 = alinhado ao ascendente).
+      spans.add(
+        pw.WidgetSpan(
+          baseline: fontSize * 0.15,
+          child: pw.Image(
+            pw.MemoryImage(png),
+            width: fontSize,
+            height: fontSize,
+          ),
+        ),
+      );
+    } else {
+      // Fallback: insere o caractere bruto (pode aparecer como ▯ na fonte)
+      spans.add(
+        pw.TextSpan(
+          text: emojiChar,
+          style: pw.TextStyle(font: font, fontSize: fontSize),
+        ),
+      );
+    }
+    lastEnd = match.end;
+  }
+  // Trecho final de texto após o último emoji
+  if (lastEnd < text.length) {
+    spans.add(
+      pw.TextSpan(
+        text: text.substring(lastEnd),
+        style: pw.TextStyle(font: font, fontSize: fontSize),
+      ),
+    );
+  }
+  // Se não havia nenhum emoji, retorna um único TextSpan simples
+  if (spans.isEmpty) {
+    return pw.TextSpan(
+      text: text,
+      style: pw.TextStyle(font: font, fontSize: fontSize),
+    );
+  }
+  return pw.TextSpan(children: spans);
+}
+
 /// Serviço para gerar PDF a partir de dados de uma história.
 /// Comentários e nomes em português conforme convenção do projeto.
 class PdfExportService {
@@ -25,6 +124,7 @@ class PdfExportService {
     String? emoticon,
     bool highQuality = false,
     String? locale,
+    int? backgroundColorHex,
   }) async {
     final doc = pw.Document();
 
@@ -119,10 +219,29 @@ class PdfExportService {
       iconBytes = null;
     }
 
+    // Pré-renderiza emojis do conteúdo textual para uso inline no PDF
+    final contentSpans = await _buildContentSpans(content, baseFont, 12);
+
     doc.addPage(
       pw.MultiPage(
-        pageFormat: pageFormat,
-        margin: const pw.EdgeInsets.all(marginAll),
+        pageTheme: pw.PageTheme(
+          pageFormat: pageFormat,
+          margin: const pw.EdgeInsets.all(marginAll),
+          // Renderiza cor de fundo sólid cobrindo a página inteira
+          buildBackground: backgroundColorHex != null
+              ? (context) => pw.FullPage(
+                  ignoreMargins: true,
+                  child: pw.Container(
+                    decoration: pw.BoxDecoration(
+                      color: pdf.PdfColor.fromInt(
+                        // Garante alpha = 0xFF (totalmente opáco)
+                        backgroundColorHex | 0xFF000000,
+                      ),
+                    ),
+                  ),
+                )
+              : null,
+        ),
         build: (context) {
           final List<pw.Widget> widgets = [];
 
@@ -217,11 +336,9 @@ class PdfExportService {
             ),
           );
 
-          // Conteúdo textual
+          // Conteúdo textual — usa RichText para renderizar emojis inline
           widgets.add(pw.SizedBox(height: 16));
-          widgets.add(
-            pw.Text(content, style: pw.TextStyle(font: baseFont, fontSize: 12)),
-          );
+          widgets.add(pw.RichText(text: contentSpans));
 
           // Imagens (uma por linha, redimensionadas)
           if (compressedImages.isNotEmpty) {

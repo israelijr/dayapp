@@ -13,6 +13,7 @@ import '../models/historia.dart';
 import '../models/tag.dart';
 import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
+import '../providers/premium_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../providers/scroll_position_provider.dart';
 import '../services/pdf_export_service.dart';
@@ -126,6 +127,15 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
   }
 
   Future<void> _exportHistoria(Historia historia) async {
+    // Bloqueia exportação de PDF para usuários Free
+    if (!context.read<PremiumProvider>().canExportPdf) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.exportPdfPremiumRequired),
+        ),
+      );
+      return;
+    }
     try {
       // Captura o locale antes do primeiro await para evitar uso de context após async
       final localeName = AppLocalizations.of(context)!.localeName;
@@ -151,7 +161,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
         MaterialPageRoute(
           builder: (_) => PdfPreviewScreen(
             initialPdfBytes: pdfBytes,
-            onGenerate: (highQuality) =>
+            onGenerate: (highQuality, bgColor) =>
                 PdfExportService.generatePdfFromHistoria(
                   title: historia.titulo,
                   content: content,
@@ -160,6 +170,7 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
                   tags: historia.tag,
                   emoticon: historia.emoticon,
                   highQuality: highQuality,
+                  backgroundColorHex: bgColor,
                   locale: localeName,
                 ),
             filename: filename,

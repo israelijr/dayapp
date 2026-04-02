@@ -4221,6 +4221,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search insights'**
   String get insightHistorySearch;
+
+  /// Label for the PDF background color selector
+  ///
+  /// In en, this message translates to:
+  /// **'Background color'**
+  String get pdfBackgroundColor;
+
+  /// Option: no background color in the PDF
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get pdfBackgroundNone;
+
+  /// Option: beige/cream background color in the PDF
+  ///
+  /// In en, this message translates to:
+  /// **'Beige/cream'**
+  String get pdfBackgroundBeige;
+
+  /// Option: pale blue background color in the PDF
+  ///
+  /// In en, this message translates to:
+  /// **'Pale blue'**
+  String get pdfBackgroundBlue;
+
+  /// Option: pale green background color in the PDF
+  ///
+  /// In en, this message translates to:
+  /// **'Pale green'**
+  String get pdfBackgroundGreen;
+
+  /// Option: light gray background color in the PDF
+  ///
+  /// In en, this message translates to:
+  /// **'Light gray'**
+  String get pdfBackgroundGray;
+
+  /// SnackBar shown when a Free user tries to export to PDF
+  ///
+  /// In en, this message translates to:
+  /// **'Exporting to PDF is a Premium feature. Upgrade your plan to access it.'**
+  String get exportPdfPremiumRequired;
 }
 
 class _AppLocalizationsDelegate

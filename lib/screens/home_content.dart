@@ -63,6 +63,15 @@ class _HomeContentState extends State<HomeContent> {
   }
 
   Future<void> _exportHistoria(Historia historia) async {
+    // Bloqueia exportação de PDF para usuários Free
+    if (!context.read<PremiumProvider>().canExportPdf) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.exportPdfPremiumRequired),
+        ),
+      );
+      return;
+    }
     try {
       // Salva referências do contexto antes das operações assíncronas
       final navigator = Navigator.of(context);
@@ -90,7 +99,7 @@ class _HomeContentState extends State<HomeContent> {
         MaterialPageRoute(
           builder: (_) => PdfPreviewScreen(
             initialPdfBytes: pdfBytes,
-            onGenerate: (highQuality) =>
+            onGenerate: (highQuality, bgColor) =>
                 PdfExportService.generatePdfFromHistoria(
                   title: historia.titulo,
                   content: content,
@@ -99,6 +108,7 @@ class _HomeContentState extends State<HomeContent> {
                   tags: historia.tag,
                   emoticon: historia.emoticon,
                   highQuality: highQuality,
+                  backgroundColorHex: bgColor,
                   locale: localeName,
                 ),
             filename: filename,

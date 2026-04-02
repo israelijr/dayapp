@@ -2345,6 +2345,28 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get insightHistorySearch => 'Buscar insights';
+
+  @override
+  String get pdfBackgroundColor => 'Cor de fundo';
+
+  @override
+  String get pdfBackgroundNone => 'Sem cor';
+
+  @override
+  String get pdfBackgroundBeige => 'Bege/creme';
+
+  @override
+  String get pdfBackgroundBlue => 'Azul pálido';
+
+  @override
+  String get pdfBackgroundGreen => 'Verde pálido';
+
+  @override
+  String get pdfBackgroundGray => 'Cinza claro';
+
+  @override
+  String get exportPdfPremiumRequired =>
+      'Exportar em PDF é um recurso Premium. Faça upgrade do seu plano para aceder.';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -4688,4 +4710,26 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get insightHistorySearch => 'Buscar insights';
+
+  @override
+  String get pdfBackgroundColor => 'Cor de fundo';
+
+  @override
+  String get pdfBackgroundNone => 'Sem cor';
+
+  @override
+  String get pdfBackgroundBeige => 'Bege/creme';
+
+  @override
+  String get pdfBackgroundBlue => 'Azul pálido';
+
+  @override
+  String get pdfBackgroundGreen => 'Verde pálido';
+
+  @override
+  String get pdfBackgroundGray => 'Cinza claro';
+
+  @override
+  String get exportPdfPremiumRequired =>
+      'Exportar em PDF é um recurso Premium. Faça upgrade do seu plano para acessar.';
 }

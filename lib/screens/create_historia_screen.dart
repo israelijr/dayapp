@@ -16,6 +16,7 @@ import '../helpers/rich_text_helper.dart';
 import '../models/tag.dart';
 import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
+import '../providers/premium_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../services/emoji_service.dart';
 import '../services/pdf_export_service.dart';
@@ -295,7 +296,6 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
       return null;
     }
 
-
     setState(() {
       _isLoading = true;
     });
@@ -362,7 +362,6 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
         );
       }
 
-
       // Se a data permitir notificação (pelo menos 2 horas à frente), perguntar sobre notificação
       if (NotificationHelper().shouldScheduleNotification(selectedDate)) {
         await _showNotificationDialog(historiaId);
@@ -399,6 +398,15 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
   }
 
   Future<void> _exportToPdf() async {
+    // Bloqueia exportação de PDF para usuários Free
+    if (!context.read<PremiumProvider>().canExportPdf) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.exportPdfPremiumRequired),
+        ),
+      );
+      return;
+    }
     // Valida título e descrição
     final plainText = richTextController.document.toPlainText().trim();
     if (titleController.text.trim().isEmpty || plainText.isEmpty) {
@@ -478,7 +486,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
         MaterialPageRoute(
           builder: (_) => PdfPreviewScreen(
             initialPdfBytes: pdfBytes,
-            onGenerate: (highQuality) =>
+            onGenerate: (highQuality, bgColor) =>
                 PdfExportService.generatePdfFromHistoria(
                   title: titleText,
                   content: plainText,
@@ -489,6 +497,7 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                       : _selectedTags.map((t) => t.nome).join(', '),
                   emoticon: selectedEmoticon,
                   highQuality: highQuality,
+                  backgroundColorHex: bgColor,
                   locale: loc.localeName,
                 ),
             filename: filename,

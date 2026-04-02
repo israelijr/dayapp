@@ -1258,5 +1258,19 @@
   "insightHistoryFilterPremium": "Premium",
   "@insightHistoryFilterPremium": { "description": "Chip de filtro: exibir apenas insights premium" },
   "insightHistorySearch": "Buscar insights",
-  "@insightHistorySearch": { "description": "Texto de dica do campo de busca na tela de histórico" }
+  "@insightHistorySearch": { "description": "Texto de dica do campo de busca na tela de histórico" },
+  "pdfBackgroundColor": "Cor de fundo",
+  "@pdfBackgroundColor": { "description": "Rótulo do seletor de cor de fundo do PDF" },
+  "pdfBackgroundNone": "Sem cor",
+  "@pdfBackgroundNone": { "description": "Opção: sem cor de fundo no PDF" },
+  "pdfBackgroundBeige": "Bege/creme",
+  "@pdfBackgroundBeige": { "description": "Opção: fundo bege/creme no PDF" },
+  "pdfBackgroundBlue": "Azul pálido",
+  "@pdfBackgroundBlue": { "description": "Opção: fundo azul pálido no PDF" },
+  "pdfBackgroundGreen": "Verde pálido",
+  "@pdfBackgroundGreen": { "description": "Opção: fundo verde pálido no PDF" },
+  "pdfBackgroundGray": "Cinza claro",
+  "@pdfBackgroundGray": { "description": "Opção: fundo cinza claro no PDF" },
+  "exportPdfPremiumRequired": "Exportar em PDF é um recurso Premium. Faça upgrade do seu plano para acessar.",
+  "@exportPdfPremiumRequired": { "description": "SnackBar exibido quando usuário Free tenta exportar PDF" }
 }

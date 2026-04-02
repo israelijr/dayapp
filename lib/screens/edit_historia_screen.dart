@@ -19,6 +19,7 @@ import '../models/historia.dart';
 import '../models/tag.dart';
 import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
+import '../providers/premium_provider.dart';
 import '../services/emoji_service.dart';
 import '../services/pdf_export_service.dart';
 import '../theme/animation_durations.dart';
@@ -617,7 +618,6 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
       }
     }
 
-
     if (!mounted) return false;
     if (navigateAfterSave) Navigator.pop(context, true);
     return true;
@@ -724,6 +724,19 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
   }
 
   Future<void> _exportToPdf() async {
+    // Bloqueia exportação de PDF para usuários Free
+    if (!context.read<PremiumProvider>().canExportPdf) {
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            // ignore: use_build_context_synchronously
+            AppLocalizations.of(context)!.exportPdfPremiumRequired,
+          ),
+        ),
+      );
+      return;
+    }
     // ignore: use_build_context_synchronously
     final loc = AppLocalizations.of(context)!;
     // Validação mínima
@@ -759,18 +772,20 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
       MaterialPageRoute(
         builder: (_) => PdfPreviewScreen(
           initialPdfBytes: pdfBytes,
-          onGenerate: (highQuality) => PdfExportService.generatePdfFromHistoria(
-            title: titleText,
-            content: plainText,
-            date: selectedDate,
-            images: fotos,
-            tags: _selectedTags.isEmpty
-                ? null
-                : _selectedTags.map((t) => t.nome).join(', '),
-            emoticon: selectedEmoticon,
-            highQuality: highQuality,
-            locale: loc.localeName,
-          ),
+          onGenerate: (highQuality, bgColor) =>
+              PdfExportService.generatePdfFromHistoria(
+                title: titleText,
+                content: plainText,
+                date: selectedDate,
+                images: fotos,
+                tags: _selectedTags.isEmpty
+                    ? null
+                    : _selectedTags.map((t) => t.nome).join(', '),
+                emoticon: selectedEmoticon,
+                highQuality: highQuality,
+                backgroundColorHex: bgColor,
+                locale: loc.localeName,
+              ),
           filename: filename,
           title: AppLocalizations.of(
             context,
@@ -942,7 +957,6 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
                       },
                     ),
                     const SizedBox(height: 16),
-
 
                     // Humor (como você se sentiu)
                     const SizedBox(height: 16),

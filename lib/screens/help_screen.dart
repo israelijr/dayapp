@@ -70,7 +70,6 @@ class HelpScreen extends StatelessWidget {
                 loc.helpTextEditorTitle,
                 loc.helpTextEditorDesc,
               ),
-              _buildHelpItem(context, loc.chaptersTitle, loc.helpChaptersDesc),
               _buildHelpItem(context, loc.mediaLabel, loc.helpMediaDesc),
             ],
           ),

@@ -2336,4 +2336,26 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get insightHistorySearch => 'Search insights';
+
+  @override
+  String get pdfBackgroundColor => 'Background color';
+
+  @override
+  String get pdfBackgroundNone => 'None';
+
+  @override
+  String get pdfBackgroundBeige => 'Beige/cream';
+
+  @override
+  String get pdfBackgroundBlue => 'Pale blue';
+
+  @override
+  String get pdfBackgroundGreen => 'Pale green';
+
+  @override
+  String get pdfBackgroundGray => 'Light gray';
+
+  @override
+  String get exportPdfPremiumRequired =>
+      'Exporting to PDF is a Premium feature. Upgrade your plan to access it.';
 }
