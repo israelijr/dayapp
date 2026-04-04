@@ -21,6 +21,20 @@ class TrashScreen extends StatefulWidget {
 class _TrashScreenState extends State<TrashScreen> {
   final List<Historia> _selectedItems = [];
   bool _isSelectionMode = false;
+  late Future<List<Historia>> _futureHistorias;
+  int _lastRefreshCounter = -1;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Atualiza o future apenas quando o refreshCounter muda,
+    // evitando recriar o Future a cada setState (ex.: seleção de cards).
+    final refreshCounter = Provider.of<RefreshProvider>(context).refreshCounter;
+    if (_lastRefreshCounter != refreshCounter) {
+      _lastRefreshCounter = refreshCounter;
+      _futureHistorias = _fetchDeletedHistorias();
+    }
+  }
 
   Future<List<Historia>> _fetchDeletedHistorias() async {
     final auth = Provider.of<AuthProvider>(context, listen: false);
@@ -37,36 +51,6 @@ class _TrashScreenState extends State<TrashScreen> {
       orderBy: 'data_exclusao DESC',
     );
     return result.map((map) => Historia.fromMap(map)).toList();
-  }
-
-  Future<void> _restoreHistoria(Historia historia) async {
-    final db = await DatabaseHelper().database;
-    await db.update(
-      'historia',
-      {
-        'excluido': null,
-        'data_exclusao': null,
-        'data_update': DateTime.now().toIso8601String(),
-        'backed_up': 0,
-      },
-      where: 'id = ?',
-      whereArgs: [historia.id],
-    );
-    if (!mounted) return;
-    final refreshProvider = Provider.of<RefreshProvider>(
-      context,
-      listen: false,
-    );
-    refreshProvider.refresh();
-    setState(() {
-      _selectedItems.clear();
-      _isSelectionMode = false;
-    });
-
-    final loc = AppLocalizations.of(context)!;
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(loc.successStoryRestored)));
   }
 
   Future<void> _restoreSelected() async {
@@ -125,23 +109,26 @@ class _TrashScreenState extends State<TrashScreen> {
     }
   }
 
-  Future<void> _permanentlyDeleteHistoria(Historia historia) async {
+  Future<void> _permanentlyDeleteSelected() async {
+    if (_selectedItems.isEmpty) return;
+
+    final loc = AppLocalizations.of(context)!;
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) {
-        final loc = AppLocalizations.of(ctx)!;
+        final ctxLoc = AppLocalizations.of(ctx)!;
         return AlertDialog(
-          title: Text(loc.permanentlyDeleteTitle),
-          content: Text(loc.permanentlyDeleteConfirm),
+          title: Text(ctxLoc.permanentlyDeleteTitle),
+          content: Text(ctxLoc.permanentlyDeleteConfirm),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: Text(loc.cancel),
+              child: Text(ctxLoc.cancel),
             ),
             TextButton(
               onPressed: () => Navigator.pop(ctx, true),
               child: Text(
-                loc.permanentlyDeleteLabel,
+                ctxLoc.permanentlyDeleteLabel,
                 style: TextStyle(color: Theme.of(ctx).colorScheme.error),
               ),
             ),
@@ -152,7 +139,9 @@ class _TrashScreenState extends State<TrashScreen> {
 
     if (confirm == true) {
       final db = await DatabaseHelper().database;
-      await db.delete('historia', where: 'id = ?', whereArgs: [historia.id]);
+      for (final historia in _selectedItems) {
+        await db.delete('historia', where: 'id = ?', whereArgs: [historia.id]);
+      }
       if (!mounted) return;
       final refreshProvider = Provider.of<RefreshProvider>(
         context,
@@ -164,7 +153,6 @@ class _TrashScreenState extends State<TrashScreen> {
         _isSelectionMode = false;
       });
 
-      final loc = AppLocalizations.of(context)!;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(loc.successStoryDeletedPermanently)),
       );
@@ -295,11 +283,7 @@ class _TrashScreenState extends State<TrashScreen> {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: InkWell(
         onTap: () {
-          if (_isSelectionMode) {
-            _toggleSelection(historia);
-          } else {
-            _showHistoriaOptions(historia);
-          }
+          _toggleSelection(historia);
         },
         onLongPress: () {
           _toggleSelection(historia);
@@ -403,45 +387,8 @@ class _TrashScreenState extends State<TrashScreen> {
     );
   }
 
-  void _showHistoriaOptions(Historia historia) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: Icon(Icons.restore, color: AppColors.emoticonGreen),
-              title: Text(
-                'Restaurar',
-                style: TextStyle(color: AppColors.labelColor(context)),
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                _restoreHistoria(historia);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.delete_forever, color: AppColors.emoticonRed),
-              title: Text(
-                'Excluir permanentemente',
-                style: TextStyle(color: AppColors.labelColor(context)),
-              ),
-              onTap: () {
-                Navigator.pop(context);
-                _permanentlyDeleteHistoria(historia);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    final refreshProvider = Provider.of<RefreshProvider>(context);
-
     return Scaffold(
       appBar: AppBar(
         title: _isSelectionMode
@@ -453,6 +400,12 @@ class _TrashScreenState extends State<TrashScreen> {
               icon: const Icon(Icons.restore),
               tooltip: 'Restaurar selecionados',
               onPressed: _restoreSelected,
+            ),
+            IconButton(
+              icon: const Icon(Icons.delete_forever),
+              tooltip: 'Excluir permanentemente',
+              color: Theme.of(context).colorScheme.error,
+              onPressed: _permanentlyDeleteSelected,
             ),
             IconButton(
               icon: const Icon(Icons.close),
@@ -474,8 +427,7 @@ class _TrashScreenState extends State<TrashScreen> {
         ],
       ),
       body: FutureBuilder<List<Historia>>(
-        key: ValueKey(refreshProvider.refreshCounter),
-        future: _fetchDeletedHistorias(),
+        future: _futureHistorias,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
