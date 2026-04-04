@@ -19,8 +19,11 @@ class CapituloSugestaoService {
        _analyzer = analyzer;
 
   Future<List<CapituloSugestao>> sugerirCapitulos(String userId) async {
-    final entradas = await _capituloHelper.listEntradasElegiveis(userId);
-    if (entradas.length < _minEntradasPorCapitulo) return const [];
+    // Usa JOIN com historia_tags para obter as tags reais de cada entrada
+    final entradasComTags = await _capituloHelper.listEntradasElegiveisComTags(
+      userId,
+    );
+    if (entradasComTags.length < _minEntradasPorCapitulo) return const [];
 
     final ignoradas = await _capituloHelper.getIgnoredSuggestionFingerprints(
       userId,
@@ -29,16 +32,30 @@ class CapituloSugestaoService {
       userId,
     );
 
-    final candidatas =
-        entradas
-            .where((h) => h.id != null && !entradasJaVinculadas.contains(h.id))
+    final candidatasComTags =
+        entradasComTags
+            .where(
+              (item) =>
+                  item.historia.id != null &&
+                  !entradasJaVinculadas.contains(item.historia.id),
+            )
             .toList(growable: false)
-          ..sort((a, b) => a.data.compareTo(b.data));
+          ..sort((a, b) => a.historia.data.compareTo(b.historia.data));
 
-    if (candidatas.length < _minEntradasPorCapitulo) return const [];
+    if (candidatasComTags.length < _minEntradasPorCapitulo) return const [];
+
+    final candidatas = candidatasComTags
+        .map((item) => item.historia)
+        .toList(growable: false);
+
+    // Mapa de id → tagNomes obtidos via JOIN (inclui nome e slug das tags)
+    final tagNomesMap = {
+      for (final item in candidatasComTags) item.historia.id!: item.tagNomes,
+    };
 
     final featureMap = {
-      for (final entry in candidatas) entry.id!: _buildFeatures(entry),
+      for (final entry in candidatas)
+        entry.id!: _buildFeatures(entry, tagNomesMap[entry.id!] ?? ''),
     };
 
     final grupos = <List<Historia>>[];
@@ -116,8 +133,10 @@ class CapituloSugestaoService {
     return sugestoes;
   }
 
-  _EntryFeatures _buildFeatures(Historia entry) {
-    final tagParts = (entry.tag ?? '')
+  _EntryFeatures _buildFeatures(Historia entry, [String tagNomes = '']) {
+    // Prioriza as tags da tabela relacional; recorre ao campo legado se vazio
+    final rawTags = tagNomes.isNotEmpty ? tagNomes : (entry.tag ?? '');
+    final tagParts = rawTags
         .split(',')
         .map((item) => item.trim().toLowerCase())
         .where((item) => item.isNotEmpty)

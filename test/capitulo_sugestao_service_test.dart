@@ -17,6 +17,15 @@ class FakeCapituloHelper extends CapituloHelper {
   @override
   Future<List<Historia>> listEntradasElegiveis(String userId) async => entradas;
 
+  /// Mapeia entry.tag como tagNomes para manter compatibilidade com os testes
+  @override
+  Future<List<({Historia historia, String tagNomes})>>
+  listEntradasElegiveisComTags(String userId) async {
+    return entradas
+        .map((h) => (historia: h, tagNomes: h.tag ?? ''))
+        .toList(growable: false);
+  }
+
   @override
   Future<Set<String>> getIgnoredSuggestionFingerprints(String userId) async {
     return ignoradas;
