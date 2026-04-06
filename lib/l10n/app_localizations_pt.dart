@@ -1463,6 +1463,13 @@ class AppLocalizationsPt extends AppLocalizations {
       'Entradas com data pelo menos 2 horas à frente podem ter notificações agendadas.';
 
   @override
+  String get xiaomiNotificationWarningTitle => 'Xiaomi / Poco / HyperOS';
+
+  @override
+  String get xiaomiNotificationWarningDesc =>
+      'Em dispositivos Xiaomi e Poco, a opção \"Pausar atividade do app quando sem uso\" deve estar desativada. Caso contrário, o sistema pode remover permissões e cancelar as notificações agendadas.';
+
+  @override
   String get defaultAdvanceTitle => 'Antecedência Padrão';
 
   @override
@@ -3826,6 +3833,13 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get entryNotificationsInfo =>
       'Entradas com data pelo menos 2 horas à frente podem ter notificações agendadas.';
+
+  @override
+  String get xiaomiNotificationWarningTitle => 'Xiaomi / Poco / HyperOS';
+
+  @override
+  String get xiaomiNotificationWarningDesc =>
+      'Em dispositivos Xiaomi e Poco, a opção \"Pausar atividade do app quando sem uso\" deve estar desativada. Caso contrário, o sistema pode remover permissões e cancelar as notificações agendadas.';
 
   @override
   String get defaultAdvanceTitle => 'Antecedência Padrão';

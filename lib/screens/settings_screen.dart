@@ -1401,6 +1401,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
             subtitle: Text(loc.entryNotificationsInfo),
             dense: true,
           ),
+        if (_notificationEnabled)
+          ListTile(
+            leading: Icon(
+              Icons.warning_amber_rounded,
+              color: Theme.of(context).colorScheme.tertiary,
+            ),
+            title: Text(loc.xiaomiNotificationWarningTitle),
+            subtitle: Text(loc.xiaomiNotificationWarningDesc),
+            dense: true,
+          ),
         // const Divider(),
         // ... (comentado permanece igual)
       ],

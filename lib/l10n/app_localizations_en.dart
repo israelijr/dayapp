@@ -1455,6 +1455,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Entries with a date at least 2 hours ahead may have scheduled notifications.';
 
   @override
+  String get xiaomiNotificationWarningTitle => 'Xiaomi / Poco / HyperOS';
+
+  @override
+  String get xiaomiNotificationWarningDesc =>
+      'On Xiaomi and Poco devices, the \"Pause app activity if unused\" option must be disabled. Otherwise, the system may remove permissions and cancel scheduled notifications.';
+
+  @override
   String get defaultAdvanceTitle => 'Default advance';
 
   @override

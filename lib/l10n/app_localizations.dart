@@ -2693,6 +2693,18 @@ abstract class AppLocalizations {
   /// **'Entries with a date at least 2 hours ahead may have scheduled notifications.'**
   String get entryNotificationsInfo;
 
+  /// No description provided for @xiaomiNotificationWarningTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Xiaomi / Poco / HyperOS'**
+  String get xiaomiNotificationWarningTitle;
+
+  /// No description provided for @xiaomiNotificationWarningDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'On Xiaomi and Poco devices, the \"Pause app activity if unused\" option must be disabled. Otherwise, the system may remove permissions and cancel scheduled notifications.'**
+  String get xiaomiNotificationWarningDesc;
+
   /// No description provided for @defaultAdvanceTitle.
   ///
   /// In en, this message translates to:

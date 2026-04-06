@@ -1471,6 +1471,13 @@ class AppLocalizationsEs extends AppLocalizations {
       'Las entradas con fecha al menos 2 horas por delante pueden tener notificaciones programadas.';
 
   @override
+  String get xiaomiNotificationWarningTitle => 'Xiaomi / Poco / HyperOS';
+
+  @override
+  String get xiaomiNotificationWarningDesc =>
+      'En dispositivos Xiaomi y Poco, la opción \"Pausar actividad de la app cuando no se usa\" debe estar desactivada. De lo contrario, el sistema puede eliminar permisos y cancelar las notificaciones programadas.';
+
+  @override
   String get defaultAdvanceTitle => 'Antelación predeterminada';
 
   @override

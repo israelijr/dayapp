@@ -570,6 +570,8 @@
   "notifications": "Notificações",
   "entryNotifications": "Notificações de Entradas",
   "entryNotificationsInfo": "Entradas com data pelo menos 2 horas à frente podem ter notificações agendadas.",
+  "xiaomiNotificationWarningTitle": "Xiaomi / Poco / HyperOS",
+  "xiaomiNotificationWarningDesc": "Em dispositivos Xiaomi e Poco, a opção \"Pausar atividade do app quando sem uso\" deve estar desativada. Caso contrário, o sistema pode remover permissões e cancelar as notificações agendadas.",
   "defaultAdvanceTitle": "Antecedência Padrão",
   "notificationAdvanceTitle": "Antecedência da Notificação",
   "notificationAdvancePrompt": "Com quanto tempo de antecedência você quer ser notificado?",

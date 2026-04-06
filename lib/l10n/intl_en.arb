@@ -590,6 +590,8 @@
   "notifications": "Notifications",
   "entryNotifications": "Entry notifications",
   "entryNotificationsInfo": "Entries with a date at least 2 hours ahead may have scheduled notifications.",
+  "xiaomiNotificationWarningTitle": "Xiaomi / Poco / HyperOS",
+  "xiaomiNotificationWarningDesc": "On Xiaomi and Poco devices, the \"Pause app activity if unused\" option must be disabled. Otherwise, the system may remove permissions and cancel scheduled notifications.",
   "defaultAdvanceTitle": "Default advance",
   "notificationAdvanceTitle": "Notification advance",
   "notificationAdvancePrompt": "How much notice would you like before being notified?",
