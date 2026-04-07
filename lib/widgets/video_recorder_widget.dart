@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:file_picker/file_picker.dart';
