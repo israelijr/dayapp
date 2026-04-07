@@ -109,9 +109,10 @@ class _SearchScreenState extends State<SearchScreen> {
             });
             return;
           }
-          // Pesquisa no título ou descrição
+          // Pesquisa no título ou descrição (DISTINCT para evitar duplicatas)
           results = await db.query(
             'historia',
+            distinct: true,
             where:
                 'user_id = ? AND excluido IS NULL AND (titulo LIKE ? OR descricao LIKE ?)',
             whereArgs: [userId, '%$query%', '%$query%'],
