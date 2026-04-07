@@ -275,11 +275,8 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
 
         _startTimer();
       } else {
-        if (!mounted) return;
-        final loc = AppLocalizations.of(context)!;
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(loc.permissionMicrophoneDenied)));
+        // Permissão negada: fecha o dialog silenciosamente
+        if (mounted) Navigator.of(context).pop();
       }
     } catch (e) {
       if (!mounted) return;

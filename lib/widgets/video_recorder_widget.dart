@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -319,6 +320,14 @@ class _VideoRecorderWidgetState extends State<VideoRecorderWidget> {
     } catch (e) {
       // Garante reset da flag em caso de erro
       pinProvider.isPickingExternalMedia = false;
+
+      // Permissão negada: apenas fecha o dialog sem exibir mensagem de erro
+      if (e is PlatformException &&
+          (e.code == 'camera_access_denied' ||
+              e.code == 'photo_access_denied')) {
+        if (mounted) Navigator.of(context).pop();
+        return;
+      }
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
