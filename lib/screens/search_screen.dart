@@ -656,29 +656,112 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
+  /// Navega para a tela de edição de uma história
+  void _editHistoria(Historia historia) {
+    final refreshProvider = Provider.of<RefreshProvider>(
+      context,
+      listen: false,
+    );
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => EditHistoriaScreen(historia: historia)),
+    ).then((updated) {
+      if (updated == true) {
+        _performSearch();
+        if (mounted) {
+          refreshProvider.refresh();
+        }
+      }
+    });
+  }
+
+  /// Atualiza campos de uma história no banco
+  Future<void> _updateHistoriaFields(
+    Historia historia,
+    Map<String, dynamic> updates,
+  ) async {
+    final db = await DatabaseHelper().database;
+    await db.update(
+      'historia',
+      {
+        'data_update': DateTime.now().toIso8601String(),
+        'backed_up': 0,
+        ...updates,
+      },
+      where: 'id = ?',
+      whereArgs: [historia.id],
+    );
+  }
+
+  /// Soft delete de uma história (move para lixeira)
+  Future<void> _deleteHistoria(Historia historia) async {
+    final l10n = AppLocalizations.of(context)!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.deleteStoryTitle),
+        content: Text(l10n.deleteStoryConfirm),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(
+              l10n.deleteLabel,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    await _updateHistoriaFields(historia, {
+      'excluido': 'sim',
+      'data_exclusao': DateTime.now().toIso8601String(),
+    });
+    if (!mounted) return;
+    _performSearch();
+    Provider.of<RefreshProvider>(context, listen: false).refresh();
+  }
+
+  /// Desagrupa uma história (remove do grupo)
+  Future<void> _desagruparHistoria(Historia historia) async {
+    final l10n = AppLocalizations.of(context)!;
+    await _updateHistoriaFields(historia, {
+      'grupo': null,
+      'tag': null,
+      'arquivado': null,
+    });
+    if (!mounted) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(l10n.storyUngrouped)));
+    _performSearch();
+    Provider.of<RefreshProvider>(context, listen: false).refresh();
+  }
+
+  /// Desarquiva uma história
+  Future<void> _desarquivarHistoria(Historia historia) async {
+    final l10n = AppLocalizations.of(context)!;
+    await _updateHistoriaFields(historia, {'arquivado': null});
+    if (!mounted) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(l10n.unarchive)));
+    _performSearch();
+    Provider.of<RefreshProvider>(context, listen: false).refresh();
+  }
+
   /// Card de uma história
   Widget _buildHistoriaCard(Historia historia) {
+    final l10n = AppLocalizations.of(context)!;
+    final temGrupo = historia.grupo != null && historia.grupo!.isNotEmpty;
+    final estaArquivado = historia.arquivado != null;
+
     return GestureDetector(
-      onTap: () {
-        final refreshProvider = Provider.of<RefreshProvider>(
-          context,
-          listen: false,
-        );
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => EditHistoriaScreen(historia: historia),
-          ),
-        ).then((updated) {
-          if (updated == true) {
-            // Atualiza os resultados após edição
-            _performSearch();
-            if (mounted) {
-              refreshProvider.refresh();
-            }
-          }
-        });
-      },
+      onTap: () => _editHistoria(historia),
       child: Card(
         margin: const EdgeInsets.only(bottom: 12),
         elevation: 2,
@@ -688,6 +771,118 @@ class _SearchScreenState extends State<SearchScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Cabeçalho: badges de grupo/arquivado + menu de 3 pontos
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Badges de grupo e arquivado
+                  Expanded(
+                    child: Wrap(
+                      spacing: 6,
+                      runSpacing: 4,
+                      children: [
+                        if (temGrupo)
+                          _buildBadge(
+                            icon: Icons.folder_outlined,
+                            label: historia.grupo!,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.tertiaryContainer,
+                            foregroundColor: Theme.of(
+                              context,
+                            ).colorScheme.onTertiaryContainer,
+                          ),
+                        if (estaArquivado)
+                          _buildBadge(
+                            icon: Icons.archive_outlined,
+                            label: l10n.archivedStateLabel,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerHighest,
+                            foregroundColor: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
+                      ],
+                    ),
+                  ),
+                  // Menu de 3 pontos
+                  PopupMenuButton<String>(
+                    padding: EdgeInsets.zero,
+                    icon: Icon(
+                      Icons.more_vert,
+                      size: 20,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    onSelected: (value) async {
+                      switch (value) {
+                        case 'editar':
+                          _editHistoria(historia);
+                        case 'desagrupar':
+                          await _desagruparHistoria(historia);
+                        case 'desarquivar':
+                          await _desarquivarHistoria(historia);
+                        case 'excluir':
+                          await _deleteHistoria(historia);
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        value: 'editar',
+                        child: Row(
+                          children: [
+                            const Icon(Icons.edit_outlined, size: 20),
+                            const SizedBox(width: 12),
+                            Text(l10n.edit),
+                          ],
+                        ),
+                      ),
+                      if (temGrupo)
+                        PopupMenuItem(
+                          value: 'desagrupar',
+                          child: Row(
+                            children: [
+                              const Icon(Icons.folder_off_outlined, size: 20),
+                              const SizedBox(width: 12),
+                              Text(l10n.ungroup),
+                            ],
+                          ),
+                        ),
+                      if (estaArquivado)
+                        PopupMenuItem(
+                          value: 'desarquivar',
+                          child: Row(
+                            children: [
+                              const Icon(Icons.unarchive_outlined, size: 20),
+                              const SizedBox(width: 12),
+                              Text(l10n.unarchive),
+                            ],
+                          ),
+                        ),
+                      PopupMenuItem(
+                        value: 'excluir',
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.delete_outline,
+                              size: 20,
+                              color: Theme.of(context).colorScheme.error,
+                            ),
+                            const SizedBox(width: 12),
+                            Text(
+                              l10n.deleteLabel,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.error,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+
               // Visualização das fotos com grade e visualizador completo
               HistoriaFotosGrid(historiaId: historia.id ?? 0, height: 120),
               // Áudios e vídeos
@@ -802,6 +997,30 @@ class _SearchScreenState extends State<SearchScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  /// Widget auxiliar para badges de grupo e arquivado
+  Widget _buildBadge({
+    required IconData icon,
+    required String label,
+    required Color backgroundColor,
+    required Color foregroundColor,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: foregroundColor),
+          const SizedBox(width: 4),
+          Text(label, style: TextStyle(fontSize: 12, color: foregroundColor)),
+        ],
       ),
     );
   }
