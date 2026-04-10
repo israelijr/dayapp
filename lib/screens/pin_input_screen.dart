@@ -19,6 +19,7 @@ class _PinInputScreenState extends State<PinInputScreen>
   final List<String> _digits = ['', '', '', '', '', '', '', ''];
   int _currentIndex = 0;
   bool _isLoading = false;
+  bool _isPinVisible = false;
   String? _errorMessage;
   late AnimationController _shakeController;
   late Animation<double> _shakeAnimation;
@@ -104,50 +105,88 @@ class _PinInputScreenState extends State<PinInputScreen>
 
                         const SizedBox(height: 32),
 
-                        // Círculos do PIN
-                        AnimatedBuilder(
-                          animation: _shakeAnimation,
-                          builder: (context, child) {
-                            return Transform.translate(
-                              offset: Offset(
-                                _shakeAnimation.value *
-                                    10 *
-                                    (1 - _shakeAnimation.value) *
-                                    2,
-                                0,
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: List.generate(8, (index) {
-                                  return Container(
-                                    margin: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                    ),
-                                    width: 20,
-                                    height: 20,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: _digits[index].isNotEmpty
-                                          ? Theme.of(
-                                              context,
-                                            ).colorScheme.primary
-                                          : Theme.of(context)
+                        // Círculos do PIN com botão de revelar
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            AnimatedBuilder(
+                              animation: _shakeAnimation,
+                              builder: (context, child) {
+                                return Transform.translate(
+                                  offset: Offset(
+                                    _shakeAnimation.value *
+                                        10 *
+                                        (1 - _shakeAnimation.value) *
+                                        2,
+                                    0,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: List.generate(8, (index) {
+                                      return Container(
+                                        margin: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                        ),
+                                        width: 20,
+                                        height: 20,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: _digits[index].isNotEmpty
+                                              ? Theme.of(
+                                                  context,
+                                                ).colorScheme.primary
+                                              : Theme.of(context)
+                                                    .colorScheme
+                                                    .outline
+                                                    .withValues(
+                                                      alpha: 0.3 * 255,
+                                                    ),
+                                          border: Border.all(
+                                            color: Theme.of(context)
                                                 .colorScheme
                                                 .outline
-                                                .withValues(alpha: 0.3 * 255),
-                                      border: Border.all(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .outline
-                                            .withValues(alpha: 0.5 * 255),
-                                        width: 1,
-                                      ),
-                                    ),
-                                  );
-                                }),
+                                                .withValues(alpha: 0.5 * 255),
+                                            width: 1,
+                                          ),
+                                        ),
+                                        child:
+                                            _isPinVisible &&
+                                                _digits[index].isNotEmpty
+                                            ? Center(
+                                                child: Text(
+                                                  _digits[index],
+                                                  style: TextStyle(
+                                                    color: Theme.of(
+                                                      context,
+                                                    ).colorScheme.onPrimary,
+                                                    fontSize: 10,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              )
+                                            : null,
+                                      );
+                                    }),
+                                  ),
+                                );
+                              },
+                            ),
+                            IconButton(
+                              onPressed: () => setState(
+                                () => _isPinVisible = !_isPinVisible,
                               ),
-                            );
-                          },
+                              icon: Icon(
+                                _isPinVisible
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                                size: 20,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.6),
+                              ),
+                            ),
+                          ],
                         ),
 
                         if (_errorMessage != null) ...[

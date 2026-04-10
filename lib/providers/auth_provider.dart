@@ -46,6 +46,10 @@ class AuthProvider extends ChangeNotifier {
           );
         }
 
+        // Atualiza o e-mail de recuperação para o usuário atual,
+        // garantindo que contas diferentes não compartilhem o mesmo e-mail.
+        await _pinRecoveryService.saveUserEmail(email);
+
         if (remember) {
           final prefs = await SharedPreferences.getInstance();
           await prefs.setString('user_id', _user!.id);
@@ -125,6 +129,8 @@ class AuthProvider extends ChangeNotifier {
       );
       if (result.isNotEmpty) {
         _user = User.fromMap(result.first);
+        // Garante que o e-mail de recuperação está sincronizado com o usuário atual
+        await _pinRecoveryService.saveUserEmail(_user!.email);
         notifyListeners();
       }
     }

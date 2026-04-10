@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
@@ -590,7 +592,15 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
 
       if (files.isEmpty) return; // canceled
       final file = files.first;
-      final content = await file.readAsString();
+      // Lê como bytes e decodifica como UTF-8 com fallback para Latin-1,
+      // evitando caracteres corrompidos em diferentes plataformas.
+      final bytes = await file.readAsBytes();
+      String content;
+      try {
+        content = utf8.decode(bytes);
+      } catch (_) {
+        content = latin1.decode(bytes);
+      }
 
       if (!mounted) return;
       setState(() {
@@ -601,6 +611,8 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
         );
         richTextController.document.insert(0, content);
       });
+      // Força verificação de mudanças pois document.insert não dispara o listener
+      _checkForChanges();
     } catch (e) {
       // Garante reset da flag em caso de erro
       pinProvider.isPickingExternalMedia = false;
