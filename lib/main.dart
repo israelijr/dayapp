@@ -263,33 +263,35 @@ class _AppLoaderState extends State<AppLoader> {
             ],
             supportedLocales: AppLocalizations.supportedLocales,
             locale: PlatformDispatcher.instance.locale,
-            home: Scaffold(
-              body: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.error_outline,
-                      size: 64,
-                      color: Theme.of(context).colorScheme.error,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      AppLocalizations.of(context)!.errorInitializingApp,
-                      style: const TextStyle(fontSize: 20),
-                    ),
-                    const SizedBox(height: 8),
-                    Text('${snapshot.error}', textAlign: TextAlign.center),
-                    const SizedBox(height: 24),
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          _initFuture = _initializeApp();
-                        });
-                      },
-                      child: Text(AppLocalizations.of(context)!.tryAgain),
-                    ),
-                  ],
+            home: Builder(
+              builder: (context) => Scaffold(
+                body: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.error_outline,
+                        size: 64,
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        AppLocalizations.of(context)!.errorInitializingApp,
+                        style: const TextStyle(fontSize: 20),
+                      ),
+                      const SizedBox(height: 8),
+                      Text('${snapshot.error}', textAlign: TextAlign.center),
+                      const SizedBox(height: 24),
+                      ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            _initFuture = _initializeApp();
+                          });
+                        },
+                        child: Text(AppLocalizations.of(context)!.tryAgain),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
