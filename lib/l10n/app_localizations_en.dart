@@ -1455,11 +1455,12 @@ class AppLocalizationsEn extends AppLocalizations {
       'Entries with a date at least 2 hours ahead may have scheduled notifications.';
 
   @override
-  String get xiaomiNotificationWarningTitle => 'Xiaomi / Poco / HyperOS';
+  String get backgroundRestrictionsWarningTitle =>
+      'Notifications & Background Apps';
 
   @override
-  String get xiaomiNotificationWarningDesc =>
-      'On Xiaomi and Poco devices, the \"Pause app activity if unused\" option must be disabled. Otherwise, the system may remove permissions and cancel scheduled notifications.';
+  String get backgroundRestrictionsWarningDesc =>
+      'Some systems aggressively sleep background apps to save battery, which may block the app\'s scheduled notifications. To ensure proper functioning, open the app\'s settings on your device and:\n• Disable \'Pause app activity if unused\' (or similar option).\n• Set battery restrictions to \'Unrestricted\' (don\'t worry, background battery consumption is negligible).';
 
   @override
   String get defaultAdvanceTitle => 'Default advance';

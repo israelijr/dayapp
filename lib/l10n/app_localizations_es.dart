@@ -1471,11 +1471,12 @@ class AppLocalizationsEs extends AppLocalizations {
       'Las entradas con fecha al menos 2 horas por delante pueden tener notificaciones programadas.';
 
   @override
-  String get xiaomiNotificationWarningTitle => 'Xiaomi / Poco / HyperOS';
+  String get backgroundRestrictionsWarningTitle =>
+      'Notificaciones y Segundo Plano';
 
   @override
-  String get xiaomiNotificationWarningDesc =>
-      'En dispositivos Xiaomi y Poco, la opción \"Pausar actividad de la app cuando no se usa\" debe estar desactivada. De lo contrario, el sistema puede eliminar permisos y cancelar las notificaciones programadas.';
+  String get backgroundRestrictionsWarningDesc =>
+      'Algunos sistemas reducen drásticamente las actividades en segundo plano para ahorrar energía, lo que puede bloquear las notificaciones programadas. Para asegurar el funcionamiento correcto, abre las configuraciones de la aplicación en tu dispositivo y:\n• Desactiva la opción \'Pausar actividad de la app cuando no se usa\' (o similar).\n• Define las restricciones de batería como \'Sin restricciones\' (no te preocupes, el consumo de batería en segundo plano es insignificante).';
 
   @override
   String get defaultAdvanceTitle => 'Antelación predeterminada';

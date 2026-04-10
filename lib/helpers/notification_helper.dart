@@ -75,6 +75,22 @@ class NotificationHelper {
               padding: const EdgeInsets.all(16.0),
               child: Text(loc.notificationDialogPrompt),
             ),
+            ListTile(
+              leading: Icon(
+                Icons.warning_amber_rounded,
+                color: Theme.of(context).colorScheme.tertiary,
+              ),
+              title: Text(
+                loc.backgroundRestrictionsWarningTitle,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(
+                loc.backgroundRestrictionsWarningDesc,
+                style: const TextStyle(fontSize: 12),
+              ),
+              dense: true,
+            ),
+            const Divider(),
             ...NotificationPreferencesService.advanceOptions.map((minutes) {
               final notificationTime = calculateNotificationTime(
                 entryDate,

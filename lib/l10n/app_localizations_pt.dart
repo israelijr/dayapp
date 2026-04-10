@@ -1463,11 +1463,12 @@ class AppLocalizationsPt extends AppLocalizations {
       'Entradas com data pelo menos 2 horas à frente podem ter notificações agendadas.';
 
   @override
-  String get xiaomiNotificationWarningTitle => 'Xiaomi / Poco / HyperOS';
+  String get backgroundRestrictionsWarningTitle =>
+      'Notificações e Segundo Plano';
 
   @override
-  String get xiaomiNotificationWarningDesc =>
-      'Em dispositivos Xiaomi e Poco, a opção \"Pausar atividade do app quando sem uso\" deve estar desativada. Caso contrário, o sistema pode remover permissões e cancelar as notificações agendadas.';
+  String get backgroundRestrictionsWarningDesc =>
+      'Alguns sistemas reduzem drasticamente as atividades em segundo plano para economizar energia, o que pode bloquear suas notificações agendadas. Para garantir o funcionamento correto, abra as configurações do aplicativo no seu dispositivo e:\n• Desative a opção \'Pausar atividade do app quando sem uso\' (ou similar).\n• Defina as restrições de bateria como \'Sem Restrição\' (não se preocupe, o consumo de bateria do DayApp em segundo plano é desprezível).';
 
   @override
   String get defaultAdvanceTitle => 'Antecedência Padrão';
@@ -3860,11 +3861,12 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
       'Entradas com data pelo menos 2 horas à frente podem ter notificações agendadas.';
 
   @override
-  String get xiaomiNotificationWarningTitle => 'Xiaomi / Poco / HyperOS';
+  String get backgroundRestrictionsWarningTitle =>
+      'Notificações e Segundo Plano';
 
   @override
-  String get xiaomiNotificationWarningDesc =>
-      'Em dispositivos Xiaomi e Poco, a opção \"Pausar atividade do app quando sem uso\" deve estar desativada. Caso contrário, o sistema pode remover permissões e cancelar as notificações agendadas.';
+  String get backgroundRestrictionsWarningDesc =>
+      'Alguns sistemas reduzem drasticamente as atividades em segundo plano para economizar energia, o que pode bloquear suas notificações agendadas. Para garantir o funcionamento correto, abra as configurações do aplicativo no seu dispositivo e:\n• Desative a opção \'Pausar atividade do app quando sem uso\' (ou similar).\n• Defina as restrições de bateria como \'Sem Restrição\' (não se preocupe, o consumo de bateria do DayApp em segundo plano é desprezível).';
 
   @override
   String get defaultAdvanceTitle => 'Antecedência Padrão';
