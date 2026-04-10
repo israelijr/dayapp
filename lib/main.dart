@@ -118,6 +118,9 @@ class AppLoader extends StatefulWidget {
 class _AppLoaderState extends State<AppLoader> {
   late Future<AppInitData> _initFuture;
 
+  /// Payload de notificação aguardando o navigator estar pronto (cold start).
+  String? _pendingNotificationPayload;
+
   @override
   void initState() {
     super.initState();
@@ -157,10 +160,14 @@ class _AppLoaderState extends State<AppLoader> {
       if (payload != null) {
         // Verifica se é uma notificação de engajamento
         if (payload == 'engagement') {
-          // Registra que o usuário interagiu com a notificação
           await EngagementService().registerAppUsage();
-          // Navega para a tela inicial (o app decidirá se precisa de login)
-          // Como o app já está abrindo, a rota inicial será respeitada
+          return;
+        }
+
+        // Se o navigator ainda não está pronto (app reiniciando), guarda o
+        // payload para navegar após a inicialização completar.
+        if (navigatorKey.currentState == null) {
+          if (mounted) setState(() => _pendingNotificationPayload = payload);
           return;
         }
 
@@ -186,6 +193,19 @@ class _AppLoaderState extends State<AppLoader> {
 
     // Aguarda inicializações em paralelo
     await Future.wait([notificationsFuture, engagementFuture]);
+
+    // Verifica se o app foi iniciado por um toque em notificação (cold start).
+    // Nesse caso, onDidReceiveNotificationResponse não é chamado; o payload
+    // precisa ser recuperado aqui e aplicado após o navigator estar pronto.
+    final coldStartPayload = await NotificationService()
+        .getPendingLaunchPayload();
+    if (coldStartPayload != null) {
+      if (coldStartPayload == 'engagement') {
+        await EngagementService().registerAppUsage();
+      } else {
+        _pendingNotificationPayload = coldStartPayload;
+      }
+    }
 
     return AppInitData(
       authProvider: authProvider,
@@ -278,6 +298,32 @@ class _AppLoaderState extends State<AppLoader> {
 
         // Inicialização completa - carrega o app principal
         final data = snapshot.data!;
+
+        // Se houver payload pendente de notificação (cold start), navega após
+        // o frame ser pintado para garantir que o navigator já está montado.
+        if (_pendingNotificationPayload != null) {
+          WidgetsBinding.instance.addPostFrameCallback((_) async {
+            final payload = _pendingNotificationPayload;
+            if (payload == null || !mounted) return;
+            setState(() => _pendingNotificationPayload = null);
+
+            final int? historiaId = int.tryParse(payload);
+            if (historiaId != null) {
+              final Historia? historia = await DatabaseHelper().getHistoria(
+                historiaId,
+              );
+              if (historia != null && mounted) {
+                navigatorKey.currentState?.push(
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        EditHistoriaScreen(historia: historia),
+                  ),
+                );
+              }
+            }
+          });
+        }
+
         return MyApp(
           authProvider: data.authProvider,
           themeProvider: data.themeProvider,

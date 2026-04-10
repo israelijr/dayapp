@@ -215,4 +215,19 @@ class NotificationService {
       // Erro ao agendar notificação de engajamento - ignora silenciosamente
     }
   }
+
+  /// Retorna o payload de notificação que iniciou o app (cold start).
+  /// Deve ser chamado uma única vez durante a inicialização.
+  Future<String?> getPendingLaunchPayload() async {
+    try {
+      final details = await flutterLocalNotificationsPlugin
+          .getNotificationAppLaunchDetails();
+      if (details != null && details.didNotificationLaunchApp) {
+        return details.notificationResponse?.payload;
+      }
+    } catch (e) {
+      // Plataforma pode não suportar este recurso - ignora silenciosamente
+    }
+    return null;
+  }
 }
