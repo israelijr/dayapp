@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../db/database_helper.dart';
+import '../providers/auth_provider.dart';
 import '../providers/locale_provider.dart';
 import '../providers/pin_provider.dart';
 import '../providers/premium_provider.dart';
@@ -181,7 +182,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _loadUserEmail() async {
-    final email = await _recoveryService.getUserEmail();
+    final auth = Provider.of<AuthProvider>(context, listen: false);
+    final email = await _recoveryService.getUserEmail(userId: auth.user?.id);
     setState(() {
       _userEmail = email;
     });
@@ -1333,7 +1335,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               }
 
               Navigator.of(dialogBuilderContext).pop(); // Fecha antes do await
-              await _recoveryService.saveUserEmail(email);
+              final auth = Provider.of<AuthProvider>(context, listen: false);
+              await _recoveryService.saveUserEmail(
+                email,
+                userId: auth.user?.id,
+              );
               await _loadUserEmail();
 
               if (!mounted) return;

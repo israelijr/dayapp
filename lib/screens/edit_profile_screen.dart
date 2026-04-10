@@ -8,8 +8,8 @@ import 'package:provider/provider.dart';
 
 import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
-// ...existing code...
 import '../services/file_utils.dart';
+import '../widgets/custom_text_field.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -142,6 +142,219 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         _errorMessage = AppLocalizations.of(context)!.profileUpdateError;
       });
     }
+  }
+
+  void _showChangeEmailDialog() {
+    final loc = AppLocalizations.of(context)!;
+    final newEmailController = TextEditingController();
+    String? dialogError;
+
+    showDialog(
+      context: context,
+      builder: (dialogCtx) => StatefulBuilder(
+        builder: (dialogCtx, setDialogState) => AlertDialog(
+          title: Text(loc.changeEmail),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CustomTextField(
+                controller: newEmailController,
+                label: loc.email,
+                keyboardType: TextInputType.emailAddress,
+                prefixIcon: const Icon(Icons.email_outlined),
+              ),
+              if (dialogError != null) ...[
+                const SizedBox(height: 8),
+                Text(
+                  dialogError!,
+                  style: TextStyle(
+                    color: Theme.of(dialogCtx).colorScheme.error,
+                  ),
+                ),
+              ],
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogCtx).pop(),
+              child: Text(loc.cancel),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final newEmail = newEmailController.text.trim();
+                final emailRegex = RegExp(
+                  r'^[\w\-\.]+@([\w\-]+\.)+[\w\-]{2,}$',
+                );
+                if (newEmail.isEmpty) {
+                  setDialogState(() => dialogError = loc.emailRequired);
+                  return;
+                }
+                if (!emailRegex.hasMatch(newEmail)) {
+                  setDialogState(() => dialogError = loc.emailInvalid);
+                  return;
+                }
+
+                Navigator.of(dialogCtx).pop();
+                final auth = context.read<AuthProvider>();
+                final success = await auth.updateEmail(newEmail);
+
+                if (!mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      success
+                          ? loc.emailChangedSuccess
+                          : loc.emailAlreadyRegistered,
+                    ),
+                    backgroundColor: success
+                        ? Colors.green
+                        : Theme.of(context).colorScheme.error,
+                  ),
+                );
+
+                if (success) {
+                  // Atualiza o campo de e-mail visível na tela
+                  setState(() {
+                    _emailController.text = newEmail;
+                  });
+                }
+              },
+              child: Text(loc.save),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showChangePasswordDialog() {
+    final loc = AppLocalizations.of(context)!;
+    final currentPasswordController = TextEditingController();
+    final newPasswordController = TextEditingController();
+    final confirmPasswordController = TextEditingController();
+    bool obscureCurrent = true;
+    bool obscureNew = true;
+    bool obscureConfirm = true;
+    String? dialogError;
+
+    showDialog(
+      context: context,
+      builder: (dialogCtx) => StatefulBuilder(
+        builder: (dialogCtx, setDialogState) => AlertDialog(
+          title: Text(loc.changePassword),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CustomTextField(
+                  controller: currentPasswordController,
+                  label: loc.currentPassword,
+                  obscureText: obscureCurrent,
+                  prefixIcon: const Icon(Icons.lock_outline),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      obscureCurrent ? Icons.visibility_off : Icons.visibility,
+                    ),
+                    onPressed: () =>
+                        setDialogState(() => obscureCurrent = !obscureCurrent),
+                  ),
+                ),
+                CustomTextField(
+                  controller: newPasswordController,
+                  label: loc.newPinLabel,
+                  obscureText: obscureNew,
+                  prefixIcon: const Icon(Icons.lock),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      obscureNew ? Icons.visibility_off : Icons.visibility,
+                    ),
+                    onPressed: () =>
+                        setDialogState(() => obscureNew = !obscureNew),
+                  ),
+                ),
+                CustomTextField(
+                  controller: confirmPasswordController,
+                  label: loc.confirmPassword,
+                  obscureText: obscureConfirm,
+                  prefixIcon: const Icon(Icons.lock),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      obscureConfirm ? Icons.visibility_off : Icons.visibility,
+                    ),
+                    onPressed: () =>
+                        setDialogState(() => obscureConfirm = !obscureConfirm),
+                  ),
+                ),
+                if (dialogError != null) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    dialogError!,
+                    style: TextStyle(
+                      color: Theme.of(dialogCtx).colorScheme.error,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogCtx).pop(),
+              child: Text(loc.cancel),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final current = currentPasswordController.text;
+                final newPass = newPasswordController.text;
+                final confirm = confirmPasswordController.text;
+
+                if (current.isEmpty || newPass.isEmpty || confirm.isEmpty) {
+                  setDialogState(() => dialogError = loc.fillAllFields);
+                  return;
+                }
+                if (newPass.length < 4) {
+                  setDialogState(() => dialogError = loc.newPasswordMinLength);
+                  return;
+                }
+                if (newPass != confirm) {
+                  setDialogState(() => dialogError = loc.passwordsDoNotMatch);
+                  return;
+                }
+
+                Navigator.of(dialogCtx).pop();
+                final auth = context.read<AuthProvider>();
+                final result = await auth.changePassword(
+                  currentPassword: current,
+                  newPassword: newPass,
+                );
+
+                if (!mounted) return;
+                String message;
+                bool isError = false;
+                if (result == 'ok') {
+                  message = loc.passwordChangedSuccess;
+                } else if (result == 'wrongPassword') {
+                  message = loc.wrongCurrentPassword;
+                  isError = true;
+                } else {
+                  message = loc.profileUpdateError;
+                  isError = true;
+                }
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(message),
+                    backgroundColor: isError
+                        ? Theme.of(context).colorScheme.error
+                        : Colors.green,
+                  ),
+                );
+              },
+              child: Text(loc.save),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> _pickImage() async {
@@ -363,6 +576,26 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           AppLocalizations.of(context)!.save,
                           style: const TextStyle(fontSize: 16),
                         ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              const Divider(),
+              const SizedBox(height: 4),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  icon: const Icon(Icons.email_outlined),
+                  label: Text(AppLocalizations.of(context)!.changeEmail),
+                  onPressed: _showChangeEmailDialog,
+                ),
+              ),
+              const SizedBox(height: 8),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  icon: const Icon(Icons.lock_outline),
+                  label: Text(AppLocalizations.of(context)!.changePassword),
+                  onPressed: _showChangePasswordDialog,
                 ),
               ),
             ],

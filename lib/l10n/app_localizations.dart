@@ -4275,6 +4275,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Exporting to PDF is a Premium feature. Upgrade your plan to access it.'**
   String get exportPdfPremiumRequired;
+
+  /// Button/title to change the user email
+  ///
+  /// In en, this message translates to:
+  /// **'Change Email'**
+  String get changeEmail;
+
+  /// Button/title to change the user password
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get changePassword;
+
+  /// Label for the current password field
+  ///
+  /// In en, this message translates to:
+  /// **'Current Password'**
+  String get currentPassword;
+
+  /// Error shown when current password verification fails
+  ///
+  /// In en, this message translates to:
+  /// **'Current password is incorrect.'**
+  String get wrongCurrentPassword;
+
+  /// Success message after password change
+  ///
+  /// In en, this message translates to:
+  /// **'Password changed successfully.'**
+  String get passwordChangedSuccess;
+
+  /// Success message after email change
+  ///
+  /// In en, this message translates to:
+  /// **'Email changed successfully.'**
+  String get emailChangedSuccess;
+
+  /// Validation error when new password is too short (min 4 chars)
+  ///
+  /// In en, this message translates to:
+  /// **'New password must be at least 4 characters.'**
+  String get newPasswordMinLength;
+
+  /// Error shown when one or more required fields are empty
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill in all fields.'**
+  String get fillAllFields;
 }
 
 class _AppLocalizationsDelegate

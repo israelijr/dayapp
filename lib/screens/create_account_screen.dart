@@ -36,21 +36,29 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         passwordController.text.isEmpty ||
         confirmPasswordController.text.isEmpty) {
       setState(() {
-        errorMessage = 'Preencha todos os campos.';
+        errorMessage = AppLocalizations.of(context)!.fillAllFields;
         loading = false;
       });
       return;
     }
     if (passwordController.text != confirmPasswordController.text) {
       setState(() {
-        errorMessage = 'As senhas não coincidem.';
+        errorMessage = AppLocalizations.of(context)!.passwordsDoNotMatch;
         loading = false;
       });
       return;
     }
     if (passwordController.text.length < 6) {
       setState(() {
-        errorMessage = 'A senha deve ter pelo menos 6 caracteres.';
+        errorMessage = AppLocalizations.of(context)!.passwordMinLength;
+        loading = false;
+      });
+      return;
+    }
+    final emailRegex = RegExp(r'^[\w\-\.]+@([\w\-]+\.)+[\w\-]{2,}$');
+    if (!emailRegex.hasMatch(emailController.text.trim())) {
+      setState(() {
+        errorMessage = AppLocalizations.of(context)!.emailInvalid;
         loading = false;
       });
       return;

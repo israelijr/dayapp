@@ -1243,5 +1243,21 @@
   "pdfBackgroundGray": "Gris claro",
   "@pdfBackgroundGray": { "description": "Opción: fondo gris claro en el PDF" },
   "exportPdfPremiumRequired": "Exportar a PDF es una función Premium. Actualiza tu plan para acceder.",
-  "@exportPdfPremiumRequired": { "description": "SnackBar mostrado cuando un usuario Free intenta exportar a PDF" }
+  "@exportPdfPremiumRequired": { "description": "SnackBar mostrado cuando un usuario Free intenta exportar a PDF" },
+  "changeEmail": "Cambiar Correo",
+  "@changeEmail": { "description": "Botón/título para cambiar el correo" },
+  "changePassword": "Cambiar Contraseña",
+  "@changePassword": { "description": "Botón/título para cambiar la contraseña" },
+  "currentPassword": "Contraseña actual",
+  "@currentPassword": { "description": "Etiqueta del campo de contraseña actual" },
+  "wrongCurrentPassword": "La contraseña actual es incorrecta.",
+  "@wrongCurrentPassword": { "description": "Error cuando la verificación de la contraseña actual falla" },
+  "passwordChangedSuccess": "Contraseña cambiada correctamente.",
+  "@passwordChangedSuccess": { "description": "Mensaje de éxito tras cambiar la contraseña" },
+  "emailChangedSuccess": "Correo cambiado correctamente.",
+  "@emailChangedSuccess": { "description": "Mensaje de éxito tras cambiar el correo" },
+  "newPasswordMinLength": "La nueva contraseña debe tener al menos 4 caracteres.",
+  "@newPasswordMinLength": { "description": "Error de validación cuando la nueva contraseña es muy corta (mín. 4)" },
+  "fillAllFields": "Por favor, rellene todos los campos.",
+  "@fillAllFields": { "description": "Error mostrado cuando uno o más campos obligatorios están vacíos" }
 }

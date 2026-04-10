@@ -48,7 +48,7 @@ class AuthProvider extends ChangeNotifier {
 
         // Atualiza o e-mail de recuperação para o usuário atual,
         // garantindo que contas diferentes não compartilhem o mesmo e-mail.
-        await _pinRecoveryService.saveUserEmail(email);
+        await _pinRecoveryService.saveUserEmail(email, userId: _user!.id);
 
         if (remember) {
           final prefs = await SharedPreferences.getInstance();
@@ -100,8 +100,14 @@ class AuthProvider extends ChangeNotifier {
         fotoPerfil: fotoPerfil,
       );
 
-      // Salva o e-mail de recuperação automaticamente
-      await _pinRecoveryService.saveUserEmail(email);
+      // Salva o e-mail de recuperação automaticamente (por usuário)
+      await _pinRecoveryService.saveUserEmail(email, userId: uuid);
+
+      // Salva o ID do novo usuário em SharedPreferences para que o
+      // tryAutoLogin restaure a sessão correta ao reiniciar o app,
+      // sem retornar para a conta anterior.
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('user_id', uuid);
 
       notifyListeners();
       return true;
@@ -130,7 +136,10 @@ class AuthProvider extends ChangeNotifier {
       if (result.isNotEmpty) {
         _user = User.fromMap(result.first);
         // Garante que o e-mail de recuperação está sincronizado com o usuário atual
-        await _pinRecoveryService.saveUserEmail(_user!.email);
+        await _pinRecoveryService.saveUserEmail(
+          _user!.email,
+          userId: _user!.id,
+        );
         notifyListeners();
       }
     }
@@ -209,6 +218,86 @@ class AuthProvider extends ChangeNotifier {
       return true;
     } catch (e) {
       return false;
+    }
+  }
+
+  /// Altera o e-mail do usuário logado.
+  /// Retorna false se o novo e-mail já estiver em uso por outra conta.
+  Future<bool> updateEmail(String newEmail) async {
+    if (_user == null) return false;
+
+    try {
+      final db = await DatabaseHelper().database;
+
+      // Verifica se o novo e-mail já pertence a outra conta
+      final existing = await db.query(
+        'users',
+        where: 'email = ? AND id != ?',
+        whereArgs: [newEmail, _user!.id],
+      );
+      if (existing.isNotEmpty) return false;
+
+      await db.update(
+        'users',
+        {'email': newEmail},
+        where: 'id = ?',
+        whereArgs: [_user!.id],
+      );
+
+      _user = User(
+        id: _user!.id,
+        nome: _user!.nome,
+        email: newEmail,
+        dtNascimento: _user!.dtNascimento,
+        fotoPerfil: _user!.fotoPerfil,
+      );
+
+      // Sincroniza o e-mail de recuperação de PIN
+      await _pinRecoveryService.saveUserEmail(newEmail, userId: _user!.id);
+
+      notifyListeners();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /// Altera a senha do usuário logado verificando a senha atual.
+  /// Retorna 'wrongPassword' se a senha atual estiver errada, 'error' em
+  /// caso de falha, ou 'ok' em caso de sucesso.
+  Future<String> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    if (_user == null) return 'error';
+
+    try {
+      final db = await DatabaseHelper().database;
+      final result = await db.query(
+        'users',
+        where: 'id = ?',
+        whereArgs: [_user!.id],
+      );
+      if (result.isEmpty) return 'error';
+
+      final storedHash = result.first['senha'] as String;
+      if (!_secureStorage.verifyPassword(currentPassword, storedHash)) {
+        return 'wrongPassword';
+      }
+
+      final salt = _secureStorage.generateSalt();
+      final hashedPassword = _secureStorage.hashPassword(newPassword, salt);
+
+      await db.update(
+        'users',
+        {'senha': hashedPassword},
+        where: 'id = ?',
+        whereArgs: [_user!.id],
+      );
+
+      return 'ok';
+    } catch (e) {
+      return 'error';
     }
   }
 }

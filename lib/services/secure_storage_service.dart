@@ -160,19 +160,34 @@ class SecureStorageService {
 
   // ==================== E-mail de Recuperação ====================
 
-  /// Salva e-mail de recuperação
+  /// Salva e-mail de recuperação (global, para compatibilidade)
   Future<void> saveRecoveryEmail(String email) async {
     await _storage.write(key: _recoveryEmailKey, value: email);
   }
 
-  /// Obtém e-mail de recuperação
+  /// Obtém e-mail de recuperação (global)
   Future<String?> getRecoveryEmail() async {
     return await _storage.read(key: _recoveryEmailKey);
   }
 
-  /// Remove e-mail de recuperação
+  /// Remove e-mail de recuperação (global)
   Future<void> removeRecoveryEmail() async {
     await _storage.delete(key: _recoveryEmailKey);
+  }
+
+  /// Salva e-mail de recuperação exclusivo do usuário identificado por [userId]
+  Future<void> saveRecoveryEmailForUser(String userId, String email) async {
+    await _storage.write(key: '${_recoveryEmailKey}_$userId', value: email);
+  }
+
+  /// Obtém e-mail de recuperação exclusivo do usuário identificado por [userId]
+  Future<String?> getRecoveryEmailForUser(String userId) async {
+    return await _storage.read(key: '${_recoveryEmailKey}_$userId');
+  }
+
+  /// Remove e-mail de recuperação exclusivo do usuário identificado por [userId]
+  Future<void> removeRecoveryEmailForUser(String userId) async {
+    await _storage.delete(key: '${_recoveryEmailKey}_$userId');
   }
 
   // ==================== Migração ====================

@@ -28,8 +28,12 @@ class PinRecoveryService {
     return code.toString();
   }
 
-  /// Salva o e-mail do usuário (armazenamento seguro)
-  Future<void> saveUserEmail(String email) async {
+  /// Salva o e-mail do usuário (armazenamento seguro por usuário)
+  Future<void> saveUserEmail(String email, {String? userId}) async {
+    if (userId != null && userId.isNotEmpty) {
+      await _secureStorage.saveRecoveryEmailForUser(userId, email);
+    }
+    // Mantém também o e-mail global para compatibilidade com versões antigas
     await _secureStorage.saveRecoveryEmail(email);
 
     // Remove dados legados se existirem
@@ -38,9 +42,15 @@ class PinRecoveryService {
   }
 
   /// Obtém o e-mail do usuário salvo
-  /// Inclui migração de dados legados
-  Future<String?> getUserEmail() async {
-    // Primeiro tenta do armazenamento seguro
+  /// Prioriza a chave por userId, com fallback para chave global e dados legados
+  Future<String?> getUserEmail({String? userId}) async {
+    // Tenta primeiro a chave específica do usuário
+    if (userId != null && userId.isNotEmpty) {
+      final userEmail = await _secureStorage.getRecoveryEmailForUser(userId);
+      if (userEmail != null) return userEmail;
+    }
+
+    // Fallback: armazenamento global (compatibilidade)
     final secureEmail = await _secureStorage.getRecoveryEmail();
     if (secureEmail != null) return secureEmail;
 

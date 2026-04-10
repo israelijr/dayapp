@@ -1272,6 +1272,22 @@
   "pdfBackgroundGray": "Light gray",
   "@pdfBackgroundGray": { "description": "Option: light gray background color in the PDF" },
   "exportPdfPremiumRequired": "Exporting to PDF is a Premium feature. Upgrade your plan to access it.",
-  "@exportPdfPremiumRequired": { "description": "SnackBar shown when a Free user tries to export to PDF" }
+  "@exportPdfPremiumRequired": { "description": "SnackBar shown when a Free user tries to export to PDF" },
+  "changeEmail": "Change Email",
+  "@changeEmail": { "description": "Button/title to change the user email" },
+  "changePassword": "Change Password",
+  "@changePassword": { "description": "Button/title to change the user password" },
+  "currentPassword": "Current Password",
+  "@currentPassword": { "description": "Label for the current password field" },
+  "wrongCurrentPassword": "Current password is incorrect.",
+  "@wrongCurrentPassword": { "description": "Error shown when current password verification fails" },
+  "passwordChangedSuccess": "Password changed successfully.",
+  "@passwordChangedSuccess": { "description": "Success message after password change" },
+  "emailChangedSuccess": "Email changed successfully.",
+  "@emailChangedSuccess": { "description": "Success message after email change" },
+  "newPasswordMinLength": "New password must be at least 4 characters.",
+  "@newPasswordMinLength": { "description": "Validation error when new password is too short (min 4 chars)" },
+  "fillAllFields": "Please fill in all fields.",
+  "@fillAllFields": { "description": "Error shown when one or more required fields are empty" }
 }
 

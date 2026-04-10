@@ -2374,6 +2374,31 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get exportPdfPremiumRequired =>
       'Exportar em PDF é um recurso Premium. Faça upgrade do seu plano para aceder.';
+
+  @override
+  String get changeEmail => 'Alterar E-mail';
+
+  @override
+  String get changePassword => 'Alterar Palavra-passe';
+
+  @override
+  String get currentPassword => 'Palavra-passe atual';
+
+  @override
+  String get wrongCurrentPassword => 'A palavra-passe atual está incorreta.';
+
+  @override
+  String get passwordChangedSuccess => 'Palavra-passe alterada com sucesso.';
+
+  @override
+  String get emailChangedSuccess => 'E-mail alterado com sucesso.';
+
+  @override
+  String get newPasswordMinLength =>
+      'A nova palavra-passe deve ter pelo menos 4 caracteres.';
+
+  @override
+  String get fillAllFields => 'Por favor, preencha todos os campos.';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -4746,4 +4771,29 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get exportPdfPremiumRequired =>
       'Exportar em PDF é um recurso Premium. Faça upgrade do seu plano para acessar.';
+
+  @override
+  String get changeEmail => 'Alterar E-mail';
+
+  @override
+  String get changePassword => 'Alterar Senha';
+
+  @override
+  String get currentPassword => 'Senha atual';
+
+  @override
+  String get wrongCurrentPassword => 'A senha atual está incorreta.';
+
+  @override
+  String get passwordChangedSuccess => 'Senha alterada com sucesso.';
+
+  @override
+  String get emailChangedSuccess => 'E-mail alterado com sucesso.';
+
+  @override
+  String get newPasswordMinLength =>
+      'A nova senha deve ter pelo menos 4 caracteres.';
+
+  @override
+  String get fillAllFields => 'Por favor, preencha todos os campos.';
 }

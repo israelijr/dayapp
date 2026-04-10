@@ -2387,4 +2387,29 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get exportPdfPremiumRequired =>
       'Exportar a PDF es una función Premium. Actualiza tu plan para acceder.';
+
+  @override
+  String get changeEmail => 'Cambiar Correo';
+
+  @override
+  String get changePassword => 'Cambiar Contraseña';
+
+  @override
+  String get currentPassword => 'Contraseña actual';
+
+  @override
+  String get wrongCurrentPassword => 'La contraseña actual es incorrecta.';
+
+  @override
+  String get passwordChangedSuccess => 'Contraseña cambiada correctamente.';
+
+  @override
+  String get emailChangedSuccess => 'Correo cambiado correctamente.';
+
+  @override
+  String get newPasswordMinLength =>
+      'La nueva contraseña debe tener al menos 4 caracteres.';
+
+  @override
+  String get fillAllFields => 'Por favor, rellene todos los campos.';
 }

@@ -30,6 +30,11 @@ android {
         jvmTarget = JavaVersion.VERSION_11.toString()
     }
 
+    // Suprime warnings de bridge methods em pacotes de terceiros (ex.: video_player_android)
+    tasks.withType<JavaCompile>().configureEach {
+        options.compilerArgs.add("-Xlint:-overrides")
+    }
+
     defaultConfig {
         applicationId = "br.com.israelijr.dayapp"
         // You can update the following values to match your application needs.
@@ -38,6 +43,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        multiDexEnabled = true
     }
 
     if (keystorePropertiesFile.exists()) {

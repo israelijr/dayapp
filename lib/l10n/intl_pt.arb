@@ -1274,5 +1274,21 @@
   "pdfBackgroundGray": "Cinza claro",
   "@pdfBackgroundGray": { "description": "Opção: fundo cinza claro no PDF" },
   "exportPdfPremiumRequired": "Exportar em PDF é um recurso Premium. Faça upgrade do seu plano para aceder.",
-  "@exportPdfPremiumRequired": { "description": "SnackBar exibido quando utilizador Free tenta exportar PDF" }
+  "@exportPdfPremiumRequired": { "description": "SnackBar exibido quando utilizador Free tenta exportar PDF" },
+  "changeEmail": "Alterar E-mail",
+  "@changeEmail": { "description": "Botão/título para alterar o e-mail" },
+  "changePassword": "Alterar Palavra-passe",
+  "@changePassword": { "description": "Botão/título para alterar a palavra-passe" },
+  "currentPassword": "Palavra-passe atual",
+  "@currentPassword": { "description": "Rótulo do campo de palavra-passe atual" },
+  "wrongCurrentPassword": "A palavra-passe atual está incorreta.",
+  "@wrongCurrentPassword": { "description": "Erro quando a verificação da palavra-passe atual falha" },
+  "passwordChangedSuccess": "Palavra-passe alterada com sucesso.",
+  "@passwordChangedSuccess": { "description": "Mensagem de sucesso após alterar palavra-passe" },
+  "emailChangedSuccess": "E-mail alterado com sucesso.",
+  "@emailChangedSuccess": { "description": "Mensagem de sucesso após alterar e-mail" },
+  "newPasswordMinLength": "A nova palavra-passe deve ter pelo menos 4 caracteres.",
+  "@newPasswordMinLength": { "description": "Erro de validação quando a nova palavra-passe é curta demais (mín. 4)" },
+  "fillAllFields": "Por favor, preencha todos os campos.",
+  "@fillAllFields": { "description": "Erro exibido quando um ou mais campos obrigatórios estão vazios" }
 }

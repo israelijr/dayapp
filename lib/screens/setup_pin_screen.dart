@@ -23,6 +23,10 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
   bool _isLoading = false;
   String? _errorMessage;
 
+  bool _obscureCurrentPin = true;
+  bool _obscureNewPin = true;
+  bool _obscureConfirmPin = true;
+
   @override
   void dispose() {
     _currentPinController.dispose();
@@ -78,8 +82,18 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
                   controller: _currentPinController,
                   label: AppLocalizations.of(context)!.currentPinLabel,
                   keyboardType: TextInputType.number,
-                  obscureText: true,
+                  obscureText: _obscureCurrentPin,
                   prefixIcon: const Icon(Icons.lock_outline),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscureCurrentPin
+                          ? Icons.visibility_off
+                          : Icons.visibility,
+                    ),
+                    onPressed: () => setState(
+                      () => _obscureCurrentPin = !_obscureCurrentPin,
+                    ),
+                  ),
                   maxLength: 8,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 ),
@@ -92,8 +106,15 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
                     ? AppLocalizations.of(context)!.newPinLabel
                     : AppLocalizations.of(context)!.pinLabel,
                 keyboardType: TextInputType.number,
-                obscureText: true,
+                obscureText: _obscureNewPin,
                 prefixIcon: const Icon(Icons.lock),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscureNewPin ? Icons.visibility_off : Icons.visibility,
+                  ),
+                  onPressed: () =>
+                      setState(() => _obscureNewPin = !_obscureNewPin),
+                ),
                 maxLength: 8,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               ),
@@ -103,8 +124,17 @@ class _SetupPinScreenState extends State<SetupPinScreen> {
                 controller: _confirmPinController,
                 label: AppLocalizations.of(context)!.confirmPin,
                 keyboardType: TextInputType.number,
-                obscureText: true,
+                obscureText: _obscureConfirmPin,
                 prefixIcon: const Icon(Icons.lock),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscureConfirmPin
+                        ? Icons.visibility_off
+                        : Icons.visibility,
+                  ),
+                  onPressed: () =>
+                      setState(() => _obscureConfirmPin = !_obscureConfirmPin),
+                ),
                 maxLength: 8,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               ),

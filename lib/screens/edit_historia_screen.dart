@@ -695,14 +695,20 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
         content = latin1.decode(bytes);
       }
       if (!mounted) return;
-      setState(() {
-        richTextController.document.delete(
-          0,
-          richTextController.document.length,
-        );
-        richTextController.document.insert(0, content);
-      });
-      // Força verificação de mudanças pois document.insert não dispara o listener
+      // Normaliza quebras de linha (Windows \r\n → \n, macOS antigo \r → \n)
+      final normalizedContent = content
+          .replaceAll('\r\n', '\n')
+          .replaceAll('\r', '\n');
+
+      // Usa replaceText para garantir que o controller notifique os listeners
+      // e o botão de descarte seja ativado corretamente
+      richTextController.replaceText(
+        0,
+        richTextController.document.length - 1,
+        normalizedContent,
+        null,
+      );
+      // Força verificação de mudanças caso o listener não dispare de imediato
       _checkForChanges();
     } catch (e) {
       // Garante reset da flag em caso de erro

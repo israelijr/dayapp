@@ -53,7 +53,8 @@ class _PinRecoveryScreenState extends State<PinRecoveryScreen> {
 
   /// Carrega o email de recuperação cadastrado (se existir)
   Future<void> _loadRecoveryEmail() async {
-    final email = await _recoveryService.getUserEmail();
+    final auth = Provider.of<AuthProvider>(context, listen: false);
+    final email = await _recoveryService.getUserEmail(userId: auth.user?.id);
     if (email == null || email.isEmpty || !mounted) return;
 
     setState(() {
