@@ -1,4 +1,6 @@
+import 'package:dayapp/helpers/route_transition_helper.dart';
 import 'package:dayapp/l10n/app_localizations.dart';
+import 'package:dayapp/widgets/pulse_animation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
@@ -411,8 +413,8 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
               );
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => EditHistoriaScreen(historia: historia),
+                RouteTransitionHelper.slideUpRotateTransition(
+                  EditHistoriaScreen(historia: historia),
                 ),
               ).then((updated) {
                 if (!mounted) return;
@@ -743,8 +745,8 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
               if (value == 'edit') {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) => EditHistoriaScreen(historia: historia),
+                  RouteTransitionHelper.slideUpRotateTransition(
+                    EditHistoriaScreen(historia: historia),
                   ),
                 ).then((updated) {
                   if (!mounted) return;
@@ -994,22 +996,27 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: Padding(
           padding: const EdgeInsets.only(bottom: 12),
-          child: FloatingActionButton.extended(
-            onPressed: () {
-              final refreshProvider = Provider.of<RefreshProvider>(
-                context,
-                listen: false,
-              );
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const CreateHistoriaScreen()),
-              ).then((created) {
-                if (!mounted) return;
-                refreshProvider.refresh();
-              });
-            },
-            icon: const Icon(Icons.add),
-            label: Text(AppLocalizations.of(context)!.newStory),
+          child: PulseAnimation(
+            scaleTarget: 1.06,
+            child: FloatingActionButton.extended(
+              onPressed: () {
+                final refreshProvider = Provider.of<RefreshProvider>(
+                  context,
+                  listen: false,
+                );
+                Navigator.push(
+                  context,
+                  RouteTransitionHelper.slideUpRotateTransition(
+                    const CreateHistoriaScreen(),
+                  ),
+                ).then((created) {
+                  if (!mounted) return;
+                  refreshProvider.refresh();
+                });
+              },
+              icon: const Icon(Icons.add),
+              label: Text(AppLocalizations.of(context)!.newStory),
+            ),
           ),
         ),
       ), // Scaffold

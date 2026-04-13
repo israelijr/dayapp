@@ -1,3 +1,4 @@
+import 'package:dayapp/helpers/route_transition_helper.dart';
 import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -664,7 +665,9 @@ class _SearchScreenState extends State<SearchScreen> {
     );
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => EditHistoriaScreen(historia: historia)),
+      RouteTransitionHelper.slideUpRotateTransition(
+        EditHistoriaScreen(historia: historia),
+      ),
     ).then((updated) {
       if (updated == true) {
         _performSearch();

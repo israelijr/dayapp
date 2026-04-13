@@ -1,3 +1,4 @@
+import 'package:dayapp/helpers/route_transition_helper.dart';
 import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -419,8 +420,8 @@ class _HomeContentState extends State<HomeContent> {
               );
               navigator
                   .push(
-                    MaterialPageRoute(
-                      builder: (_) => EditHistoriaScreen(historia: historia),
+                    RouteTransitionHelper.slideUpRotateTransition(
+                      EditHistoriaScreen(historia: historia),
                     ),
                   )
                   .then((updated) {
@@ -698,8 +699,8 @@ class _HomeContentState extends State<HomeContent> {
             if (value == 'edit') {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => EditHistoriaScreen(historia: historia),
+                RouteTransitionHelper.slideUpRotateTransition(
+                  EditHistoriaScreen(historia: historia),
                 ),
               ).then((updated) {
                 if (!mounted) return;

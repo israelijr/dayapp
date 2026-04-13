@@ -1,3 +1,4 @@
+import 'package:dayapp/helpers/route_transition_helper.dart';
 import 'dart:io';
 import 'dart:ui';
 
@@ -179,8 +180,8 @@ class _AppLoaderState extends State<AppLoader> {
           );
           if (historia != null) {
             navigatorKey.currentState?.push(
-              MaterialPageRoute(
-                builder: (context) => EditHistoriaScreen(historia: historia),
+              RouteTransitionHelper.slideUpRotateTransition(
+                EditHistoriaScreen(historia: historia),
               ),
             );
           }
@@ -316,9 +317,8 @@ class _AppLoaderState extends State<AppLoader> {
               );
               if (historia != null && mounted) {
                 navigatorKey.currentState?.push(
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        EditHistoriaScreen(historia: historia),
+                  RouteTransitionHelper.slideUpRotateTransition(
+                    EditHistoriaScreen(historia: historia),
                   ),
                 );
               }

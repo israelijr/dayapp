@@ -1,3 +1,6 @@
+import 'package:dayapp/screens/create_historia_screen.dart';
+import 'package:dayapp/helpers/route_transition_helper.dart';
+import "package:dayapp/widgets/pulse_animation.dart";
 import 'dart:io';
 
 import 'package:dayapp/l10n/generated/app_localizations.dart';
@@ -755,12 +758,20 @@ class _HomeScreenState extends State<HomeScreen> {
             : const SearchScreen(),
         // Mostra o FAB apenas nas abas Home e Grupos
         floatingActionButton: _selectedIndex != 2
-            ? FloatingActionButton.extended(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/create_historia');
-                },
-                icon: const Icon(Icons.add),
-                label: Text(AppLocalizations.of(context)!.newStory),
+            ? PulseAnimation(
+                scaleTarget: 1.06,
+                child: FloatingActionButton.extended(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      RouteTransitionHelper.slideUpRotateTransition(
+                        const CreateHistoriaScreen(),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.add),
+                  label: Text(AppLocalizations.of(context)!.newStory),
+                ),
               )
             : null,
         bottomNavigationBar: NavigationBar(

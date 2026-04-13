@@ -1,3 +1,4 @@
+import 'package:dayapp/helpers/route_transition_helper.dart';
 import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -345,8 +346,8 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
               );
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => EditHistoriaScreen(historia: historia),
+                RouteTransitionHelper.slideUpRotateTransition(
+                  EditHistoriaScreen(historia: historia),
                 ),
               ).then((updated) {
                 if (!mounted) return;
@@ -457,9 +458,8 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
                                   );
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(
-                                  builder: (_) =>
-                                      EditHistoriaScreen(historia: historia),
+                                RouteTransitionHelper.slideUpRotateTransition(
+                                  EditHistoriaScreen(historia: historia),
                                 ),
                               ).then((updated) {
                                 if (!mounted) return;
@@ -676,8 +676,8 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
               if (value == 'edit') {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) => EditHistoriaScreen(historia: historia),
+                  RouteTransitionHelper.slideUpRotateTransition(
+                    EditHistoriaScreen(historia: historia),
                   ),
                 ).then((updated) {
                   if (!mounted) return;
@@ -884,7 +884,9 @@ class _ArchivedStoriesScreenState extends State<ArchivedStoriesScreen> {
             );
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const CreateHistoriaScreen()),
+              RouteTransitionHelper.slideUpRotateTransition(
+                const CreateHistoriaScreen(),
+              ),
             ).then((created) {
               if (!mounted) return;
               refreshProvider.refresh();

@@ -1,3 +1,4 @@
+import 'package:dayapp/helpers/route_transition_helper.dart';
 import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -334,8 +335,8 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
         onDoubleTap: () async {
           final result = await Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (_) => EditHistoriaScreen(historia: historia),
+            RouteTransitionHelper.slideUpRotateTransition(
+              EditHistoriaScreen(historia: historia),
             ),
           );
           if (result == true) {
@@ -398,9 +399,8 @@ class _CalendarViewScreenState extends State<CalendarViewScreen> {
                       if (value == 'edit') {
                         final result = await Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                EditHistoriaScreen(historia: historia),
+                          RouteTransitionHelper.slideUpRotateTransition(
+                            EditHistoriaScreen(historia: historia),
                           ),
                         );
                         if (result == true) {
