@@ -5,10 +5,10 @@ class RouteTransitionHelper {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) => page,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        var scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+        final scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
           CurvedAnimation(parent: animation, curve: Curves.fastOutSlowIn),
         );
-        var fadeAnimation = Tween<double>(
+        final fadeAnimation = Tween<double>(
           begin: 0.0,
           end: 1.0,
         ).animate(CurvedAnimation(parent: animation, curve: Curves.easeIn));
@@ -27,7 +27,7 @@ class RouteTransitionHelper {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) => page,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        var offsetAnimation =
+        final offsetAnimation =
             Tween<Offset>(
               begin: const Offset(0.0, 0.8),
               end: Offset.zero,
@@ -35,15 +35,15 @@ class RouteTransitionHelper {
               CurvedAnimation(parent: animation, curve: Curves.easeOutBack),
             );
 
-        var scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+        final scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
           CurvedAnimation(parent: animation, curve: Curves.easeOutBack),
         );
 
-        var rotationAnimation = Tween<double>(begin: 0.03, end: 0.0).animate(
+        final rotationAnimation = Tween<double>(begin: 0.03, end: 0.0).animate(
           CurvedAnimation(parent: animation, curve: Curves.easeOutBack),
         );
 
-        var fadeAnimation = Tween<double>(
+        final fadeAnimation = Tween<double>(
           begin: 0.0,
           end: 1.0,
         ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOut));

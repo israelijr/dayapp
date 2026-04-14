@@ -1,7 +1,7 @@
-import 'package:dayapp/helpers/route_transition_helper.dart';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:dayapp/helpers/route_transition_helper.dart';
 import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';

@@ -1,9 +1,9 @@
-import 'package:dayapp/screens/create_historia_screen.dart';
-import 'package:dayapp/helpers/route_transition_helper.dart';
-import "package:dayapp/widgets/pulse_animation.dart";
 import 'dart:io';
 
+import 'package:dayapp/helpers/route_transition_helper.dart';
 import 'package:dayapp/l10n/generated/app_localizations.dart';
+import 'package:dayapp/screens/create_historia_screen.dart';
+import 'package:dayapp/widgets/pulse_animation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';

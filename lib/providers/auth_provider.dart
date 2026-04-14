@@ -103,6 +103,11 @@ class AuthProvider extends ChangeNotifier {
       // Salva o e-mail de recuperação automaticamente (por usuário)
       await _pinRecoveryService.saveUserEmail(email, userId: uuid);
 
+      // Remove credenciais biométricas de qualquer conta anterior,
+      // garantindo que a tela de login mostre o checkbox de configuração
+      // de biometria em vez do botão de login biométrico da conta antiga.
+      await _secureStorage.removeBiometricCredentials();
+
       // Salva o ID do novo usuário em SharedPreferences para que o
       // tryAutoLogin restaure a sessão correta ao reiniciar o app,
       // sem retornar para a conta anterior.

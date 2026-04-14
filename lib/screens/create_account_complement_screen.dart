@@ -77,7 +77,11 @@ class _CreateAccountComplementScreenState
     setState(() {
       loading = false;
     });
-    navigator.popUntil(ModalRoute.withName('/login'));
+    // Navega para uma nova instância da tela de login, removendo toda a
+    // pilha de criação de conta. Isso garante que o initState rode novamente
+    // e a verificação de biometria reflita o estado real (sem credenciais
+    // da conta anterior).
+    navigator.pushNamedAndRemoveUntil('/login', (route) => false);
   }
 
   @override
