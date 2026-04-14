@@ -190,6 +190,26 @@ class SecureStorageService {
     await _storage.delete(key: '${_recoveryEmailKey}_$userId');
   }
 
+  // ==================== Chave de Backup Automático ====================
+
+  static const String _autoBackupKeyKey = '_auto_backup_key';
+
+  /// Retorna a chave de criptografia dos backups automáticos, criando-a
+  /// na primeira chamada. A chave é gerada aleatoriamente (256 bits),
+  /// armazenada no Keystore do Android e nunca fica exposta fora do dispositivo.
+  /// É deletada junto com o app no uninstall, o que é intencional: os arquivos
+  /// de backup automático também são deletados no uninstall.
+  Future<String> getOrCreateAutoBackupKey() async {
+    final existing = await _storage.read(key: _autoBackupKeyKey);
+    if (existing != null) return existing;
+
+    final random = Random.secure();
+    final keyBytes = List<int>.generate(32, (_) => random.nextInt(256));
+    final key = base64.encode(keyBytes);
+    await _storage.write(key: _autoBackupKeyKey, value: key);
+    return key;
+  }
+
   // ==================== Migração ====================
 
   /// Migra dados do SharedPreferences para SecureStorage

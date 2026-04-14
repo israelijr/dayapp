@@ -2391,4 +2391,63 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fillAllFields => 'Please fill in all fields.';
+
+  @override
+  String get backupInfoDialogTitle => 'About backup';
+
+  @override
+  String get backupInfoDialogContent =>
+      '📦  What is included in the backup\n• All your stories (texts, photos, audios, videos)\n• App database\n• Chapter photos\n\n📂  How to store your backup\nAfter creation, use the share menu to save the file wherever you like — OneDrive, Google Drive, e-mail or any other service.\n\n🔒  Backup password\nEvery backup you create is encrypted with a password you define at the time of creation.\n\nThis password is known only to you. It is not stored anywhere in the app.\n\n⚠️  If you forget your password, the backup file will be permanently inaccessible — not even our support team will be able to recover your data.\n\nAlways store your backup password in a safe place outside the app.';
+
+  @override
+  String get backupPasswordDialogTitle => 'Protect your backup';
+
+  @override
+  String get backupPasswordDescription =>
+      'Set a password to encrypt your backup file. The contents will be protected and unreadable to anyone who does not have this password.';
+
+  @override
+  String get backupPasswordWarningTitle =>
+      '⚠️  Important — read before continuing';
+
+  @override
+  String get backupPasswordWarning =>
+      'This password is known only to you. It is not stored anywhere in the app or on our servers.\n\nIf you forget it, the backup file will be permanently inaccessible — not even our team will be able to help you recover the data.\n\nStore this password in a safe place before proceeding.';
+
+  @override
+  String get backupPasswordField => 'Password';
+
+  @override
+  String get backupPasswordConfirmField => 'Confirm password';
+
+  @override
+  String get backupPasswordMismatch =>
+      'The passwords do not match. Please try again.';
+
+  @override
+  String get backupPasswordTooShort =>
+      'Password must be at least 6 characters.';
+
+  @override
+  String get backupPasswordEmpty => 'Please enter a password.';
+
+  @override
+  String get backupCreateEncrypted => 'Create encrypted backup';
+
+  @override
+  String get restorePasswordDialogTitle => 'Enter the backup password';
+
+  @override
+  String get restorePasswordDescription =>
+      'If you set a password when creating this backup, enter it below.\n\nIf the backup was created without a password, leave the field blank.';
+
+  @override
+  String get restorePasswordField => 'Password (leave blank if none was set)';
+
+  @override
+  String get restorePasswordWrong =>
+      'Incorrect password or unreadable backup. Check the password and try again.';
+
+  @override
+  String get restoreContinue => 'Continue';
 }

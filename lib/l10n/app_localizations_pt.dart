@@ -2400,6 +2400,66 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get fillAllFields => 'Por favor, preencha todos os campos.';
+
+  @override
+  String get backupInfoDialogTitle => 'Sobre o backup';
+
+  @override
+  String get backupInfoDialogContent =>
+      '📦  O que está incluído no backup\n• Todas as suas histórias (textos, fotos, áudios, vídeos)\n• Base de dados do app\n• Fotos de capítulos\n\n📂  Como guardar o seu backup\nApós a criação, utilize o menu de partilha para guardar o ficheiro onde preferir — OneDrive, Google Drive, e-mail ou outro serviço.\n\n🔒  Senha do backup\nCada backup que cria é protegido com uma senha que define no momento da criação.\n\nEsta senha é conhecida apenas por si. Não é guardada em nenhum lugar do app.\n\n⚠️  Se esquecer a senha, o ficheiro de backup ficará permanentemente inacessível — nem a nossa equipa de apoio conseguirá recuperar os seus dados.\n\nGuarde sempre a senha do backup num local seguro fora do app.';
+
+  @override
+  String get backupPasswordDialogTitle => 'Proteja o seu backup';
+
+  @override
+  String get backupPasswordDescription =>
+      'Defina uma senha para encriptar o ficheiro de backup. O conteúdo ficará protegido e ilegível para quem não tiver esta senha.';
+
+  @override
+  String get backupPasswordWarningTitle =>
+      '⚠️  Importante — leia antes de continuar';
+
+  @override
+  String get backupPasswordWarning =>
+      'Esta senha é conhecida apenas por si. Não é guardada em nenhum lugar no app nem nos nossos servidores.\n\nSe a esquecer, o ficheiro de backup ficará permanentemente inacessível — nem a nossa equipa conseguirá ajudar a recuperar os dados.\n\nGuarde esta senha num local seguro antes de continuar.';
+
+  @override
+  String get backupPasswordField => 'Senha';
+
+  @override
+  String get backupPasswordConfirmField => 'Confirmar senha';
+
+  @override
+  String get backupPasswordMismatch =>
+      'As senhas não coincidem. Por favor, tente novamente.';
+
+  @override
+  String get backupPasswordTooShort =>
+      'A senha deve ter pelo menos 6 caracteres.';
+
+  @override
+  String get backupPasswordEmpty => 'Por favor, insira uma senha.';
+
+  @override
+  String get backupCreateEncrypted => 'Criar backup encriptado';
+
+  @override
+  String get restorePasswordDialogTitle => 'Introduza a senha do backup';
+
+  @override
+  String get restorePasswordDescription =>
+      'Se definiu uma senha ao criar este backup, introduza-a abaixo.\n\nSe o backup foi criado sem senha, deixe o campo em branco.';
+
+  @override
+  String get restorePasswordField =>
+      'Senha (deixe em branco se não foi definida)';
+
+  @override
+  String get restorePasswordWrong =>
+      'Senha incorreta ou backup ilegível. Verifique a senha e tente novamente.';
+
+  @override
+  String get restoreContinue => 'Continuar';
 }
 
 /// The translations for Portuguese, as used in Brazil (`pt_BR`).
@@ -4798,4 +4858,64 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get fillAllFields => 'Por favor, preencha todos os campos.';
+
+  @override
+  String get backupInfoDialogTitle => 'Sobre o backup';
+
+  @override
+  String get backupInfoDialogContent =>
+      '📦  O que está incluído no backup\n• Todas as suas histórias (textos, fotos, áudios, vídeos)\n• Banco de dados do app\n• Fotos de capítulos\n\n📂  Como guardar o seu backup\nApós a criação, use o menu de compartilhamento para salvar o arquivo onde quiser — OneDrive, Google Drive, e-mail ou qualquer outro serviço.\n\n🔒  Senha do backup\nCada backup que você cria é protegido com uma senha que você define no momento da criação.\n\nEssa senha é conhecida somente por você. Ela não é armazenada em nenhum lugar do app.\n\n⚠️  Se você esquecer a senha, o arquivo de backup ficará permanentemente inacessível — nem a nossa equipe de suporte conseguirá recuperar os seus dados.\n\nGuarde sempre a senha do backup em um local seguro fora do app.';
+
+  @override
+  String get backupPasswordDialogTitle => 'Proteja o seu backup';
+
+  @override
+  String get backupPasswordDescription =>
+      'Defina uma senha para criptografar o arquivo de backup. O conteúdo ficará protegido e ilegível para quem não tiver esta senha.';
+
+  @override
+  String get backupPasswordWarningTitle =>
+      '⚠️  Importante — leia antes de continuar';
+
+  @override
+  String get backupPasswordWarning =>
+      'Essa senha é conhecida somente por você. Ela não é armazenada em nenhum lugar no app nem nos nossos servidores.\n\nSe você esquecer a senha, o arquivo de backup ficará permanentemente inacessível — nem a nossa equipe conseguirá ajudar a recuperar os dados.\n\nGuarde essa senha em um local seguro antes de continuar.';
+
+  @override
+  String get backupPasswordField => 'Senha';
+
+  @override
+  String get backupPasswordConfirmField => 'Confirmar senha';
+
+  @override
+  String get backupPasswordMismatch =>
+      'As senhas não coincidem. Por favor, tente novamente.';
+
+  @override
+  String get backupPasswordTooShort =>
+      'A senha deve ter pelo menos 6 caracteres.';
+
+  @override
+  String get backupPasswordEmpty => 'Por favor, insira uma senha.';
+
+  @override
+  String get backupCreateEncrypted => 'Criar backup criptografado';
+
+  @override
+  String get restorePasswordDialogTitle => 'Digite a senha do backup';
+
+  @override
+  String get restorePasswordDescription =>
+      'Se você definiu uma senha ao criar este backup, insira-a abaixo.\n\nSe o backup foi criado sem senha, deixe o campo em branco.';
+
+  @override
+  String get restorePasswordField =>
+      'Senha (deixe em branco se não foi definida)';
+
+  @override
+  String get restorePasswordWrong =>
+      'Senha incorreta ou backup ilegível. Verifique a senha e tente novamente.';
+
+  @override
+  String get restoreContinue => 'Continuar';
 }

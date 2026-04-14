@@ -2413,4 +2413,65 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get fillAllFields => 'Por favor, rellene todos los campos.';
+
+  @override
+  String get backupInfoDialogTitle => 'Sobre la copia de seguridad';
+
+  @override
+  String get backupInfoDialogContent =>
+      '📦  Qué incluye la copia de seguridad\n• Todas tus historias (textos, fotos, audios, vídeos)\n• Base de datos de la app\n• Fotos de capítulos\n\n📂  Cómo guardar tu copia de seguridad\nTras la creación, usa el menú de compartir para guardar el archivo donde quieras — OneDrive, Google Drive, correo electrónico u otro servicio.\n\n🔒  Contraseña de la copia de seguridad\nCada copia de seguridad que crees estará cifrada con una contraseña que tú defines en el momento de la creación.\n\nEsta contraseña solo la conoces tú. No se almacena en ningún lugar de la app.\n\n⚠️  Si olvidas la contraseña, el archivo quedará permanentemente inaccesible — ni nuestro equipo de soporte podrá recuperar tus datos.\n\nGuarda siempre la contraseña en un lugar seguro fuera de la app.';
+
+  @override
+  String get backupPasswordDialogTitle => 'Protege tu copia de seguridad';
+
+  @override
+  String get backupPasswordDescription =>
+      'Define una contraseña para cifrar el archivo de copia de seguridad. El contenido quedará protegido e ilegible para quien no tenga esta contraseña.';
+
+  @override
+  String get backupPasswordWarningTitle =>
+      '⚠️  Importante — lee antes de continuar';
+
+  @override
+  String get backupPasswordWarning =>
+      'Esta contraseña solo la conoces tú. No se almacena en ningún lugar de la app ni en nuestros servidores.\n\nSi la olvidas, el archivo de copia de seguridad quedará permanentemente inaccesible — ni nuestro equipo podrá ayudarte a recuperar los datos.\n\nGuarda esta contraseña en un lugar seguro antes de continuar.';
+
+  @override
+  String get backupPasswordField => 'Contraseña';
+
+  @override
+  String get backupPasswordConfirmField => 'Confirmar contraseña';
+
+  @override
+  String get backupPasswordMismatch =>
+      'Las contraseñas no coinciden. Por favor, inténtalo de nuevo.';
+
+  @override
+  String get backupPasswordTooShort =>
+      'La contraseña debe tener al menos 6 caracteres.';
+
+  @override
+  String get backupPasswordEmpty => 'Por favor, ingresa una contraseña.';
+
+  @override
+  String get backupCreateEncrypted => 'Crear copia cifrada';
+
+  @override
+  String get restorePasswordDialogTitle =>
+      'Ingresa la contraseña de la copia de seguridad';
+
+  @override
+  String get restorePasswordDescription =>
+      'Si definiste una contraseña al crear esta copia de seguridad, ingrésala a continuación.\n\nSi la copia fue creada sin contraseña, deja el campo en blanco.';
+
+  @override
+  String get restorePasswordField =>
+      'Contraseña (deja en blanco si no se definió)';
+
+  @override
+  String get restorePasswordWrong =>
+      'Contraseña incorrecta o copia de seguridad ilegible. Verifica la contraseña e inténtalo de nuevo.';
+
+  @override
+  String get restoreContinue => 'Continuar';
 }

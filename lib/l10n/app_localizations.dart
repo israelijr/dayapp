@@ -4323,6 +4323,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please fill in all fields.'**
   String get fillAllFields;
+
+  /// Title of the backup info dialog
+  ///
+  /// In en, this message translates to:
+  /// **'About backup'**
+  String get backupInfoDialogTitle;
+
+  /// Full content of the backup info dialog, including password warning
+  ///
+  /// In en, this message translates to:
+  /// **'📦  What is included in the backup\n• All your stories (texts, photos, audios, videos)\n• App database\n• Chapter photos\n\n📂  How to store your backup\nAfter creation, use the share menu to save the file wherever you like — OneDrive, Google Drive, e-mail or any other service.\n\n🔒  Backup password\nEvery backup you create is encrypted with a password you define at the time of creation.\n\nThis password is known only to you. It is not stored anywhere in the app.\n\n⚠️  If you forget your password, the backup file will be permanently inaccessible — not even our support team will be able to recover your data.\n\nAlways store your backup password in a safe place outside the app.'**
+  String get backupInfoDialogContent;
+
+  /// Title of the export password dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Protect your backup'**
+  String get backupPasswordDialogTitle;
+
+  /// Description shown in the export password dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Set a password to encrypt your backup file. The contents will be protected and unreadable to anyone who does not have this password.'**
+  String get backupPasswordDescription;
+
+  /// Title of the warning section in the export password dialog
+  ///
+  /// In en, this message translates to:
+  /// **'⚠️  Important — read before continuing'**
+  String get backupPasswordWarningTitle;
+
+  /// Warning text shown in the export password dialog
+  ///
+  /// In en, this message translates to:
+  /// **'This password is known only to you. It is not stored anywhere in the app or on our servers.\n\nIf you forget it, the backup file will be permanently inaccessible — not even our team will be able to help you recover the data.\n\nStore this password in a safe place before proceeding.'**
+  String get backupPasswordWarning;
+
+  /// Label for the password field in the export password dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get backupPasswordField;
+
+  /// Label for the confirm password field in the export password dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm password'**
+  String get backupPasswordConfirmField;
+
+  /// Validation error when passwords do not match
+  ///
+  /// In en, this message translates to:
+  /// **'The passwords do not match. Please try again.'**
+  String get backupPasswordMismatch;
+
+  /// Validation error when password is too short
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 6 characters.'**
+  String get backupPasswordTooShort;
+
+  /// Validation error when password field is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a password.'**
+  String get backupPasswordEmpty;
+
+  /// Button label to create the encrypted backup
+  ///
+  /// In en, this message translates to:
+  /// **'Create encrypted backup'**
+  String get backupCreateEncrypted;
+
+  /// Title of the restore password dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the backup password'**
+  String get restorePasswordDialogTitle;
+
+  /// Description shown in the restore password dialog
+  ///
+  /// In en, this message translates to:
+  /// **'If you set a password when creating this backup, enter it below.\n\nIf the backup was created without a password, leave the field blank.'**
+  String get restorePasswordDescription;
+
+  /// Label for the password field in the restore password dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Password (leave blank if none was set)'**
+  String get restorePasswordField;
+
+  /// Error shown when the restore password is incorrect
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect password or unreadable backup. Check the password and try again.'**
+  String get restorePasswordWrong;
+
+  /// Button label to continue with restore
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get restoreContinue;
 }
 
 class _AppLocalizationsDelegate

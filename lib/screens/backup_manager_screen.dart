@@ -14,6 +14,7 @@ import '../providers/premium_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../services/auto_backup_service.dart';
 import '../services/backup_service.dart';
+import '../services/secure_storage_service.dart';
 import '../theme/m3_expressive_theme.dart';
 
 class BackupManagerScreen extends StatefulWidget {
@@ -88,8 +89,10 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
     });
 
     try {
+      final backupKey = await SecureStorageService().getOrCreateAutoBackupKey();
       await _backupService.restoreFromZipFile(
         backupFile.path,
+        password: backupKey,
         onProgress: (msg) {
           if (mounted) {
             setState(() {
@@ -215,7 +218,17 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: Text(loc.manageBackups)),
+      appBar: AppBar(
+        title: Text(loc.manageBackups),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.info_outline, size: 28),
+            tooltip: loc.backupInfoDialogTitle,
+            onPressed: () => _showInfoDialog(context, loc),
+          ),
+          const SizedBox(width: 4),
+        ],
+      ),
       body: kIsWeb
           ? Center(
               child: Padding(
@@ -259,47 +272,6 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // Informação sobre backup
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.info_outline,
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primary,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    loc.backupInfoTitle,
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.labelColor(context),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-                              Text(
-                                loc.backupInfoDetails,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.labelColor(context),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 16),
-
                       // Backup em Arquivo ZIP
                       Card(
                         child: Padding(
@@ -746,8 +718,268 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
     );
   }
 
+  /// Exibe o diálogo informativo sobre backup (substitui o card fixo)
+  void _showInfoDialog(BuildContext context, AppLocalizations loc) {
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(
+              Icons.info_outline,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            const SizedBox(width: 10),
+            Text(
+              loc.backupInfoDialogTitle,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Text(
+            loc.backupInfoDialogContent,
+            style: const TextStyle(fontSize: 14, height: 1.55),
+          ),
+        ),
+        actions: [
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(loc.close),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Exibe o diálogo para definir senha antes de exportar o backup.
+  /// Retorna a senha digitada, ou null se o usuário cancelar.
+  Future<String?> _showExportPasswordDialog(AppLocalizations loc) async {
+    final passwordController = TextEditingController();
+    final confirmController = TextEditingController();
+    String? errorText;
+    bool obscure1 = true;
+    bool obscure2 = true;
+
+    return showDialog<String?>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              scrollable: true,
+              title: Text(
+                loc.backupPasswordDialogTitle,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              content: SizedBox(
+                width: double.maxFinite,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      loc.backupPasswordDescription,
+                      style: const TextStyle(fontSize: 14, height: 1.5),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Campo de senha
+                    TextField(
+                      controller: passwordController,
+                      obscureText: obscure1,
+                      decoration: InputDecoration(
+                        labelText: loc.backupPasswordField,
+                        border: const OutlineInputBorder(),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            obscure1 ? Icons.visibility_off : Icons.visibility,
+                          ),
+                          onPressed: () =>
+                              setDialogState(() => obscure1 = !obscure1),
+                        ),
+                      ),
+                      onChanged: (_) {
+                        if (errorText != null) {
+                          setDialogState(() => errorText = null);
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Campo de confirmação
+                    TextField(
+                      controller: confirmController,
+                      obscureText: obscure2,
+                      decoration: InputDecoration(
+                        labelText: loc.backupPasswordConfirmField,
+                        border: const OutlineInputBorder(),
+                        errorText: errorText,
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            obscure2 ? Icons.visibility_off : Icons.visibility,
+                          ),
+                          onPressed: () =>
+                              setDialogState(() => obscure2 = !obscure2),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Bloco de aviso destacado
+                    Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.errorContainer.withValues(alpha: 0.55),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.error,
+                          width: 1.0,
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            loc.backupPasswordWarningTitle,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: Theme.of(context).colorScheme.error,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            loc.backupPasswordWarning,
+                            style: const TextStyle(fontSize: 13, height: 1.6),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogContext, null),
+                  child: Text(loc.cancel),
+                ),
+                FilledButton(
+                  onPressed: () {
+                    final pw = passwordController.text;
+                    final confirm = confirmController.text;
+
+                    if (pw.isEmpty) {
+                      setDialogState(() => errorText = loc.backupPasswordEmpty);
+                      return;
+                    }
+                    if (pw.length < 6) {
+                      setDialogState(
+                        () => errorText = loc.backupPasswordTooShort,
+                      );
+                      return;
+                    }
+                    if (pw != confirm) {
+                      setDialogState(
+                        () => errorText = loc.backupPasswordMismatch,
+                      );
+                      return;
+                    }
+
+                    Navigator.pop(dialogContext, pw);
+                  },
+                  child: Text(loc.backupCreateEncrypted),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  /// Exibe o diálogo para digitar a senha ao restaurar um backup.
+  /// Retorna a senha digitada (pode ser vazia para backups antigos sem criptografia),
+  /// ou null se o usuário cancelar.
+  Future<String?> _showRestorePasswordDialog(AppLocalizations loc) async {
+    final passwordController = TextEditingController();
+    bool obscure = true;
+
+    return showDialog<String?>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              scrollable: true,
+              title: Text(
+                loc.restorePasswordDialogTitle,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              content: SizedBox(
+                width: double.maxFinite,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      loc.restorePasswordDescription,
+                      style: const TextStyle(fontSize: 14, height: 1.6),
+                    ),
+                    const SizedBox(height: 20),
+                    TextField(
+                      controller: passwordController,
+                      obscureText: obscure,
+                      decoration: InputDecoration(
+                        labelText: loc.restorePasswordField,
+                        border: const OutlineInputBorder(),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            obscure ? Icons.visibility_off : Icons.visibility,
+                          ),
+                          onPressed: () =>
+                              setDialogState(() => obscure = !obscure),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogContext, null),
+                  child: Text(loc.cancel),
+                ),
+                FilledButton(
+                  onPressed: () =>
+                      Navigator.pop(dialogContext, passwordController.text),
+                  child: Text(loc.restoreContinue),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   Future<void> _createAndShareBackup() async {
     final loc = AppLocalizations.of(context)!;
+
+    // Pede a senha de criptografia antes de iniciar
+    final password = await _showExportPasswordDialog(loc);
+    if (!mounted || password == null) return;
+
     // Obter o PinProvider para evitar bloqueio durante compartilhamento
     final pinProvider = Provider.of<PinProvider>(context, listen: false);
 
@@ -775,6 +1007,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
             setState(() => _progressValue = value);
           }
         },
+        password: password,
         l10n: loc,
       );
 
@@ -869,6 +1102,22 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
         return;
       }
 
+      // Pede a senha do backup (pode ser vazia para backups antigos sem criptografia)
+      if (!mounted) {
+        pinProvider.isPickingExternalMedia = false;
+        return;
+      }
+      final restorePassword = await _showRestorePasswordDialog(loc);
+      if (!mounted) {
+        pinProvider.isPickingExternalMedia = false;
+        return;
+      }
+      if (restorePassword == null) {
+        // Usuário cancelou no diálogo de senha
+        pinProvider.isPickingExternalMedia = false;
+        return;
+      }
+
       setState(() {
         _isLoading = true;
         _statusMessage = loc.restoreStarting;
@@ -882,6 +1131,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
 
       await _backupService.restoreFromZipFile(
         filePath,
+        password: restorePassword.isEmpty ? null : restorePassword,
         onProgress: (message) {
           if (mounted) {
             setState(() => _statusMessage = message);
@@ -944,9 +1194,18 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
       pinProvider.isPickingExternalMedia = false;
 
       if (mounted) {
+        // Detecta erro de senha incorreta para exibir mensagem amigável
+        final errorStr = e.toString().toLowerCase();
+        final isWrongPassword =
+            errorStr.contains('mac') ||
+            errorStr.contains('password') ||
+            errorStr.contains('decrypt') ||
+            errorStr.contains('invalid');
         setState(() {
           _isLoading = false;
-          _statusMessage = loc.restoreError(e.toString());
+          _statusMessage = isWrongPassword
+              ? loc.restorePasswordWrong
+              : loc.restoreError(e.toString());
           _progressValue = null;
           _statusIsError = true;
           _statusIsSuccess = false;

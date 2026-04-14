@@ -23,8 +23,10 @@ void _createZipFileInIsolate(Map<String, dynamic> zipConfig) {
       .map((entry) => entry.cast<String, dynamic>())
       .toList();
 
+  final password = zipConfig['password'] as String?;
+
   try {
-    final encoder = ZipFileEncoder();
+    final encoder = ZipFileEncoder(password: password);
     encoder.create(zipPath);
 
     final totalBytes = (zipConfig['totalBytes'] as int?) ?? 0;
@@ -71,6 +73,7 @@ class BackupService {
   /// (para OneDrive, Google Drive, etc)
   Future<String> createBackupZipFile({
     required AppLocalizations l10n,
+    String? password,
     void Function(String)? onProgress,
     void Function(double?)? onProgressValue,
   }) async {
@@ -412,6 +415,7 @@ Versão: 2.0.0
         'zipPath': zipPath,
         'entries': zipEntriesWithSize,
         'totalBytes': totalBytes,
+        if (password != null) 'password': password,
       });
 
       final completer = Completer<void>();
@@ -471,6 +475,7 @@ Versão: 2.0.0
   /// Compartilha o arquivo de backup (para salvar no OneDrive, Google Drive, etc)
   Future<void> shareBackupFile({
     required AppLocalizations l10n,
+    String? password,
     void Function(String)? onProgress,
     void Function(double?)? onProgressValue,
   }) async {
@@ -478,6 +483,7 @@ Versão: 2.0.0
       final zipPath = await createBackupZipFile(
         onProgress: onProgress,
         onProgressValue: onProgressValue,
+        password: password,
         l10n: l10n,
       );
       final zipFile = File(zipPath);
@@ -502,6 +508,7 @@ Versão: 2.0.0
   Future<void> restoreFromZipFile(
     String zipFilePath, {
     required AppLocalizations l10n,
+    String? password,
     void Function(String)? onProgress,
     void Function(double?)? onProgressValue,
   }) async {
@@ -522,7 +529,11 @@ Versão: 2.0.0
       final zipFile = File(zipFilePath);
       final bytes = await zipFile.readAsBytes();
 
-      final archive = ZipDecoder().decodeBytes(bytes);
+      // password null = backup sem criptografia (compatibilidade com backups antigos)
+      final archive = ZipDecoder().decodeBytes(
+        bytes,
+        password: password?.isNotEmpty == true ? password : null,
+      );
 
       final extractTotalBytes = archive
           .where((file) => file.isFile)
