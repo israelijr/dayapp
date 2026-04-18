@@ -1,4 +1,4 @@
-package br.com.israelijr.dayapp
+package br.com.iijrapp.dayapp
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

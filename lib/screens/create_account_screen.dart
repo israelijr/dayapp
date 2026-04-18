@@ -222,7 +222,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     onTap: () async {
                       final Uri emailUri = Uri(
                         scheme: 'mailto',
-                        path: 'israelijr.app@gmail.com',
+                        path: 'contato@iijrapp.com.br',
                         queryParameters: {
                           'subject': 'Suporte DayApp - Criação de Conta',
                           'body':
@@ -234,7 +234,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       }
                     },
                     child: Text(
-                      'israelijr.app@gmail.com',
+                      'contato@iijrapp.com.br',
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onPrimary,
                         decoration: TextDecoration.underline,
@@ -246,7 +246,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   GestureDetector(
                     onTap: () async {
                       const url =
-                          'https://sites.google.com/view/politicadeprivacidade-dayapp/início';
+                          'https://iijrapp.com.br/politica_de_privacidade';
                       final Uri uri = Uri.parse(url);
                       if (await canLaunchUrl(uri)) {
                         await launchUrl(

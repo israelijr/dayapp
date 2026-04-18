@@ -286,7 +286,7 @@ class _AboutScreenState extends State<AboutScreen> {
                 );
                 final Uri emailUri = Uri(
                   scheme: 'mailto',
-                  path: 'israelijr.app@gmail.com',
+                  path: 'contato@iijrapp.com.br',
                   queryParameters: {
                     'subject': l10n.aboutScreenSupportEmailSubject,
                     'body': l10n.aboutScreenSupportEmailBody(_version),
@@ -313,7 +313,7 @@ class _AboutScreenState extends State<AboutScreen> {
                   ),
                   const SizedBox(width: 12),
                   Text(
-                    'israelijr.app@gmail.com',
+                    'contato@iijrapp.com.br',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
@@ -332,8 +332,7 @@ class _AboutScreenState extends State<AboutScreen> {
                   context,
                   listen: false,
                 );
-                const url =
-                    'https://sites.google.com/view/politicadeprivacidade-dayapp/início';
+                const url = 'https://iijrapp.com.br/politica_de_privacidade';
                 final Uri uri = Uri.parse(url);
                 if (await canLaunchUrl(uri)) {
                   pinProvider.isPickingExternalMedia = true;
