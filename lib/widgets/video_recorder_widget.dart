@@ -44,7 +44,7 @@ class _VideoRecorderWidgetState extends State<VideoRecorderWidget> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,

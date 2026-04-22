@@ -63,7 +63,7 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
 
   Widget _buildInitialDialog() {
     return Dialog(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -158,7 +158,7 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
 
   Widget _buildRecordingInterface() {
     return Dialog(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,

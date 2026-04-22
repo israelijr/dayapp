@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:archive/archive_io.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -46,7 +47,15 @@ void _createZipFileInIsolate(Map<String, dynamic> zipConfig) {
         continue;
       }
 
-      encoder.addFile(sourceFile, archivePath);
+      // Leitura síncrona para garantir que os bytes são lidos antes de
+      // qualquer operação assíncrona poder interferir. Usar addFile (async)
+      // sem await pode causar descarte silencioso de arquivos de mídia quando
+      // o isolate é encerrado antes das Futures pendentes completarem.
+      final fileBytes = sourceFile.readAsBytesSync();
+      final archiveFile = ArchiveFile(archivePath, fileBytes.length, fileBytes);
+      archiveFile.compress = true;
+      encoder.addArchiveFile(archiveFile);
+
       processedBytes += sizeBytes;
 
       sendPort.send({
@@ -56,7 +65,9 @@ void _createZipFileInIsolate(Map<String, dynamic> zipConfig) {
       });
     }
 
-    encoder.close();
+    // closeSync garante que todos os dados (incluindo Central Directory) são
+    // gravados e o handle do arquivo é fechado antes de notificar 'done'.
+    encoder.closeSync();
     sendPort.send({'type': 'done'});
   } catch (e) {
     sendPort.send({'type': 'error', 'error': e.toString()});
@@ -525,15 +536,22 @@ Versão: 2.0.0
       }
       await extractDir.create(recursive: true);
 
-      // Extrair ZIP
-      final zipFile = File(zipFilePath);
-      final bytes = await zipFile.readAsBytes();
+      // Extrair ZIP usando stream para evitar carregar todo o arquivo em memória.
+      // Carregar ZIPs grandes (com vídeos/fotos) via readAsBytes() pode causar
+      // OOM no Android, corrompendo silenciosamente os arquivos de mídia.
+      final zipInputStream = InputFileStream(zipFilePath);
 
       // password null = backup sem criptografia (compatibilidade com backups antigos)
-      final archive = ZipDecoder().decodeBytes(
-        bytes,
-        password: password?.isNotEmpty == true ? password : null,
-      );
+      final Archive archive;
+      try {
+        archive = ZipDecoder().decodeBuffer(
+          zipInputStream,
+          password: password?.isNotEmpty == true ? password : null,
+        );
+      } catch (e) {
+        await zipInputStream.close();
+        rethrow;
+      }
 
       final extractTotalBytes = archive
           .where((file) => file.isFile)
@@ -567,20 +585,25 @@ Versão: 2.0.0
       onProgress?.call(l10n.restoreProgressZipContains(archive.length));
 
       var extractedBytesDone = 0;
-      for (final file in archive) {
-        final filename = path.join(extractDir.path, file.name);
-        if (file.isFile) {
-          final outFile = File(filename);
-          await outFile.create(recursive: true);
-          await outFile.writeAsBytes(file.content as List<int>);
-          extractedBytesDone += file.size;
-          reportOverallProgress(
-            completedWorkBytes: extractedBytesDone,
-            totalWorkBytes: extractTotalBytes,
-          );
-        } else {
-          await Directory(filename).create(recursive: true);
+      try {
+        for (final file in archive) {
+          final filename = path.join(extractDir.path, file.name);
+          if (file.isFile) {
+            final outFile = File(filename);
+            await outFile.create(recursive: true);
+            await outFile.writeAsBytes(file.content as List<int>);
+            extractedBytesDone += file.size;
+            reportOverallProgress(
+              completedWorkBytes: extractedBytesDone,
+              totalWorkBytes: extractTotalBytes,
+            );
+          } else {
+            await Directory(filename).create(recursive: true);
+          }
         }
+      } finally {
+        // Fechar o stream do ZIP após extrair todos os arquivos (ou em caso de erro).
+        await zipInputStream.close();
       }
 
       // Função auxiliar para encontrar arquivo recursivamente
@@ -997,6 +1020,120 @@ Versão: 2.0.0
             );
           }
         }
+      }
+
+      // 7. Reescrever caminhos absolutos no banco restaurado.
+      //
+      // O banco de dados armazena caminhos ABSOLUTOS como:
+      //   /data/user/0/<old_package>/app_flutter/photos/photo_xxx.jpg
+      // Após restaurar para outro dispositivo ou após mudança de package ID,
+      // esses caminhos ficam inválidos. Os arquivos já estão nas pastas certas,
+      // mas o DB precisa apontar para o diretório atual do app.
+      onProgress?.call(l10n.restoreProgressReinitializingDb);
+      try {
+        final appDocDir = await getApplicationDocumentsDirectory();
+        final dbFullPath2 = path.join(await getDatabasesPath(), 'dayapp.db');
+        final patchDb = await openDatabase(dbFullPath2);
+        try {
+          final photosBase = path.join(appDocDir.path, 'photos');
+          final audiosBase = path.join(appDocDir.path, 'audios');
+          final videosBase = path.join(appDocDir.path, 'videos');
+          final chapterPhotosBase = path.join(appDocDir.path, 'chapter_photos');
+
+          // Reescreve foto_path em historia_fotos
+          final fotos = await patchDb.query(
+            'historia_fotos',
+            columns: ['id', 'foto_path'],
+          );
+          for (final row in fotos) {
+            final oldPath = row['foto_path'] as String;
+            final newPath = path.join(photosBase, path.basename(oldPath));
+            if (oldPath != newPath) {
+              await patchDb.update(
+                'historia_fotos',
+                {'foto_path': newPath},
+                where: 'id = ?',
+                whereArgs: [row['id']],
+              );
+            }
+          }
+
+          // Reescreve audio_path em historia_audios
+          final audios = await patchDb.query(
+            'historia_audios',
+            columns: ['id', 'audio_path'],
+          );
+          for (final row in audios) {
+            final oldPath = row['audio_path'] as String;
+            final newPath = path.join(audiosBase, path.basename(oldPath));
+            if (oldPath != newPath) {
+              await patchDb.update(
+                'historia_audios',
+                {'audio_path': newPath},
+                where: 'id = ?',
+                whereArgs: [row['id']],
+              );
+            }
+          }
+
+          // Reescreve video_path e thumbnail_path em historia_videos
+          final videos = await patchDb.query(
+            'historia_videos',
+            columns: ['id', 'video_path', 'thumbnail_path'],
+          );
+          for (final row in videos) {
+            final oldVideoPath = row['video_path'] as String;
+            final newVideoPath = path.join(
+              videosBase,
+              path.basename(oldVideoPath),
+            );
+            final oldThumbnailPath = row['thumbnail_path'] as String?;
+            final newThumbnailPath =
+                (oldThumbnailPath != null && oldThumbnailPath.isNotEmpty)
+                ? path.join(videosBase, path.basename(oldThumbnailPath))
+                : null;
+            if (oldVideoPath != newVideoPath ||
+                oldThumbnailPath != newThumbnailPath) {
+              await patchDb.update(
+                'historia_videos',
+                {
+                  'video_path': newVideoPath,
+                  'thumbnail_path': newThumbnailPath,
+                },
+                where: 'id = ?',
+                whereArgs: [row['id']],
+              );
+            }
+          }
+
+          // Reescreve foto_path em capitulos
+          final capitulos = await patchDb.query(
+            'capitulos',
+            columns: ['id', 'foto_path'],
+            where: 'foto_path IS NOT NULL',
+          );
+          for (final row in capitulos) {
+            final oldPath = row['foto_path'] as String?;
+            if (oldPath == null || oldPath.isEmpty) continue;
+            final newPath = path.join(
+              chapterPhotosBase,
+              path.basename(oldPath),
+            );
+            if (oldPath != newPath) {
+              await patchDb.update(
+                'capitulos',
+                {'foto_path': newPath},
+                where: 'id = ?',
+                whereArgs: [row['id']],
+              );
+            }
+          }
+        } finally {
+          await patchDb.close();
+        }
+      } catch (e) {
+        // Não bloquear a restauração se a reescrita falhar
+        debugPrint('Aviso: falha ao reescrever caminhos de mídia: $e');
       }
 
       // Limpar diretório temporário
