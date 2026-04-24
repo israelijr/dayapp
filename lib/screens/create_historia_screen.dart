@@ -117,7 +117,6 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
   // Estado do indicador de sync de backup incremental
   bool _isSyncing = false;
   bool _syncDone = false;
-  bool _showBackupWarning = false;
 
   @override
   void initState() {
@@ -127,16 +126,6 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
     // Adiciona listeners para detectar mudanças
     titleController.addListener(_checkForChanges);
     richTextController.addListener(_checkForChanges);
-    // Verifica se a pasta de backup está configurada para exibir aviso
-    _checkBackupFolderWarning();
-  }
-
-  Future<void> _checkBackupFolderWarning() async {
-    final configured = await IncrementalBackupService().isConfigured();
-    if (!mounted) return;
-    setState(() {
-      _showBackupWarning = !configured;
-    });
   }
 
   void _checkForChanges() {
@@ -392,36 +381,30 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
       // Dispara backup incremental em segundo plano com indicador visual.
       // Se a pasta não estiver configurada, exibe aviso dismissível.
       final l10nForBackup = l10n;
-      IncrementalBackupService()
-          .triggerSilentBackup(
-            l10n: l10nForBackup,
-            onSyncStart: () {
-              if (mounted) {
-                setState(() {
-                  _isSyncing = true;
-                  _syncDone = false;
-                });
-              }
-            },
-            onSyncEnd: (success) {
-              if (!mounted) return;
-              setState(() {
-                _isSyncing = false;
-                _syncDone = success;
-              });
-              if (success) {
-                // Apaga o ícone de sync após 2 segundos
-                Future.delayed(const Duration(seconds: 2), () {
-                  if (mounted) setState(() => _syncDone = false);
-                });
-              }
-            },
-          )
-          .then((result) {
-            if (result == BackupTriggerResult.noFolder && mounted) {
-              setState(() => _showBackupWarning = true);
-            }
+      IncrementalBackupService().triggerSilentBackup(
+        l10n: l10nForBackup,
+        onSyncStart: () {
+          if (mounted) {
+            setState(() {
+              _isSyncing = true;
+              _syncDone = false;
+            });
+          }
+        },
+        onSyncEnd: (success) {
+          if (!mounted) return;
+          setState(() {
+            _isSyncing = false;
+            _syncDone = success;
           });
+          if (success) {
+            // Apaga o ícone de sync após 2 segundos
+            Future.delayed(const Duration(seconds: 2), () {
+              if (mounted) setState(() => _syncDone = false);
+            });
+          }
+        },
+      );
 
       // Navega para a tela inicial se solicitado
       if (navigateAfterSave) {
@@ -810,35 +793,6 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
         ),
         body: Column(
           children: [
-            // Aviso dismissível: pasta de backup não configurada
-            if (_showBackupWarning)
-              MaterialBanner(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                content: Text(
-                  loc.incrementalBackupWarningNoFolder,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                leading: Icon(
-                  Icons.warning_amber_rounded,
-                  color: Theme.of(context).colorScheme.error,
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () => setState(() => _showBackupWarning = false),
-                    child: Text(loc.close),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      setState(() => _showBackupWarning = false);
-                      Navigator.pushNamed(context, '/backup-manager');
-                    },
-                    child: Text(loc.configureLabel),
-                  ),
-                ],
-              ),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16),

@@ -20,17 +20,33 @@ class BiometricService {
   static const String _legacyBiometricEmailKey = 'biometric_email';
   static const String _legacyBiometricPasswordKey = 'biometric_password';
 
+  /// Caches em memória para exibição instantânea na UI
+  bool? _cachedAvailable;
+  bool? _cachedEnabled;
+
+  /// Retorna disponibilidade de biometria do cache (síncrono)
+  bool? get cachedAvailable => _cachedAvailable;
+
+  /// Retorna se biometria está habilitada do cache (síncrono)
+  bool? get cachedEnabled => _cachedEnabled;
+
   /// Verifica se o dispositivo suporta biometria
   Future<bool> isBiometricAvailable() async {
+    if (_cachedAvailable != null) return _cachedAvailable!;
     // Desabilita biometria na web e no Linux
-    if (kIsWeb || Platform.isLinux) return false;
+    if (kIsWeb || Platform.isLinux) {
+      _cachedAvailable = false;
+      return false;
+    }
     try {
       final bool canAuthenticateWithBiometrics =
           await _localAuth.canCheckBiometrics;
       final bool canAuthenticate =
           canAuthenticateWithBiometrics || await _localAuth.isDeviceSupported();
+      _cachedAvailable = canAuthenticate;
       return canAuthenticate;
     } on PlatformException {
+      _cachedAvailable = false;
       return false;
     }
   }
@@ -69,9 +85,14 @@ class BiometricService {
   /// Verifica se a biometria está habilitada para o aplicativo
   /// Inclui migração automática de dados legados
   Future<bool> isBiometricEnabled() async {
+    if (_cachedEnabled != null) return _cachedEnabled!;
+
     // Primeiro verifica no armazenamento seguro
     final secureEnabled = await _secureStorage.isBiometricEnabled();
-    if (secureEnabled) return true;
+    if (secureEnabled) {
+      _cachedEnabled = true;
+      return true;
+    }
 
     // Verifica se há dados legados para migrar
     final prefs = await SharedPreferences.getInstance();
@@ -80,16 +101,18 @@ class BiometricService {
     if (legacyEnabled) {
       // Migra dados legados para armazenamento seguro
       await _migrateLegacyData();
+      _cachedEnabled = true;
       return true;
     }
 
+    _cachedEnabled = false;
     return false;
   }
 
   /// Habilita a biometria para o aplicativo (armazenamento seguro)
   Future<void> enableBiometric(String email, String password) async {
     await _secureStorage.saveBiometricCredentials(email, password);
-
+    _cachedEnabled = true;
     // Remove dados legados se existirem
     await _removeLegacyData();
   }
@@ -97,7 +120,7 @@ class BiometricService {
   /// Desabilita a biometria para o aplicativo
   Future<void> disableBiometric() async {
     await _secureStorage.removeBiometricCredentials();
-
+    _cachedEnabled = false;
     // Remove dados legados se existirem
     await _removeLegacyData();
   }

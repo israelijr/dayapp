@@ -55,6 +55,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void initState() {
     super.initState();
     _pinProvider = Provider.of<PinProvider>(context, listen: false);
+
+    // Inicializa com valores em cache para exibição instantânea
+    _pinEnabled = _pinProvider.isPinEnabled;
+    _biometricEnabled = _pinProvider.isBiometricEnabled;
+    _biometricAvailable = _biometricService.cachedAvailable ?? false;
+    _backgroundLockTimeout =
+        _inactivityService.cachedTimeout ??
+        InactivityService.defaultBackgroundTimeoutSeconds;
+
+    // Atualiza em segundo plano (confirma valores e preenche caches ainda nulos)
     _checkBiometricStatus();
     _checkPinStatus();
     _loadBackgroundLockTimeout();

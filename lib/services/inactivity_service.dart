@@ -18,15 +18,25 @@ class InactivityService {
   /// -1 significa nunca bloquear (padrão)
   static const int defaultBackgroundTimeoutSeconds = neverLockValue;
 
+  /// Cache em memória do timeout para exibição instantânea na UI
+  int? _cachedTimeout;
+
+  /// Retorna o valor em cache se disponível (síncrono)
+  int? get cachedTimeout => _cachedTimeout;
+
   /// Obtém o tempo de bloqueio em segundo plano configurado (em segundos)
   Future<int> getBackgroundLockTimeout() async {
+    if (_cachedTimeout != null) return _cachedTimeout!;
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getInt(_backgroundLockTimeoutKey) ??
+    _cachedTimeout =
+        prefs.getInt(_backgroundLockTimeoutKey) ??
         defaultBackgroundTimeoutSeconds;
+    return _cachedTimeout!;
   }
 
   /// Define o tempo de bloqueio em segundo plano (em segundos)
   Future<void> setBackgroundLockTimeout(int seconds) async {
+    _cachedTimeout = seconds;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_backgroundLockTimeoutKey, seconds);
   }
