@@ -16,7 +16,6 @@ import '../providers/theme_provider.dart';
 import '../services/biometric_service.dart';
 import '../services/engagement_service.dart';
 import '../services/inactivity_service.dart';
-import '../services/incremental_backup_service.dart';
 import '../services/notification_preferences_service.dart';
 import '../services/pin_recovery_service.dart';
 import '../services/secure_storage_service.dart';
@@ -52,10 +51,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String? _userEmail;
   late PinProvider _pinProvider;
 
-  // Estado do backup incremental
-  bool _backupFolderConfigured = false;
-  bool _isChangingFolder = false;
-
   @override
   void initState() {
     super.initState();
@@ -65,7 +60,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _loadBackgroundLockTimeout();
     _loadNotificationPreferences();
     _loadUserEmail();
-    _loadIncrementalBackupSettings();
   }
 
   Widget _buildLanguageSection(BuildContext context) {
@@ -196,48 +190,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _notificationAdvance = advance;
       _engagementNotificationsEnabled = engagementEnabled;
     });
-  }
-
-  Future<void> _loadIncrementalBackupSettings() async {
-    final configured = await IncrementalBackupService().isConfigured();
-    if (!mounted) return;
-    setState(() {
-      _backupFolderConfigured = configured;
-    });
-  }
-
-  /// Seleciona nova pasta SAF e migra os arquivos de backup existentes para ela.
-  /// O progresso é indicado via [_isChangingFolder] no trailing do ListTile.
-  Future<void> _showChangeFolderDialog(BuildContext context) async {
-    final loc = AppLocalizations.of(context)!;
-    // Captura o ScaffoldMessenger antes de qualquer await
-    final scaffoldMessenger = ScaffoldMessenger.of(context);
-
-    final newUri = await IncrementalBackupService().pickAndSetFolder();
-    if (!newUri || !mounted) return;
-
-    // Recupera a URI recém-gravada para passar ao changeFolder
-    final newFolderUri = await IncrementalBackupService().getBackupFolderUri();
-    if (newFolderUri == null || !mounted) return;
-
-    setState(() => _isChangingFolder = true);
-
-    try {
-      await IncrementalBackupService().changeFolder(
-        newFolderUri: newFolderUri,
-        l10n: loc,
-      );
-    } catch (e) {
-      debugPrint('Erro ao trocar pasta de backup: $e');
-    }
-
-    if (!mounted) return;
-    setState(() => _isChangingFolder = false);
-    await _loadIncrementalBackupSettings();
-
-    scaffoldMessenger.showSnackBar(
-      SnackBar(content: Text(loc.incrementalBackupFolderChanged)),
-    );
   }
 
   @override
@@ -996,73 +948,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Navigator.pushNamed(context, '/backup-manager');
           },
         ),
-        const Divider(indent: 16, endIndent: 16),
-        // ── Backup Incremental ──────────────────────────────────────────────
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Text(
-            loc.incrementalBackupTitle,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: AppColors.labelColor(context),
-            ),
-          ),
-        ),
-        ListTile(
-          leading: Icon(
-            _backupFolderConfigured
-                ? Icons.cloud_done_outlined
-                : Icons.cloud_off_outlined,
-            color: _backupFolderConfigured
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.error,
-          ),
-          title: Text(loc.incrementalBackupTitle),
-          subtitle: Text(
-            _backupFolderConfigured
-                ? loc.incrementalBackupFolderConfigured
-                : loc.incrementalBackupFolderNotSet,
-          ),
-          trailing: _isChangingFolder
-              ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : TextButton(
-                  onPressed: () => _showChangeFolderDialog(context),
-                  child: Text(
-                    _backupFolderConfigured
-                        ? loc.incrementalBackupChangeFolder
-                        : loc.incrementalBackupSelectFolder,
-                  ),
-                ),
-        ),
-        if (!_backupFolderConfigured)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(
-                  Icons.warning_amber_rounded,
-                  size: 16,
-                  color: Theme.of(context).colorScheme.error,
-                ),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Text(
-                    loc.incrementalBackupDescription,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        const Divider(indent: 16, endIndent: 16),
       ],
     );
   }

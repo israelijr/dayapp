@@ -135,15 +135,6 @@ class AppLocalizationsPt extends AppLocalizations {
   String get backup => 'Backup';
 
   @override
-  String get automaticBackup => 'Backup Automático';
-
-  @override
-  String get lastAutoBackup => 'Último backup automático';
-
-  @override
-  String get backupOnLogout => 'Backup ao sair';
-
-  @override
   String get enabled => 'Habilitado';
 
   @override
@@ -516,9 +507,6 @@ class AppLocalizationsPt extends AppLocalizations {
   String get passwordMinLength => 'A senha deve ter pelo menos 6 caracteres.';
 
   @override
-  String get sendCode => 'Enviar Código';
-
-  @override
   String get unlock => 'Desbloquear';
 
   @override
@@ -616,9 +604,6 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get errorSendingCode => 'Erro ao enviar código. Tente novamente.';
-
-  @override
-  String get recoverPinTitle => 'Recuperar PIN';
 
   @override
   String get enterRecoveryCodePrompt =>
@@ -902,20 +887,6 @@ class AppLocalizationsPt extends AppLocalizations {
       'Selecione um arquivo de backup (ZIP) anteriormente criado para restaurar todos os seus dados.';
 
   @override
-  String get autoBackupsSavedTitle => 'Backups Automáticos Salvos';
-
-  @override
-  String autoBackupsSavedCount(int count) {
-    return '$count arquivo(s)';
-  }
-
-  @override
-  String get autoBackupShareSubject => 'Backup Automático DayApp';
-
-  @override
-  String get autoBackupSavedLocal => 'Backup salvo localmente!';
-
-  @override
   String get backupShareSubject => 'Backup DayApp';
 
   @override
@@ -1086,11 +1057,11 @@ class AppLocalizationsPt extends AppLocalizations {
   String get helpBackupSecurityTitle => 'Backup e Segurança';
 
   @override
-  String get helpAutomaticBackupTitle => 'Backup Automático';
+  String get helpAutomaticBackupTitle => 'Automatic Backup';
 
   @override
   String get helpAutomaticBackupDesc =>
-      'Configure backup automático (Premium) nas Configurações. O backup será criado quando fizer logout.';
+      'Configure automatic backup (Premium) in Settings. The backup will be created when you log out.';
 
   @override
   String get helpManualBackupTitle => 'Backup Manual';
@@ -1433,8 +1404,14 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
+  String get recoverPinTitle => 'Recuperar PIN';
+
+  @override
   String get recoverPinDescription =>
       'Enviaremos um código de recuperação para o seu e-mail cadastrado.';
+
+  @override
+  String get sendCode => 'Enviar Código';
 
   @override
   String get emptyTrashTitle => 'Esvaziar lixeira';
@@ -1484,56 +1461,58 @@ class AppLocalizationsPt extends AppLocalizations {
   String get notificationAdvanceDefault => 'Antecedência padrão';
 
   @override
+  String get automaticBackup => 'Backup Automático';
+
+  @override
   String get manageCompleteBackup => 'Gerenciar Backup Completo';
 
   @override
   String get backupWithVideosZip => 'Backup com vídeos em arquivo ZIP';
 
   @override
-  String get backupOnLogoutDescription => 'Backup será criado ao fazer logout';
+  String get backupOnLogoutDescription =>
+      'Backup will be created when you log out';
 
   @override
   String get automaticBackupInfo =>
-      'Ao fazer logout, um backup será criado e você poderá escolher onde salvar (pasta local, Google Drive, etc).';
+      'When you log out, a backup will be created and you can choose where to save it (local folder, Google Drive, etc).';
 
   @override
   String get automaticBackupInfoLocal =>
-      'Ao fazer logout, um backup será salvo automaticamente no dispositivo. Você pode exportá-lo para nuvem depois se necessário.';
+      'On logout, a backup is automatically saved locally on your device. You can later export it to cloud storage if needed.';
 
   @override
-  String get incrementalBackupTitle =>
-      'Pasta de Cópia de Segurança Incremental';
+  String get incrementalBackupTitle => 'Incremental Backup Folder';
 
   @override
   String get incrementalBackupDescription =>
-      'As suas histórias são guardadas automaticamente nesta pasta sempre que guardar uma.';
+      'Stories are automatically backed up to this folder whenever you save one.';
 
   @override
-  String get incrementalBackupFolderNotSet => 'Pasta não configurada';
+  String get incrementalBackupFolderNotSet => 'Folder not configured';
 
   @override
-  String get incrementalBackupFolderConfigured => 'Pasta configurada';
+  String get incrementalBackupFolderConfigured => 'Folder configured';
 
   @override
-  String get incrementalBackupSelectFolder => 'Selecionar Pasta';
+  String get incrementalBackupSelectFolder => 'Select Folder';
 
   @override
-  String get incrementalBackupChangeFolder => 'Alterar Pasta';
+  String get incrementalBackupChangeFolder => 'Change Folder';
 
   @override
   String get incrementalBackupChangingFolder =>
-      'A copiar ficheiros para a nova pasta...';
+      'Copying files to new folder...';
 
   @override
-  String get incrementalBackupFolderChanged =>
-      'Pasta de cópia de segurança atualizada.';
+  String get incrementalBackupFolderChanged => 'Backup folder updated.';
 
   @override
   String get incrementalBackupWarningNoFolder =>
-      'Pasta de cópia de segurança não configurada. As histórias não serão guardadas até configurar uma pasta nas Definições.';
+      'Backup folder not set. Stories will not be backed up until you configure a folder in Settings.';
 
   @override
-  String get incrementalBackupSyncDone => 'Guardado em cópia de segurança';
+  String get incrementalBackupSyncDone => 'Backed up';
 
   @override
   String get biometricsNotAvailable => 'Não disponível neste dispositivo';
@@ -2132,7 +2111,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get autoBackupPremiumRequired =>
-      'Backups automáticos são um recurso Premium. Faça upgrade para aceder a backups guardados, pontos de restauro e gestão de armazenamento.';
+      'Automatic backups are a Premium feature. Upgrade to access saved backups, restore points and storage management.';
 
   @override
   String autoBackupStorageInfo(int count, String size) {
@@ -2141,7 +2120,7 @@ class AppLocalizationsPt extends AppLocalizations {
       locale: localeName,
       other: '$count backups · $size',
       one: '1 backup · $size',
-      zero: 'Nenhum backup guardado',
+      zero: 'No backups saved',
     );
     return '$_temp0';
   }
@@ -2628,15 +2607,6 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get backup => 'Backup';
 
   @override
-  String get automaticBackup => 'Backup Automático';
-
-  @override
-  String get lastAutoBackup => 'Último backup automático';
-
-  @override
-  String get backupOnLogout => 'Backup ao sair';
-
-  @override
   String get enabled => 'Habilitado';
 
   @override
@@ -3009,9 +2979,6 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get passwordMinLength => 'A senha deve ter pelo menos 6 caracteres.';
 
   @override
-  String get sendCode => 'Enviar Código';
-
-  @override
   String get unlock => 'Desbloquear';
 
   @override
@@ -3109,9 +3076,6 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get errorSendingCode => 'Erro ao enviar código. Tente novamente.';
-
-  @override
-  String get recoverPinTitle => 'Recuperar PIN';
 
   @override
   String get enterRecoveryCodePrompt =>
@@ -3393,20 +3357,6 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get restoreSectionDescription =>
       'Selecione um arquivo de backup (ZIP) anteriormente criado para restaurar todos os seus dados.';
-
-  @override
-  String get autoBackupsSavedTitle => 'Backups Automáticos Salvos';
-
-  @override
-  String autoBackupsSavedCount(int count) {
-    return '$count arquivo(s)';
-  }
-
-  @override
-  String get autoBackupShareSubject => 'Backup Automático DayApp';
-
-  @override
-  String get autoBackupSavedLocal => 'Backup salvo localmente!';
 
   @override
   String get backupShareSubject => 'Backup DayApp';
@@ -3926,8 +3876,14 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   }
 
   @override
+  String get recoverPinTitle => 'Recuperar PIN';
+
+  @override
   String get recoverPinDescription =>
       'Enviaremos um código de recuperação para o seu e-mail cadastrado.';
+
+  @override
+  String get sendCode => 'Enviar Código';
 
   @override
   String get emptyTrashTitle => 'Esvaziar lixeira';
@@ -3975,6 +3931,9 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get notificationAdvanceDefault => 'Antecedência padrão';
+
+  @override
+  String get automaticBackup => 'Backup Automático';
 
   @override
   String get manageCompleteBackup => 'Gerenciar Backup Completo';

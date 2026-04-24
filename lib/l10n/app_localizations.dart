@@ -341,24 +341,6 @@ abstract class AppLocalizations {
   /// **'Backup'**
   String get backup;
 
-  /// No description provided for @automaticBackup.
-  ///
-  /// In en, this message translates to:
-  /// **'Automatic Backup'**
-  String get automaticBackup;
-
-  /// No description provided for @lastAutoBackup.
-  ///
-  /// In en, this message translates to:
-  /// **'Last automatic backup'**
-  String get lastAutoBackup;
-
-  /// No description provided for @backupOnLogout.
-  ///
-  /// In en, this message translates to:
-  /// **'Backup on logout'**
-  String get backupOnLogout;
-
   /// No description provided for @enabled.
   ///
   /// In en, this message translates to:
@@ -965,7 +947,7 @@ abstract class AppLocalizations {
   /// **'Email not found. Check and try again.'**
   String get emailNotFound;
 
-  /// Message for codeSent
+  /// Message shown when a verification code is sent
   ///
   /// In en, this message translates to:
   /// **'Code sent to {email}! Check your inbox.'**
@@ -1030,12 +1012,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Password must be at least 6 characters.'**
   String get passwordMinLength;
-
-  /// Label for sendCode
-  ///
-  /// In en, this message translates to:
-  /// **'Send Code'**
-  String get sendCode;
 
   /// Label for unlock
   ///
@@ -1211,7 +1187,7 @@ abstract class AppLocalizations {
   /// **'No email registered. Configure it in settings.'**
   String get noEmailRegistered;
 
-  /// Message for checkEmailOrUseCode
+  /// Prompt to check email or enter code
   ///
   /// In en, this message translates to:
   /// **'Check your email at {email} or use the displayed code'**
@@ -1228,12 +1204,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error sending code. Try again.'**
   String get errorSendingCode;
-
-  /// Label for recoverPinTitle
-  ///
-  /// In en, this message translates to:
-  /// **'Recover PIN'**
-  String get recoverPinTitle;
 
   /// Label for enterRecoveryCodePrompt
   ///
@@ -1768,30 +1738,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select a backup file (ZIP) previously created to restore all your data.'**
   String get restoreSectionDescription;
-
-  /// No description provided for @autoBackupsSavedTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Saved Automatic Backups'**
-  String get autoBackupsSavedTitle;
-
-  /// No description provided for @autoBackupsSavedCount.
-  ///
-  /// In en, this message translates to:
-  /// **'{count} file(s)'**
-  String autoBackupsSavedCount(int count);
-
-  /// No description provided for @autoBackupShareSubject.
-  ///
-  /// In en, this message translates to:
-  /// **'DayApp Automatic Backup'**
-  String get autoBackupShareSubject;
-
-  /// Message shown when automatic backup is saved in local storage
-  ///
-  /// In en, this message translates to:
-  /// **'Backup saved locally!'**
-  String get autoBackupSavedLocal;
 
   /// Subject used when sharing a manual backup file
   ///
@@ -2645,11 +2591,23 @@ abstract class AppLocalizations {
   /// **'Do you want to remove the group \"{name}\" from your stories?'**
   String deleteGroupConfirm(Object name);
 
+  /// Label for recoverPinTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Recover PIN'**
+  String get recoverPinTitle;
+
   /// No description provided for @recoverPinDescription.
   ///
   /// In en, this message translates to:
   /// **'We will send a recovery code to your registered email.'**
   String get recoverPinDescription;
+
+  /// Label for sendCode
+  ///
+  /// In en, this message translates to:
+  /// **'Send Code'**
+  String get sendCode;
 
   /// No description provided for @emptyTrashTitle.
   ///
@@ -2728,6 +2686,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Default advance'**
   String get notificationAdvanceDefault;
+
+  /// No description provided for @automaticBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic Backup'**
+  String get automaticBackup;
 
   /// No description provided for @manageCompleteBackup.
   ///

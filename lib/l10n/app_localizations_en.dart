@@ -136,15 +136,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backup => 'Backup';
 
   @override
-  String get automaticBackup => 'Automatic Backup';
-
-  @override
-  String get lastAutoBackup => 'Last automatic backup';
-
-  @override
-  String get backupOnLogout => 'Backup on logout';
-
-  @override
   String get enabled => 'Enabled';
 
   @override
@@ -512,9 +503,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get passwordMinLength => 'Password must be at least 6 characters.';
 
   @override
-  String get sendCode => 'Send Code';
-
-  @override
   String get unlock => 'Unlock';
 
   @override
@@ -612,9 +600,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorSendingCode => 'Error sending code. Try again.';
-
-  @override
-  String get recoverPinTitle => 'Recover PIN';
 
   @override
   String get enterRecoveryCodePrompt => 'Enter the code sent to your email:';
@@ -895,20 +880,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get restoreSectionDescription =>
       'Select a backup file (ZIP) previously created to restore all your data.';
-
-  @override
-  String get autoBackupsSavedTitle => 'Saved Automatic Backups';
-
-  @override
-  String autoBackupsSavedCount(int count) {
-    return '$count file(s)';
-  }
-
-  @override
-  String get autoBackupShareSubject => 'DayApp Automatic Backup';
-
-  @override
-  String get autoBackupSavedLocal => 'Backup saved locally!';
 
   @override
   String get backupShareSubject => 'DayApp Backup';
@@ -1425,8 +1396,14 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get recoverPinTitle => 'Recover PIN';
+
+  @override
   String get recoverPinDescription =>
       'We will send a recovery code to your registered email.';
+
+  @override
+  String get sendCode => 'Send Code';
 
   @override
   String get emptyTrashTitle => 'Empty trash';
@@ -1474,6 +1451,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationAdvanceDefault => 'Default advance';
+
+  @override
+  String get automaticBackup => 'Automatic Backup';
 
   @override
   String get manageCompleteBackup => 'Manage full backup';

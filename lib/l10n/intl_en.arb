@@ -64,9 +64,6 @@
     }
   },
   "backup": "Backup",
-  "automaticBackup": "Automatic Backup",
-  "lastAutoBackup": "Last automatic backup",
-  "backupOnLogout": "Backup on logout",
   "enabled": "Enabled",
   "disabled": "Disabled",
   "confirm": "Confirm",
@@ -192,7 +189,6 @@
   "createAccountButton": "Create Account",
   "alreadyHaveAccount": "Already have an account? Log in",
   "needHelp": "Need help?",
-  "changePin": "Change PIN",
   "currentPinLabel": "Current PIN",
   "newPinLabel": "New PIN",
   "pinLabel": "PIN",
@@ -219,7 +215,6 @@
   "resendCodeSuccess": "New code sent! Check your inbox.",
   "resendCodeError": "Error resending code. Try again.",
   "passwordMinLength": "Password must be at least 6 characters.",
-  "sendCode": "Send code",
   "unlock": "Unlock",
   "fullName": "Full name",
   "birthDate": "Birth date",
@@ -253,7 +248,6 @@
   "@checkEmailOrUseCode": { "description": "Prompt to check email or enter code", "placeholders": { "email": {} } },
   "errorGeneratingCode": "Error generating code. Try again.",
   "errorSendingCode": "Error sending code. Try again.",
-  "recoverPinTitle": "Recover PIN",
   "enterRecoveryCodePrompt": "Enter the code sent to your email:",
   "recoveryCodeLabel": "Recovery code (6 digits)",
   "enterPasswordToContinue": "Enter your password to continue",
@@ -372,18 +366,6 @@
   "backupZipExplanation": "Generates a ZIP file that you can save to OneDrive, Google Drive, email or any other location.",
   "restoreSectionTitle": "Restore Backup",
   "restoreSectionDescription": "Select a backup file (ZIP) previously created to restore all your data.",
-  "autoBackupsSavedTitle": "Saved Automatic Backups",
-  "autoBackupsSavedCount": "{count} file(s)",
-  "@autoBackupsSavedCount": {
-    "placeholders": {
-      "count": {"type": "int"}
-    }
-  },
-  "autoBackupShareSubject": "DayApp Automatic Backup",
-  "autoBackupSavedLocal": "Backup saved locally!",
-  "@autoBackupSavedLocal": {
-    "description": "Message shown when automatic backup is saved in local storage"
-  },
   "backupShareSubject": "DayApp Backup",
   "@backupShareSubject": {
     "description": "Subject used when sharing a manual backup file"
@@ -596,6 +578,7 @@
   "notificationAdvanceTitle": "Notification advance",
   "notificationAdvancePrompt": "How much notice would you like before being notified?",
   "notificationAdvanceDefault": "Default advance",
+  "automaticBackup": "Automatic Backup",
   "manageCompleteBackup": "Manage full backup",
   "backupWithVideosZip": "Backup with videos in ZIP file",
   "backupOnLogoutDescription": "Backup will be created when you log out",
@@ -746,7 +729,6 @@
   "@informYourEmail": { "description": "Message for informYourEmail", "type": "text" },
   "@invalidEmail": { "description": "Message for invalidEmail", "type": "text" },
   "@emailNotFound": { "description": "Message for emailNotFound", "type": "text" },
-  "@codeSent": { "description": "Message for codeSent", "type": "text" },
   "@codeMustBe6": { "description": "Message for codeMustBe6", "type": "text" },
   "@codeVerified": { "description": "Message for codeVerified", "type": "text" },
   "@codeInvalid": { "description": "Message for codeInvalid", "type": "text" },
@@ -780,12 +762,10 @@
   "@fillEmailAndPassword": { "description": "Message for fillEmailAndPassword", "type": "text" },
   "@emailOrPasswordIncorrect": { "description": "Message for emailOrPasswordIncorrect", "type": "text" },
   "@noEmailRegistered": { "description": "Message for noEmailRegistered", "type": "text" },
-  "@checkEmailOrUseCode": { "description": "Message for checkEmailOrUseCode", "type": "text" },
   "@errorGeneratingCode": { "description": "Message for errorGeneratingCode", "type": "text" },
   "@errorSendingCode": { "description": "Message for errorSendingCode", "type": "text" },
   "@recoverPinTitle": { "description": "Label for recoverPinTitle", "type": "text" },
   "@enterRecoveryCodePrompt": { "description": "Label for enterRecoveryCodePrompt", "type": "text" },
-  "@recoveryCodeLabel": { "description": "Label for recoveryCodeLabel", "type": "text" },
   "@enterPasswordToContinue": { "description": "Label for enterPasswordToContinue", "type": "text" },
   "@enterPinToContinue": { "description": "Label for enterPinToContinue", "type": "text" },
   "@useBiometricsToContinue": { "description": "Label for useBiometricsToContinue", "type": "text" },
@@ -1078,7 +1058,6 @@
   "@verifyCode": { "description": "Button to verify recovery code" },
   "resetPin": "Reset PIN",
   "@resetPin": { "description": "Button to reset PIN" },
-  "recoveryCodeLabel": "Recovery code (6 digits)",
   "@recoveryCodeLabel": { "description": "Label for recovery code input field" },
 
   "premiumPlan": "Premium",

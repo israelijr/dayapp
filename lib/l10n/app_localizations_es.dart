@@ -136,15 +136,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get backup => 'Copia de seguridad';
 
   @override
-  String get automaticBackup => 'Copia de seguridad automática';
-
-  @override
-  String get lastAutoBackup => 'Última copia automática';
-
-  @override
-  String get backupOnLogout => 'Copia al cerrar sesión';
-
-  @override
   String get enabled => 'Habilitado';
 
   @override
@@ -518,9 +509,6 @@ class AppLocalizationsEs extends AppLocalizations {
       'La contraseña debe tener al menos 6 caracteres.';
 
   @override
-  String get sendCode => 'Enviar código';
-
-  @override
   String get unlock => 'Desbloquear';
 
   @override
@@ -622,9 +610,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get errorSendingCode => 'Error al enviar código. Intente nuevamente.';
-
-  @override
-  String get recoverPinTitle => 'Recuperar PIN';
 
   @override
   String get enterRecoveryCodePrompt =>
@@ -908,20 +893,6 @@ class AppLocalizationsEs extends AppLocalizations {
       'Selecciona un archivo de copia de seguridad (ZIP) creado previamente para restaurar todos tus datos.';
 
   @override
-  String get autoBackupsSavedTitle => 'Copias automáticas guardadas';
-
-  @override
-  String autoBackupsSavedCount(int count) {
-    return '$count archivo(s)';
-  }
-
-  @override
-  String get autoBackupShareSubject => 'Copia automática de DayApp';
-
-  @override
-  String get autoBackupSavedLocal => '¡Copia de seguridad guardada localmente!';
-
-  @override
   String get backupShareSubject => 'Copia de seguridad de DayApp';
 
   @override
@@ -1093,11 +1064,11 @@ class AppLocalizationsEs extends AppLocalizations {
   String get helpBackupSecurityTitle => 'Copia de seguridad y seguridad';
 
   @override
-  String get helpAutomaticBackupTitle => 'Copia de seguridad automática';
+  String get helpAutomaticBackupTitle => 'Automatic Backup';
 
   @override
   String get helpAutomaticBackupDesc =>
-      'Configura copia de seguridad automática (Premium) en Configuración. La copia se creará al cerrar sesión.';
+      'Configure automatic backup (Premium) in Settings. The backup will be created when you log out.';
 
   @override
   String get helpManualBackupTitle => 'Copia de seguridad manual';
@@ -1441,8 +1412,14 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get recoverPinTitle => 'Recuperar PIN';
+
+  @override
   String get recoverPinDescription =>
       'Enviaremos un código de recuperación a su correo electrónico registrado.';
+
+  @override
+  String get sendCode => 'Enviar código';
 
   @override
   String get emptyTrashTitle => 'Empty trash';
@@ -1492,6 +1469,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get notificationAdvanceDefault => 'Antelación predeterminada';
 
   @override
+  String get automaticBackup => 'Copia de seguridad automática';
+
+  @override
   String get manageCompleteBackup => 'Administrar copia de seguridad completa';
 
   @override
@@ -1500,50 +1480,48 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get backupOnLogoutDescription =>
-      'La copia de seguridad se creará al cerrar sesión';
+      'Backup will be created when you log out';
 
   @override
   String get automaticBackupInfo =>
-      'Cuando cierre sesión, se creará una copia de seguridad y podrá elegir dónde guardarla (carpeta local, Google Drive, etc).';
+      'When you log out, a backup will be created and you can choose where to save it (local folder, Google Drive, etc).';
 
   @override
   String get automaticBackupInfoLocal =>
-      'Al cerrar sesión, una copia de seguridad se guarda automáticamente en su dispositivo. Puede exportarla a almacenamiento en la nube después si es necesario.';
+      'On logout, a backup is automatically saved locally on your device. You can later export it to cloud storage if needed.';
 
   @override
-  String get incrementalBackupTitle =>
-      'Carpeta de Copia de Seguridad Incremental';
+  String get incrementalBackupTitle => 'Incremental Backup Folder';
 
   @override
   String get incrementalBackupDescription =>
-      'Sus historias se guardan automáticamente en esta carpeta cada vez que guarda una.';
+      'Stories are automatically backed up to this folder whenever you save one.';
 
   @override
-  String get incrementalBackupFolderNotSet => 'Carpeta no configurada';
+  String get incrementalBackupFolderNotSet => 'Folder not configured';
 
   @override
-  String get incrementalBackupFolderConfigured => 'Carpeta configurada';
+  String get incrementalBackupFolderConfigured => 'Folder configured';
 
   @override
-  String get incrementalBackupSelectFolder => 'Seleccionar Carpeta';
+  String get incrementalBackupSelectFolder => 'Select Folder';
 
   @override
-  String get incrementalBackupChangeFolder => 'Cambiar Carpeta';
+  String get incrementalBackupChangeFolder => 'Change Folder';
 
   @override
   String get incrementalBackupChangingFolder =>
-      'Copiando archivos a la nueva carpeta...';
+      'Copying files to new folder...';
 
   @override
-  String get incrementalBackupFolderChanged =>
-      'Carpeta de copia de seguridad actualizada.';
+  String get incrementalBackupFolderChanged => 'Backup folder updated.';
 
   @override
   String get incrementalBackupWarningNoFolder =>
-      'Carpeta de copia de seguridad no configurada. Las historias no serán respaldadas hasta que configure una carpeta en Ajustes.';
+      'Backup folder not set. Stories will not be backed up until you configure a folder in Settings.';
 
   @override
-  String get incrementalBackupSyncDone => 'Guardado en copia de seguridad';
+  String get incrementalBackupSyncDone => 'Backed up';
 
   @override
   String get biometricsNotAvailable => 'No disponible en este dispositivo';
@@ -2145,7 +2123,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get autoBackupPremiumRequired =>
-      'Los backups automáticos son una función Premium. Actualiza para acceder a backups guardados, puntos de restauración y gestión de almacenamiento.';
+      'Automatic backups are a Premium feature. Upgrade to access saved backups, restore points and storage management.';
 
   @override
   String autoBackupStorageInfo(int count, String size) {
@@ -2154,7 +2132,7 @@ class AppLocalizationsEs extends AppLocalizations {
       locale: localeName,
       other: '$count backups · $size',
       one: '1 backup · $size',
-      zero: 'Sin backups guardados',
+      zero: 'No backups saved',
     );
     return '$_temp0';
   }

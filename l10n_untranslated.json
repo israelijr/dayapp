@@ -1,6 +1,43 @@
 {
   "es": [
+    "helpAutomaticBackupTitle",
+    "helpAutomaticBackupDesc",
     "emptyTrashTitle",
-    "emptyTrashLabel"
+    "emptyTrashLabel",
+    "backupOnLogoutDescription",
+    "automaticBackupInfo",
+    "automaticBackupInfoLocal",
+    "incrementalBackupTitle",
+    "incrementalBackupDescription",
+    "incrementalBackupFolderNotSet",
+    "incrementalBackupFolderConfigured",
+    "incrementalBackupSelectFolder",
+    "incrementalBackupChangeFolder",
+    "incrementalBackupChangingFolder",
+    "incrementalBackupFolderChanged",
+    "incrementalBackupWarningNoFolder",
+    "incrementalBackupSyncDone",
+    "autoBackupPremiumRequired",
+    "autoBackupStorageInfo"
+  ],
+
+  "pt": [
+    "helpAutomaticBackupTitle",
+    "helpAutomaticBackupDesc",
+    "backupOnLogoutDescription",
+    "automaticBackupInfo",
+    "automaticBackupInfoLocal",
+    "incrementalBackupTitle",
+    "incrementalBackupDescription",
+    "incrementalBackupFolderNotSet",
+    "incrementalBackupFolderConfigured",
+    "incrementalBackupSelectFolder",
+    "incrementalBackupChangeFolder",
+    "incrementalBackupChangingFolder",
+    "incrementalBackupFolderChanged",
+    "incrementalBackupWarningNoFolder",
+    "incrementalBackupSyncDone",
+    "autoBackupPremiumRequired",
+    "autoBackupStorageInfo"
   ]
 }

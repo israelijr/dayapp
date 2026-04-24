@@ -60,9 +60,6 @@
     }
   },
   "backup": "Backup",
-  "automaticBackup": "Backup Automático",
-  "lastAutoBackup": "Último backup automático",
-  "backupOnLogout": "Backup ao sair",
   "enabled": "Habilitado",
   "disabled": "Desabilitado",
   "confirm": "Confirmar",
@@ -320,18 +317,6 @@
   "backupZipExplanation": "Gera um arquivo ZIP que você pode salvar no OneDrive, Google Drive, email ou qualquer outro local.",
   "restoreSectionTitle": "Restaurar Backup",
   "restoreSectionDescription": "Selecione um arquivo de backup (ZIP) anteriormente criado para restaurar todos os seus dados.",
-  "autoBackupsSavedTitle": "Backups Automáticos Salvos",
-  "autoBackupsSavedCount": "{count} arquivo(s)",
-  "@autoBackupsSavedCount": {
-    "placeholders": {
-      "count": {"type": "int"}
-    }
-  },
-  "autoBackupShareSubject": "Backup Automático DayApp",
-  "autoBackupSavedLocal": "Backup salvo localmente!",
-  "@autoBackupSavedLocal": {
-    "description": "Mensagem exibida quando o backup automático é salvo no armazenamento local"
-  },
   "backupShareSubject": "Backup DayApp",
   "@backupShareSubject": {
     "description": "Assunto usado ao compartilhar um arquivo de backup manual"
@@ -402,8 +387,6 @@
   "helpInsightsTitle": "Insights",
   "helpInsightsDesc": "Receba insights baseados em suas histórias na tela inicial.\nAlguns insights estão disponíveis apenas na versão Premium.\nAcesse o histórico de insights no menu lateral.",
   "helpBackupSecurityTitle": "Backup e Segurança",
-  "helpAutomaticBackupTitle": "Backup Automático",
-  "helpAutomaticBackupDesc": "Configure backup automático (Premium) nas Configurações. O backup será criado quando fizer logout.",
   "helpManualBackupTitle": "Backup Manual",
   "helpManualBackupDesc": "Acesse \"Gerenciar Backup Completo\" nas Configurações para criar backup completo com todas as mídias.",
   "helpRestoreTitle": "Restauração",
@@ -576,21 +559,9 @@
   "notificationAdvanceTitle": "Antecedência da Notificação",
   "notificationAdvancePrompt": "Com quanto tempo de antecedência você quer ser notificado?",
   "notificationAdvanceDefault": "Antecedência padrão",
+  "automaticBackup": "Backup Automático",
   "manageCompleteBackup": "Gerenciar Backup Completo",
   "backupWithVideosZip": "Backup com vídeos em arquivo ZIP",
-  "backupOnLogoutDescription": "Backup será criado ao fazer logout",
-  "automaticBackupInfo": "Ao fazer logout, um backup será criado e você poderá escolher onde salvar (pasta local, Google Drive, etc).",
-  "automaticBackupInfoLocal": "Ao fazer logout, um backup será salvo automaticamente no dispositivo. Você pode exportá-lo para nuvem depois se necessário.",
-  "incrementalBackupTitle": "Pasta de Cópia de Segurança Incremental",
-  "incrementalBackupDescription": "As suas histórias são guardadas automaticamente nesta pasta sempre que guardar uma.",
-  "incrementalBackupFolderNotSet": "Pasta não configurada",
-  "incrementalBackupFolderConfigured": "Pasta configurada",
-  "incrementalBackupSelectFolder": "Selecionar Pasta",
-  "incrementalBackupChangeFolder": "Alterar Pasta",
-  "incrementalBackupChangingFolder": "A copiar ficheiros para a nova pasta...",
-  "incrementalBackupFolderChanged": "Pasta de cópia de segurança atualizada.",
-  "incrementalBackupWarningNoFolder": "Pasta de cópia de segurança não configurada. As histórias não serão guardadas até configurar uma pasta nas Definições.",
-  "incrementalBackupSyncDone": "Guardado em cópia de segurança",
   "biometricsNotAvailable": "Não disponível neste dispositivo",
   "biometricsDisabled": "Biometria desabilitada",
   "biometricConfiguredInfo": "A biometria está configurada. Você pode fazer login usando sua digital ou reconhecimento facial.",
@@ -723,7 +694,6 @@
   "@informYourEmail": { "description": "Message for informYourEmail", "type": "text" },
   "@invalidEmail": { "description": "Message for invalidEmail", "type": "text" },
   "@emailNotFound": { "description": "Message for emailNotFound", "type": "text" },
-  "@codeSent": { "description": "Message for codeSent", "type": "text" },
   "@codeMustBe6": { "description": "Message for codeMustBe6", "type": "text" },
   "@codeVerified": { "description": "Message for codeVerified", "type": "text" },
   "@codeInvalid": { "description": "Message for codeInvalid", "type": "text" },
@@ -757,7 +727,6 @@
   "@fillEmailAndPassword": { "description": "Message for fillEmailAndPassword", "type": "text" },
   "@emailOrPasswordIncorrect": { "description": "Message for emailOrPasswordIncorrect", "type": "text" },
   "@noEmailRegistered": { "description": "Message for noEmailRegistered", "type": "text" },
-  "@checkEmailOrUseCode": { "description": "Message for checkEmailOrUseCode", "type": "text" },
   "@errorGeneratingCode": { "description": "Message for errorGeneratingCode", "type": "text" },
   "@errorSendingCode": { "description": "Message for errorSendingCode", "type": "text" },
   "@recoverPinTitle": { "description": "Label for recoverPinTitle", "type": "text" },
@@ -1105,13 +1074,6 @@
   "@premiumDebugFeatures": { "description": "Título da seção que lista funcionalidades por plano" },
   "premiumDebugNoSource": "nenhuma",
   "@premiumDebugNoSource": { "description": "Exibido quando não há origem de premium registrada" },
-  "autoBackupPremiumRequired": "Backups automáticos são um recurso Premium. Faça upgrade para aceder a backups guardados, pontos de restauro e gestão de armazenamento.",
-  "@autoBackupPremiumRequired": { "description": "Mensagem exibida para utilizadores Free na secção de backups automáticos" },
-  "autoBackupStorageInfo": "{count, plural, =0{Nenhum backup guardado} =1{1 backup · {size}} other{{count} backups · {size}}}",
-  "@autoBackupStorageInfo": {
-    "description": "Quantidade de backups e espaço total exibidos nas configurações",
-    "placeholders": { "count": { "type": "int" }, "size": { "type": "String" } }
-  },
   "chaptersTitle": "Capítulos",
   "@chaptersTitle": { "description": "Título da tela de capítulos e acesso rápido" },
   "chapterShortcutToggle": "Mostrar/ocultar card de capítulos na Home",

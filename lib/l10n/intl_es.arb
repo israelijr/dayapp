@@ -60,9 +60,6 @@
     }
   },
   "backup": "Copia de seguridad",
-  "automaticBackup": "Copia de seguridad automática",
-  "lastAutoBackup": "Última copia automática",
-  "backupOnLogout": "Copia al cerrar sesión",
   "enabled": "Habilitado",
   "disabled": "Deshabilitado",
   "confirm": "Confirmar",
@@ -346,18 +343,6 @@
   "backupZipExplanation": "Genera un archivo ZIP que puedes guardar en OneDrive, Google Drive, correo electrónico o cualquier otra ubicación.",
   "restoreSectionTitle": "Restaurar copia de seguridad",
   "restoreSectionDescription": "Selecciona un archivo de copia de seguridad (ZIP) creado previamente para restaurar todos tus datos.",
-  "autoBackupsSavedTitle": "Copias automáticas guardadas",
-  "autoBackupsSavedCount": "{count} archivo(s)",
-  "@autoBackupsSavedCount": {
-    "placeholders": {
-      "count": {"type": "int"}
-    }
-  },
-  "autoBackupShareSubject": "Copia automática de DayApp",
-  "autoBackupSavedLocal": "¡Copia de seguridad guardada localmente!",
-  "@autoBackupSavedLocal": {
-    "description": "Mensaje mostrado cuando la copia automática se guarda en el almacenamiento local"
-  },
   "backupShareSubject": "Copia de seguridad de DayApp",
   "@backupShareSubject": {
     "description": "Asunto usado al compartir un archivo de copia manual"
@@ -428,8 +413,6 @@
   "helpInsightsTitle": "Insights",
   "helpInsightsDesc": "Recibe insights basados en tus historias en la pantalla principal.\nAlgunos insights solo están disponibles en la versión Premium.\nAccede al historial de insights en el menú lateral.",
   "helpBackupSecurityTitle": "Copia de seguridad y seguridad",
-  "helpAutomaticBackupTitle": "Copia de seguridad automática",
-  "helpAutomaticBackupDesc": "Configura copia de seguridad automática (Premium) en Configuración. La copia se creará al cerrar sesión.",
   "helpManualBackupTitle": "Copia de seguridad manual",
   "helpManualBackupDesc": "Ve a \"Administrar copia de seguridad completa\" en Configuración para crear una copia completa con todos los medios.",
   "helpRestoreTitle": "Restaurar",
@@ -568,21 +551,9 @@
   "notificationAdvanceTitle": "Antelación de la notificación",
   "notificationAdvancePrompt": "¿Con cuánto tiempo de antelación desea ser notificado?",
   "notificationAdvanceDefault": "Antelación predeterminada",
+  "automaticBackup": "Copia de seguridad automática",
   "manageCompleteBackup": "Administrar copia de seguridad completa",
   "backupWithVideosZip": "Copia de seguridad con videos en archivo ZIP",
-  "backupOnLogoutDescription": "La copia de seguridad se creará al cerrar sesión",
-  "automaticBackupInfo": "Cuando cierre sesión, se creará una copia de seguridad y podrá elegir dónde guardarla (carpeta local, Google Drive, etc).",
-  "automaticBackupInfoLocal": "Al cerrar sesión, una copia de seguridad se guarda automáticamente en su dispositivo. Puede exportarla a almacenamiento en la nube después si es necesario.",
-  "incrementalBackupTitle": "Carpeta de Copia de Seguridad Incremental",
-  "incrementalBackupDescription": "Sus historias se guardan automáticamente en esta carpeta cada vez que guarda una.",
-  "incrementalBackupFolderNotSet": "Carpeta no configurada",
-  "incrementalBackupFolderConfigured": "Carpeta configurada",
-  "incrementalBackupSelectFolder": "Seleccionar Carpeta",
-  "incrementalBackupChangeFolder": "Cambiar Carpeta",
-  "incrementalBackupChangingFolder": "Copiando archivos a la nueva carpeta...",
-  "incrementalBackupFolderChanged": "Carpeta de copia de seguridad actualizada.",
-  "incrementalBackupWarningNoFolder": "Carpeta de copia de seguridad no configurada. Las historias no serán respaldadas hasta que configure una carpeta en Ajustes.",
-  "incrementalBackupSyncDone": "Guardado en copia de seguridad",
   "biometricsNotAvailable": "No disponible en este dispositivo",
   "biometricsDisabled": "Biometría deshabilitada",
   "biometricConfiguredInfo": "La biometría está configurada. Puede iniciar sesión usando su huella dactilar o reconocimiento facial.",
@@ -707,7 +678,6 @@
   "@informYourEmail": { "description": "Message for informYourEmail", "type": "text" },
   "@invalidEmail": { "description": "Message for invalidEmail", "type": "text" },
   "@emailNotFound": { "description": "Message for emailNotFound", "type": "text" },
-  "@codeSent": { "description": "Message for codeSent", "type": "text" },
   "@codeMustBe6": { "description": "Message for codeMustBe6", "type": "text" },
   "@codeVerified": { "description": "Message for codeVerified", "type": "text" },
   "@codeInvalid": { "description": "Message for codeInvalid", "type": "text" },
@@ -741,7 +711,6 @@
   "@fillEmailAndPassword": { "description": "Message for fillEmailAndPassword", "type": "text" },
   "@emailOrPasswordIncorrect": { "description": "Message for emailOrPasswordIncorrect", "type": "text" },
   "@noEmailRegistered": { "description": "Message for noEmailRegistered", "type": "text" },
-  "@checkEmailOrUseCode": { "description": "Message for checkEmailOrUseCode", "type": "text" },
   "@errorGeneratingCode": { "description": "Message for errorGeneratingCode", "type": "text" },
   "@errorSendingCode": { "description": "Message for errorSendingCode", "type": "text" },
   "@recoverPinTitle": { "description": "Label for recoverPinTitle", "type": "text" },
@@ -1074,13 +1043,6 @@
   "@premiumDebugFeatures": { "description": "Título de la sección que lista funcionalidades por plan" },
   "premiumDebugNoSource": "ninguna",
   "@premiumDebugNoSource": { "description": "Mostrado cuando no hay origen de premium registrado" },
-  "autoBackupPremiumRequired": "Los backups automáticos son una función Premium. Actualiza para acceder a backups guardados, puntos de restauración y gestión de almacenamiento.",
-  "@autoBackupPremiumRequired": { "description": "Mensaje mostrado a usuarios Free en la sección de backups automáticos" },
-  "autoBackupStorageInfo": "{count, plural, =0{Sin backups guardados} =1{1 backup · {size}} other{{count} backups · {size}}}",
-  "@autoBackupStorageInfo": {
-    "description": "Cantidad de backups y espacio total mostrado en configuración",
-    "placeholders": { "count": { "type": "int" }, "size": { "type": "String" } }
-  },
   "chaptersTitle": "Capítulos",
   "@chaptersTitle": { "description": "Título de la pantalla de capítulos y acceso rápido" },
   "chapterShortcutToggle": "Mostrar/ocultar tarjeta de capítulos en Inicio",

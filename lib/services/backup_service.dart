@@ -239,7 +239,7 @@ Versão: 2.0.0
       final zipPath = path.join(tempDir.path, 'dayapp_backup_$timestamp.zip');
 
       final receivePort = ReceivePort();
-      final isolate = await Isolate.spawn(_createZipFileInIsolate, {
+      final isolate = await Isolate.spawn(backupZipIsolateEntrypoint, {
         'sendPort': receivePort.sendPort,
         'zipPath': zipPath,
         'entries': zipEntriesWithSize,
@@ -390,25 +390,20 @@ Versão: 2.0.0
       onProgress?.call(l10n.restoreProgressZipContains(archive.length));
 
       var extractedBytesDone = 0;
-      try {
-        for (final file in archive) {
-          final filename = path.join(extractDir.path, file.name);
-          if (file.isFile) {
-            final outFile = File(filename);
-            await outFile.create(recursive: true);
-            await outFile.writeAsBytes(file.content as List<int>);
-            extractedBytesDone += file.size;
-            reportOverallProgress(
-              completedWorkBytes: extractedBytesDone,
-              totalWorkBytes: extractTotalBytes,
-            );
-          } else {
-            await Directory(filename).create(recursive: true);
-          }
+      for (final file in archive) {
+        final filename = path.join(extractDir.path, file.name);
+        if (file.isFile) {
+          final outFile = File(filename);
+          await outFile.create(recursive: true);
+          await outFile.writeAsBytes(file.content as List<int>);
+          extractedBytesDone += file.size;
+          reportOverallProgress(
+            completedWorkBytes: extractedBytesDone,
+            totalWorkBytes: extractTotalBytes,
+          );
+        } else {
+          await Directory(filename).create(recursive: true);
         }
-      } finally {
-        // Fechar o stream do ZIP após extrair todos os arquivos (ou em caso de erro).
-        await zipInputStream.close();
       }
 
       // Função auxiliar para encontrar arquivo recursivamente
