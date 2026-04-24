@@ -1482,37 +1482,44 @@ class AppLocalizationsPt extends AppLocalizations {
       'On logout, a backup is automatically saved locally on your device. You can later export it to cloud storage if needed.';
 
   @override
-  String get incrementalBackupTitle => 'Incremental Backup Folder';
+  String get incrementalBackupTitle => 'Pasta de Backup Incremental';
 
   @override
   String get incrementalBackupDescription =>
-      'Stories are automatically backed up to this folder whenever you save one.';
+      'As suas histórias são guardadas automaticamente nesta pasta sempre que guardar uma.';
 
   @override
-  String get incrementalBackupFolderNotSet => 'Folder not configured';
+  String get incrementalBackupFolderNotSet => 'Pasta não configurada';
 
   @override
-  String get incrementalBackupFolderConfigured => 'Folder configured';
+  String get incrementalBackupFolderConfigured => 'Pasta configurada';
 
   @override
-  String get incrementalBackupSelectFolder => 'Select Folder';
+  String get incrementalBackupSelectFolder => 'Selecionar Pasta';
 
   @override
-  String get incrementalBackupChangeFolder => 'Change Folder';
+  String get incrementalBackupChangeFolder => 'Alterar Pasta';
 
   @override
   String get incrementalBackupChangingFolder =>
-      'Copying files to new folder...';
+      'A copiar ficheiros para a nova pasta...';
 
   @override
-  String get incrementalBackupFolderChanged => 'Backup folder updated.';
+  String get incrementalBackupFolderChanged => 'Pasta de backup atualizada.';
 
   @override
   String get incrementalBackupWarningNoFolder =>
-      'Backup folder not set. Stories will not be backed up until you configure a folder in Settings.';
+      'Pasta de backup não configurada. As histórias não serão guardadas até configurar uma pasta nas Definições.';
 
   @override
-  String get incrementalBackupSyncDone => 'Backed up';
+  String get incrementalBackupSyncDone => 'Guardado em backup';
+
+  @override
+  String get backupSetupTitle => 'Configurar Pasta de Backup';
+
+  @override
+  String get backupSetupContent =>
+      'Escolha uma pasta onde as suas histórias serão guardadas automaticamente. Isto garante que os seus dados estão sempre seguros.';
 
   @override
   String get biometricsNotAvailable => 'Não disponível neste dispositivo';
@@ -3984,6 +3991,13 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get incrementalBackupSyncDone => 'Salvo em backup';
+
+  @override
+  String get backupSetupTitle => 'Configurar Pasta de Backup';
+
+  @override
+  String get backupSetupContent =>
+      'Escolha uma pasta onde suas histórias serão salvas automaticamente. Isso garante que seus dados estejam sempre seguros.';
 
   @override
   String get biometricsNotAvailable => 'Não disponível neste dispositivo';

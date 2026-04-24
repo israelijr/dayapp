@@ -830,6 +830,13 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
                     onPressed: () => setState(() => _showBackupWarning = false),
                     child: Text(loc.close),
                   ),
+                  TextButton(
+                    onPressed: () {
+                      setState(() => _showBackupWarning = false);
+                      Navigator.pushNamed(context, '/backup-manager');
+                    },
+                    child: Text(loc.configureLabel),
+                  ),
                 ],
               ),
             Expanded(

@@ -1336,5 +1336,9 @@
   "restorePasswordWrong": "Senha incorreta ou backup ilegível. Verifique a senha e tente novamente.",
   "@restorePasswordWrong": { "description": "Erro quando a senha de restauração está incorreta" },
   "restoreContinue": "Continuar",
-  "@restoreContinue": { "description": "Rótulo do botão para continuar com a restauração" }
+  "@restoreContinue": { "description": "Rótulo do botão para continuar com a restauração" },
+  "backupSetupTitle": "Configurar Pasta de Backup",
+  "@backupSetupTitle": { "description": "Título do diálogo de configuração inicial da pasta de backup" },
+  "backupSetupContent": "Escolha uma pasta onde suas histórias serão salvas automaticamente. Isso garante que seus dados estejam sempre seguros.",
+  "@backupSetupContent": { "description": "Conteúdo do diálogo de configuração inicial da pasta de backup" }
 }

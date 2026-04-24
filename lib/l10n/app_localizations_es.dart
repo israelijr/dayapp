@@ -1491,37 +1491,45 @@ class AppLocalizationsEs extends AppLocalizations {
       'On logout, a backup is automatically saved locally on your device. You can later export it to cloud storage if needed.';
 
   @override
-  String get incrementalBackupTitle => 'Incremental Backup Folder';
+  String get incrementalBackupTitle =>
+      'Carpeta de Copia de Seguridad Incremental';
 
   @override
   String get incrementalBackupDescription =>
-      'Stories are automatically backed up to this folder whenever you save one.';
+      'Tus historias se respaldan automáticamente en esta carpeta cada vez que guardas una.';
 
   @override
-  String get incrementalBackupFolderNotSet => 'Folder not configured';
+  String get incrementalBackupFolderNotSet => 'Carpeta no configurada';
 
   @override
-  String get incrementalBackupFolderConfigured => 'Folder configured';
+  String get incrementalBackupFolderConfigured => 'Carpeta configurada';
 
   @override
-  String get incrementalBackupSelectFolder => 'Select Folder';
+  String get incrementalBackupSelectFolder => 'Seleccionar Carpeta';
 
   @override
-  String get incrementalBackupChangeFolder => 'Change Folder';
+  String get incrementalBackupChangeFolder => 'Cambiar Carpeta';
 
   @override
   String get incrementalBackupChangingFolder =>
-      'Copying files to new folder...';
+      'Copiando archivos a la nueva carpeta...';
 
   @override
-  String get incrementalBackupFolderChanged => 'Backup folder updated.';
+  String get incrementalBackupFolderChanged => 'Carpeta de copia actualizada.';
 
   @override
   String get incrementalBackupWarningNoFolder =>
-      'Backup folder not set. Stories will not be backed up until you configure a folder in Settings.';
+      'Carpeta de copia no configurada. Las historias no se respaldarán hasta que configures una carpeta en Ajustes.';
 
   @override
-  String get incrementalBackupSyncDone => 'Backed up';
+  String get incrementalBackupSyncDone => 'Respaldado';
+
+  @override
+  String get backupSetupTitle => 'Configurar Carpeta de Copia de Seguridad';
+
+  @override
+  String get backupSetupContent =>
+      'Elige una carpeta donde tus historias se respaldarán automáticamente. Esto garantiza que tus datos siempre estén seguros.';
 
   @override
   String get biometricsNotAvailable => 'No disponible en este dispositivo';

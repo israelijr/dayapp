@@ -2783,6 +2783,18 @@ abstract class AppLocalizations {
   /// **'Backed up'**
   String get incrementalBackupSyncDone;
 
+  /// Dialog title for first-time backup folder setup prompt
+  ///
+  /// In en, this message translates to:
+  /// **'Set Up Backup Folder'**
+  String get backupSetupTitle;
+
+  /// Dialog content for first-time backup folder setup prompt
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a folder where your stories will be backed up automatically. This ensures your data is always safe.'**
+  String get backupSetupContent;
+
   /// No description provided for @biometricsNotAvailable.
   ///
   /// In en, this message translates to:

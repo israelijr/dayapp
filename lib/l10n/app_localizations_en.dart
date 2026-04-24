@@ -1507,6 +1507,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get incrementalBackupSyncDone => 'Backed up';
 
   @override
+  String get backupSetupTitle => 'Set Up Backup Folder';
+
+  @override
+  String get backupSetupContent =>
+      'Choose a folder where your stories will be backed up automatically. This ensures your data is always safe.';
+
+  @override
   String get biometricsNotAvailable => 'Not available on this device';
 
   @override

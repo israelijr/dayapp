@@ -8,6 +8,7 @@ import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../services/backup_service.dart';
+import '../services/incremental_backup_service.dart';
 import '../theme/m3_expressive_theme.dart';
 
 class BackupManagerScreen extends StatefulWidget {
@@ -19,15 +20,25 @@ class BackupManagerScreen extends StatefulWidget {
 
 class _BackupManagerScreenState extends State<BackupManagerScreen> {
   final BackupService _backupService = BackupService();
+  final IncrementalBackupService _incrementalService =
+      IncrementalBackupService();
   bool _isLoading = false;
   String _statusMessage = '';
   double? _progressValue;
   bool _statusIsError = false; // nova flag para colorir card de status
   bool _statusIsSuccess = false;
+  String? _backupFolderPath;
+  bool _isFolderLoading = false;
 
   @override
   void initState() {
     super.initState();
+    _loadFolderPath();
+  }
+
+  Future<void> _loadFolderPath() async {
+    final path = await _incrementalService.getBackupFolderUri();
+    if (mounted) setState(() => _backupFolderPath = path);
   }
 
   @override
@@ -88,6 +99,135 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      // Pasta de Backup Automático
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.folder_open,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
+                                    size: 28,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          loc.incrementalBackupTitle,
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColors.labelColor(
+                                              context,
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
+                                          loc.incrementalBackupDescription,
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.onSurfaceVariant,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 10,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: _backupFolderPath != null
+                                      ? Theme.of(
+                                          context,
+                                        ).colorScheme.secondaryContainer
+                                      : Theme.of(
+                                          context,
+                                        ).colorScheme.errorContainer,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      _backupFolderPath != null
+                                          ? Icons.check_circle_outline
+                                          : Icons.warning_amber_rounded,
+                                      size: 18,
+                                      color: _backupFolderPath != null
+                                          ? Theme.of(
+                                              context,
+                                            ).colorScheme.onSecondaryContainer
+                                          : Theme.of(context).colorScheme.error,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        _backupFolderPath ??
+                                            loc.incrementalBackupFolderNotSet,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: _backupFolderPath != null
+                                              ? Theme.of(context)
+                                                    .colorScheme
+                                                    .onSecondaryContainer
+                                              : Theme.of(
+                                                  context,
+                                                ).colorScheme.error,
+                                          fontFamily: 'monospace',
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 2,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              FilledButton.icon(
+                                onPressed: _isFolderLoading || _isLoading
+                                    ? null
+                                    : _pickBackupFolder,
+                                icon: _isFolderLoading
+                                    ? const SizedBox(
+                                        width: 16,
+                                        height: 16,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                        ),
+                                      )
+                                    : const Icon(Icons.folder_open),
+                                label: Text(
+                                  _backupFolderPath != null
+                                      ? loc.incrementalBackupChangeFolder
+                                      : loc.incrementalBackupSelectFolder,
+                                ),
+                                style: FilledButton.styleFrom(
+                                  minimumSize: const Size(double.infinity, 48),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
+
                       // Backup em Arquivo ZIP
                       Card(
                         child: Padding(
@@ -299,6 +439,35 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
               ],
             ),
     );
+  }
+
+  /// Abre o seletor de pastas e persiste o caminho escolhido.
+  Future<void> _pickBackupFolder() async {
+    final loc = AppLocalizations.of(context)!;
+    final pinProvider = Provider.of<PinProvider>(context, listen: false);
+
+    setState(() => _isFolderLoading = true);
+    pinProvider.isPickingExternalMedia = true;
+
+    try {
+      final selected = await _incrementalService.pickAndSetFolder();
+      await Future.delayed(const Duration(milliseconds: 300));
+      pinProvider.isPickingExternalMedia = false;
+
+      if (!mounted) return;
+      if (selected) {
+        final newPath = await _incrementalService.getBackupFolderUri();
+        if (!mounted) return;
+        setState(() => _backupFolderPath = newPath);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(loc.incrementalBackupFolderChanged)),
+        );
+      }
+    } catch (e) {
+      pinProvider.isPickingExternalMedia = false;
+    } finally {
+      if (mounted) setState(() => _isFolderLoading = false);
+    }
   }
 
   /// Exibe o diálogo informativo sobre backup (substitui o card fixo)
