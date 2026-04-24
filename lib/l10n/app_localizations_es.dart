@@ -1491,8 +1491,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'On logout, a backup is automatically saved locally on your device. You can later export it to cloud storage if needed.';
 
   @override
-  String get incrementalBackupTitle =>
-      'Carpeta de Copia de Seguridad Incremental';
+  String get incrementalBackupTitle => 'Carpeta de Backup';
 
   @override
   String get incrementalBackupDescription =>
@@ -1530,6 +1529,10 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get backupSetupContent =>
       'Elige una carpeta donde tus historias se respaldarán automáticamente. Esto garantiza que tus datos siempre estén seguros.';
+
+  @override
+  String get backupSavedToFolder =>
+      'Guardando copia en la carpeta configurada...';
 
   @override
   String get biometricsNotAvailable => 'No disponible en este dispositivo';

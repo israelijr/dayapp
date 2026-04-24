@@ -83,6 +83,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       leading: const Icon(Icons.language),
       title: Text(loc.language),
       subtitle: Text(subtitle),
+      trailing: const Icon(Icons.chevron_right),
       onTap: () => _showLanguageDialog(context, localeProvider),
     );
   }
@@ -481,6 +482,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             subtitle: Text(
               '${AppLocalizations.of(context)!.backgroundLock}: ${InactivityService.getBackgroundTimeoutLabel(_backgroundLockTimeout, AppLocalizations.of(context)!)}',
             ),
+            trailing: const Icon(Icons.chevron_right),
             onTap: _showBackgroundLockTimeoutDialog,
           ),
           ListTile(
@@ -499,6 +501,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             subtitle: Text(
               '${loc.backgroundLock}: ${InactivityService.getBackgroundTimeoutLabel(_backgroundLockTimeout, AppLocalizations.of(context)!)}',
             ),
+            trailing: const Icon(Icons.chevron_right),
             onTap: _showBackgroundLockTimeoutDialog,
           ),
         ],
@@ -1222,13 +1225,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Text(
-            loc.notifications,
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: AppColors.labelColor(context),
-            ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  loc.notifications,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.labelColor(context),
+                  ),
+                ),
+              ),
+              IconButton(
+                icon: Icon(
+                  Icons.warning_amber_rounded,
+                  color: Theme.of(context).colorScheme.tertiary,
+                ),
+                tooltip: loc.backgroundRestrictionsWarningTitle,
+                onPressed: () => _showBackgroundRestrictionsDialog(context),
+              ),
+            ],
           ),
         ),
         ListTile(
@@ -1252,6 +1269,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 _notificationAdvance,
               ),
             ),
+            trailing: const Icon(Icons.chevron_right),
             onTap: _showNotificationAdvanceDialog,
             dense: true,
           ),
@@ -1262,19 +1280,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
             subtitle: Text(loc.entryNotificationsInfo),
             dense: true,
           ),
-        if (_notificationEnabled)
-          ListTile(
-            leading: Icon(
-              Icons.warning_amber_rounded,
-              color: Theme.of(context).colorScheme.tertiary,
-            ),
-            title: Text(loc.backgroundRestrictionsWarningTitle),
-            subtitle: Text(loc.backgroundRestrictionsWarningDesc),
-            dense: true,
-          ),
         // const Divider(),
         // ... (comentado permanece igual)
       ],
+    );
+  }
+
+  void _showBackgroundRestrictionsDialog(BuildContext context) {
+    final loc = AppLocalizations.of(context)!;
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        icon: Icon(
+          Icons.warning_amber_rounded,
+          color: Theme.of(context).colorScheme.tertiary,
+          size: 32,
+        ),
+        title: Text(loc.backgroundRestrictionsWarningTitle),
+        content: Text(
+          loc.backgroundRestrictionsWarningDesc,
+          style: const TextStyle(fontSize: 14, height: 1.55),
+        ),
+        actions: [
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(loc.close),
+          ),
+        ],
+      ),
     );
   }
 

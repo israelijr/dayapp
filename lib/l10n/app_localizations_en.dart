@@ -1474,7 +1474,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'On logout, a backup is automatically saved locally on your device. You can later export it to cloud storage if needed.';
 
   @override
-  String get incrementalBackupTitle => 'Incremental Backup Folder';
+  String get incrementalBackupTitle => 'Backup Folder';
 
   @override
   String get incrementalBackupDescription =>
@@ -1512,6 +1512,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get backupSetupContent =>
       'Choose a folder where your stories will be backed up automatically. This ensures your data is always safe.';
+
+  @override
+  String get backupSavedToFolder => 'Saving backup to configured folder...';
 
   @override
   String get biometricsNotAvailable => 'Not available on this device';

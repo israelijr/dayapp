@@ -582,7 +582,7 @@
   "backupOnLogoutDescription": "Backup será criado ao fazer logout",
   "automaticBackupInfo": "Ao fazer logout, um backup será criado e você poderá escolher onde salvar (pasta local, Google Drive, etc).",
   "automaticBackupInfoLocal": "Ao fazer logout, um backup será salvo automaticamente no dispositivo. Você pode exportá-lo para nuvem depois se necessário.",
-  "incrementalBackupTitle": "Pasta de Backup Incremental",
+  "incrementalBackupTitle": "Pasta de Backup",
   "incrementalBackupDescription": "Suas histórias são salvas automaticamente nesta pasta sempre que você salvar uma.",
   "incrementalBackupFolderNotSet": "Pasta não configurada",
   "incrementalBackupFolderConfigured": "Pasta configurada",
@@ -1340,5 +1340,6 @@
   "backupSetupTitle": "Configurar Pasta de Backup",
   "@backupSetupTitle": { "description": "Título do diálogo de configuração inicial da pasta de backup" },
   "backupSetupContent": "Escolha uma pasta onde suas histórias serão salvas automaticamente. Isso garante que seus dados estejam sempre seguros.",
-  "@backupSetupContent": { "description": "Conteúdo do diálogo de configuração inicial da pasta de backup" }
+  "@backupSetupContent": { "description": "Conteúdo do diálogo de configuração inicial da pasta de backup" },
+  "backupSavedToFolder": "Salvando backup na pasta configurada..."
 }

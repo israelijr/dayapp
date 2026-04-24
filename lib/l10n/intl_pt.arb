@@ -1300,10 +1300,10 @@
   "@restorePasswordWrong": { "description": "Erro quando a senha de restauração está incorreta" },
   "restoreContinue": "Continuar",
   "@restoreContinue": { "description": "Rótulo do botão para continuar com a restauração" },
-  "incrementalBackupTitle": "Pasta de Backup Incremental",
-  "@incrementalBackupTitle": { "description": "Título da secção de configuração da pasta de backup incremental" },
+  "incrementalBackupTitle": "Pasta de Backup",
+  "@incrementalBackupTitle": { "description": "Título da secção de configuração da pasta de backup" },
   "incrementalBackupDescription": "As suas histórias são guardadas automaticamente nesta pasta sempre que guardar uma.",
-  "@incrementalBackupDescription": { "description": "Descrição da secção de backup incremental" },
+  "@incrementalBackupDescription": { "description": "Descrição da secção de backup" },
   "incrementalBackupFolderNotSet": "Pasta não configurada",
   "@incrementalBackupFolderNotSet": { "description": "Subtítulo quando nenhuma pasta de backup foi selecionada" },
   "incrementalBackupFolderConfigured": "Pasta configurada",
@@ -1323,5 +1323,7 @@
   "backupSetupTitle": "Configurar Pasta de Backup",
   "@backupSetupTitle": { "description": "Título do diálogo de configuração inicial da pasta de backup" },
   "backupSetupContent": "Escolha uma pasta onde as suas histórias serão guardadas automaticamente. Isto garante que os seus dados estão sempre seguros.",
-  "@backupSetupContent": { "description": "Conteúdo do diálogo de configuração inicial da pasta de backup" }
+  "@backupSetupContent": { "description": "Conteúdo do diálogo de configuração inicial da pasta de backup" },
+  "backupSavedToFolder": "A guardar backup na pasta configurada...",
+  "@backupSavedToFolder": { "description": "Mensagem de progresso ao copiar o ZIP de backup para a pasta configurada" }
 }

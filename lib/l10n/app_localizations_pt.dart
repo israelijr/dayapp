@@ -1482,7 +1482,7 @@ class AppLocalizationsPt extends AppLocalizations {
       'On logout, a backup is automatically saved locally on your device. You can later export it to cloud storage if needed.';
 
   @override
-  String get incrementalBackupTitle => 'Pasta de Backup Incremental';
+  String get incrementalBackupTitle => 'Pasta de Backup';
 
   @override
   String get incrementalBackupDescription =>
@@ -1520,6 +1520,9 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get backupSetupContent =>
       'Escolha uma pasta onde as suas histórias serão guardadas automaticamente. Isto garante que os seus dados estão sempre seguros.';
+
+  @override
+  String get backupSavedToFolder => 'A guardar backup na pasta configurada...';
 
   @override
   String get biometricsNotAvailable => 'Não disponível neste dispositivo';
@@ -3960,7 +3963,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
       'Ao fazer logout, um backup será salvo automaticamente no dispositivo. Você pode exportá-lo para nuvem depois se necessário.';
 
   @override
-  String get incrementalBackupTitle => 'Pasta de Backup Incremental';
+  String get incrementalBackupTitle => 'Pasta de Backup';
 
   @override
   String get incrementalBackupDescription =>
@@ -3998,6 +4001,9 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get backupSetupContent =>
       'Escolha uma pasta onde suas histórias serão salvas automaticamente. Isso garante que seus dados estejam sempre seguros.';
+
+  @override
+  String get backupSavedToFolder => 'Salvando backup na pasta configurada...';
 
   @override
   String get biometricsNotAvailable => 'Não disponível neste dispositivo';

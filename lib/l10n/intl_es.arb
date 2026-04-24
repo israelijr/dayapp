@@ -1269,10 +1269,10 @@
   "@restorePasswordWrong": { "description": "Error cuando la contraseña de restauración es incorrecta" },
   "restoreContinue": "Continuar",
   "@restoreContinue": { "description": "Etiqueta del botón para continuar con la restauración" },
-  "incrementalBackupTitle": "Carpeta de Copia de Seguridad Incremental",
-  "@incrementalBackupTitle": { "description": "Título de la sección de configuración de la carpeta de copia incremental" },
+  "incrementalBackupTitle": "Carpeta de Backup",
+  "@incrementalBackupTitle": { "description": "Título de la sección de configuración de la carpeta de backup" },
   "incrementalBackupDescription": "Tus historias se respaldan automáticamente en esta carpeta cada vez que guardas una.",
-  "@incrementalBackupDescription": { "description": "Descripción de la sección de copia incremental" },
+  "@incrementalBackupDescription": { "description": "Descripción de la sección de backup" },
   "incrementalBackupFolderNotSet": "Carpeta no configurada",
   "@incrementalBackupFolderNotSet": { "description": "Subtítulo cuando no hay carpeta de copia seleccionada" },
   "incrementalBackupFolderConfigured": "Carpeta configurada",
@@ -1292,5 +1292,7 @@
   "backupSetupTitle": "Configurar Carpeta de Copia de Seguridad",
   "@backupSetupTitle": { "description": "Título del diálogo de configuración inicial de la carpeta de copia" },
   "backupSetupContent": "Elige una carpeta donde tus historias se respaldarán automáticamente. Esto garantiza que tus datos siempre estén seguros.",
-  "@backupSetupContent": { "description": "Contenido del diálogo de configuración inicial de la carpeta de copia" }
+  "@backupSetupContent": { "description": "Contenido del diálogo de configuración inicial de la carpeta de copia" },
+  "backupSavedToFolder": "Guardando copia en la carpeta configurada...",
+  "@backupSavedToFolder": { "description": "Mensaje de progreso al copiar el ZIP de backup a la carpeta configurada" }
 }

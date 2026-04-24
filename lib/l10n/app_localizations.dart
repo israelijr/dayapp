@@ -2723,13 +2723,13 @@ abstract class AppLocalizations {
   /// **'On logout, a backup is automatically saved locally on your device. You can later export it to cloud storage if needed.'**
   String get automaticBackupInfoLocal;
 
-  /// Section title for incremental backup folder configuration
+  /// Section title for backup folder configuration
   ///
   /// In en, this message translates to:
-  /// **'Incremental Backup Folder'**
+  /// **'Backup Folder'**
   String get incrementalBackupTitle;
 
-  /// Description under the incremental backup section
+  /// Description under the backup section
   ///
   /// In en, this message translates to:
   /// **'Stories are automatically backed up to this folder whenever you save one.'**
@@ -2794,6 +2794,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Choose a folder where your stories will be backed up automatically. This ensures your data is always safe.'**
   String get backupSetupContent;
+
+  /// Progress message shown while copying the backup zip to the configured folder
+  ///
+  /// In en, this message translates to:
+  /// **'Saving backup to configured folder...'**
+  String get backupSavedToFolder;
 
   /// No description provided for @biometricsNotAvailable.
   ///
