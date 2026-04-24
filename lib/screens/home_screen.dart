@@ -11,10 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../db/database_helper.dart';
 import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
-import '../providers/premium_provider.dart';
-import '../services/auto_backup_service.dart';
 import '../theme/animation_durations.dart';
-import '../theme/m3_expressive_theme.dart';
 import 'edit_profile_screen.dart';
 import 'groups_maintenance_screen.dart';
 import 'groups_screen.dart';
@@ -720,24 +717,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     listen: false,
                   );
 
-                  // Fecha o drawer antes de iniciar o backup
+                  // Fecha o drawer antes de iniciar o logout
                   navigator.pop();
-
-                  // Executa backup automático ao fazer logout (somente Premium)
-                  final premium = Provider.of<PremiumProvider>(
-                    context,
-                    listen: false,
-                  );
-                  final autoBackup = AutoBackupService();
-                  final configured = await autoBackup.isConfigured();
-                  if (configured && premium.canUseAutomaticBackup && mounted) {
-                    final zipPath = await _showAutoBackupProgress(autoBackup);
-                    // Backup automático agora é salvo localmente automaticamente
-                    // Nenhuma ação de compartilhamento necessária
-                    if (zipPath != null) {
-                      debugPrint('Backup automático salvo em: $zipPath');
-                    }
-                  }
 
                   await auth.logout();
                   pinProvider.updateUserLoginStatus(false);
@@ -797,74 +778,5 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ), // Scaffold
     ); // ScaffoldMessenger
-  }
-
-  /// Exibe dialog de progresso durante o backup automático ao fazer logout.
-  /// Retorna o caminho do ZIP criado, ou null em caso de erro/cancelamento.
-  Future<String?> _showAutoBackupProgress(AutoBackupService autoBackup) async {
-    final l10n = AppLocalizations.of(context)!;
-    // Controlador para atualizar o texto de progresso
-    final progressNotifier = ValueNotifier<String>(l10n.backupStarting);
-    String? resultPath;
-
-    // Inicia o backup antes de abrir o dialog
-    final backupFuture = autoBackup.executeBackup(
-      l10n: l10n,
-      onProgress: (message) {
-        progressNotifier.value = message;
-      },
-    );
-
-    await showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) {
-        // Fecha o dialog quando o backup terminar
-        backupFuture.then((zipPath) {
-          resultPath = zipPath;
-          if (dialogContext.mounted) {
-            Navigator.of(dialogContext).pop();
-          }
-        });
-
-        return PopScope(
-          canPop: false,
-          child: AlertDialog(
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const CircularProgressIndicator(),
-                const SizedBox(height: 20),
-                Text(
-                  l10n.automaticBackup,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.labelColor(context),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                ValueListenableBuilder<String>(
-                  valueListenable: progressNotifier,
-                  builder: (context, message, _) {
-                    return Text(
-                      message,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
-                    );
-                  },
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-
-    progressNotifier.dispose();
-    return resultPath;
   }
 }

@@ -15,7 +15,11 @@ import '../helpers/photo_file_helper.dart';
 import '../helpers/video_file_helper.dart';
 import '../l10n/generated/app_localizations.dart';
 
-void _createZipFileInIsolate(Map<String, dynamic> zipConfig) {
+/// Entrypoint de isolate para criação de ZIP. Declarado como função top-level
+/// para poder ser passado a [Isolate.spawn]. Também usado pelo
+/// [IncrementalBackupService].
+// ignore: library_private_types_in_public_api
+void backupZipIsolateEntrypoint(Map<String, dynamic> zipConfig) {
   final sendPort = zipConfig['sendPort'] as SendPort;
   final zipPath = zipConfig['zipPath'] as String;
   final entries = (zipConfig['entries'] as List)
@@ -23,10 +27,8 @@ void _createZipFileInIsolate(Map<String, dynamic> zipConfig) {
       .map((entry) => entry.cast<String, dynamic>())
       .toList();
 
-  final password = zipConfig['password'] as String?;
-
   try {
-    final encoder = ZipFileEncoder(password: password);
+    final encoder = ZipFileEncoder();
     encoder.create(zipPath);
 
     final totalBytes = (zipConfig['totalBytes'] as int?) ?? 0;
@@ -85,7 +87,6 @@ class BackupService {
   /// (para OneDrive, Google Drive, etc)
   Future<String> createBackupZipFile({
     required AppLocalizations l10n,
-    String? password,
     void Function(String)? onProgress,
     void Function(double?)? onProgressValue,
   }) async {
@@ -238,12 +239,11 @@ Versão: 2.0.0
       final zipPath = path.join(tempDir.path, 'dayapp_backup_$timestamp.zip');
 
       final receivePort = ReceivePort();
-      final isolate = await Isolate.spawn(_createZipFileInIsolate, {
+      final isolate = await Isolate.spawn(backupZipIsolateEntrypoint, {
         'sendPort': receivePort.sendPort,
         'zipPath': zipPath,
         'entries': zipEntriesWithSize,
         'totalBytes': totalBytes,
-        if (password != null) 'password': password,
       });
 
       final completer = Completer<void>();
@@ -304,7 +304,6 @@ Versão: 2.0.0
   /// Compartilha o arquivo de backup (para salvar no OneDrive, Google Drive, etc)
   Future<void> shareBackupFile({
     required AppLocalizations l10n,
-    String? password,
     void Function(String)? onProgress,
     void Function(double?)? onProgressValue,
   }) async {
@@ -312,7 +311,6 @@ Versão: 2.0.0
       final zipPath = await createBackupZipFile(
         onProgress: onProgress,
         onProgressValue: onProgressValue,
-        password: password,
         l10n: l10n,
       );
       final zipFile = File(zipPath);
@@ -337,7 +335,6 @@ Versão: 2.0.0
   Future<void> restoreFromZipFile(
     String zipFilePath, {
     required AppLocalizations l10n,
-    String? password,
     void Function(String)? onProgress,
     void Function(double?)? onProgressValue,
   }) async {
@@ -359,13 +356,9 @@ Versão: 2.0.0
       // OOM no Android, corrompendo silenciosamente os arquivos de mídia.
       final zipInputStream = InputFileStream(zipFilePath);
 
-      // password null = backup sem criptografia (compatibilidade com backups antigos)
       final Archive archive;
       try {
-        archive = ZipDecoder().decodeBuffer(
-          zipInputStream,
-          password: password?.isNotEmpty == true ? password : null,
-        );
+        archive = ZipDecoder().decodeBuffer(zipInputStream);
       } catch (e) {
         await zipInputStream.close();
         rethrow;

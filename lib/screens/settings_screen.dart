@@ -13,10 +13,10 @@ import '../providers/locale_provider.dart';
 import '../providers/pin_provider.dart';
 import '../providers/premium_provider.dart';
 import '../providers/theme_provider.dart';
-import '../services/auto_backup_service.dart';
 import '../services/biometric_service.dart';
 import '../services/engagement_service.dart';
 import '../services/inactivity_service.dart';
+import '../services/incremental_backup_service.dart';
 import '../services/notification_preferences_service.dart';
 import '../services/pin_recovery_service.dart';
 import '../services/secure_storage_service.dart';
@@ -38,7 +38,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final PinRecoveryService _recoveryService = PinRecoveryService();
   final NotificationPreferencesService _notificationService =
       NotificationPreferencesService();
-  final AutoBackupService _autoBackupService = AutoBackupService();
   final EngagementService _engagementService = EngagementService();
   bool _biometricAvailable = false;
   bool _biometricEnabled = false;
@@ -53,11 +52,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   String? _userEmail;
   late PinProvider _pinProvider;
 
-  // Estado do backup automático
-  bool _autoBackupEnabled = false;
-  DateTime? _lastAutoBackupTime;
-  int _localBackupCount = 0;
-  String _localBackupSize = '';
+  // Estado do backup incremental
+  bool _backupFolderConfigured = false;
+  bool _isChangingFolder = false;
 
   @override
   void initState() {
@@ -68,7 +65,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _loadBackgroundLockTimeout();
     _loadNotificationPreferences();
     _loadUserEmail();
-    _loadAutoBackupSettings();
+    _loadIncrementalBackupSettings();
   }
 
   Widget _buildLanguageSection(BuildContext context) {
@@ -201,45 +198,46 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
   }
 
-  Future<void> _loadAutoBackupSettings() async {
-    // Captura o provider antes do primeiro await para evitar uso de context em gap assíncrono
-    final premium = Provider.of<PremiumProvider>(context, listen: false);
-    final canUseAutoBackup = premium.canUseAutomaticBackup;
-
-    final enabled = await _autoBackupService.isEnabled();
-
-    // Se o usuário é Free e o backup estava ativo (estado residual),
-    // limpa a preferência para evitar exibição de estado inconsistente.
-    if (!canUseAutoBackup && enabled) {
-      await _autoBackupService.setEnabled(false);
-    }
-
-    final effectiveEnabled = canUseAutoBackup && enabled;
-    final lastBackup = await _autoBackupService.getLastBackupTime();
-    final backupFiles = await _autoBackupService.listLocalBackups();
-    int totalBytes = 0;
-    for (final f in backupFiles) {
-      if (await f.exists()) totalBytes += await f.length();
-    }
+  Future<void> _loadIncrementalBackupSettings() async {
+    final configured = await IncrementalBackupService().isConfigured();
+    if (!mounted) return;
     setState(() {
-      _autoBackupEnabled = effectiveEnabled;
-      _lastAutoBackupTime = lastBackup;
-      _localBackupCount = backupFiles.length;
-      _localBackupSize = _formatBackupSize(totalBytes);
+      _backupFolderConfigured = configured;
     });
   }
 
-  /// Formata bytes para string legível (KB / MB)
-  String _formatBackupSize(int bytes) {
-    if (bytes == 0) return '0 B';
-    const suffixes = ['B', 'KB', 'MB', 'GB'];
-    var size = bytes.toDouble();
-    var i = 0;
-    while (size >= 1024 && i < suffixes.length - 1) {
-      size /= 1024;
-      i++;
+  /// Seleciona nova pasta SAF e migra os arquivos de backup existentes para ela.
+  /// O progresso é indicado via [_isChangingFolder] no trailing do ListTile.
+  Future<void> _showChangeFolderDialog(BuildContext context) async {
+    final loc = AppLocalizations.of(context)!;
+    // Captura o ScaffoldMessenger antes de qualquer await
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+    final newUri = await IncrementalBackupService().pickAndSetFolder();
+    if (!newUri || !mounted) return;
+
+    // Recupera a URI recém-gravada para passar ao changeFolder
+    final newFolderUri = await IncrementalBackupService().getBackupFolderUri();
+    if (newFolderUri == null || !mounted) return;
+
+    setState(() => _isChangingFolder = true);
+
+    try {
+      await IncrementalBackupService().changeFolder(
+        newFolderUri: newFolderUri,
+        l10n: loc,
+      );
+    } catch (e) {
+      debugPrint('Erro ao trocar pasta de backup: $e');
     }
-    return '${size.toStringAsFixed(1)} ${suffixes[i]}';
+
+    if (!mounted) return;
+    setState(() => _isChangingFolder = false);
+    await _loadIncrementalBackupSettings();
+
+    scaffoldMessenger.showSnackBar(
+      SnackBar(content: Text(loc.incrementalBackupFolderChanged)),
+    );
   }
 
   @override
@@ -974,8 +972,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _buildBackupSection(BuildContext context) {
     final loc = AppLocalizations.of(context)!;
-    final premium = Provider.of<PremiumProvider>(context, listen: false);
-    final canUseAutoBackup = premium.canUseAutomaticBackup;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1001,10 +997,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
           },
         ),
         const Divider(indent: 16, endIndent: 16),
+        // ── Backup Incremental ──────────────────────────────────────────────
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Text(
-            loc.automaticBackup,
+            loc.incrementalBackupTitle,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -1012,89 +1009,62 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
         ),
-        if (!canUseAutoBackup)
-          ListTile(
-            leading: const Icon(Icons.backup),
-            title: Text(loc.backupOnLogout),
-            subtitle: Text(loc.disabled),
-            trailing: IconButton(
-              icon: const Icon(Icons.lock_outline),
-              tooltip: loc.premiumFeature,
-              onPressed: () {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text(loc.premiumFeature)));
-              },
-            ),
-          )
-        else
-          SwitchListTile(
-            secondary: const Icon(Icons.backup),
-            title: Text(loc.backupOnLogout),
-            subtitle: Text(
-              _autoBackupEnabled ? loc.backupOnLogoutDescription : loc.disabled,
-            ),
-            value: _autoBackupEnabled,
-            onChanged: (value) async {
-              await _autoBackupService.setEnabled(value);
-              await _loadAutoBackupSettings();
-            },
+        ListTile(
+          leading: Icon(
+            _backupFolderConfigured
+                ? Icons.cloud_done_outlined
+                : Icons.cloud_off_outlined,
+            color: _backupFolderConfigured
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.error,
           ),
-        if (canUseAutoBackup && _autoBackupEnabled) ...[
-          if (_lastAutoBackupTime != null)
-            ListTile(
-              leading: const Icon(Icons.history),
-              title: Text(loc.lastAutoBackup),
-              subtitle: Text(
-                _formatLastBackupTime(context, _lastAutoBackupTime!),
-              ),
-              dense: true,
-            ),
-          ListTile(
-            leading: const Icon(Icons.folder_open),
-            title: Text(
-              loc.autoBackupStorageInfo(_localBackupCount, _localBackupSize),
-            ),
-            dense: true,
-            trailing: TextButton(
-              onPressed: () => Navigator.pushNamed(context, '/backup-manager'),
-              child: Text(loc.manageCompleteBackup),
+          title: Text(loc.incrementalBackupTitle),
+          subtitle: Text(
+            _backupFolderConfigured
+                ? loc.incrementalBackupFolderConfigured
+                : loc.incrementalBackupFolderNotSet,
+          ),
+          trailing: _isChangingFolder
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : TextButton(
+                  onPressed: () => _showChangeFolderDialog(context),
+                  child: Text(
+                    _backupFolderConfigured
+                        ? loc.incrementalBackupChangeFolder
+                        : loc.incrementalBackupSelectFolder,
+                  ),
+                ),
+        ),
+        if (!_backupFolderConfigured)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.warning_amber_rounded,
+                  size: 16,
+                  color: Theme.of(context).colorScheme.error,
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    loc.incrementalBackupDescription,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-          ListTile(
-            leading: const Icon(Icons.info_outline),
-            title: Text(loc.information),
-            subtitle: Text(loc.automaticBackupInfoLocal),
-            dense: true,
-          ),
-        ],
+        const Divider(indent: 16, endIndent: 16),
       ],
     );
-  }
-
-  /// Formata a data do último backup para exibição
-  String _formatLastBackupTime(BuildContext context, DateTime dateTime) {
-    final loc = AppLocalizations.of(context)!;
-    final now = DateTime.now();
-    final difference = now.difference(dateTime);
-
-    final day = dateTime.day.toString().padLeft(2, '0');
-    final month = dateTime.month.toString().padLeft(2, '0');
-    final year = dateTime.year;
-    final hour = dateTime.hour.toString().padLeft(2, '0');
-    final minute = dateTime.minute.toString().padLeft(2, '0');
-
-    final formatted = '$day/$month/$year ${loc.timeAtConnector} $hour:$minute';
-
-    if (difference.inMinutes < 1) {
-      return '$formatted (${loc.timeAgoNow})';
-    } else if (difference.inMinutes < 60) {
-      return '$formatted (${loc.timeAgoMinutes(difference.inMinutes)})';
-    } else if (difference.inHours < 24) {
-      return '$formatted (${loc.timeAgoHours(difference.inHours)})';
-    } else {
-      return '$formatted (${loc.timeAgoDays(difference.inDays)})';
-    }
   }
 
   @override

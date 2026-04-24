@@ -1511,6 +1511,41 @@ class AppLocalizationsEs extends AppLocalizations {
       'Al cerrar sesión, una copia de seguridad se guarda automáticamente en su dispositivo. Puede exportarla a almacenamiento en la nube después si es necesario.';
 
   @override
+  String get incrementalBackupTitle =>
+      'Carpeta de Copia de Seguridad Incremental';
+
+  @override
+  String get incrementalBackupDescription =>
+      'Sus historias se guardan automáticamente en esta carpeta cada vez que guarda una.';
+
+  @override
+  String get incrementalBackupFolderNotSet => 'Carpeta no configurada';
+
+  @override
+  String get incrementalBackupFolderConfigured => 'Carpeta configurada';
+
+  @override
+  String get incrementalBackupSelectFolder => 'Seleccionar Carpeta';
+
+  @override
+  String get incrementalBackupChangeFolder => 'Cambiar Carpeta';
+
+  @override
+  String get incrementalBackupChangingFolder =>
+      'Copiando archivos a la nueva carpeta...';
+
+  @override
+  String get incrementalBackupFolderChanged =>
+      'Carpeta de copia de seguridad actualizada.';
+
+  @override
+  String get incrementalBackupWarningNoFolder =>
+      'Carpeta de copia de seguridad no configurada. Las historias no serán respaldadas hasta que configure una carpeta en Ajustes.';
+
+  @override
+  String get incrementalBackupSyncDone => 'Guardado en copia de seguridad';
+
+  @override
   String get biometricsNotAvailable => 'No disponible en este dispositivo';
 
   @override

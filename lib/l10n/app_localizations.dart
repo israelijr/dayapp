@@ -2759,6 +2759,66 @@ abstract class AppLocalizations {
   /// **'On logout, a backup is automatically saved locally on your device. You can later export it to cloud storage if needed.'**
   String get automaticBackupInfoLocal;
 
+  /// Section title for incremental backup folder configuration
+  ///
+  /// In en, this message translates to:
+  /// **'Incremental Backup Folder'**
+  String get incrementalBackupTitle;
+
+  /// Description under the incremental backup section
+  ///
+  /// In en, this message translates to:
+  /// **'Stories are automatically backed up to this folder whenever you save one.'**
+  String get incrementalBackupDescription;
+
+  /// Subtitle shown when no backup folder has been selected
+  ///
+  /// In en, this message translates to:
+  /// **'Folder not configured'**
+  String get incrementalBackupFolderNotSet;
+
+  /// Subtitle shown when a backup folder has been selected
+  ///
+  /// In en, this message translates to:
+  /// **'Folder configured'**
+  String get incrementalBackupFolderConfigured;
+
+  /// Button label to open SAF folder picker
+  ///
+  /// In en, this message translates to:
+  /// **'Select Folder'**
+  String get incrementalBackupSelectFolder;
+
+  /// Button label to change the currently configured backup folder
+  ///
+  /// In en, this message translates to:
+  /// **'Change Folder'**
+  String get incrementalBackupChangeFolder;
+
+  /// Progress message shown while migrating backup files to a new folder
+  ///
+  /// In en, this message translates to:
+  /// **'Copying files to new folder...'**
+  String get incrementalBackupChangingFolder;
+
+  /// Snackbar message when folder change is successful
+  ///
+  /// In en, this message translates to:
+  /// **'Backup folder updated.'**
+  String get incrementalBackupFolderChanged;
+
+  /// Warning shown when saving a story but no backup folder is configured
+  ///
+  /// In en, this message translates to:
+  /// **'Backup folder not set. Stories will not be backed up until you configure a folder in Settings.'**
+  String get incrementalBackupWarningNoFolder;
+
+  /// Tooltip/label for the sync-done icon shown briefly after saving a story
+  ///
+  /// In en, this message translates to:
+  /// **'Backed up'**
+  String get incrementalBackupSyncDone;
+
   /// No description provided for @biometricsNotAvailable.
   ///
   /// In en, this message translates to:

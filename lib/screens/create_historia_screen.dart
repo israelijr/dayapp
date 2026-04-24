@@ -21,6 +21,7 @@ import '../providers/pin_provider.dart';
 import '../providers/premium_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../services/emoji_service.dart';
+import '../services/incremental_backup_service.dart';
 import '../services/pdf_export_service.dart';
 import '../theme/animation_durations.dart';
 import '../theme/m3_expressive_theme.dart';
@@ -113,6 +114,11 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
   // Controle de alterações não salvas
   bool _hasUnsavedChanges = false;
 
+  // Estado do indicador de sync de backup incremental
+  bool _isSyncing = false;
+  bool _syncDone = false;
+  bool _showBackupWarning = false;
+
   @override
   void initState() {
     super.initState();
@@ -121,6 +127,16 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
     // Adiciona listeners para detectar mudanças
     titleController.addListener(_checkForChanges);
     richTextController.addListener(_checkForChanges);
+    // Verifica se a pasta de backup está configurada para exibir aviso
+    _checkBackupFolderWarning();
+  }
+
+  Future<void> _checkBackupFolderWarning() async {
+    final configured = await IncrementalBackupService().isConfigured();
+    if (!mounted) return;
+    setState(() {
+      _showBackupWarning = !configured;
+    });
   }
 
   void _checkForChanges() {
@@ -372,6 +388,40 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
       // Atualiza a tela inicial
       if (!mounted) return historiaId;
       refreshProvider.refresh();
+
+      // Dispara backup incremental em segundo plano com indicador visual.
+      // Se a pasta não estiver configurada, exibe aviso dismissível.
+      final l10nForBackup = l10n;
+      IncrementalBackupService()
+          .triggerSilentBackup(
+            l10n: l10nForBackup,
+            onSyncStart: () {
+              if (mounted) {
+                setState(() {
+                  _isSyncing = true;
+                  _syncDone = false;
+                });
+              }
+            },
+            onSyncEnd: (success) {
+              if (!mounted) return;
+              setState(() {
+                _isSyncing = false;
+                _syncDone = success;
+              });
+              if (success) {
+                // Apaga o ícone de sync após 2 segundos
+                Future.delayed(const Duration(seconds: 2), () {
+                  if (mounted) setState(() => _syncDone = false);
+                });
+              }
+            },
+          )
+          .then((result) {
+            if (result == BackupTriggerResult.noFolder && mounted) {
+              setState(() => _showBackupWarning = true);
+            }
+          });
 
       // Navega para a tela inicial se solicitado
       if (navigateAfterSave) {
@@ -709,6 +759,28 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
             style: TextStyle(color: labelColor, fontWeight: FontWeight.bold),
           ),
           actions: [
+            // Indicador de sync do backup incremental (Opção B: visível, não bloqueante)
+            if (_isSyncing)
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8),
+                child: SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              )
+            else if (_syncDone)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Tooltip(
+                  message: loc.incrementalBackupSyncDone,
+                  child: Icon(
+                    Icons.cloud_done_outlined,
+                    size: 20,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+              ),
             IconButton(
               icon: const Icon(Icons.picture_as_pdf),
               tooltip: loc.exportPdf,
@@ -738,6 +810,28 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
         ),
         body: Column(
           children: [
+            // Aviso dismissível: pasta de backup não configurada
+            if (_showBackupWarning)
+              MaterialBanner(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                content: Text(
+                  loc.incrementalBackupWarningNoFolder,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                leading: Icon(
+                  Icons.warning_amber_rounded,
+                  color: Theme.of(context).colorScheme.error,
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => setState(() => _showBackupWarning = false),
+                    child: Text(loc.close),
+                  ),
+                ],
+              ),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16),

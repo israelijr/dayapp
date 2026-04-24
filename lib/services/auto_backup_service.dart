@@ -7,7 +7,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../l10n/generated/app_localizations.dart';
 import 'backup_service.dart';
-import 'secure_storage_service.dart';
 
 /// Serviço de backup automático ao fazer logout
 ///
@@ -141,11 +140,8 @@ class AutoBackupService {
 
       onProgress?.call(l10n.backupStarting);
 
-      // Cria backup no temp com criptografia AES-256 via chave do Keystore
-      final backupKey = await SecureStorageService().getOrCreateAutoBackupKey();
       final tempZipPath = await _backupService.createBackupZipFile(
         l10n: l10n,
-        password: backupKey,
         onProgress: onProgress,
       );
 
