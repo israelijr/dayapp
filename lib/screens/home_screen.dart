@@ -11,7 +11,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../db/database_helper.dart';
 import '../providers/auth_provider.dart';
 import '../providers/pin_provider.dart';
-import '../services/incremental_backup_service.dart';
 import '../theme/animation_durations.dart';
 import 'edit_profile_screen.dart';
 import 'groups_maintenance_screen.dart';
@@ -41,8 +40,6 @@ class _HomeScreenState extends State<HomeScreen> {
   static bool _backupSuggestionShown = false;
   static const String _prefKeyIsCardView = 'home_isCardView';
   static const String _prefKeyShowChapterCard = 'home_show_chapter_card';
-  static const String _prefKeyBackupSetupPrompted =
-      'backup_folder_setup_prompted';
 
   @override
   void initState() {
@@ -54,7 +51,6 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!_backupSuggestionShown) {
         _checkUnsavedStories();
-        _checkFirstRunBackupSetup();
         _backupSuggestionShown = true;
       }
     });
@@ -123,55 +119,6 @@ class _HomeScreenState extends State<HomeScreen> {
     } catch (e) {
       // Silencia erros durante a checagem inicial
     }
-  }
-
-  Future<void> _checkFirstRunBackupSetup() async {
-    // Delay para não competir com o diálogo de histórias não salvas
-    await Future.delayed(const Duration(milliseconds: 1200));
-    if (!mounted) return;
-
-    final prefs = await SharedPreferences.getInstance();
-    final alreadyPrompted = prefs.getBool(_prefKeyBackupSetupPrompted) ?? false;
-    if (alreadyPrompted) return;
-
-    final configured = await IncrementalBackupService().isConfigured();
-    await prefs.setBool(_prefKeyBackupSetupPrompted, true);
-
-    if (configured || !mounted) return;
-
-    final l10n = AppLocalizations.of(context)!;
-    final pinProvider = Provider.of<PinProvider>(context, listen: false);
-
-    await showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(l10n.backupSetupTitle),
-        content: Text(l10n.backupSetupContent),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: Text(l10n.laterLabel),
-          ),
-          FilledButton(
-            onPressed: () async {
-              Navigator.of(dialogContext).pop();
-              pinProvider.isPickingExternalMedia = true;
-              final selected = await IncrementalBackupService()
-                  .pickAndSetFolder();
-              await Future.delayed(const Duration(milliseconds: 300));
-              pinProvider.isPickingExternalMedia = false;
-              if (selected && mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(l10n.incrementalBackupFolderChanged)),
-                );
-              }
-            },
-            child: Text(l10n.incrementalBackupSelectFolder),
-          ),
-        ],
-      ),
-    );
   }
 
   Future<void> _loadLayoutPreference() async {
