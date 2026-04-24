@@ -239,7 +239,7 @@ Versão: 2.0.0
       final zipPath = path.join(tempDir.path, 'dayapp_backup_$timestamp.zip');
 
       final receivePort = ReceivePort();
-      final isolate = await Isolate.spawn(backupZipIsolateEntrypoint, {
+      final isolate = await Isolate.spawn(_createZipFileInIsolate, {
         'sendPort': receivePort.sendPort,
         'zipPath': zipPath,
         'entries': zipEntriesWithSize,
@@ -351,18 +351,12 @@ Versão: 2.0.0
       }
       await extractDir.create(recursive: true);
 
-      // Extrair ZIP usando stream para evitar carregar todo o arquivo em memória.
-      // Carregar ZIPs grandes (com vídeos/fotos) via readAsBytes() pode causar
-      // OOM no Android, corrompendo silenciosamente os arquivos de mídia.
-      final zipInputStream = InputFileStream(zipFilePath);
+      // Extrair ZIP
+      final zipFile = File(zipFilePath);
+      final bytes = await zipFile.readAsBytes();
 
-      final Archive archive;
-      try {
-        archive = ZipDecoder().decodeBuffer(zipInputStream);
-      } catch (e) {
-        await zipInputStream.close();
-        rethrow;
-      }
+      // password null = backup sem criptografia (compatibilidade com backups antigos)
+      final archive = ZipDecoder().decodeBytes(bytes);
 
       final extractTotalBytes = archive
           .where((file) => file.isFile)
