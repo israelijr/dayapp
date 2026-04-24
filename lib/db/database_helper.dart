@@ -588,9 +588,7 @@ class DatabaseHelper {
     if (oldVersion < 19) {
       // Adiciona coluna de foto ao capítulo.
       try {
-        await db.execute(
-          'ALTER TABLE capitulos ADD COLUMN foto_path TEXT;',
-        );
+        await db.execute('ALTER TABLE capitulos ADD COLUMN foto_path TEXT;');
       } catch (e) {
         debugPrint('Erro adicionando foto_path em capitulos (v19): $e');
       }
@@ -872,6 +870,82 @@ class DatabaseHelper {
     DateTime? now,
   }) async {
     final db = await database;
+    final currentTime = now ?? DateTime.now();
+    final cutoff = currentTime
+        .subtract(Duration(days: retentionDays))
+        .toIso8601String();
+
+    // Buscar histórias a expirar para deletar suas mídias antes de removê-las
+    final List<Map<String, dynamic>> expiring;
+    if (userId != null && userId.isNotEmpty) {
+      expiring = await db.query(
+        'historia',
+        columns: ['id', 'foto_historia'],
+        where:
+            'user_id = ? AND excluido = ? AND data_exclusao IS NOT NULL AND data_exclusao <= ?',
+        whereArgs: [userId, 'sim', cutoff],
+      );
+    } else {
+      expiring = await db.query(
+        'historia',
+        columns: ['id', 'foto_historia'],
+        where:
+            'excluido = ? AND data_exclusao IS NOT NULL AND data_exclusao <= ?',
+        whereArgs: ['sim', cutoff],
+      );
+    }
+
+    // Deletar arquivos de mídia de cada história expirada
+    for (final map in expiring) {
+      final id = map['id'] as int?;
+      if (id == null) continue;
+
+      final fotos = await db.query(
+        'historia_fotos',
+        columns: ['foto_path'],
+        where: 'historia_id = ?',
+        whereArgs: [id],
+      );
+      for (final foto in fotos) {
+        final path = foto['foto_path'] as String?;
+        if (path != null) await PhotoFileHelper.deletePhoto(path);
+      }
+
+      final audios = await db.query(
+        'historia_audios',
+        columns: ['audio_path'],
+        where: 'historia_id = ?',
+        whereArgs: [id],
+      );
+      for (final audio in audios) {
+        final path = audio['audio_path'] as String?;
+        if (path != null) await AudioFileHelper.deleteAudio(path);
+      }
+
+      final videos = await db.query(
+        'historia_videos',
+        columns: ['video_path', 'thumbnail_path'],
+        where: 'historia_id = ?',
+        whereArgs: [id],
+      );
+      for (final video in videos) {
+        final path = video['video_path'] as String?;
+        final thumb = video['thumbnail_path'] as String?;
+        if (path != null) await VideoFileHelper.deleteVideo(path);
+        if (thumb != null) await VideoFileHelper.deleteVideo(thumb);
+      }
+
+      final fotoHistoria = map['foto_historia'] as String?;
+      if (fotoHistoria != null && fotoHistoria.isNotEmpty) {
+        try {
+          final f = File(fotoHistoria);
+          if (await f.exists()) await f.delete();
+        } catch (_) {
+          // Ignora erros ao deletar capa da história
+        }
+      }
+    }
+
     return deleteExpiredTrashStoriesFromDatabase(
       db,
       retentionDays: retentionDays,
