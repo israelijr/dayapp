@@ -30,6 +30,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String get spanish => 'Español';
 
   @override
+  String get french => 'Francés';
+
+  @override
+  String get italian => 'Italiano';
+
+  @override
+  String get portuguese => 'Portugués';
+
+  @override
   String get tryAgain => 'Intentar de nuevo';
 
   @override

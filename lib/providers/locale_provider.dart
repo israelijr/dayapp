@@ -41,6 +41,10 @@ class LocaleProvider extends ChangeNotifier {
     } else if (sel.startsWith('pt')) {
       // Português -> forçar Brasil para consistência com ARB
       _locale = const Locale('pt', 'BR');
+    } else if (sel.startsWith('fr')) {
+      _locale = const Locale('fr', 'FR');
+    } else if (sel.startsWith('it')) {
+      _locale = const Locale('it', 'IT');
     } else if (sel == 'system') {
       _locale = null;
     } else {

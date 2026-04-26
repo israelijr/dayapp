@@ -84,6 +84,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
       case 'es':
         subtitle = loc.spanish;
         break;
+      case 'fr':
+        subtitle = loc.french;
+        break;
+      case 'it':
+        subtitle = loc.italian;
+        break;
       case 'system':
       default:
         subtitle = loc.deviceDefault;
@@ -138,6 +144,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     value: 'es',
                     groupValue: lp.selection,
                     title: Text(loc.spanish),
+                    onChanged: (v) {
+                      if (v == null) return;
+                      lp.setSelection(v);
+                    },
+                  ),
+                  RadioListTile<String>(
+                    value: 'fr',
+                    groupValue: lp.selection,
+                    title: Text(loc.french),
+                    onChanged: (v) {
+                      if (v == null) return;
+                      lp.setSelection(v);
+                    },
+                  ),
+                  RadioListTile<String>(
+                    value: 'it',
+                    groupValue: lp.selection,
+                    title: Text(loc.italian),
                     onChanged: (v) {
                       if (v == null) return;
                       lp.setSelection(v);

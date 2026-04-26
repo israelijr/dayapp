@@ -7,6 +7,8 @@ import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_en.dart';
 import 'app_localizations_es.dart';
+import 'app_localizations_fr.dart';
+import 'app_localizations_it.dart';
 import 'app_localizations_pt.dart';
 
 // ignore_for_file: type=lint
@@ -99,6 +101,8 @@ abstract class AppLocalizations {
     Locale('pt'),
     Locale('pt', 'BR'),
     Locale('es'),
+    Locale('fr'),
+    Locale('it'),
   ];
 
   /// Label for appTitle
@@ -142,6 +146,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Spanish'**
   String get spanish;
+
+  /// Label for french
+  ///
+  /// In en, this message translates to:
+  /// **'French'**
+  String get french;
+
+  /// Label for italian
+  ///
+  /// In en, this message translates to:
+  /// **'Italian'**
+  String get italian;
+
+  /// Label for portuguese
+  ///
+  /// In en, this message translates to:
+  /// **'Portuguese'**
+  String get portuguese;
 
   /// Label for tryAgain
   ///
@@ -4480,7 +4502,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['en', 'es', 'pt'].contains(locale.languageCode);
+      <String>['en', 'es', 'fr', 'it', 'pt'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -4505,6 +4527,10 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsEn();
     case 'es':
       return AppLocalizationsEs();
+    case 'fr':
+      return AppLocalizationsFr();
+    case 'it':
+      return AppLocalizationsIt();
     case 'pt':
       return AppLocalizationsPt();
   }

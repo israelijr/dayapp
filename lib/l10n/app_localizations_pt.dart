@@ -30,6 +30,15 @@ class AppLocalizationsPt extends AppLocalizations {
   String get spanish => 'Español';
 
   @override
+  String get french => 'Francês';
+
+  @override
+  String get italian => 'Italiano';
+
+  @override
+  String get portuguese => 'Português';
+
+  @override
   String get tryAgain => 'Tentar novamente';
 
   @override
@@ -2510,6 +2519,15 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get spanish => 'Español';
+
+  @override
+  String get french => 'Francês';
+
+  @override
+  String get italian => 'Italiano';
+
+  @override
+  String get portuguese => 'Português';
 
   @override
   String get tryAgain => 'Tentar novamente';
