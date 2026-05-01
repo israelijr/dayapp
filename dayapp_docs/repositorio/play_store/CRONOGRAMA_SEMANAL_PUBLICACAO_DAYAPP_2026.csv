@@ -1,6 +1,0 @@
-Semana,Inicio,Fim,Objetivo,TarefasIDs,Entregavel,RiscoPrincipal,Mitigacao
-Semana 1,2026-03-16,2026-03-22,Fechar base documental e compliance inicial,1;4;5;6;7;9;10;11,"Politica publicada, Sobre e Ajuda atualizadas, AdMob preparado",Atraso por falta de URL final e estrategia de monetizacao,Definir dono e prazo para cada pendencia critica
-Semana 2,2026-03-23,2026-03-29,Preparar release assinada com anuncios em producao,12;14;15;16;17;18;19;20;21,"AAB assinado e validado, assets e copy final",Ausencia de keystore e IDs reais,Tratar keystore e IDs como bloqueio maximo
-Semana 3,2026-03-30,2026-04-05,Concluir Play Console e formularios obrigatorios,22;23;24;25;26;27,Play Console completo e teste interno ativo,Inconsistencia entre politica Data Safety e anuncios,Revisao cruzada antes de enviar
-Semana 4,2026-04-06,2026-04-12,Executar teste interno e submeter para revisao,28;29;30,Build candidata aprovada e app em revisao,Bugs bloqueadores de ultima hora,Rodar checklist completo antes da submissao
-Semana 5,2026-04-13,2026-04-19,Monitorar pos-publicacao e preparar patch,31,Relatorio de lancamento e plano 1.0.1,Feedback negativo inicial,Responder rapido e priorizar hotfix

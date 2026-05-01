@@ -137,11 +137,6 @@ class HelpScreen extends StatelessWidget {
             children: [
               _buildHelpItem(
                 context,
-                loc.helpAutomaticBackupTitle,
-                loc.helpAutomaticBackupDesc,
-              ),
-              _buildHelpItem(
-                context,
                 loc.helpManualBackupTitle,
                 loc.helpManualBackupDesc,
               ),
