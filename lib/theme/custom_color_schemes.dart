@@ -146,35 +146,98 @@ class CustomColorSchemes {
   );
 
   // Sunset - Light
+  // static final ColorScheme sunsetLight = const ColorScheme.light().copyWith(
+  //   primary: const Color(0xFF9C4330),
+  //   onPrimary: Colors.white,
+  //   secondary: const Color(0xFF77574E),
+  //   tertiary: const Color(0xFF6C5D2F),
+  //   error: const Color(0xFFBA1A1A),
+  //   primaryContainer: const Color(0xFFFFDAD3),
+  //   onPrimaryContainer: const Color(0xFF3B0A02),
+  //   secondaryContainer: const Color(0xFFFFDBD1),
+  //   tertiaryContainer: const Color(0xFFF5E1A7),
+  //   errorContainer: const Color(0xFFFFDAD6),
+  //   surfaceContainerHighest: const Color(0xFFEDE0DC),
+  //   surface: const Color(0xFFFFFBFF),
+  //   inverseSurface: const Color(0xFF3C2A26),
+  // );
+  // SUNSET LIGHT
   static final ColorScheme sunsetLight = const ColorScheme.light().copyWith(
-    primary: const Color(0xFF9C4330),
+    primary: const Color(0xFFFFA000), // Âmbar 700
     onPrimary: Colors.white,
-    secondary: const Color(0xFF77574E),
-    tertiary: const Color(0xFF6C5D2F),
+
+    secondary: const Color(0xFFFB8C00), // Laranja 600
+    onSecondary: Colors.white,
+
+    tertiary: const Color(0xFFFFD54F), // Âmbar 300
+    onTertiary: const Color(0xFF3A2A00),
+
     error: const Color(0xFFBA1A1A),
-    primaryContainer: const Color(0xFFFFDAD3),
-    onPrimaryContainer: const Color(0xFF3B0A02),
-    secondaryContainer: const Color(0xFFFFDBD1),
-    tertiaryContainer: const Color(0xFFF5E1A7),
-    errorContainer: const Color(0xFFFFDAD6),
-    surfaceContainerHighest: const Color(0xFFEDE0DC),
-    surface: const Color(0xFFFFFBFF),
-    inverseSurface: const Color(0xFF3C2A26),
+    onError: Colors.white,
+
+    primaryContainer: const Color(0xFFFFECB3), // Âmbar 100
+    onPrimaryContainer: const Color(0xFF3B2A00),
+
+    secondaryContainer: const Color(0xFFFFCC80), // Laranja 200
+    onSecondaryContainer: const Color(0xFF3A1E00),
+
+    tertiaryContainer: const Color(0xFFFFF176), // Yellow 300
+    onTertiaryContainer: const Color(0xFF332700),
+
+    surface: const Color(0xFFFFFBF7),
+    onSurface: const Color(0xFF2B2118),
+
+    surfaceContainerHighest: const Color(0xFFF2E7DC),
+
+    inverseSurface: const Color(0xFF382F28),
+    onInverseSurface: const Color(0xFFFFF1E8),
   );
 
   // Sunset - Dark
+  // static final ColorScheme sunsetDark = const ColorScheme.dark().copyWith(
+  //   primary: const Color(0xFFFFB4A3),
+  //   secondary: const Color(0xFFE7BDB2),
+  //   tertiary: const Color(0xFFD8C58D),
+  //   error: const Color(0xFFFFB4AB),
+  //   primaryContainer: const Color(0xFF7D2C1B),
+  //   secondaryContainer: const Color(0xFF5D4037),
+  //   tertiaryContainer: const Color(0xFF534619),
+  //   errorContainer: const Color(0xFF93000A),
+  //   surfaceContainerHighest: const Color(0xFF2E2220),
+  //   surface: const Color(0xFF201A18),
+  //   inverseSurface: const Color(0xFFF1DFDA),
+  // );
+
+  // SUNSET DARK
   static final ColorScheme sunsetDark = const ColorScheme.dark().copyWith(
-    primary: const Color(0xFFFFB4A3),
-    secondary: const Color(0xFFE7BDB2),
-    tertiary: const Color(0xFFD8C58D),
+    primary: const Color(0xFFFFCA28), // Âmbar 400
+    onPrimary: const Color(0xFF3D2D00),
+
+    secondary: const Color(0xFFFF9800), // Laranja 500
+    onSecondary: const Color(0xFF3A1F00),
+
+    tertiary: const Color(0xFFFFE082), // Âmbar 200
+    onTertiary: const Color(0xFF3B2A00),
+
     error: const Color(0xFFFFB4AB),
-    primaryContainer: const Color(0xFF7D2C1B),
-    secondaryContainer: const Color(0xFF5D4037),
-    tertiaryContainer: const Color(0xFF534619),
-    errorContainer: const Color(0xFF93000A),
-    surfaceContainerHighest: const Color(0xFF2E2220),
-    surface: const Color(0xFF201A18),
-    inverseSurface: const Color(0xFFF1DFDA),
+    onError: const Color(0xFF690005),
+
+    primaryContainer: const Color(0xFF5D4300),
+    onPrimaryContainer: const Color(0xFFFFE082),
+
+    secondaryContainer: const Color(0xFF5A3200),
+    onSecondaryContainer: const Color(0xFFFFCC80),
+
+    tertiaryContainer: const Color(0xFF665000),
+    onTertiaryContainer: const Color(0xFFFFF176),
+
+    surface: const Color(0xFF18120D),
+    onSurface: const Color(0xFFF4E7DA),
+
+    surfaceContainerHighest: const Color(0xFF2B241E),
+
+    inverseSurface: const Color(0xFFF4E7DA),
+    onInverseSurface: const Color(0xFF241A12),
   );
 
   // Mapa de fácil acesso aos esquemas criados
