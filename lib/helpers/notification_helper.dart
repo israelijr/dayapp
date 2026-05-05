@@ -147,6 +147,7 @@ class NotificationHelper {
         title,
         description,
         selectedAdvanceMinutes!,
+        loc: loc,
       );
 
       if (!context.mounted) return;
@@ -162,14 +163,17 @@ class NotificationHelper {
     DateTime entryDate,
     String title,
     String? description,
-    int advanceMinutes,
-  ) async {
-    // translation helper without BuildContext: construct locale object from current Intl locale
-    final localeParts = intl.Intl.getCurrentLocale().split('_');
-    final locale = localeParts.length == 2
-        ? Locale(localeParts[0], localeParts[1])
-        : Locale(localeParts[0]);
-    final loc = lookupAppLocalizations(locale);
+    int advanceMinutes, {
+    AppLocalizations? loc,
+  }) async {
+    // Usa loc passado pelo chamador; fallback para Intl.getCurrentLocale()
+    loc ??= () {
+      final localeParts = intl.Intl.getCurrentLocale().split('_');
+      final locale = localeParts.length == 2
+          ? Locale(localeParts[0], localeParts[1])
+          : Locale(localeParts[0]);
+      return lookupAppLocalizations(locale);
+    }();
     // Calcula o horário da notificação
     final notificationTime = calculateNotificationTime(
       entryDate,
@@ -190,7 +194,7 @@ class NotificationHelper {
       await _notificationService.scheduleNotification(
         id: notificationId,
         title: loc.notificationReminderTitle(title),
-        body: description ?? 'Você tem uma entrada agendada',
+        body: description ?? loc.notificationReminderBody,
         scheduledDate: notificationTime,
         payload: historiaId.toString(),
       );

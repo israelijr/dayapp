@@ -1349,6 +1349,9 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
+  String get notificationReminderBody => 'Você tem uma entrada agendada';
+
+  @override
   String get successImageAdded => 'Imagem adicionada com sucesso!';
 
   @override
@@ -3838,6 +3841,9 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String notificationReminderTitle(Object title) {
     return 'Lembrete: $title';
   }
+
+  @override
+  String get notificationReminderBody => 'Você tem uma entrada agendada';
 
   @override
   String get successImageAdded => 'Imagem adicionada com sucesso!';

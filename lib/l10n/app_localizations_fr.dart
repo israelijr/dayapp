@@ -1364,6 +1364,9 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get notificationReminderBody => 'Vous avez une entrée planifiée';
+
+  @override
   String get successImageAdded => 'Image ajoutée avec succès !';
 
   @override

@@ -1358,6 +1358,9 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get notificationReminderBody => 'Tienes una entrada programada';
+
+  @override
   String get successImageAdded => '¡Imagen agregada con éxito!';
 
   @override

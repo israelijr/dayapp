@@ -1358,6 +1358,9 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
+  String get notificationReminderBody => 'Hai una voce programmata';
+
+  @override
   String get successImageAdded => 'Immagine aggiunta con successo!';
 
   @override

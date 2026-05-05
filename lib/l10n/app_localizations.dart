@@ -2511,6 +2511,12 @@ abstract class AppLocalizations {
   /// **'Reminder: {title}'**
   String notificationReminderTitle(Object title);
 
+  /// Body text for entry reminder notifications
+  ///
+  /// In en, this message translates to:
+  /// **'You have a scheduled entry'**
+  String get notificationReminderBody;
+
   /// No description provided for @successImageAdded.
   ///
   /// In en, this message translates to:

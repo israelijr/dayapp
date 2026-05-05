@@ -1343,6 +1343,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get notificationReminderBody => 'You have a scheduled entry';
+
+  @override
   String get successImageAdded => 'Image added successfully!';
 
   @override
