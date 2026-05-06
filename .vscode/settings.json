@@ -3,6 +3,8 @@
         "/^cat /home/israel/Dev/DayApp/lib/l10n/intl_pt_BR\\.arb \\| python3 -c \"import json,sys; d=json\\.load\\(sys\\.stdin\\); \\[print\\(f'\\{k\\}: \\{v\\}'\\) for k,v in d\\.items\\(\\) if not k\\.startswith\\('@'\\) and k not in \\['@@locale'\\]\\]\" \\| tail -200$/": {
             "approve": true,
             "matchCommandLine": true
-        }
+        },
+        "mkdir": true,
+        "git clone": true
     }
 }
