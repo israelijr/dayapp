@@ -31,7 +31,13 @@ class PremiumService {
   ///
   /// Em debug (`kDebugMode`) o override manual da tela de debug
   /// tem precedência sobre o valor gravado pelo billing.
+  ///
+  /// TODO(billing): trocar `_internalTestingPhase` para false ao integrar
+  /// o in_app_purchase e publicar para produção paga.
+  static const bool _internalTestingPhase = true;
+
   Future<bool> isPremium() async {
+    if (_internalTestingPhase) return true;
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(_keyIsPremium) ?? false;
   }
