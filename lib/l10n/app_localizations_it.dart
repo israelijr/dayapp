@@ -1481,6 +1481,13 @@ class AppLocalizationsIt extends AppLocalizations {
   String get notificationAdvanceDefault => 'Anticipo predefinito';
 
   @override
+  String get notificationScheduleModeTitle => 'Modalità di pianificazione (QA)';
+
+  @override
+  String get notificationScheduleModeInexact =>
+      'Non esatta (compatibile con Play)';
+
+  @override
   String get automaticBackup => 'Backup automatico';
 
   @override

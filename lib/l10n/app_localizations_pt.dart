@@ -1473,6 +1473,12 @@ class AppLocalizationsPt extends AppLocalizations {
   String get notificationAdvanceDefault => 'Antecedência padrão';
 
   @override
+  String get notificationScheduleModeTitle => 'Modo de agendamento (QA)';
+
+  @override
+  String get notificationScheduleModeInexact => 'Inexato (compatível com Play)';
+
+  @override
   String get automaticBackup => 'Backup Automático';
 
   @override
@@ -3965,6 +3971,12 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get notificationAdvanceDefault => 'Antecedência padrão';
+
+  @override
+  String get notificationScheduleModeTitle => 'Modo de agendamento (QA)';
+
+  @override
+  String get notificationScheduleModeInexact => 'Inexato (compatível com Play)';
 
   @override
   String get automaticBackup => 'Backup Automático';

@@ -64,15 +64,6 @@ class NotificationService {
     if (androidImplementation != null) {
       // Solicita permissão de notificações
       await androidImplementation.requestNotificationsPermission();
-
-      // Android 12+ requer permissão específica para alarmes exatos
-      await androidImplementation.requestExactAlarmsPermission();
-
-      // Verifica se a permissão está realmente ativa
-      final canScheduleExact = await androidImplementation
-          .canScheduleExactNotifications();
-
-      if (canScheduleExact == false) {}
     }
   }
 
@@ -115,7 +106,7 @@ class NotificationService {
           body,
           tz.TZDateTime.from(scheduledDate, tz.local),
           notificationDetails,
-          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+          androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
           uiLocalNotificationDateInterpretation:
               UILocalNotificationDateInterpretation.absoluteTime,
           payload: payload,
@@ -206,7 +197,7 @@ class NotificationService {
         body,
         tzDateTime,
         notificationDetails,
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
         payload: payload,

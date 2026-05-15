@@ -4,6 +4,7 @@
 // A migração requer refatoração significativa dos dialogs para StatefulWidgets
 
 import 'package:dayapp/l10n/generated/app_localizations.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -1312,6 +1313,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
             leading: const Icon(Icons.info_outline),
             title: Text(loc.information),
             subtitle: Text(loc.entryNotificationsInfo),
+            dense: true,
+          ),
+        if (_notificationEnabled && kDebugMode)
+          ListTile(
+            leading: const Icon(Icons.bug_report_outlined),
+            title: Text(loc.notificationScheduleModeTitle),
+            subtitle: Text(loc.notificationScheduleModeInexact),
             dense: true,
           ),
         // const Divider(),

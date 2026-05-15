@@ -558,6 +558,8 @@
   "notificationAdvanceTitle": "Anticipo notifica",
   "notificationAdvancePrompt": "Con quanto anticipo vorresti essere notificato?",
   "notificationAdvanceDefault": "Anticipo predefinito",
+  "notificationScheduleModeTitle": "Modalità di pianificazione (QA)",
+  "notificationScheduleModeInexact": "Non esatta (compatibile con Play)",
   "automaticBackup": "Backup automatico",
   "manageCompleteBackup": "Gestisci backup completo",
   "backupWithVideosZip": "Backup con video in file ZIP",

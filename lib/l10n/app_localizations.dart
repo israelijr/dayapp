@@ -2715,6 +2715,18 @@ abstract class AppLocalizations {
   /// **'Default advance'**
   String get notificationAdvanceDefault;
 
+  /// No description provided for @notificationScheduleModeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduling mode (QA)'**
+  String get notificationScheduleModeTitle;
+
+  /// No description provided for @notificationScheduleModeInexact.
+  ///
+  /// In en, this message translates to:
+  /// **'Inexact (Play-compliant)'**
+  String get notificationScheduleModeInexact;
+
   /// No description provided for @automaticBackup.
   ///
   /// In en, this message translates to:

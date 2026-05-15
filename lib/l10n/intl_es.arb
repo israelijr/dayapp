@@ -556,6 +556,8 @@
   "notificationAdvanceTitle": "Antelación de la notificación",
   "notificationAdvancePrompt": "¿Con cuánto tiempo de antelación desea ser notificado?",
   "notificationAdvanceDefault": "Antelación predeterminada",
+  "notificationScheduleModeTitle": "Modo de programación (QA)",
+  "notificationScheduleModeInexact": "Inexacto (compatible con Play)",
   "automaticBackup": "Copia de seguridad automática",
   "manageCompleteBackup": "Administrar copia de seguridad completa",
   "backupWithVideosZip": "Copia de seguridad con videos en archivo ZIP",

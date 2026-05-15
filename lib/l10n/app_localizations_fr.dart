@@ -1487,6 +1487,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get notificationAdvanceDefault => 'Avance par défaut';
 
   @override
+  String get notificationScheduleModeTitle => 'Mode de planification (QA)';
+
+  @override
+  String get notificationScheduleModeInexact => 'Inexact (compatible Play)';
+
+  @override
   String get automaticBackup => 'Sauvegarde automatique';
 
   @override

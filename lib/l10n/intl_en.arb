@@ -583,6 +583,8 @@
   "notificationAdvanceTitle": "Notification advance",
   "notificationAdvancePrompt": "How much notice would you like before being notified?",
   "notificationAdvanceDefault": "Default advance",
+  "notificationScheduleModeTitle": "Scheduling mode (QA)",
+  "notificationScheduleModeInexact": "Inexact (Play-compliant)",
   "automaticBackup": "Automatic Backup",
   "manageCompleteBackup": "Manage full backup",
   "backupWithVideosZip": "Backup with videos in ZIP file",

@@ -1465,6 +1465,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationAdvanceDefault => 'Default advance';
 
   @override
+  String get notificationScheduleModeTitle => 'Scheduling mode (QA)';
+
+  @override
+  String get notificationScheduleModeInexact => 'Inexact (Play-compliant)';
+
+  @override
   String get automaticBackup => 'Automatic Backup';
 
   @override

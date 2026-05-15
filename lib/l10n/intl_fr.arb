@@ -558,6 +558,8 @@
   "notificationAdvanceTitle": "Avance de notification",
   "notificationAdvancePrompt": "Combien de temps à l'avance souhaitez-vous être notifié ?",
   "notificationAdvanceDefault": "Avance par défaut",
+  "notificationScheduleModeTitle": "Mode de planification (QA)",
+  "notificationScheduleModeInexact": "Inexact (compatible Play)",
   "automaticBackup": "Sauvegarde automatique",
   "manageCompleteBackup": "Gérer la sauvegarde complète",
   "backupWithVideosZip": "Sauvegarde avec vidéos en fichier ZIP",
