@@ -56,7 +56,9 @@ void backupZipIsolateEntrypoint(Map<String, dynamic> zipConfig) {
       final archiveFile = ArchiveFile(archivePath, fileBytes.length, fileBytes);
       // Mídias já comprimidas pelo codec (mp4/jpg/png/m4a/mp3) usam modo Store
       // para evitar CPU desnecessária sem ganho real de tamanho.
-      archiveFile.compress = (entry['compress'] as bool?) ?? false;
+      archiveFile.compression = ((entry['compress'] as bool?) ?? false)
+          ? CompressionType.deflate
+          : CompressionType.none;
       encoder.addArchiveFile(archiveFile);
 
       processedBytes += sizeBytes;

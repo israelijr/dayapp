@@ -75,7 +75,7 @@ class IncrementalBackupService {
   ///
   /// Retorna true se o usuário selecionou uma pasta.
   Future<bool> pickAndSetFolder() async {
-    final folderPath = await FilePicker.platform.getDirectoryPath();
+    final folderPath = await FilePicker.getDirectoryPath();
     if (folderPath == null) return false;
     await setBackupFolderUri(folderPath);
     return true;

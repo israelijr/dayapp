@@ -404,7 +404,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
 
     try {
       // Selecionar arquivo ZIP
-      final result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['zip'],
       );

@@ -385,7 +385,7 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
     debugPrint('AUDIO: Flag isPickingExternalMedia = true (múltiplos)');
 
     try {
-      final result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.pickFiles(
         type: FileType.audio,
         allowMultiple: true,
       );
@@ -469,7 +469,7 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
     debugPrint('AUDIO: Flag isPickingExternalMedia = true (único)');
 
     try {
-      final result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.pickFiles(
         type: FileType.audio,
         allowMultiple: false,
       );

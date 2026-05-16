@@ -45,7 +45,7 @@ class NotificationService {
         );
 
     await flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
+      settings: initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
         onSelectNotification(response.payload);
       },
@@ -60,10 +60,23 @@ class NotificationService {
         .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin
         >();
+    final darwinImplementation = flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin
+        >();
 
     if (androidImplementation != null) {
       // Solicita permissão de notificações
       await androidImplementation.requestNotificationsPermission();
+    }
+
+    if (darwinImplementation != null) {
+      // Solicita permissões em iOS/macOS para exibir alertas e sons
+      await darwinImplementation.requestPermissions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
     }
   }
 
@@ -91,24 +104,22 @@ class NotificationService {
       // Vamos mostrar uma notificação imediata para teste
 
       await flutterLocalNotificationsPlugin.show(
-        id,
-        title,
-        body,
-        notificationDetails,
+        id: id,
+        title: title,
+        body: body,
+        notificationDetails: notificationDetails,
         payload: payload,
       );
     } else {
       // Para outras plataformas, usar zonedSchedule
       try {
         await flutterLocalNotificationsPlugin.zonedSchedule(
-          id,
-          title,
-          body,
-          tz.TZDateTime.from(scheduledDate, tz.local),
-          notificationDetails,
+          id: id,
+          title: title,
+          body: body,
+          scheduledDate: tz.TZDateTime.from(scheduledDate, tz.local),
+          notificationDetails: notificationDetails,
           androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-          uiLocalNotificationDateInterpretation:
-              UILocalNotificationDateInterpretation.absoluteTime,
           payload: payload,
         );
 
@@ -121,7 +132,7 @@ class NotificationService {
   }
 
   Future<void> cancelNotification(int id) async {
-    await flutterLocalNotificationsPlugin.cancel(id);
+    await flutterLocalNotificationsPlugin.cancel(id: id);
   }
 
   /// Lista todas as notificações pendentes
@@ -148,10 +159,10 @@ class NotificationService {
     );
 
     await flutterLocalNotificationsPlugin.show(
-      id,
-      title,
-      body,
-      notificationDetails,
+      id: id,
+      title: title,
+      body: body,
+      notificationDetails: notificationDetails,
       payload: payload,
     );
   }
@@ -192,14 +203,12 @@ class NotificationService {
       final tzDateTime = tz.TZDateTime.from(scheduledDate, tz.local);
 
       await flutterLocalNotificationsPlugin.zonedSchedule(
-        id,
-        title,
-        body,
-        tzDateTime,
-        notificationDetails,
+        id: id,
+        title: title,
+        body: body,
+        scheduledDate: tzDateTime,
+        notificationDetails: notificationDetails,
         androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
         payload: payload,
       );
     } catch (e) {

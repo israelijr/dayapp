@@ -29,26 +29,26 @@ dependencies:
   image_picker: ^1.1.1
   flutter_image_compress: ^2.3.0
   url_launcher: ^6.1.10
-  share_plus: ^12.0.0
+  share_plus: ^12.0.2
   sqflite_common_ffi: ^2.3.6
-  flutter_local_notifications: ^17.2.2
-  timezone: ^0.9.3
-  flutter_slidable: ^3.1.0
-  file_selector: ^0.9.0
+  flutter_local_notifications: ^21.0.0
+  timezone: ^0.11.0
+  flutter_slidable: ^4.0.3
+  file_selector: ^1.1.0
   audioplayers: ^6.1.0
   record: ^6.2.0
   video_player: ^2.9.2
-  file_picker: ^8.1.6
+  file_picker: ^11.0.2
   table_calendar: ^3.1.2
-  local_auth: ^2.3.0
-  archive: ^3.6.1
+  local_auth: ^3.0.1
+  archive: ^4.0.9
   crypto: ^3.0.3
   flutter_quill: ^11.5.0
   vsc_quill_delta_to_html: ^1.0.2
-  flutter_secure_storage: ^9.2.4
+  flutter_secure_storage: ^10.2.0
   sqflite_common_ffi_web: ^1.1.1
-  package_info_plus: ^8.0.2
-  mailer: ^6.2.0
+  package_info_plus: ^9.0.1
+  mailer: ^7.1.0
   flutter_timezone: ^5.0.1
   # PDF export
   pdf: ^3.10.2

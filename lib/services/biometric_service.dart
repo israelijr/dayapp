@@ -71,10 +71,8 @@ class BiometricService {
     try {
       final bool didAuthenticate = await _localAuth.authenticate(
         localizedReason: reason,
-        options: const AuthenticationOptions(
-          stickyAuth: true,
-          biometricOnly: true,
-        ),
+        persistAcrossBackgrounding: true,
+        biometricOnly: true,
       );
       return didAuthenticate;
     } on PlatformException {

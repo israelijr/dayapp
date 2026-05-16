@@ -140,7 +140,7 @@ class _VideoRecorderWidgetState extends State<VideoRecorderWidget> {
     pinProvider.isPickingExternalMedia = true;
 
     try {
-      final result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.pickFiles(
         type: FileType.video,
         allowMultiple: true,
       );
@@ -221,7 +221,7 @@ class _VideoRecorderWidgetState extends State<VideoRecorderWidget> {
     pinProvider.isPickingExternalMedia = true;
 
     try {
-      final result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.pickFiles(
         type: FileType.video,
         allowMultiple: false,
       );
