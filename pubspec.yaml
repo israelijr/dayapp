@@ -5,7 +5,7 @@ description: "Um aplicativo para registrar suas memórias."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 # Defome a versão da aplicação.
-version: 1.0.1+4
+version: 1.0.1+5
 
 environment:
   sdk: ^3.9.2
