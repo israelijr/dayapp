@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
@@ -147,7 +148,10 @@ class ThumbnailService {
       try {
         final file = File(imagePath);
         return await file.readAsBytes();
-      } catch (_) {
+      } catch (fallbackError) {
+        debugPrint(
+          'ThumbnailService: erro no fallback de leitura da imagem "$imagePath": $fallbackError',
+        );
         return null;
       }
     }
@@ -183,8 +187,9 @@ class ThumbnailService {
       if (await thumbDir.exists()) {
         await thumbDir.delete(recursive: true);
       }
-    } catch (_) {
-      // Ignora erros ao limpar cache
+    } catch (e) {
+      // Falha de limpeza não é crítica para o fluxo principal.
+      debugPrint('ThumbnailService: erro ao limpar cache de thumbnails: $e');
     }
   }
 
@@ -202,7 +207,8 @@ class ThumbnailService {
         }
       }
       return totalSize;
-    } catch (_) {
+    } catch (e) {
+      debugPrint('ThumbnailService: erro ao calcular tamanho do cache: $e');
       return 0;
     }
   }

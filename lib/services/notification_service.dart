@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show debugPrint, kIsWeb;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -26,6 +26,7 @@ class NotificationService {
     } catch (e) {
       // Fallback para UTC se não conseguir obter o timezone
       // Isso evita crashes em dispositivos com configurações incomuns
+      debugPrint('NotificationService: erro ao configurar timezone local: $e');
     }
 
     const AndroidInitializationSettings initializationSettingsAndroid =
@@ -126,7 +127,8 @@ class NotificationService {
         // Lista notificações pendentes para debug
         await listPendingNotifications();
       } catch (e) {
-        // Erro ao agendar notificação - ignora silenciosamente
+        // Erro ao agendar notificação - mantém execução sem quebrar a UI
+        debugPrint('NotificationService: erro ao agendar notificação: $e');
       }
     }
   }
@@ -212,7 +214,10 @@ class NotificationService {
         payload: payload,
       );
     } catch (e) {
-      // Erro ao agendar notificação de engajamento - ignora silenciosamente
+      // Erro ao agendar notificação de engajamento - mantém execução
+      debugPrint(
+        'NotificationService: erro ao agendar notificação de engajamento: $e',
+      );
     }
   }
 
@@ -226,7 +231,8 @@ class NotificationService {
         return details.notificationResponse?.payload;
       }
     } catch (e) {
-      // Plataforma pode não suportar este recurso - ignora silenciosamente
+      // Plataforma pode não suportar este recurso.
+      debugPrint('NotificationService: erro ao ler payload de lançamento: $e');
     }
     return null;
   }

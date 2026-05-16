@@ -631,7 +631,10 @@ class _CreateHistoriaScreenState extends State<CreateHistoriaScreen> {
       String content;
       try {
         content = utf8.decode(bytes);
-      } catch (_) {
+      } catch (e) {
+        debugPrint(
+          'CreateHistoriaScreen: fallback para Latin-1 na leitura de arquivo TXT: $e',
+        );
         content = latin1.decode(bytes);
       }
 

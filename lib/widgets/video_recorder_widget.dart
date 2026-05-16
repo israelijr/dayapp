@@ -313,8 +313,9 @@ class _VideoRecorderWidgetState extends State<VideoRecorderWidget> {
       // Limpa o arquivo temporário se necessário
       try {
         await file.delete();
-      } catch (_) {
+      } catch (e) {
         // Ignora erro ao deletar arquivo temporário
+        debugPrint('VideoRecorderWidget: erro ao excluir vídeo temporário: $e');
       }
     } catch (e) {
       // Garante reset da flag em caso de erro

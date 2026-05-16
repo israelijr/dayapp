@@ -7,6 +7,15 @@
         "mkdir": true,
         "git clone": true,
         "dart": true,
-        "awk": true
+        "awk": true,
+        "./scripts/check_release_readiness.sh": true,
+        "/^bash scripts/check_release_readiness\\.sh --skip-device-check$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^bash -n scripts/check_release_readiness\\.sh$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
     }
 }

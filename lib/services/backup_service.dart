@@ -569,8 +569,10 @@ Versão: 2.0.0
                 await tmpDb.execute(
                   'ALTER TABLE historia ADD COLUMN backed_up INTEGER DEFAULT 0;',
                 );
-              } catch (_) {
-                // ignore
+              } catch (e) {
+                debugPrint(
+                  'BackupService: erro ao criar coluna backed_up durante restore: $e',
+                );
               }
             }
             // Compatibilidade: backups anteriores ao v14 não possuem as colunas
@@ -584,8 +586,10 @@ Versão: 2.0.0
                 await tmpDb.execute(
                   'UPDATE historia SET humor = 3 WHERE humor IS NULL;',
                 );
-              } catch (_) {
-                // ignore
+              } catch (e) {
+                debugPrint(
+                  'BackupService: erro ao ajustar coluna humor durante restore: $e',
+                );
               }
             }
             final hasEnergia = tableInfo.any((c) => c['name'] == 'energia');
@@ -597,8 +601,10 @@ Versão: 2.0.0
                 await tmpDb.execute(
                   'UPDATE historia SET energia = 2 WHERE energia IS NULL;',
                 );
-              } catch (_) {
-                // ignore
+              } catch (e) {
+                debugPrint(
+                  'BackupService: erro ao ajustar coluna energia durante restore: $e',
+                );
               }
             }
             // Marcar todas as histórias deste banco restaurado como já salvas
@@ -636,8 +642,11 @@ Versão: 2.0.0
               await tmpDb.execute(
                 'CREATE INDEX IF NOT EXISTS idx_historia_tags_tag ON historia_tags(tag_id);',
               );
-            } catch (_) {
-              // Tabelas/índices já existem; ignorar
+            } catch (e) {
+              // Tabelas/índices são de compatibilidade; erro não é bloqueante.
+              debugPrint(
+                'BackupService: erro ao garantir estrutura de tags no restore: $e',
+              );
             }
 
             // Verificar a versão gravada no backup para aplicar migrações
@@ -653,8 +662,11 @@ Versão: 2.0.0
             if (backupVersion < 15) {
               try {
                 await DatabaseHelper.migrateTagsFromLegacyField(tmpDb);
-              } catch (_) {
+              } catch (e) {
                 // Migração de tags não crítica; continuar normalmente
+                debugPrint(
+                  'BackupService: erro na migração legada de tags no restore: $e',
+                );
               }
             }
 
@@ -672,8 +684,11 @@ Versão: 2.0.0
                 // Atualizar user_version para evitar dupla migração quando
                 // DatabaseHelper reabrir o banco com version: 16.
                 await tmpDb.execute('PRAGMA user_version = 16;');
-              } catch (_) {
+              } catch (e) {
                 // Migração não crítica; ignorar
+                debugPrint(
+                  'BackupService: erro na migração de escala de humor no restore: $e',
+                );
               }
             }
           } finally {
@@ -681,6 +696,9 @@ Versão: 2.0.0
           }
         } catch (e) {
           // Não falhar a restauração se a marcação não funcionar
+          debugPrint(
+            'BackupService: erro em ajustes pós-restauração do banco: $e',
+          );
         }
       } else {
         throw Exception(

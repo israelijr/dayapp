@@ -130,8 +130,9 @@ class IncrementalBackupService {
     // Limpa ZIP temporário
     try {
       await File(tempZipPath).delete();
-    } catch (_) {
+    } catch (e) {
       // Limpeza opcional — não crítico
+      debugPrint('IncrementalBackupService: erro ao remover ZIP temporário base: $e');
     }
 
     onProgressValue?.call(1.0);
@@ -260,8 +261,9 @@ class IncrementalBackupService {
 
     try {
       await tempZipFile.delete();
-    } catch (_) {
+    } catch (e) {
       // Limpeza opcional
+      debugPrint('IncrementalBackupService: erro ao remover ZIP temporário diff: $e');
     }
 
     onProgressValue?.call(1.0);
@@ -381,7 +383,10 @@ class IncrementalBackupService {
 
     try {
       await File(baseTempPath).delete();
-    } catch (_) {}
+    } catch (e) {
+      // Limpeza opcional de temporário — não deve interromper a restauração.
+      debugPrint('IncrementalBackupService: erro ao remover restore_base.zip: $e');
+    }
 
     // Aplica diff (se existir)
     final diffFile = File(path.join(folderPath, _fileDiff));
@@ -400,7 +405,10 @@ class IncrementalBackupService {
 
       try {
         await File(diffTempPath).delete();
-      } catch (_) {}
+      } catch (e) {
+        // Limpeza opcional de temporário — não deve interromper a restauração.
+        debugPrint('IncrementalBackupService: erro ao remover restore_diff.zip: $e');
+      }
     }
 
     onProgressValue?.call(1.0);
@@ -423,7 +431,12 @@ class IncrementalBackupService {
           'modified': stat.modified.toIso8601String(),
           'size': stat.size,
         };
-      } catch (_) {}
+      } catch (e) {
+        // Arquivo pode ter sido removido enquanto o manifesto é montado.
+        debugPrint(
+          'IncrementalBackupService: erro ao ler metadados de $archivePath: $e',
+        );
+      }
     }
 
     for (final f in media.videos) {
@@ -452,7 +465,8 @@ class IncrementalBackupService {
     if (!await file.exists()) return null;
     try {
       return jsonDecode(await file.readAsString()) as Map<String, dynamic>;
-    } catch (_) {
+    } catch (e) {
+      debugPrint('IncrementalBackupService: erro ao ler manifesto de backup: $e');
       return null;
     }
   }

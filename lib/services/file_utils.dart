@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
@@ -26,8 +27,9 @@ class FileUtils {
       if (await f.exists()) {
         await f.delete();
       }
-    } catch (_) {
-      // ignore errors
+    } catch (e) {
+      // Falha de limpeza não é crítica, mas ajuda no diagnóstico.
+      debugPrint('FileUtils: erro ao excluir arquivo "$path": $e');
     }
   }
 }

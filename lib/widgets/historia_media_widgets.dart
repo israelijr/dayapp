@@ -412,8 +412,11 @@ class HistoriaFotosGrid extends StatelessWidget {
                                   // ignore: deprecated_member_use
                                   await Share.shareXFiles([XFile(file.path)]);
                                   pinProvider.isPickingExternalMedia = false;
-                                } catch (_) {
+                                } catch (e) {
                                   pinProvider.isPickingExternalMedia = false;
+                                  debugPrint(
+                                    'HistoriaMediaWidgets: erro ao compartilhar imagem da história: $e',
+                                  );
                                   messenger.showSnackBar(
                                     SnackBar(
                                       content: Text(localizations.errorShare),
@@ -747,8 +750,11 @@ class _HistoriaThumbnailImageState extends State<HistoriaThumbnailImage> {
           _isLoading = false;
         });
       }
-    } catch (_) {
+    } catch (e) {
       // Em caso de erro, usa imagem original sem thumbnail
+      debugPrint(
+        'HistoriaMediaWidgets: erro ao gerar thumbnail, usando imagem original: $e',
+      );
       if (mounted) {
         setState(() {
           _thumbnailBytes = widget.imageBytes;

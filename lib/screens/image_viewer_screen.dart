@@ -79,7 +79,10 @@ class _ImageViewerScreenState extends State<ImageViewerScreen> {
             ),
           );
         }
-      } catch (_) {
+      } catch (fallbackError) {
+        debugPrint(
+          'ImageViewerScreen: falha ao compartilhar arquivo; fallback para base64: $fallbackError',
+        );
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(AppLocalizations.of(context)!.shareError)),

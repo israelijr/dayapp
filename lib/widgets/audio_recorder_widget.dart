@@ -361,8 +361,9 @@ class _AudioRecorderWidgetState extends State<AudioRecorderWidget> {
         // Limpa o arquivo temporário
         try {
           await file.delete();
-        } catch (_) {
+        } catch (e) {
           // Ignora erro ao deletar arquivo temporário
+          debugPrint('AudioRecorderWidget: erro ao excluir áudio temporário: $e');
         }
       }
     } catch (e) {

@@ -117,7 +117,8 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       }
     } catch (e) {
-      // Silencia erros durante a checagem inicial
+      // Falha não crítica para a experiência inicial, mas útil para diagnóstico.
+      debugPrint('HomeScreen: erro durante checagem inicial de backup: $e');
     }
   }
 
@@ -130,8 +131,9 @@ class _HomeScreenState extends State<HomeScreen> {
           _isCardView = val;
         });
       }
-    } catch (_) {
-      // ignore errors and keep default
+    } catch (e) {
+      // Mantém padrão de layout em caso de falha de leitura.
+      debugPrint('HomeScreen: erro ao carregar preferência de layout: $e');
     }
   }
 
@@ -139,8 +141,9 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(_prefKeyIsCardView, isCard);
-    } catch (_) {
-      // ignore
+    } catch (e) {
+      // Falha de persistência não deve quebrar a navegação.
+      debugPrint('HomeScreen: erro ao salvar preferência de layout: $e');
     }
   }
 
@@ -153,8 +156,11 @@ class _HomeScreenState extends State<HomeScreen> {
           _showChapterShortcutCard = val;
         });
       }
-    } catch (_) {
-      // ignore errors and keep default
+    } catch (e) {
+      // Mantém padrão de card em caso de falha de leitura.
+      debugPrint(
+        'HomeScreen: erro ao carregar preferência de card de capítulos: $e',
+      );
     }
   }
 
@@ -162,8 +168,9 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(_prefKeyShowChapterCard, value);
-    } catch (_) {
-      // ignore
+    } catch (e) {
+      // Falha de persistência não deve quebrar o fluxo.
+      debugPrint('HomeScreen: erro ao salvar preferência de card de capítulos: $e');
     }
   }
 
@@ -475,7 +482,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               'assets/image/icon.png',
                             );
                           }
-                        } catch (_) {
+                        } catch (e) {
+                          debugPrint(
+                            'HomeScreen: erro ao carregar imagem de perfil local, usando fallback: $e',
+                          );
                           profileImage = const AssetImage(
                             'assets/image/icon.png',
                           );

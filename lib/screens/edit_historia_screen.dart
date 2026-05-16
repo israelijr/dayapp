@@ -691,7 +691,10 @@ class _EditHistoriaScreenState extends State<EditHistoriaScreen> {
       String content;
       try {
         content = utf8.decode(bytes);
-      } catch (_) {
+      } catch (e) {
+        debugPrint(
+          'EditHistoriaScreen: fallback para Latin-1 na leitura de arquivo TXT: $e',
+        );
         content = latin1.decode(bytes);
       }
       if (!mounted) return;

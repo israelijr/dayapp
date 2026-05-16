@@ -1,4 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart' show debugPrint;
 
 import '../db/database_helper.dart';
 import '../models/insight.dart';
@@ -554,8 +555,11 @@ class InsightService {
 
     try {
       return Insight.decodeList(json);
-    } catch (_) {
+    } catch (e) {
       // Cache corrompido — ignora e recalcula
+      debugPrint('InsightService: cache corrompido para userId=$userId: $e');
+      await prefs.remove(_cacheKeyFor(userId));
+      await prefs.remove(_timestampKeyFor(userId));
       return null;
     }
   }

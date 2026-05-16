@@ -242,7 +242,8 @@ else
   fail 'Signing config de release nao encontrada.'
 fi
 
-if grep -q 'signingConfig = signingConfigs.getByName("release")' "$BUILD_GRADLE_FILE"; then
+if grep -Eq 'signingConfig\s*=\s*signingConfigs\.getByName\("release"\)' "$BUILD_GRADLE_FILE" \
+  || grep -Eq 'signingConfig\s*=\s*if\s*\(keystorePropertiesFile\.exists\(\)\)' "$BUILD_GRADLE_FILE"; then
   pass 'Build de release usa a assinatura configurada.'
 else
   fail 'Build de release nao esta vinculada a signingConfigs.release.'

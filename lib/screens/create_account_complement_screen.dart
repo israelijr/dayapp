@@ -28,17 +28,28 @@ class _CreateAccountComplementScreenState
 
   Future<void> _pickImage() async {
     final picker = ImagePicker();
-    final picked = await picker.pickImage(source: ImageSource.gallery);
-    if (picked != null) {
+    try {
+      final picked = await picker.pickImage(source: ImageSource.gallery);
+      if (picked != null) {
+        if (!mounted) return;
+        setState(() {
+          profileImagePath = picked.path;
+          errorMessage = null;
+        });
+      }
+    } catch (e) {
       if (!mounted) return;
       setState(() {
-        profileImagePath = picked.path;
+        errorMessage = AppLocalizations.of(context)!.errorSelectImages(
+          e.toString(),
+        );
       });
     }
   }
 
   Future<void> _saveComplement(BuildContext context) async {
     final navigator = Navigator.of(context);
+    final l10n = AppLocalizations.of(context)!;
     setState(() {
       loading = true;
       errorMessage = null;
@@ -63,25 +74,36 @@ class _CreateAccountComplementScreenState
       });
       return;
     }
-    final db = await DatabaseHelper().database;
-    await db.update(
-      'users',
-      {
-        'dt_nascimento': birthDate?.toIso8601String(),
-        'foto_perfil': profileImagePath,
-      },
-      where: 'id = ?',
-      whereArgs: [auth.user!.id],
-    );
-    if (!mounted) return;
-    setState(() {
-      loading = false;
-    });
-    // Navega para uma nova instância da tela de login, removendo toda a
-    // pilha de criação de conta. Isso garante que o initState rode novamente
-    // e a verificação de biometria reflita o estado real (sem credenciais
-    // da conta anterior).
-    navigator.pushNamedAndRemoveUntil('/login', (route) => false);
+    try {
+      final db = await DatabaseHelper().database;
+      await db.update(
+        'users',
+        {
+          'dt_nascimento': birthDate?.toIso8601String(),
+          'foto_perfil': profileImagePath,
+        },
+        where: 'id = ?',
+        whereArgs: [auth.user!.id],
+      );
+
+      if (!mounted) return;
+      // Navega para uma nova instância da tela de login, removendo toda a
+      // pilha de criação de conta. Isso garante que o initState rode novamente
+      // e a verificação de biometria reflita o estado real (sem credenciais
+      // da conta anterior).
+      navigator.pushNamedAndRemoveUntil('/login', (route) => false);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        errorMessage = l10n.profileUpdateError;
+      });
+      debugPrint('CreateAccountComplementScreen: erro ao salvar complemento: $e');
+    } finally {
+      if (!mounted) return;
+      setState(() {
+        loading = false;
+      });
+    }
   }
 
   @override

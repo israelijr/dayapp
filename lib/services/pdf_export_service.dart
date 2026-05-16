@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/widgets.dart' as fw;
 // printing not needed in this file
@@ -47,8 +48,9 @@ Future<pw.TextSpan> _buildContentSpans(
   for (final emoji in uniqueEmojis) {
     try {
       cache[emoji] = await _renderEmojiToPng(emoji, fontSize * 1.4);
-    } catch (_) {
+    } catch (e) {
       // Ignora emoji que não puder ser rasterizado
+      debugPrint('PdfExportService: falha ao renderizar emoji inline "$emoji": $e');
     }
   }
 
@@ -147,7 +149,8 @@ class PdfExportService {
         throw const FormatException('Arquivo de fonte inválido');
       }
       baseFont = pw.Font.ttf(bd);
-    } catch (_) {
+    } catch (e) {
+      debugPrint('PdfExportService: fallback para Helvetica (fonte regular): $e');
       baseFont = pw.Font.helvetica();
     }
     try {
@@ -157,7 +160,8 @@ class PdfExportService {
         throw const FormatException('Arquivo de fonte inválido');
       }
       boldFont = pw.Font.ttf(bd);
-    } catch (_) {
+    } catch (e) {
+      debugPrint('PdfExportService: fallback para HelveticaBold (fonte bold): $e');
       boldFont = pw.Font.helveticaBold();
     }
 
@@ -192,7 +196,8 @@ class PdfExportService {
           } else {
             compressedImages.add(img);
           }
-        } catch (_) {
+        } catch (e) {
+          debugPrint('PdfExportService: falha ao comprimir imagem para PDF: $e');
           compressedImages.add(img);
         }
       }
@@ -205,7 +210,8 @@ class PdfExportService {
     if (emoticon != null && emoticon.isNotEmpty) {
       try {
         emoticonPng = await _renderEmojiToPng(emoticon, 28);
-      } catch (_) {
+      } catch (e) {
+        debugPrint('PdfExportService: falha ao renderizar emoticon: $e');
         emoticonPng = null;
       }
     }
@@ -215,7 +221,8 @@ class PdfExportService {
     try {
       final iconData = await rootBundle.load('assets/icon/icon.png');
       iconBytes = iconData.buffer.asUint8List();
-    } catch (_) {
+    } catch (e) {
+      debugPrint('PdfExportService: ícone não disponível para cabeçalho do PDF: $e');
       iconBytes = null;
     }
 
@@ -368,8 +375,9 @@ class PdfExportService {
                     ),
                   ),
                 );
-              } catch (_) {
+              } catch (e) {
                 // Ignora imagem que não puder ser inserida
+                debugPrint('PdfExportService: falha ao inserir imagem no PDF: $e');
               }
             }
           }

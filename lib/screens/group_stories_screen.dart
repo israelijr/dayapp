@@ -1073,7 +1073,19 @@ class _GroupStoriesScreenState extends State<GroupStoriesScreen> {
           where: 'user_id = ? AND nome = ?',
           whereArgs: [userId, widget.grupo.nome],
         );
-      } catch (_) {}
+      } catch (e) {
+        // Falha na remoção do registro do grupo não deve interromper o fluxo,
+        // mas precisa ser visível para diagnóstico e suporte.
+        debugPrint('GroupStoriesScreen: erro ao remover grupo: $e');
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.errorDeletingStory(e.toString()),
+            ),
+          ),
+        );
+      }
 
       if (!mounted) return;
       navigator.pushReplacementNamed('/home');
