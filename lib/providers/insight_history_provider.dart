@@ -3,22 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../services/insight_history_service.dart';
 
 /// Filtro de tier para o histórico.
-enum HistoryTierFilter {
-  all,
-  freeOnly,
-  premiumOnly;
-
-  String get label {
-    switch (this) {
-      case HistoryTierFilter.all:
-        return 'Todos';
-      case HistoryTierFilter.freeOnly:
-        return 'Free';
-      case HistoryTierFilter.premiumOnly:
-        return 'Premium';
-    }
-  }
-}
+enum HistoryTierFilter { all, freeOnly, premiumOnly }
 
 /// Grupo mensal de entradas do histórico, usado para exibição agrupada.
 class InsightHistoryGroup {

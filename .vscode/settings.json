@@ -5,6 +5,8 @@
             "matchCommandLine": true
         },
         "mkdir": true,
-        "git clone": true
+        "git clone": true,
+        "dart": true,
+        "awk": true
     }
 }

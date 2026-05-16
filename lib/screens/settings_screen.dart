@@ -1,8 +1,3 @@
-// ignore_for_file: deprecated_member_use
-// TODO: Migrar RadioListTile para RadioGroup quando Flutter 3.32+ for estável
-// Os RadioListTile usam groupValue/onChanged que foram deprecados no Flutter 3.32+
-// A migração requer refatoração significativa dos dialogs para StatefulWidgets
-
 import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
@@ -117,58 +112,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
             final loc = AppLocalizations.of(ctx)!;
             return AlertDialog(
               title: Text(loc.language),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  RadioListTile<String>(
-                    value: 'system',
-                    groupValue: lp.selection,
-                    title: Text(loc.deviceDefault),
-                    onChanged: (v) {
-                      if (v == null) return;
-                      lp.setSelection(
-                        v,
-                      ); // alteração imediata, escrita em segundo plano
-                      // Mantém o diálogo aberto para que o usuário veja a aplicação imediata
-                    },
-                  ),
-                  RadioListTile<String>(
-                    value: 'en',
-                    groupValue: lp.selection,
-                    title: Text(loc.english),
-                    onChanged: (v) {
-                      if (v == null) return;
-                      lp.setSelection(v);
-                    },
-                  ),
-                  RadioListTile<String>(
-                    value: 'es',
-                    groupValue: lp.selection,
-                    title: Text(loc.spanish),
-                    onChanged: (v) {
-                      if (v == null) return;
-                      lp.setSelection(v);
-                    },
-                  ),
-                  RadioListTile<String>(
-                    value: 'fr',
-                    groupValue: lp.selection,
-                    title: Text(loc.french),
-                    onChanged: (v) {
-                      if (v == null) return;
-                      lp.setSelection(v);
-                    },
-                  ),
-                  RadioListTile<String>(
-                    value: 'it',
-                    groupValue: lp.selection,
-                    title: Text(loc.italian),
-                    onChanged: (v) {
-                      if (v == null) return;
-                      lp.setSelection(v);
-                    },
-                  ),
-                ],
+              content: RadioGroup<String>(
+                groupValue: lp.selection,
+                onChanged: (v) {
+                  if (v == null) return;
+                  // Alteração imediata, escrita em segundo plano.
+                  // Mantém o diálogo aberto para que o usuário veja a aplicação imediata.
+                  lp.setSelection(v);
+                },
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    RadioListTile<String>(
+                      value: 'system',
+                      title: Text(loc.deviceDefault),
+                    ),
+                    RadioListTile<String>(
+                      value: 'en',
+                      title: Text(loc.english),
+                    ),
+                    RadioListTile<String>(
+                      value: 'es',
+                      title: Text(loc.spanish),
+                    ),
+                    RadioListTile<String>(value: 'fr', title: Text(loc.french)),
+                    RadioListTile<String>(
+                      value: 'it',
+                      title: Text(loc.italian),
+                    ),
+                  ],
+                ),
               ),
               actions: [
                 TextButton(
@@ -1365,32 +1338,39 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             Text(loc.notificationAdvancePrompt),
             const SizedBox(height: 16),
-            ...NotificationPreferencesService.advanceOptions.map((minutes) {
-              return RadioListTile<int>(
-                title: Text(
-                  NotificationPreferencesService.getAdvanceLabel(minutes),
-                ),
-                value: minutes,
-                groupValue: _notificationAdvance,
-                onChanged: (value) async {
-                  if (value != null) {
-                    Navigator.of(context).pop(); // Fecha antes do await
-                    await _notificationService.setDefaultNotificationAdvance(
-                      value,
-                    );
-                    await _loadNotificationPreferences();
-                    if (!mounted) return;
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          '${loc.notificationAdvanceDefault}: ${NotificationPreferencesService.getAdvanceLabel(value)}',
-                        ),
+            RadioGroup<int>(
+              groupValue: _notificationAdvance,
+              onChanged: (value) async {
+                if (value != null) {
+                  Navigator.of(context).pop(); // Fecha antes do await
+                  await _notificationService.setDefaultNotificationAdvance(
+                    value,
+                  );
+                  await _loadNotificationPreferences();
+                  if (!mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        '${loc.notificationAdvanceDefault}: ${NotificationPreferencesService.getAdvanceLabel(value)}',
                       ),
-                    );
-                  }
-                },
-              );
-            }),
+                    ),
+                  );
+                }
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ...NotificationPreferencesService.advanceOptions.map(
+                    (minutes) => RadioListTile<int>(
+                      title: Text(
+                        NotificationPreferencesService.getAdvanceLabel(minutes),
+                      ),
+                      value: minutes,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
         actions: [
