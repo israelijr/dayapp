@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../db/database_helper.dart';
 import '../db/historia_foto_helper.dart';
@@ -24,6 +25,7 @@ import '../widgets/compact_historia_card.dart';
 import '../widgets/historia_media_widgets.dart';
 import '../widgets/insight_card.dart';
 import '../widgets/rich_text_viewer_widget.dart';
+import 'chapters_entry_screen.dart';
 import 'edit_historia_screen.dart';
 import 'group_selection_screen.dart';
 import 'pdf_preview_screen.dart';
@@ -816,10 +818,14 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
   bool _hasRefreshed = false;
   // Chave para identificar a posição do scroll desta tela
   static const String _scrollPositionKey = 'home_list_scroll';
+  static const String _prefShowIntroOnOpen = 'chapters_show_intro_on_open';
+
+  bool _showChapterIntroOnOpen = true;
 
   @override
   void initState() {
     super.initState();
+    _loadChapterIntroPreference();
     // Recarrega dados quando a key muda (RefreshProvider foi atualizado)
     // Usa addPostFrameCallback para evitar setState durante build
     // Só executa uma vez por instância do widget
@@ -841,6 +847,33 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
         _restoreScrollPositionAfterLoad();
       }
     });
+  }
+
+  Future<void> _loadChapterIntroPreference() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final value = prefs.getBool(_prefShowIntroOnOpen) ?? true;
+      if (!mounted) return;
+      setState(() {
+        _showChapterIntroOnOpen = value;
+      });
+    } catch (e) {
+      // Mantém o comportamento padrão caso a leitura de preferência falhe.
+    }
+  }
+
+  Future<void> _openChapters({bool forceIntro = false}) async {
+    if (forceIntro) {
+      await Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => const ChaptersEntryScreen(forceShowIntro: true),
+        ),
+      );
+    } else {
+      await Navigator.pushNamed(context, '/chapters');
+    }
+    if (!mounted) return;
+    await _loadChapterIntroPreference();
   }
 
   /// Restaura a posição do scroll após os dados serem carregados
@@ -926,14 +959,20 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
                     color: Theme.of(context).colorScheme.primary,
                   ),
                   title: Text(l10n.chaptersHomeCardTitle),
-                  subtitle: Text(
-                    premium.canUseChapters
-                        ? l10n.chaptersHomeCardSubtitle
-                        : l10n.chaptersPremiumRequired,
-                  ),
-                  trailing: FilledButton.tonal(
-                    onPressed: () => Navigator.pushNamed(context, '/chapters'),
-                    child: Text(l10n.chapterOpenLabel),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (!_showChapterIntroOnOpen)
+                        IconButton(
+                          tooltip: l10n.help,
+                          onPressed: () => _openChapters(forceIntro: true),
+                          icon: const Icon(Icons.help_outline_rounded),
+                        ),
+                      FilledButton.tonal(
+                        onPressed: _openChapters,
+                        child: Text(l10n.chapterOpenLabel),
+                      ),
+                    ],
                   ),
                 ),
               );

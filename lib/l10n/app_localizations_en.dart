@@ -2156,7 +2156,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chaptersHomeCardSubtitle =>
-      'Review your stories grouped by phase with smart suggestions.';
+      'Your stories hold moments. Your chapters reveal the journey.';
 
   @override
   String get chaptersPremiumRequired =>
@@ -2260,8 +2260,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get chapterNoItems =>
-      'No chapters yet. Start with an automatic suggestion or create one manually.';
+  String get chapterNoItems => 'Your next chapter starts here.';
 
   @override
   String get chapterFilterAll => 'All';
@@ -2298,6 +2297,41 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chapterOpenLabel => 'Open';
+
+  @override
+  String get chapterIntroSubtitle =>
+      'Organize your stories with meaning and relive your memories in order';
+
+  @override
+  String get chapterIntroGroupTitle => 'Bring connected moments together';
+
+  @override
+  String get chapterIntroGroupBody =>
+      'Gather multiple posts into one chapter to follow the full trajectory of a special theme or moment.';
+
+  @override
+  String get chapterIntroTimelineTitle =>
+      'Relive your story from beginning to end';
+
+  @override
+  String get chapterIntroTimelineBody =>
+      'Browse memories in chronological order and see how each moment evolved over time.';
+
+  @override
+  String get chapterIntroPhaseTitle => 'One chapter for each phase';
+
+  @override
+  String get chapterIntroPhaseBody =>
+      'Trips, college, family, work, dreams, goals, or special memories. You decide how to tell your story.';
+
+  @override
+  String get chapterIntroCtaTitle => 'Ready to organize your memories?';
+
+  @override
+  String get chapterIntroCtaBody => 'Start by creating your first chapter now';
+
+  @override
+  String get chapterIntroShowOnOpen => 'Show this screen when opening Chapters';
 
   @override
   String get chapterLinkSectionTitle => 'Chapters';

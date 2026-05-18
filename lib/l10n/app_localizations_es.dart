@@ -2183,7 +2183,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get chaptersHomeCardSubtitle =>
-      'Revisa tus historias por etapas con sugerencias inteligentes.';
+      'Tus historias guardan momentos. Tus capítulos revelan el camino.';
 
   @override
   String get chaptersPremiumRequired =>
@@ -2283,8 +2283,7 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get chapterNoItems =>
-      'Aún no hay capítulos. Empieza con una sugerencia automática o crea uno manualmente.';
+  String get chapterNoItems => 'Tu próximo capítulo empieza aquí.';
 
   @override
   String get chapterFilterAll => 'Todos';
@@ -2321,6 +2320,42 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get chapterOpenLabel => 'Abrir';
+
+  @override
+  String get chapterIntroSubtitle =>
+      'Organiza tus historias de forma significativa y revive tus recuerdos en orden';
+
+  @override
+  String get chapterIntroGroupTitle => 'Une momentos conectados';
+
+  @override
+  String get chapterIntroGroupBody =>
+      'Reúne varias publicaciones en un solo capítulo para seguir toda la trayectoria de un tema o momento especial.';
+
+  @override
+  String get chapterIntroTimelineTitle =>
+      'Revive tu historia de principio a fin';
+
+  @override
+  String get chapterIntroTimelineBody =>
+      'Navega por los recuerdos en orden cronológico y observa cómo cada momento evolucionó con el tiempo.';
+
+  @override
+  String get chapterIntroPhaseTitle => 'Un capítulo para cada etapa';
+
+  @override
+  String get chapterIntroPhaseBody =>
+      'Viajes, universidad, familia, trabajo, sueños, metas o recuerdos especiales. Tú decides cómo contar tu historia.';
+
+  @override
+  String get chapterIntroCtaTitle => '¿Listo para organizar tus recuerdos?';
+
+  @override
+  String get chapterIntroCtaBody => 'Empieza creando tu primer capítulo ahora';
+
+  @override
+  String get chapterIntroShowOnOpen =>
+      'Mostrar esta pantalla al abrir Capítulos';
 
   @override
   String get chapterLinkSectionTitle => 'Capítulos';

@@ -2180,7 +2180,7 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get chaptersHomeCardSubtitle =>
-      'Rivedi le tue storie raggruppate per fase con suggerimenti intelligenti.';
+      'Le tue storie custodiscono momenti. I tuoi capitoli rivelano il percorso.';
 
   @override
   String get chaptersPremiumRequired =>
@@ -2280,8 +2280,7 @@ class AppLocalizationsIt extends AppLocalizations {
   }
 
   @override
-  String get chapterNoItems =>
-      'Ancora nessun capitolo. Inizia con un suggerimento automatico o creane uno manualmente.';
+  String get chapterNoItems => 'Il tuo prossimo capitolo inizia qui.';
 
   @override
   String get chapterFilterAll => 'Tutti';
@@ -2318,6 +2317,43 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get chapterOpenLabel => 'Apri';
+
+  @override
+  String get chapterIntroSubtitle =>
+      'Organizza le tue storie in modo significativo e rivivi i tuoi ricordi in ordine';
+
+  @override
+  String get chapterIntroGroupTitle => 'Unisci momenti collegati';
+
+  @override
+  String get chapterIntroGroupBody =>
+      'Riunisci più post in un unico capitolo per seguire l\'intero percorso di un tema o momento speciale.';
+
+  @override
+  String get chapterIntroTimelineTitle =>
+      'Rivivi la tua storia dall\'inizio alla fine';
+
+  @override
+  String get chapterIntroTimelineBody =>
+      'Sfoglia i ricordi in ordine cronologico e guarda come ogni momento si è evoluto nel tempo.';
+
+  @override
+  String get chapterIntroPhaseTitle => 'Un capitolo per ogni fase';
+
+  @override
+  String get chapterIntroPhaseBody =>
+      'Viaggi, università, famiglia, lavoro, sogni, obiettivi o ricordi speciali. Decidi tu come raccontare la tua storia.';
+
+  @override
+  String get chapterIntroCtaTitle => 'Pronto a organizzare i tuoi ricordi?';
+
+  @override
+  String get chapterIntroCtaBody =>
+      'Inizia creando subito il tuo primo capitolo';
+
+  @override
+  String get chapterIntroShowOnOpen =>
+      'Mostra questa schermata all\'apertura dei Capitoli';
 
   @override
   String get chapterLinkSectionTitle => 'Capitoli';

@@ -3929,7 +3929,7 @@ abstract class AppLocalizations {
   /// Subtitle of chapters shortcut card on Home
   ///
   /// In en, this message translates to:
-  /// **'Review your stories grouped by phase with smart suggestions.'**
+  /// **'Your stories hold moments. Your chapters reveal the journey.'**
   String get chaptersHomeCardSubtitle;
 
   /// Message shown when chapters feature is locked for Free users
@@ -4097,7 +4097,7 @@ abstract class AppLocalizations {
   /// Empty state text for chapters list
   ///
   /// In en, this message translates to:
-  /// **'No chapters yet. Start with an automatic suggestion or create one manually.'**
+  /// **'Your next chapter starts here.'**
   String get chapterNoItems;
 
   /// Filter to show all chapters
@@ -4165,6 +4165,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open'**
   String get chapterOpenLabel;
+
+  /// Subtitle of the chapters intro screen
+  ///
+  /// In en, this message translates to:
+  /// **'Organize your stories with meaning and relive your memories in order'**
+  String get chapterIntroSubtitle;
+
+  /// Title of the first intro block for chapters
+  ///
+  /// In en, this message translates to:
+  /// **'Bring connected moments together'**
+  String get chapterIntroGroupTitle;
+
+  /// Body of the first intro block for chapters
+  ///
+  /// In en, this message translates to:
+  /// **'Gather multiple posts into one chapter to follow the full trajectory of a special theme or moment.'**
+  String get chapterIntroGroupBody;
+
+  /// Title of the second intro block for chapters
+  ///
+  /// In en, this message translates to:
+  /// **'Relive your story from beginning to end'**
+  String get chapterIntroTimelineTitle;
+
+  /// Body of the second intro block for chapters
+  ///
+  /// In en, this message translates to:
+  /// **'Browse memories in chronological order and see how each moment evolved over time.'**
+  String get chapterIntroTimelineBody;
+
+  /// Title of the third intro block for chapters
+  ///
+  /// In en, this message translates to:
+  /// **'One chapter for each phase'**
+  String get chapterIntroPhaseTitle;
+
+  /// Body of the third intro block for chapters
+  ///
+  /// In en, this message translates to:
+  /// **'Trips, college, family, work, dreams, goals, or special memories. You decide how to tell your story.'**
+  String get chapterIntroPhaseBody;
+
+  /// Title of the final call-to-action on chapters intro
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to organize your memories?'**
+  String get chapterIntroCtaTitle;
+
+  /// Subtitle of the final call-to-action on chapters intro
+  ///
+  /// In en, this message translates to:
+  /// **'Start by creating your first chapter now'**
+  String get chapterIntroCtaBody;
+
+  /// Checkbox to control whether intro appears when opening Chapters
+  ///
+  /// In en, this message translates to:
+  /// **'Show this screen when opening Chapters'**
+  String get chapterIntroShowOnOpen;
 
   /// Section title for linking a story to chapters
   ///

@@ -2192,7 +2192,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get chaptersHomeCardSubtitle =>
-      'Revoyez vos histoires regroupées par phase avec des suggestions intelligentes.';
+      'Vos histoires gardent des moments. Vos chapitres révèlent le parcours.';
 
   @override
   String get chaptersPremiumRequired =>
@@ -2292,8 +2292,7 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get chapterNoItems =>
-      'Pas encore de chapitres. Commencez avec une suggestion automatique ou créez-en un manuellement.';
+  String get chapterNoItems => 'Votre prochain chapitre commence ici.';
 
   @override
   String get chapterFilterAll => 'Tous';
@@ -2330,6 +2329,43 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get chapterOpenLabel => 'Ouvrir';
+
+  @override
+  String get chapterIntroSubtitle =>
+      'Organisez vos histoires de façon significative et revivez vos souvenirs dans l\'ordre';
+
+  @override
+  String get chapterIntroGroupTitle => 'Rassemblez les moments connectés';
+
+  @override
+  String get chapterIntroGroupBody =>
+      'Regroupez plusieurs publications dans un chapitre unique pour suivre toute la trajectoire d\'un thème ou d\'un moment spécial.';
+
+  @override
+  String get chapterIntroTimelineTitle =>
+      'Revivez votre histoire du début à la fin';
+
+  @override
+  String get chapterIntroTimelineBody =>
+      'Parcourez les souvenirs dans l\'ordre chronologique et voyez comment chaque moment a évolué au fil du temps.';
+
+  @override
+  String get chapterIntroPhaseTitle => 'Un chapitre pour chaque phase';
+
+  @override
+  String get chapterIntroPhaseBody =>
+      'Voyages, études, famille, travail, rêves, objectifs ou souvenirs spéciaux. C\'est vous qui décidez comment raconter votre histoire.';
+
+  @override
+  String get chapterIntroCtaTitle => 'Prêt à organiser vos souvenirs ?';
+
+  @override
+  String get chapterIntroCtaBody =>
+      'Commencez par créer votre premier chapitre maintenant';
+
+  @override
+  String get chapterIntroShowOnOpen =>
+      'Afficher cet écran lors de l\'ouverture des chapitres';
 
   @override
   String get chapterLinkSectionTitle => 'Chapitres';

@@ -2169,7 +2169,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get chaptersHomeCardSubtitle =>
-      'Reveja as suas histórias por fase com sugestões inteligentes.';
+      'Suas histórias guardam momentos. Seus capítulos revelam a jornada.';
 
   @override
   String get chaptersPremiumRequired =>
@@ -2269,8 +2269,7 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
-  String get chapterNoItems =>
-      'Ainda não há capítulos. Comece por uma sugestão automática ou crie manualmente.';
+  String get chapterNoItems => 'Seu próximo capítulo começa aqui.';
 
   @override
   String get chapterFilterAll => 'Todos';
@@ -2307,6 +2306,42 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get chapterOpenLabel => 'Abrir';
+
+  @override
+  String get chapterIntroSubtitle =>
+      'Organize suas histórias de forma significativa e reviva suas memórias em ordem';
+
+  @override
+  String get chapterIntroGroupTitle => 'Junte momentos conectados';
+
+  @override
+  String get chapterIntroGroupBody =>
+      'Reúna várias postagens em um único capítulo para acompanhar toda a trajetória de um tema ou momento especial.';
+
+  @override
+  String get chapterIntroTimelineTitle =>
+      'Reviva sua história do começo ao fim';
+
+  @override
+  String get chapterIntroTimelineBody =>
+      'Navegue pelas memórias em ordem cronológica e veja como cada momento evoluiu com o tempo.';
+
+  @override
+  String get chapterIntroPhaseTitle => 'Um capítulo para cada fase';
+
+  @override
+  String get chapterIntroPhaseBody =>
+      'Viagens, faculdade, família, trabalho, sonhos, metas ou lembranças especiais. Você decide como contar sua história.';
+
+  @override
+  String get chapterIntroCtaTitle => 'Pronto para organizar suas memórias?';
+
+  @override
+  String get chapterIntroCtaBody =>
+      'Comece criando seu primeiro capítulo agora';
+
+  @override
+  String get chapterIntroShowOnOpen => 'Mostrar essa tela ao abrir Capítulos';
 
   @override
   String get chapterLinkSectionTitle => 'Capítulos';
@@ -4672,7 +4707,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get chaptersHomeCardSubtitle =>
-      'Reveja suas histórias por fase com sugestões inteligentes.';
+      'Suas histórias guardam momentos. Seus capítulos revelam a jornada.';
 
   @override
   String get chaptersPremiumRequired =>
@@ -4772,8 +4807,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   }
 
   @override
-  String get chapterNoItems =>
-      'Ainda não há capítulos. Comece por uma sugestão automática ou crie manualmente.';
+  String get chapterNoItems => 'Seu próximo capítulo começa aqui.';
 
   @override
   String get chapterFilterAll => 'Todos';
@@ -4810,6 +4844,42 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get chapterOpenLabel => 'Abrir';
+
+  @override
+  String get chapterIntroSubtitle =>
+      'Organize suas histórias de forma significativa e reviva suas memórias em ordem';
+
+  @override
+  String get chapterIntroGroupTitle => 'Junte momentos conectados';
+
+  @override
+  String get chapterIntroGroupBody =>
+      'Reúna várias postagens em um único capítulo para acompanhar toda a trajetória de um tema ou momento especial.';
+
+  @override
+  String get chapterIntroTimelineTitle =>
+      'Reviva sua história do começo ao fim';
+
+  @override
+  String get chapterIntroTimelineBody =>
+      'Navegue pelas memórias em ordem cronológica e veja como cada momento evoluiu com o tempo.';
+
+  @override
+  String get chapterIntroPhaseTitle => 'Um capítulo para cada fase';
+
+  @override
+  String get chapterIntroPhaseBody =>
+      'Viagens, faculdade, família, trabalho, sonhos, metas ou lembranças especiais. Você decide como contar sua história.';
+
+  @override
+  String get chapterIntroCtaTitle => 'Pronto para organizar suas memórias?';
+
+  @override
+  String get chapterIntroCtaBody =>
+      'Comece criando seu primeiro capítulo agora';
+
+  @override
+  String get chapterIntroShowOnOpen => 'Mostrar essa tela ao abrir Capítulos';
 
   @override
   String get chapterLinkSectionTitle => 'Capítulos';
