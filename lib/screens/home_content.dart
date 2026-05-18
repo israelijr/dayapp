@@ -944,7 +944,7 @@ class _PaginatedHomeContentState extends State<_PaginatedHomeContent> {
                 Provider.of<AuthProvider>(context, listen: false).user?.id ??
                 '';
             final devMode = insightProvider.devMode;
-            final hasDevBanner = devMode;
+            final hasDevBanner = devMode && insights.isNotEmpty;
             final extraDevBanner = hasDevBanner ? 1 : 0;
             final headerCount =
                 extraChapterCard + extraDevBanner + insights.length;
