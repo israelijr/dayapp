@@ -464,6 +464,8 @@ class _ChaptersScreenState extends State<ChaptersScreen> {
       DateFormat('dd/MM/yy', l10n.localeName).format(capitulo.dataInicio),
       DateFormat('dd/MM/yy', l10n.localeName).format(capitulo.dataFim),
     );
+    final hasChapterPhoto =
+        capitulo.fotoPath != null && File(capitulo.fotoPath!).existsSync();
 
     return Card(
       clipBehavior: Clip.antiAlias,
@@ -497,10 +499,9 @@ class _ChaptersScreenState extends State<ChaptersScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
                 // Imagem do capítulo (entre título e datas)
-                if (capitulo.fotoPath != null &&
-                    File(capitulo.fotoPath!).existsSync())
+                if (hasChapterPhoto) ...[
+                  const SizedBox(height: 10),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: Image.file(
@@ -509,29 +510,8 @@ class _ChaptersScreenState extends State<ChaptersScreen> {
                       height: 160,
                       fit: BoxFit.cover,
                     ),
-                  )
-                else
-                  Container(
-                    width: double.infinity,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      color: capitulo.criadoAutomaticamente
-                          ? colorScheme.tertiaryContainer
-                          : colorScheme.primaryContainer,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Center(
-                      child: Icon(
-                        capitulo.criadoAutomaticamente
-                            ? Icons.auto_awesome
-                            : Icons.bookmark_outline,
-                        size: 40,
-                        color: capitulo.criadoAutomaticamente
-                            ? colorScheme.onTertiaryContainer
-                            : colorScheme.onPrimaryContainer,
-                      ),
-                    ),
                   ),
+                ],
                 const SizedBox(height: 10),
                 // Datas
                 Text(
@@ -824,6 +804,10 @@ class _CreateCapituloPageState extends State<_CreateCapituloPage> {
   final Set<int> selected = <int>{};
   String? _fotoPath;
 
+  bool get _hasDraftToConfirmExit =>
+      titleController.text.trim().isNotEmpty &&
+      descriptionController.text.trim().isNotEmpty;
+
   @override
   void initState() {
     super.initState();
@@ -931,124 +915,184 @@ class _CreateCapituloPageState extends State<_CreateCapituloPage> {
     );
   }
 
+  Future<void> _confirmDiscardChanges(AppLocalizations l10n) async {
+    if (!_hasDraftToConfirmExit) {
+      Navigator.of(context).pop();
+      return;
+    }
+
+    final dialogResult = await showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.discardChangesTitle),
+        content: Text(l10n.discardChangesPrompt),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop('cancel'),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop('discard'),
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.error,
+            ),
+            child: Text(l10n.discard),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop('save'),
+            child: Text(l10n.save),
+          ),
+        ],
+      ),
+    );
+
+    if (!mounted) return;
+
+    if (dialogResult == 'save') {
+      _save(l10n);
+    } else if (dialogResult == 'discard') {
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final colorScheme = Theme.of(context).colorScheme;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.chapterCreateManual),
-        actions: [
-          TextButton(onPressed: () => _save(l10n), child: Text(l10n.save)),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Foto do capítulo
-            Text(
-              l10n.chapterPhoto,
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
-            const SizedBox(height: 8),
-            GestureDetector(
-              onTap: () => _showPhotoOptions(context, l10n),
-              child: Container(
-                width: double.infinity,
-                height: 160,
-                decoration: BoxDecoration(
-                  color: colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: colorScheme.outlineVariant),
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: _fotoPath != null
-                    ? Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          Image.file(
-                            File(_fotoPath!),
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) {
-                              WidgetsBinding.instance.addPostFrameCallback(
-                                (_) => setState(() => _fotoPath = null),
-                              );
-                              return const SizedBox.shrink();
-                            },
-                          ),
-                          Positioned(
-                            bottom: 8,
-                            right: 8,
-                            child: FilledButton.tonalIcon(
-                              onPressed: () => _showPhotoOptions(context, l10n),
-                              icon: const Icon(Icons.edit, size: 16),
-                              label: Text(l10n.chapterChangePhoto),
-                              style: FilledButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                              ),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        await _confirmDiscardChanges(l10n);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => _confirmDiscardChanges(l10n),
+          ),
+          title: Text(l10n.chapterCreateTitle),
+        ),
+        body: SafeArea(
+          top: false,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (_fotoPath != null) ...[
+                  SizedBox(
+                    width: 92,
+                    height: 72,
+                    child: Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: SizedBox(
+                            width: 92,
+                            height: 72,
+                            child: Image.file(
+                              File(_fotoPath!),
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) {
+                                WidgetsBinding.instance.addPostFrameCallback(
+                                  (_) => setState(() => _fotoPath = null),
+                                );
+                                return const SizedBox.shrink();
+                              },
                             ),
                           ),
-                        ],
-                      )
-                    : Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.add_photo_alternate_outlined,
-                            size: 40,
-                            color: colorScheme.onSurfaceVariant,
+                        ),
+                        Positioned(
+                          top: 2,
+                          right: 2,
+                          child: IconButton.filled(
+                            onPressed: () => setState(() => _fotoPath = null),
+                            icon: const Icon(Icons.close, size: 14),
+                            tooltip: l10n.chapterRemovePhoto,
+                            style: IconButton.styleFrom(
+                              minimumSize: const Size(24, 24),
+                              padding: EdgeInsets.zero,
+                            ),
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            l10n.chapterAddPhoto,
-                            style: Theme.of(context).textTheme.bodyMedium
-                                ?.copyWith(color: colorScheme.onSurfaceVariant),
-                          ),
-                        ],
-                      ),
-              ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
+                Text(
+                  l10n.chapterTitle,
+                  style: Theme.of(context).textTheme.labelMedium,
+                ),
+                const SizedBox(height: 6),
+                TextField(
+                  controller: titleController,
+                  textCapitalization: TextCapitalization.sentences,
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    hintText: l10n.chapterTitleHint,
+                    border: const OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  l10n.chapterDescription,
+                  style: Theme.of(context).textTheme.labelMedium,
+                ),
+                const SizedBox(height: 6),
+                TextField(
+                  controller: descriptionController,
+                  textCapitalization: TextCapitalization.sentences,
+                  minLines: 2,
+                  maxLines: 3,
+                  decoration: InputDecoration(
+                    hintText: l10n.chapterDescriptionHint,
+                    border: const OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  l10n.chapterSelectEntries,
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+                const SizedBox(height: 8),
+                _EntradasChecklist(
+                  entradas: widget.entradas,
+                  tagNomesPorId: widget.tagNomesPorId,
+                  selected: selected,
+                  onSelectionChanged: (_) => setState(() {}),
+                ),
+                const SizedBox(height: 12),
+              ],
             ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: titleController,
-              textCapitalization: TextCapitalization.sentences,
-              autofocus: true,
-              decoration: InputDecoration(
-                labelText: l10n.chapterTitle,
-                hintText: l10n.chapterTitleHint,
-                border: const OutlineInputBorder(),
-              ),
+          ),
+        ),
+        bottomNavigationBar: SafeArea(
+          top: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+            child: Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => _showPhotoOptions(context, l10n),
+                    icon: const Icon(Icons.photo_camera_back_outlined),
+                    label: Text(l10n.chapterPhotoActionLabel),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: FilledButton.icon(
+                    onPressed: selected.length >= 3 ? () => _save(l10n) : null,
+                    icon: const Icon(Icons.bookmark_add_outlined),
+                    label: Text(l10n.chapterCreateMyLabel),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: descriptionController,
-              textCapitalization: TextCapitalization.sentences,
-              minLines: 2,
-              maxLines: 3,
-              decoration: InputDecoration(
-                labelText: l10n.chapterDescription,
-                border: const OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              l10n.chapterSelectEntries,
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
-            const SizedBox(height: 8),
-            _EntradasChecklist(
-              entradas: widget.entradas,
-              tagNomesPorId: widget.tagNomesPorId,
-              selected: selected,
-            ),
-            const SizedBox(height: 32),
-          ],
+          ),
         ),
       ),
     );
@@ -1078,7 +1122,21 @@ class _EditCapituloPageState extends State<_EditCapituloPage> {
   late TextEditingController titleController;
   late TextEditingController descController;
   late final Set<int> selectedIds;
+  late final String _initialTitle;
+  late final String _initialDescription;
+  late final Set<int> _initialSelectedIds;
+  String? _initialFotoPath;
   String? _fotoPath;
+
+  bool get _hasUnsavedChanges {
+    final hasSelectionChanged =
+        selectedIds.length != _initialSelectedIds.length ||
+        !selectedIds.containsAll(_initialSelectedIds);
+    return titleController.text.trim() != _initialTitle.trim() ||
+        descController.text.trim() != _initialDescription.trim() ||
+        hasSelectionChanged ||
+        _fotoPath != _initialFotoPath;
+  }
 
   @override
   void initState() {
@@ -1088,9 +1146,13 @@ class _EditCapituloPageState extends State<_EditCapituloPage> {
       text: widget.capitulo.descricao ?? '',
     );
     selectedIds = {...widget.initialEntradaIds};
+    _initialTitle = widget.capitulo.titulo;
+    _initialDescription = widget.capitulo.descricao ?? '';
+    _initialSelectedIds = {...widget.initialEntradaIds};
     // Valida se o arquivo ainda existe antes de usar
     final path = widget.capitulo.fotoPath;
     _fotoPath = (path != null && File(path).existsSync()) ? path : null;
+    _initialFotoPath = _fotoPath;
   }
 
   @override
@@ -1192,132 +1254,185 @@ class _EditCapituloPageState extends State<_EditCapituloPage> {
     );
   }
 
+  Future<void> _confirmDiscardChanges(AppLocalizations l10n) async {
+    if (!_hasUnsavedChanges) {
+      Navigator.of(context).pop();
+      return;
+    }
+
+    final dialogResult = await showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.discardChangesTitle),
+        content: Text(l10n.discardChangesPrompt),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop('cancel'),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop('discard'),
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.error,
+            ),
+            child: Text(l10n.discard),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop('save'),
+            child: Text(l10n.save),
+          ),
+        ],
+      ),
+    );
+
+    if (!mounted) return;
+
+    if (dialogResult == 'save') {
+      _save(l10n);
+    } else if (dialogResult == 'discard') {
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final colorScheme = Theme.of(context).colorScheme;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.chapterEditTitle),
-        actions: [
-          TextButton(onPressed: () => _save(l10n), child: Text(l10n.save)),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Foto do capítulo
-            Text(
-              l10n.chapterPhoto,
-              style: Theme.of(context).textTheme.labelMedium,
-            ),
-            const SizedBox(height: 6),
-            GestureDetector(
-              onTap: () => _showPhotoOptions(context, l10n),
-              child: Container(
-                width: double.infinity,
-                height: 160,
-                decoration: BoxDecoration(
-                  color: colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: colorScheme.outlineVariant),
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: _fotoPath != null
-                    ? Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          Image.file(
-                            File(_fotoPath!),
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) {
-                              WidgetsBinding.instance.addPostFrameCallback(
-                                (_) => setState(() => _fotoPath = null),
-                              );
-                              return const SizedBox.shrink();
-                            },
-                          ),
-                          Positioned(
-                            bottom: 8,
-                            right: 8,
-                            child: FilledButton.tonalIcon(
-                              onPressed: () => _showPhotoOptions(context, l10n),
-                              icon: const Icon(Icons.edit, size: 16),
-                              label: Text(l10n.chapterChangePhoto),
-                              style: FilledButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                              ),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        await _confirmDiscardChanges(l10n);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => _confirmDiscardChanges(l10n),
+          ),
+          title: Text(l10n.chapterEditTitle),
+        ),
+        body: SafeArea(
+          top: false,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (_fotoPath != null) ...[
+                  SizedBox(
+                    width: 92,
+                    height: 72,
+                    child: Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: SizedBox(
+                            width: 92,
+                            height: 72,
+                            child: Image.file(
+                              File(_fotoPath!),
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) {
+                                WidgetsBinding.instance.addPostFrameCallback(
+                                  (_) => setState(() => _fotoPath = null),
+                                );
+                                return const SizedBox.shrink();
+                              },
                             ),
                           ),
-                        ],
-                      )
-                    : Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.add_photo_alternate_outlined,
-                            size: 40,
-                            color: colorScheme.onSurfaceVariant,
+                        ),
+                        Positioned(
+                          top: 2,
+                          right: 2,
+                          child: IconButton.filled(
+                            onPressed: () => setState(() => _fotoPath = null),
+                            icon: const Icon(Icons.close, size: 14),
+                            tooltip: l10n.chapterRemovePhoto,
+                            style: IconButton.styleFrom(
+                              minimumSize: const Size(24, 24),
+                              padding: EdgeInsets.zero,
+                            ),
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            l10n.chapterAddPhoto,
-                            style: Theme.of(context).textTheme.bodyMedium
-                                ?.copyWith(color: colorScheme.onSurfaceVariant),
-                          ),
-                        ],
-                      ),
-              ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
+                Text(
+                  l10n.chapterTitle,
+                  style: Theme.of(context).textTheme.labelMedium,
+                ),
+                const SizedBox(height: 6),
+                TextField(
+                  controller: titleController,
+                  textCapitalization: TextCapitalization.sentences,
+                  decoration: InputDecoration(
+                    hintText: l10n.chapterTitleHint,
+                    border: const OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  l10n.chapterDescription,
+                  style: Theme.of(context).textTheme.labelMedium,
+                ),
+                const SizedBox(height: 6),
+                TextField(
+                  controller: descController,
+                  textCapitalization: TextCapitalization.sentences,
+                  minLines: 2,
+                  maxLines: 3,
+                  decoration: InputDecoration(
+                    hintText: l10n.chapterDescriptionHint,
+                    border: const OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  l10n.chapterSelectEntries,
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+                const SizedBox(height: 8),
+                _EntradasChecklist(
+                  entradas: widget.todasEntradas,
+                  tagNomesPorId: widget.tagNomesPorId,
+                  selected: selectedIds,
+                  onSelectionChanged: (_) => setState(() {}),
+                ),
+                const SizedBox(height: 12),
+              ],
             ),
-            const SizedBox(height: 16),
-            Text(
-              l10n.chapterTitle,
-              style: Theme.of(context).textTheme.labelMedium,
+          ),
+        ),
+        bottomNavigationBar: SafeArea(
+          top: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+            child: Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => _showPhotoOptions(context, l10n),
+                    icon: const Icon(Icons.photo_camera_back_outlined),
+                    label: Text(l10n.chapterPhotoActionLabel),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: FilledButton.icon(
+                    onPressed: selectedIds.length >= 3
+                        ? () => _save(l10n)
+                        : null,
+                    icon: const Icon(Icons.save_outlined),
+                    label: Text(l10n.save),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 6),
-            TextField(
-              controller: titleController,
-              textCapitalization: TextCapitalization.sentences,
-              decoration: InputDecoration(
-                hintText: l10n.chapterTitleHint,
-                border: const OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              l10n.chapterDescription,
-              style: Theme.of(context).textTheme.labelMedium,
-            ),
-            const SizedBox(height: 6),
-            TextField(
-              controller: descController,
-              textCapitalization: TextCapitalization.sentences,
-              minLines: 2,
-              maxLines: 3,
-              decoration: InputDecoration(
-                hintText: l10n.chapterDescriptionHint,
-                border: const OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              l10n.chapterSelectEntries,
-              style: Theme.of(context).textTheme.labelMedium,
-            ),
-            const SizedBox(height: 6),
-            _EntradasChecklist(
-              entradas: widget.todasEntradas,
-              tagNomesPorId: widget.tagNomesPorId,
-              selected: selectedIds,
-            ),
-            const SizedBox(height: 32),
-          ],
+          ),
         ),
       ),
     );
@@ -1337,11 +1452,13 @@ class _EntradasChecklist extends StatefulWidget {
 
   /// Set mutável compartilhado — o pai lê as seleções na hora de salvar.
   final Set<int> selected;
+  final ValueChanged<int>? onSelectionChanged;
 
   const _EntradasChecklist({
     required this.entradas,
     required this.tagNomesPorId,
     required this.selected,
+    this.onSelectionChanged,
   });
 
   @override
@@ -1423,6 +1540,7 @@ class _EntradasChecklistState extends State<_EntradasChecklist> {
                       widget.selected.remove(id);
                     }
                   });
+                  widget.onSelectionChanged?.call(widget.selected.length);
                 },
                 title: Text(entry.titulo),
                 subtitle: Text(

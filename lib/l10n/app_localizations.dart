@@ -3998,10 +3998,16 @@ abstract class AppLocalizations {
   /// **'Create chapter manually'**
   String get chapterCreateManual;
 
+  /// Title of the manual chapter creation screen
+  ///
+  /// In en, this message translates to:
+  /// **'Create Chapter'**
+  String get chapterCreateTitle;
+
   /// Label for chapter title field
   ///
   /// In en, this message translates to:
-  /// **'Chapter title'**
+  /// **'Title'**
   String get chapterTitle;
 
   /// Hint for chapter title field
@@ -4021,6 +4027,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Chapter photo'**
   String get chapterPhoto;
+
+  /// Label for the command button to choose chapter photo
+  ///
+  /// In en, this message translates to:
+  /// **'Chapter Photo'**
+  String get chapterPhotoActionLabel;
 
   /// Button to add a chapter photo
   ///
@@ -4081,6 +4093,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Create chapter'**
   String get chapterCreateFromSuggestion;
+
+  /// Main button label to create a manual chapter
+  ///
+  /// In en, this message translates to:
+  /// **'Create my Chapter'**
+  String get chapterCreateMyLabel;
 
   /// Button to ignore chapter suggestion
   ///

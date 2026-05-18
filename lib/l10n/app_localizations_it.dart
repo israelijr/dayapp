@@ -2221,7 +2221,10 @@ class AppLocalizationsIt extends AppLocalizations {
   String get chapterCreateManual => 'Crea capitolo manualmente';
 
   @override
-  String get chapterTitle => 'Titolo del capitolo';
+  String get chapterCreateTitle => 'Crea Capitolo';
+
+  @override
+  String get chapterTitle => 'Titolo';
 
   @override
   String get chapterTitleHint => 'Es: Cambio di lavoro';
@@ -2231,6 +2234,9 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get chapterPhoto => 'Foto del capitolo';
+
+  @override
+  String get chapterPhotoActionLabel => 'Foto del Capitolo';
 
   @override
   String get chapterAddPhoto => 'Aggiungi foto';
@@ -2270,6 +2276,9 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get chapterCreateFromSuggestion => 'Crea capitolo';
+
+  @override
+  String get chapterCreateMyLabel => 'Crea il mio Capitolo';
 
   @override
   String get chapterIgnoreLabel => 'Ignora';

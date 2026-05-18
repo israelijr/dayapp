@@ -2210,7 +2210,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get chapterCreateManual => 'Criar capítulo manualmente';
 
   @override
-  String get chapterTitle => 'Título do capítulo';
+  String get chapterCreateTitle => 'Criar Capítulo';
+
+  @override
+  String get chapterTitle => 'Título';
 
   @override
   String get chapterTitleHint => 'Ex: Mudança de emprego';
@@ -2219,7 +2222,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get chapterDescription => 'Descrição';
 
   @override
-  String get chapterPhoto => 'Foto do capítulo';
+  String get chapterPhoto => 'Foto do Capítulo';
+
+  @override
+  String get chapterPhotoActionLabel => 'Foto';
 
   @override
   String get chapterAddPhoto => 'Adicionar foto';
@@ -2232,7 +2238,7 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get chapterSelectEntries =>
-      'Selecione histórias relacionadas (título + data)';
+      'Selecione a menos 3 histórias relacionadas';
 
   @override
   String get chapterMinimumEntries => 'Mínimo: 3 histórias por capítulo.';
@@ -2259,6 +2265,9 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get chapterCreateFromSuggestion => 'Criar capítulo';
+
+  @override
+  String get chapterCreateMyLabel => 'Criar meu Capítulo';
 
   @override
   String get chapterIgnoreLabel => 'Ignorar';
@@ -4748,7 +4757,10 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get chapterCreateManual => 'Criar capítulo manualmente';
 
   @override
-  String get chapterTitle => 'Título do capítulo';
+  String get chapterCreateTitle => 'Criar Capítulo';
+
+  @override
+  String get chapterTitle => 'Título';
 
   @override
   String get chapterTitleHint => 'Ex: Mudança de emprego';
@@ -4757,7 +4769,10 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get chapterDescription => 'Descrição';
 
   @override
-  String get chapterPhoto => 'Foto do capítulo';
+  String get chapterPhoto => 'Foto do Capítulo';
+
+  @override
+  String get chapterPhotoActionLabel => 'Foto';
 
   @override
   String get chapterAddPhoto => 'Adicionar foto';
@@ -4770,7 +4785,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get chapterSelectEntries =>
-      'Selecione histórias relacionadas (título + data)';
+      'Selecione a menos 3 histórias relacionadas';
 
   @override
   String get chapterMinimumEntries => 'Mínimo: 3 histórias por capítulo.';
@@ -4797,6 +4812,9 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get chapterCreateFromSuggestion => 'Criar capítulo';
+
+  @override
+  String get chapterCreateMyLabel => 'Criar meu Capítulo';
 
   @override
   String get chapterIgnoreLabel => 'Ignorar';
