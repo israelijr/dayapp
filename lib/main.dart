@@ -154,10 +154,8 @@ class _AppLoaderState extends State<AppLoader> {
     final localeProvider = LocaleProvider();
     await localeProvider.load();
 
-    // Inicializar notificações
-    final notificationsFuture = NotificationService().init((
-      String? payload,
-    ) async {
+    // Inicializar notificações primeiro para evitar corrida com agendamentos
+    await NotificationService().init((String? payload) async {
       if (payload != null) {
         // Verifica se é uma notificação de engajamento
         if (payload == 'engagement') {
@@ -189,11 +187,8 @@ class _AppLoaderState extends State<AppLoader> {
       }
     });
 
-    // Inicializar serviço de engajamento e registrar uso do app
-    final engagementFuture = EngagementService().registerAppUsage();
-
-    // Aguarda inicializações em paralelo
-    await Future.wait([notificationsFuture, engagementFuture]);
+    // Registra uso do app após inicializar notificações
+    await EngagementService().registerAppUsage();
 
     // Verifica se o app foi iniciado por um toque em notificação (cold start).
     // Nesse caso, onDidReceiveNotificationResponse não é chamado; o payload
