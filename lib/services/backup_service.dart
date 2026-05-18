@@ -333,6 +333,40 @@ Versão: 2.0.0
     }
   }
 
+  /// Cria o backup e salva o ZIP em uma pasta escolhida pelo usuário.
+  Future<String> saveBackupFileToFolder({
+    required String folderPath,
+    required AppLocalizations l10n,
+    void Function(String)? onProgress,
+    void Function(double?)? onProgressValue,
+  }) async {
+    try {
+      final zipPath = await createBackupZipFile(
+        onProgress: onProgress,
+        onProgressValue: onProgressValue,
+        l10n: l10n,
+      );
+      final zipFile = File(zipPath);
+
+      if (!await zipFile.exists()) {
+        throw Exception(l10n.errorBackupFileNotFound);
+      }
+
+      onProgress?.call(l10n.backupSavedToFolder);
+      onProgressValue?.call(0.95);
+
+      final destinationPath = path.join(folderPath, path.basename(zipPath));
+      final destinationFile = await zipFile.copy(destinationPath);
+
+      onProgressValue?.call(1.0);
+      onProgress?.call(l10n.backupProgressSuccess);
+
+      return destinationFile.path;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   /// Restaura backup de um arquivo ZIP
   Future<void> restoreFromZipFile(
     String zipFilePath, {

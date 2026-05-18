@@ -344,6 +344,8 @@
   "backupComplete": "Copia de seguridad completa",
   "backupZipSubtitle": "Archivo ZIP con todos tus datos",
   "backupZipExplanation": "Genera un archivo ZIP que puedes guardar en OneDrive, Google Drive, correo electrónico o cualquier otra ubicación.",
+  "backupLinuxExplanation": "Elige una carpeta y el ZIP de copia de seguridad se guardará directamente en ella.",
+  "@backupLinuxExplanation": { "description": "Explicación mostrada en la tarjeta de copia de seguridad al ejecutar en Linux desktop" },
   "restoreSectionTitle": "Restaurar copia de seguridad",
   "restoreSectionDescription": "Selecciona un archivo de copia de seguridad (ZIP) creado previamente para restaurar todos tus datos.",
   "backupShareSubject": "Copia de seguridad de DayApp",

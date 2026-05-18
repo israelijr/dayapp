@@ -2,6 +2,8 @@
 cmake_minimum_required(VERSION 3.13)
 project(runner LANGUAGES CXX)
 
+# Use system lld linker to avoid compatibility issues with snap-bundled ld.
+add_link_options(-fuse-ld=lld)
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
 set(BINARY_NAME "dayapp")

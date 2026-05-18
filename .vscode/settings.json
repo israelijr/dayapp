@@ -16,6 +16,12 @@
         "/^bash -n scripts/check_release_readiness\\.sh$/": {
             "approve": true,
             "matchCommandLine": true
-        }
+        },
+        "dpkg": true,
+        "snap": true,
+        "mount": true,
+        "pgrep": true,
+        "wait": true,
+        "strings": true
     }
 }

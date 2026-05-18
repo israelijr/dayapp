@@ -1,6 +1,7 @@
 import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -24,6 +25,16 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
   double? _progressValue;
   bool _statusIsError = false; // nova flag para colorir card de status
   bool _statusIsSuccess = false;
+
+  bool get _isLinuxDesktop =>
+      !kIsWeb && defaultTargetPlatform == TargetPlatform.linux;
+
+  String _backupCardExplanation(AppLocalizations loc) {
+    if (_isLinuxDesktop) {
+      return loc.backupLinuxExplanation;
+    }
+    return loc.backupZipExplanation;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -138,7 +149,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                loc.backupZipExplanation,
+                                _backupCardExplanation(loc),
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: AppColors.labelColor(context),
@@ -149,8 +160,16 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
                                 onPressed: _isLoading
                                     ? null
                                     : _createAndShareBackup,
-                                icon: const Icon(Icons.share),
-                                label: Text(loc.createAndShareBackup),
+                                icon: Icon(
+                                  _isLinuxDesktop
+                                      ? Icons.save_alt
+                                      : Icons.share,
+                                ),
+                                label: Text(
+                                  _isLinuxDesktop
+                                      ? loc.saveAndExport
+                                      : loc.createAndShareBackup,
+                                ),
                                 style: FilledButton.styleFrom(
                                   minimumSize: const Size(double.infinity, 48),
                                 ),
@@ -349,22 +368,62 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
     });
 
     try {
-      await _backupService.shareBackupFile(
-        onProgress: (message) {
-          if (mounted) setState(() => _statusMessage = message);
-        },
-        onProgressValue: (value) {
-          if (mounted) setState(() => _progressValue = value);
-        },
-        l10n: loc,
-      );
+      if (_isLinuxDesktop) {
+        final selectedFolderPath = await FilePicker.getDirectoryPath();
+
+        if (selectedFolderPath == null) {
+          if (mounted) {
+            setState(() {
+              _isLoading = false;
+              _statusMessage = '';
+              _progressValue = null;
+              _statusIsError = false;
+              _statusIsSuccess = false;
+            });
+          }
+
+          await Future.delayed(const Duration(milliseconds: 500));
+          pinProvider.isPickingExternalMedia = false;
+          return;
+        }
+
+        await _backupService.saveBackupFileToFolder(
+          folderPath: selectedFolderPath,
+          onProgress: (message) {
+            if (mounted) setState(() => _statusMessage = message);
+          },
+          onProgressValue: (value) {
+            if (mounted) setState(() => _progressValue = value);
+          },
+          l10n: loc,
+        );
+      } else {
+        await _backupService.shareBackupFile(
+          onProgress: (message) {
+            if (mounted) setState(() => _statusMessage = message);
+          },
+          onProgressValue: (value) {
+            if (mounted) setState(() => _progressValue = value);
+          },
+          l10n: loc,
+        );
+      }
+
+      if (!mounted) {
+        pinProvider.isPickingExternalMedia = false;
+        return;
+      }
+
+      final successMessage = _isLinuxDesktop
+          ? loc.backupProgressSuccess
+          : loc.backupCreatedSuccess;
 
       debugPrint('BACKUP: Compartilhamento concluído');
 
       if (mounted) {
         setState(() {
           _isLoading = false;
-          _statusMessage = loc.backupCreatedSuccess;
+          _statusMessage = successMessage;
           _progressValue = null;
           _statusIsError = false;
           _statusIsSuccess = true;

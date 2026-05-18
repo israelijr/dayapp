@@ -318,6 +318,8 @@
   "backupComplete": "Backup Completo",
   "backupZipSubtitle": "Arquivo ZIP com todos os seus dados",
   "backupZipExplanation": "Gera um arquivo ZIP que você pode salvar no OneDrive, Google Drive, email ou qualquer outro local.",
+  "backupLinuxExplanation": "Escolha uma pasta e o backup ZIP será guardado diretamente nela.",
+  "@backupLinuxExplanation": { "description": "Explicação exibida no card de backup ao correr no Linux desktop" },
   "restoreSectionTitle": "Restaurar Backup",
   "restoreSectionDescription": "Selecione um arquivo de backup (ZIP) anteriormente criado para restaurar todos os seus dados.",
   "backupShareSubject": "Backup DayApp",

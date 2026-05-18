@@ -899,6 +899,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'Génère un fichier ZIP que vous pouvez sauvegarder sur OneDrive, Google Drive, par e-mail ou à tout autre emplacement.';
 
   @override
+  String get backupLinuxExplanation =>
+      'Choisissez un dossier et le ZIP de sauvegarde y sera enregistré directement.';
+
+  @override
   String get restoreSectionTitle => 'Restaurer la sauvegarde';
 
   @override

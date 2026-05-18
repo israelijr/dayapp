@@ -889,6 +889,10 @@ class AppLocalizationsPt extends AppLocalizations {
       'Gera um arquivo ZIP que você pode salvar no OneDrive, Google Drive, email ou qualquer outro local.';
 
   @override
+  String get backupLinuxExplanation =>
+      'Escolha uma pasta e o backup ZIP será guardado diretamente nela.';
+
+  @override
   String get restoreSectionTitle => 'Restaurar Backup';
 
   @override
@@ -3387,6 +3391,10 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   @override
   String get backupZipExplanation =>
       'Gera um arquivo ZIP que você pode salvar no OneDrive, Google Drive, email ou qualquer outro local.';
+
+  @override
+  String get backupLinuxExplanation =>
+      'Escolha uma pasta e o backup ZIP será salvo diretamente nela.';
 
   @override
   String get restoreSectionTitle => 'Restaurar Backup';

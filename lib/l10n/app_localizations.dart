@@ -1749,6 +1749,12 @@ abstract class AppLocalizations {
   /// **'Generates a ZIP file that you can save to OneDrive, Google Drive, email or any other location.'**
   String get backupZipExplanation;
 
+  /// Explanation shown on the backup card when running on Linux desktop
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a folder and the backup ZIP will be saved directly to it.'**
+  String get backupLinuxExplanation;
+
   /// No description provided for @restoreSectionTitle.
   ///
   /// In en, this message translates to:
