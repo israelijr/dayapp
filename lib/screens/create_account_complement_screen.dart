@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dayapp/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +11,33 @@ import '../db/database_helper.dart';
 import '../providers/auth_provider.dart';
 import '../theme/m3_expressive_theme.dart';
 import '../widgets/custom_text_field.dart';
+
+class _BirthDateInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final digitsOnly = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
+    final limitedDigits = digitsOnly.length > 8
+        ? digitsOnly.substring(0, 8)
+        : digitsOnly;
+
+    final buffer = StringBuffer();
+    for (var i = 0; i < limitedDigits.length; i++) {
+      if (i == 2 || i == 4) {
+        buffer.write('/');
+      }
+      buffer.write(limitedDigits[i]);
+    }
+
+    final masked = buffer.toString();
+    return TextEditingValue(
+      text: masked,
+      selection: TextSelection.collapsed(offset: masked.length),
+    );
+  }
+}
 
 class CreateAccountComplementScreen extends StatefulWidget {
   const CreateAccountComplementScreen({super.key});
@@ -40,9 +68,9 @@ class _CreateAccountComplementScreenState
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        errorMessage = AppLocalizations.of(context)!.errorSelectImages(
-          e.toString(),
-        );
+        errorMessage = AppLocalizations.of(
+          context,
+        )!.errorSelectImages(e.toString());
       });
     }
   }
@@ -97,7 +125,9 @@ class _CreateAccountComplementScreenState
       setState(() {
         errorMessage = l10n.profileUpdateError;
       });
-      debugPrint('CreateAccountComplementScreen: erro ao salvar complemento: $e');
+      debugPrint(
+        'CreateAccountComplementScreen: erro ao salvar complemento: $e',
+      );
     } finally {
       if (!mounted) return;
       setState(() {
@@ -163,6 +193,8 @@ class _CreateAccountComplementScreenState
                   controller: birthDateController,
                   label: AppLocalizations.of(context)!.birthDateFormat,
                   keyboardType: TextInputType.datetime,
+                  maxLength: 10,
+                  inputFormatters: [_BirthDateInputFormatter()],
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
