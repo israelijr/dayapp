@@ -67,7 +67,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get themeRelva => 'Herbe';
 
   @override
-  String get themeOutono => 'Automne';
+  String get themeOutono => 'Jardin botanique';
 
   @override
   String get themeCeu => 'Ciel';
@@ -77,6 +77,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get themeSunset => 'Coucher de soleil';
+
+  @override
+  String get themeMidnightGalaxy => 'Galaxie de Minuit';
 
   @override
   String get themeDefaultLightDescription => 'Thème clair par défaut';
@@ -97,10 +100,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get themeRelvaDark => 'Relva (Sombre)';
 
   @override
-  String get themeOutonoLight => 'Outono (Clair)';
+  String get themeOutonoLight => 'Jardin botanique (Clair)';
 
   @override
-  String get themeOutonoDark => 'Outono (Sombre)';
+  String get themeOutonoDark => 'Jardin botanique (Sombre)';
 
   @override
   String get themeRelvaLightDescription => 'Tons verts et naturels';
@@ -109,10 +112,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get themeRelvaDarkDescription => 'Version sombre du schéma Relva';
 
   @override
-  String get themeOutonoLightDescription => 'Tons chauds et terreux';
+  String get themeOutonoLightDescription =>
+      'Tons frais et organiques de jardin';
 
   @override
-  String get themeOutonoDarkDescription => 'Version sombre du schéma Outono';
+  String get themeOutonoDarkDescription =>
+      'Version sombre du schéma Jardin botanique';
 
   @override
   String get themeRemoveScheme => 'Supprimer le schéma';

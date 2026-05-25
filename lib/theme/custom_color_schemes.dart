@@ -12,6 +12,7 @@ class CustomColorSchemes {
   static const String ceuFamilyKey = 'ceu';
   static const String confortFamilyKey = 'confort';
   static const String sunsetFamilyKey = 'sunset';
+  static const String midnightGalaxyFamilyKey = 'midnightGalaxy';
 
   static const List<String> familyKeys = [
     relvaFamilyKey,
@@ -19,6 +20,7 @@ class CustomColorSchemes {
     ceuFamilyKey,
     confortFamilyKey,
     sunsetFamilyKey,
+    midnightGalaxyFamilyKey,
   ];
 
   // Relva - Light
@@ -51,33 +53,46 @@ class CustomColorSchemes {
     inverseSurface: const Color(0xFFDFE4DC),
   );
 
-  // Outono - Light
+  // Outono (base Botanical Garden) - Light
   static final ColorScheme outonoLight = const ColorScheme.light().copyWith(
-    primary: const Color(0xFF8F4C38),
-    secondary: const Color(0xFF77574E),
-    tertiary: const Color(0xFF6C5D2F),
+    primary: const Color(0xFF4A7C59),
+    onPrimary: const Color(0xFFFFFFFF),
+    secondary: const Color(0xFFF9A620),
+    onSecondary: const Color(0xFF3A2500),
+    tertiary: const Color(0xFFB7472A),
+    onTertiary: const Color(0xFFFFFFFF),
     error: const Color(0xFFBA1A1A),
-    primaryContainer: const Color(0xFFFFDBD1),
-    secondaryContainer: const Color(0xFFFFDBD1),
-    tertiaryContainer: const Color(0xFFF5E1A7),
+    primaryContainer: const Color(0xFFCDE9D2),
+    onPrimaryContainer: const Color(0xFF12361E),
+    secondaryContainer: const Color(0xFFFFE1A6),
+    onSecondaryContainer: const Color(0xFF4A2F00),
+    tertiaryContainer: const Color(0xFFFFD9D0),
+    onTertiaryContainer: const Color(0xFF4B1A11),
     errorContainer: const Color(0xFFFFDAD6),
-    surface: const Color(0xFFFFF8F6),
-    inverseSurface: const Color(0xFF392E2B),
+    surfaceContainerHighest: const Color(0xFFE3E8DF),
+    surface: const Color(0xFFF5F3ED),
+    inverseSurface: const Color(0xFF2B332D),
   );
 
-  // Outono - Dark
+  // Outono (base Botanical Garden) - Dark
   static final ColorScheme outonoDark = const ColorScheme.dark().copyWith(
-    primary: const Color(0xFFFFB5A0),
-    secondary: const Color(0xFFE7BDB2),
-    tertiary: const Color(0xFFD8C58D),
+    primary: const Color(0xFF99CFA6),
+    onPrimary: const Color(0xFF0F2F1A),
+    secondary: const Color(0xFFFFC85C),
+    onSecondary: const Color(0xFF3F2800),
+    tertiary: const Color(0xFFFFB59E),
+    onTertiary: const Color(0xFF5A1E13),
     error: const Color(0xFFFFB4AB),
-    primaryContainer: const Color(0xFF723523),
-    secondaryContainer: const Color(0xFF5D4037),
-    tertiaryContainer: const Color(0xFF534619),
+    primaryContainer: const Color(0xFF2E5F3E),
+    onPrimaryContainer: const Color(0xFFCDE9D2),
+    secondaryContainer: const Color(0xFF6D4700),
+    onSecondaryContainer: const Color(0xFFFFE1A6),
+    tertiaryContainer: const Color(0xFF8E3723),
+    onTertiaryContainer: const Color(0xFFFFD9D0),
     errorContainer: const Color(0xFF93000A),
-    surfaceContainerHighest: const Color(0xFF1A110F),
-    surface: const Color(0xFF1A110F),
-    inverseSurface: const Color(0xFFF1DFDA),
+    surfaceContainerHighest: const Color(0xFF2E372F),
+    surface: const Color(0xFF171D18),
+    inverseSurface: const Color(0xFFDCE5DA),
   );
 
   // Céu - Light
@@ -240,6 +255,70 @@ class CustomColorSchemes {
     onInverseSurface: const Color(0xFF241A12),
   );
 
+  // Midnight Galaxy - Light
+  static final ColorScheme midnightGalaxyLight = const ColorScheme.light()
+      .copyWith(
+        primary: const Color(0xFF4A4E8F),
+        onPrimary: const Color(0xFFFFFFFF),
+
+        secondary: const Color(0xFF2B1E3E),
+        onSecondary: const Color(0xFFFFFFFF),
+
+        tertiary: const Color(0xFFA490C2),
+        onTertiary: const Color(0xFF2A2340),
+
+        error: const Color(0xFFBA1A1A),
+        onError: const Color(0xFFFFFFFF),
+
+        primaryContainer: const Color(0xFFCCD4FF),
+        onPrimaryContainer: const Color(0xFF262A5C),
+
+        secondaryContainer: const Color(0xFFBFC8FF),
+        onSecondaryContainer: const Color(0xFF1E2250),
+
+        tertiaryContainer: const Color(0xFFE3DCFF),
+        onTertiaryContainer: const Color(0xFF2A2340),
+
+        surface: const Color(0xFFEEF0FF),
+        onSurface: const Color(0xFF1B1F33),
+        surfaceContainerHighest: const Color(0xFFD6DDF9),
+
+        inverseSurface: const Color(0xFF22263B),
+        onInverseSurface: const Color(0xFFE6E6FA),
+      );
+
+  // Midnight Galaxy - Dark
+  static final ColorScheme midnightGalaxyDark = const ColorScheme.dark()
+      .copyWith(
+        primary: const Color(0xFFB8C1FF),
+        onPrimary: const Color(0xFF1F2359),
+
+        secondary: const Color(0xFFA490C2),
+        onSecondary: const Color(0xFF2E2342),
+
+        tertiary: const Color(0xFF2B1E3E),
+        onTertiary: const Color(0xFFE8DEF9),
+
+        error: const Color(0xFFFFB4AB),
+        onError: const Color(0xFF690005),
+
+        primaryContainer: const Color(0xFF2F3670),
+        onPrimaryContainer: const Color(0xFFDCE1FF),
+
+        secondaryContainer: const Color(0xFF283063),
+        onSecondaryContainer: const Color(0xFFD7DDFF),
+
+        tertiaryContainer: const Color(0xFF3A2D56),
+        onTertiaryContainer: const Color(0xFFE9DFFF),
+
+        surface: const Color(0xFF0F1324),
+        onSurface: const Color(0xFFE6E6FA),
+        surfaceContainerHighest: const Color(0xFF222B4F),
+
+        inverseSurface: const Color(0xFFE6E6FA),
+        onInverseSurface: const Color(0xFF1A1F33),
+      );
+
   // Mapa de fácil acesso aos esquemas criados
   static final Map<String, ColorScheme> customSchemes = {
     'relvaLight': relvaLight,
@@ -252,6 +331,8 @@ class CustomColorSchemes {
     'confortDark': confortDark,
     'sunsetLight': sunsetLight,
     'sunsetDark': sunsetDark,
+    'midnightGalaxyLight': midnightGalaxyLight,
+    'midnightGalaxyDark': midnightGalaxyDark,
   };
 
   // --- Utilitários de família ---
@@ -279,6 +360,10 @@ class CustomColorSchemes {
       case 'sunsetLight':
       case 'sunsetDark':
         return sunsetFamilyKey;
+      case midnightGalaxyFamilyKey:
+      case 'midnightGalaxyLight':
+      case 'midnightGalaxyDark':
+        return midnightGalaxyFamilyKey;
       default:
         return null;
     }
@@ -296,6 +381,8 @@ class CustomColorSchemes {
         return 'confortLight';
       case sunsetFamilyKey:
         return 'sunsetLight';
+      case midnightGalaxyFamilyKey:
+        return 'midnightGalaxyLight';
       default:
         return familyKey;
     }
@@ -313,6 +400,8 @@ class CustomColorSchemes {
         return 'confortDark';
       case sunsetFamilyKey:
         return 'sunsetDark';
+      case midnightGalaxyFamilyKey:
+        return 'midnightGalaxyDark';
       default:
         return familyKey;
     }

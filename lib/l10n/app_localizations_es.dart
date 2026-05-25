@@ -66,7 +66,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get themeRelva => 'Hierba';
 
   @override
-  String get themeOutono => 'Otoño';
+  String get themeOutono => 'Jardín Botánico';
 
   @override
   String get themeCeu => 'Cielo';
@@ -76,6 +76,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get themeSunset => 'Atardecer';
+
+  @override
+  String get themeMidnightGalaxy => 'Galaxia de Medianoche';
 
   @override
   String get themeDefaultLightDescription => 'Tema claro predeterminado';
@@ -96,10 +99,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get themeRelvaDark => 'Relva (Oscuro)';
 
   @override
-  String get themeOutonoLight => 'Outono (Claro)';
+  String get themeOutonoLight => 'Jardín Botánico (Claro)';
 
   @override
-  String get themeOutonoDark => 'Outono (Oscuro)';
+  String get themeOutonoDark => 'Jardín Botánico (Oscuro)';
 
   @override
   String get themeRelvaLightDescription => 'Tonos verdes y naturales';
@@ -108,10 +111,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get themeRelvaDarkDescription => 'Versión oscura del esquema Relva';
 
   @override
-  String get themeOutonoLightDescription => 'Tonos cálidos y terrosos';
+  String get themeOutonoLightDescription =>
+      'Tonos frescos y orgánicos de jardín';
 
   @override
-  String get themeOutonoDarkDescription => 'Versión oscura del esquema Outono';
+  String get themeOutonoDarkDescription =>
+      'Versión oscura del esquema Jardín Botánico';
 
   @override
   String get themeRemoveScheme => 'Quitar esquema';

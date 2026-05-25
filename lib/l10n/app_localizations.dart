@@ -222,7 +222,7 @@ abstract class AppLocalizations {
   /// No description provided for @themeOutono.
   ///
   /// In en, this message translates to:
-  /// **'Autumn'**
+  /// **'Botanical Garden'**
   String get themeOutono;
 
   /// No description provided for @themeCeu.
@@ -242,6 +242,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sunset'**
   String get themeSunset;
+
+  /// No description provided for @themeMidnightGalaxy.
+  ///
+  /// In en, this message translates to:
+  /// **'Midnight Galaxy'**
+  String get themeMidnightGalaxy;
 
   /// No description provided for @themeDefaultLightDescription.
   ///
@@ -282,13 +288,13 @@ abstract class AppLocalizations {
   /// No description provided for @themeOutonoLight.
   ///
   /// In en, this message translates to:
-  /// **'Outono (Light)'**
+  /// **'Botanical Garden (Light)'**
   String get themeOutonoLight;
 
   /// No description provided for @themeOutonoDark.
   ///
   /// In en, this message translates to:
-  /// **'Outono (Dark)'**
+  /// **'Botanical Garden (Dark)'**
   String get themeOutonoDark;
 
   /// No description provided for @themeRelvaLightDescription.
@@ -306,13 +312,13 @@ abstract class AppLocalizations {
   /// No description provided for @themeOutonoLightDescription.
   ///
   /// In en, this message translates to:
-  /// **'Warm earthy tones'**
+  /// **'Fresh and organic garden tones'**
   String get themeOutonoLightDescription;
 
   /// No description provided for @themeOutonoDarkDescription.
   ///
   /// In en, this message translates to:
-  /// **'Dark version of the Outono scheme'**
+  /// **'Dark version of the Botanical Garden scheme'**
   String get themeOutonoDarkDescription;
 
   /// No description provided for @themeRemoveScheme.

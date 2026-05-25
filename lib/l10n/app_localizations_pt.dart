@@ -66,7 +66,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get themeRelva => 'Relva';
 
   @override
-  String get themeOutono => 'Outono';
+  String get themeOutono => 'Jardim Botânico';
 
   @override
   String get themeCeu => 'Céu';
@@ -76,6 +76,9 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get themeSunset => 'Pôr do Sol';
+
+  @override
+  String get themeMidnightGalaxy => 'Galáxia da Meia-noite';
 
   @override
   String get themeDefaultLightDescription => 'Tema claro padrão';
@@ -96,10 +99,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get themeRelvaDark => 'Relva (Escuro)';
 
   @override
-  String get themeOutonoLight => 'Outono (Claro)';
+  String get themeOutonoLight => 'Jardim Botânico (Claro)';
 
   @override
-  String get themeOutonoDark => 'Outono (Escuro)';
+  String get themeOutonoDark => 'Jardim Botânico (Escuro)';
 
   @override
   String get themeRelvaLightDescription => 'Tons verdes e naturais';
@@ -108,10 +111,12 @@ class AppLocalizationsPt extends AppLocalizations {
   String get themeRelvaDarkDescription => 'Versão escura do esquema Relva';
 
   @override
-  String get themeOutonoLightDescription => 'Tons quentes e terrosos';
+  String get themeOutonoLightDescription =>
+      'Tons frescos e orgânicos de jardim';
 
   @override
-  String get themeOutonoDarkDescription => 'Versão escura do esquema Outono';
+  String get themeOutonoDarkDescription =>
+      'Versão escura do esquema Jardim Botânico';
 
   @override
   String get themeRemoveScheme => 'Remover Esquema';
@@ -2614,7 +2619,7 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get themeRelva => 'Relva';
 
   @override
-  String get themeOutono => 'Outono';
+  String get themeOutono => 'Jardim Botânico';
 
   @override
   String get themeCeu => 'Céu';
@@ -2624,6 +2629,9 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get themeSunset => 'Pôr do Sol';
+
+  @override
+  String get themeMidnightGalaxy => 'Galáxia da Meia-noite';
 
   @override
   String get themeDefaultLightDescription => 'Tema claro padrão';
@@ -2644,10 +2652,10 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get themeRelvaDark => 'Relva (Escuro)';
 
   @override
-  String get themeOutonoLight => 'Outono (Claro)';
+  String get themeOutonoLight => 'Jardim Botânico (Claro)';
 
   @override
-  String get themeOutonoDark => 'Outono (Escuro)';
+  String get themeOutonoDark => 'Jardim Botânico (Escuro)';
 
   @override
   String get themeRelvaLightDescription => 'Tons verdes e naturais';
@@ -2656,10 +2664,12 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
   String get themeRelvaDarkDescription => 'Versão escura do esquema Relva';
 
   @override
-  String get themeOutonoLightDescription => 'Tons quentes e terrosos';
+  String get themeOutonoLightDescription =>
+      'Tons frescos e orgânicos de jardim';
 
   @override
-  String get themeOutonoDarkDescription => 'Versão escura do esquema Outono';
+  String get themeOutonoDarkDescription =>
+      'Versão escura do esquema Jardim Botânico';
 
   @override
   String get themeRemoveScheme => 'Remover Esquema';

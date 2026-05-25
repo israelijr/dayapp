@@ -273,6 +273,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         return loc.themeConfort;
       case CustomColorSchemes.sunsetFamilyKey:
         return loc.themeSunset;
+      case CustomColorSchemes.midnightGalaxyFamilyKey:
+        return loc.themeMidnightGalaxy;
       default:
         return key;
     }
@@ -291,13 +293,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
           brightness,
         ) ??
         Theme.of(context).colorScheme;
+    final bool isMidnightGalaxy =
+        themeProvider.selectedSchemeKey ==
+        CustomColorSchemes.midnightGalaxyFamilyKey;
+    final List<Color> previewColors = isMidnightGalaxy
+        ? <Color>[scheme.primary, scheme.primaryContainer]
+        : <Color>[scheme.primary, scheme.secondary];
 
     return Container(
       width: 44,
       height: 28,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(6),
-        gradient: LinearGradient(colors: [scheme.primary, scheme.secondary]),
+        gradient: LinearGradient(colors: previewColors),
         border: Border.all(color: scheme.onSurface.withValues(alpha: 0.12)),
       ),
     );
@@ -827,7 +835,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       const SizedBox(height: 8),
                       _buildThemeOption(
                         context: context,
-                        icon: Icons.park_outlined,
+                        icon: Icons.local_florist_outlined,
                         label: loc.themeOutono,
                         selected:
                             !isSystemSelected &&
@@ -913,6 +921,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               currentThemeProvider,
                             ),
                             familyKey: CustomColorSchemes.sunsetFamilyKey,
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                      _buildThemeOption(
+                        context: context,
+                        icon: Icons.nightlight_round,
+                        label: loc.themeMidnightGalaxy,
+                        selected:
+                            !isSystemSelected &&
+                            currentThemeProvider.selectedSchemeKey ==
+                                CustomColorSchemes.midnightGalaxyFamilyKey,
+                        locked: !canUsePremiumThemes,
+                        scaffoldMessenger: messenger,
+                        onTap: () {
+                          _selectThemeOption(
+                            context,
+                            currentThemeProvider,
+                            themeMode: _resolveCustomThemeMode(
+                              context,
+                              currentThemeProvider,
+                            ),
+                            familyKey:
+                                CustomColorSchemes.midnightGalaxyFamilyKey,
                           );
                         },
                       ),
