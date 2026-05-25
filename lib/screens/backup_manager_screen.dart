@@ -10,6 +10,7 @@ import '../providers/pin_provider.dart';
 import '../providers/refresh_provider.dart';
 import '../services/backup_service.dart';
 import '../theme/m3_expressive_theme.dart';
+import 'backup_info_screen.dart';
 
 class BackupManagerScreen extends StatefulWidget {
   const BackupManagerScreen({super.key});
@@ -46,7 +47,7 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
           IconButton(
             icon: const Icon(Icons.info_outline, size: 28),
             tooltip: loc.backupInfoDialogTitle,
-            onPressed: () => _showInfoDialog(context, loc),
+            onPressed: () => _openBackupInfoScreen(context),
           ),
           const SizedBox(width: 4),
         ],
@@ -315,38 +316,10 @@ class _BackupManagerScreenState extends State<BackupManagerScreen> {
     );
   }
 
-  /// Exibe o diálogo informativo sobre backup (substitui o card fixo)
-  void _showInfoDialog(BuildContext context, AppLocalizations loc) {
-    showDialog<void>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Row(
-          children: [
-            Icon(
-              Icons.info_outline,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            const SizedBox(width: 10),
-            Text(
-              loc.backupInfoDialogTitle,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-        content: SingleChildScrollView(
-          child: Text(
-            loc.backupInfoDialogContent,
-            style: const TextStyle(fontSize: 14, height: 1.55),
-          ),
-        ),
-        actions: [
-          FilledButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: Text(loc.close),
-          ),
-        ],
-      ),
-    );
+  void _openBackupInfoScreen(BuildContext context) {
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute<void>(builder: (_) => const BackupInfoScreen()));
   }
 
   Future<void> _createAndShareBackup() async {

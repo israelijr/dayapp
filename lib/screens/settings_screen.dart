@@ -18,6 +18,7 @@ import '../services/secure_storage_service.dart';
 import '../theme/custom_color_schemes.dart';
 import '../theme/m3_expressive_theme.dart';
 import '../widgets/custom_text_field.dart';
+import 'background_restrictions_info_screen.dart';
 import 'setup_pin_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -1283,7 +1284,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   color: Theme.of(context).colorScheme.tertiary,
                 ),
                 tooltip: loc.backgroundRestrictionsWarningTitle,
-                onPressed: () => _showBackgroundRestrictionsDialog(context),
+                onPressed: () => _openBackgroundRestrictionsInfoScreen(context),
               ),
             ],
           ),
@@ -1333,27 +1334,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  void _showBackgroundRestrictionsDialog(BuildContext context) {
-    final loc = AppLocalizations.of(context)!;
-    showDialog<void>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        icon: Icon(
-          Icons.warning_amber_rounded,
-          color: Theme.of(context).colorScheme.tertiary,
-          size: 32,
-        ),
-        title: Text(loc.backgroundRestrictionsWarningTitle),
-        content: Text(
-          loc.backgroundRestrictionsWarningDesc,
-          style: const TextStyle(fontSize: 14, height: 1.55),
-        ),
-        actions: [
-          FilledButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: Text(loc.close),
-          ),
-        ],
+  void _openBackgroundRestrictionsInfoScreen(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => const BackgroundRestrictionsInfoScreen(),
       ),
     );
   }
